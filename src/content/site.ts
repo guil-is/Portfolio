@@ -34,7 +34,7 @@ export const site = {
     "\u{1F44B} Hi, I\u2019m Guil \u2014 a creative lead, brand designer, and community builder striving towards a regenerative future.",
 
   hero: {
-    portrait: "/portrait.jpg",
+    portrait: "/projects/guil-portrait-2023-2-sq.jpg",
     portraitAlt: "Portrait of Guil",
     bio: [
       "I\u2019m driven by the belief that communication, design, and community can spark exponential systemic change. My passion is in crafting ideas that deepen our sense of connection with each other and the world around us.",
@@ -57,7 +57,7 @@ export const site = {
       description:
         "A group of Web3 professionals exclusively supporting public goods and crypto\u2011philanthropic organizations that create greater value for society. We do that by building digital products, governance systems, and economic models.",
       href: "https://www.generalmagic.io/",
-      image: "", // placeholder until user uploads /public/projects/general-magic.jpg
+      image: "/projects/GM-cover.jpg",
       imageAlt: "General Magic",
     },
     {
