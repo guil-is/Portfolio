@@ -1,15 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" preserveAspectRatio="xMidYMid slice">
   <defs>
-    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#e7e5e4"/>
-      <stop offset="100%" stop-color="#a8a29e"/>
-    </linearGradient>
+    <radialGradient id="g2" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#24242a"/>
+      <stop offset="100%" stop-color="#0e0e12"/>
+    </radialGradient>
   </defs>
-  <rect width="800" height="600" fill="url(#g2)"/>
-  <g fill="none" stroke="#78716c" stroke-width="1.5" opacity="0.6">
-    <rect x="200" y="150" width="400" height="300" rx="12"/>
-    <rect x="240" y="190" width="320" height="220" rx="8"/>
-    <line x1="240" y1="240" x2="560" y2="240"/>
+  <rect width="600" height="600" fill="url(#g2)"/>
+  <rect x="180" y="180" width="240" height="300" rx="14" fill="#f4e9d6" opacity="0.95"/>
+  <g stroke="#3a352b" stroke-width="1.5" fill="none" opacity="0.7">
+    <path d="M 250 360 Q 290 300 300 250 Q 310 300 350 360"/>
+    <line x1="300" y1="360" x2="300" y2="260"/>
+    <circle cx="280" cy="285" r="10"/>
+    <circle cx="320" cy="290" r="8"/>
   </g>
-  <text x="400" y="308" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="600" fill="#44403c" text-anchor="middle">Project Two</text>
 </svg>

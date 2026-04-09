@@ -1,24 +1,27 @@
 // Single source of truth for portfolio copy.
 // Edit this file to update every section of the site.
 
-export type Service = {
-  title: string;
-  description: string;
-};
-
 export type Project = {
   title: string;
-  role: string;
-  year: string;
-  description: string;
+  subtitle: string;
   image: string;
   href?: string;
 };
 
+export type ApproachItem = {
+  title: string;
+  description: string;
+};
+
 export type Testimonial = {
   quote: string;
-  author: string;
-  role: string;
+  company: string;
+  avatar: string;
+};
+
+export type Client = {
+  name: string;
+  logo: string;
 };
 
 export type Social = {
@@ -29,84 +32,133 @@ export type Social = {
 export const site = {
   name: "Guil Maueler",
   title: "Fractional Design Partner",
-  tagline:
-    "Fractional Design Partner helping founders ship thoughtful 0\u20921 products.",
+  hero: "Fractional Design Partner helping founders ship 0\u2192\u202f1 products.",
   email: "hello@example.com",
-
-  about: [
-    "I partner with founders and small teams to turn early ideas into products people actually want to use. My focus is on clarity, craft, and shipping \u2014 not deliverables for their own sake.",
-    "Over the past several years I\u2019ve led product design work across consumer, developer tools, and AI. I like being embedded just enough to move fast with the team, and stepping back just enough to keep the long view in focus.",
-  ],
-
-  services: [
-    {
-      title: "Product strategy",
-      description:
-        "Translate a rough vision into a concrete product direction \u2014 what to build first, what to cut, and what to come back to later.",
-    },
-    {
-      title: "Design & prototyping",
-      description:
-        "High\u2011fidelity interactive prototypes that feel like the real thing, so you can validate ideas with users before committing engineering cycles.",
-    },
-    {
-      title: "Working with engineering",
-      description:
-        "Tight loops with your engineers \u2014 pairing on implementation, reviewing PRs, and iterating on the live product until it feels right.",
-    },
-    {
-      title: "Design team building",
-      description:
-        "Hiring plans, interview loops, rituals, and early culture so your first design hires are set up to succeed.",
-    },
-  ] satisfies Service[],
 
   projects: [
     {
       title: "Project One",
-      role: "Lead Designer",
-      year: "2025",
-      description:
-        "A short placeholder description of the project \u2014 the problem, your role, and the outcome. Replace with real details.",
+      subtitle: "A short tagline for the project",
       image: "/projects/project-1.svg",
     },
     {
       title: "Project Two",
-      role: "Design Partner",
-      year: "2024",
-      description:
-        "Another placeholder project. Keep descriptions tight \u2014 two or three sentences is plenty.",
+      subtitle: "A short tagline for the project",
       image: "/projects/project-2.svg",
     },
     {
       title: "Project Three",
-      role: "Product Designer",
-      year: "2024",
-      description:
-        "One more slot. Swap these for your real selected work when you\u2019re ready.",
+      subtitle: "A short tagline for the project",
       image: "/projects/project-3.svg",
     },
+    {
+      title: "Project Four",
+      subtitle: "A short tagline for the project",
+      image: "/projects/project-4.svg",
+    },
   ] satisfies Project[],
+
+  about: {
+    headline: "I help early\u2011stage teams ship fast without compromising quality.",
+    photo: "/about/portrait.svg",
+    paragraphs: [
+      "I partner with founders and small teams to turn rough ideas into products people actually want to use. As your design partner, I will:",
+    ],
+    bullets: [
+      "Shape product strategy without drowning you in documents.",
+      "Build interactive prototypes to validate ideas quickly.",
+      "Pair directly with engineering to iterate in the real product.",
+      "Help you hire and grow a design team that is set up to succeed.",
+    ],
+    learnMoreHref: "#approach",
+  },
+
+  capabilities: [
+    "Product Design",
+    "Branding",
+    "Web Design",
+    "Strategy",
+    "Pitch Decks",
+    "Design Systems",
+    "Team Building",
+    "Coaching",
+  ],
+
+  approach: [
+    {
+      title: "Shared ownership.",
+      description:
+        "Whether embedded with your team or working independently, I treat every project like it is my own.",
+    },
+    {
+      title: "I work fast.",
+      description:
+        "Tight iteration loops let us explore a lot of ground until the right direction clicks into place.",
+    },
+    {
+      title: "Show and tell.",
+      description:
+        "I share work in progress often \u2014 short screen recordings and walkthroughs beat long documents.",
+    },
+    {
+      title: "Bias for action.",
+      description:
+        "I prefer tangible artifacts: a prototype, a mock, a working page \u2014 anything you can react to.",
+    },
+    {
+      title: "I work in systems.",
+      description:
+        "Reusable components and a light design system that grows with your product, not ahead of it.",
+    },
+    {
+      title: "Design is thinking.",
+      description:
+        "I explore divergent directions before converging. The more options on the table, the better.",
+    },
+  ] satisfies ApproachItem[],
+
+  clients: [
+    { name: "Studio", logo: "/clients/studio.svg" },
+    { name: "Northwind", logo: "/clients/northwind.svg" },
+    { name: "Orbit", logo: "/clients/orbit.svg" },
+    { name: "Fieldnotes", logo: "/clients/fieldnotes.svg" },
+    { name: "Cascade", logo: "/clients/cascade.svg" },
+  ] satisfies Client[],
 
   testimonials: [
     {
       quote:
-        "Working with Guil felt like having a co\u2011founder on the design side. We moved faster and made better decisions because of it.",
-      author: "Placeholder Name",
-      role: "Founder, Placeholder Co.",
+        "Working with Guil felt like having a co\u2011founder on the design side. We moved faster and made better decisions because of it. His ability to jump into the early stages of an open\u2011ended project and rapidly develop structure is rare.",
+      company: "Placeholder Co.",
+      avatar: "/avatars/avatar-1.svg",
     },
     {
       quote:
-        "Rare combination of taste, pragmatism, and follow\u2011through. Our product is dramatically better because of this partnership.",
-      author: "Placeholder Name",
-      role: "CEO, Placeholder Inc.",
+        "A rare combination of taste, pragmatism, and follow\u2011through. Guil helped us visualize an ambitious product story and then turned it into something tangible our whole team could rally around.",
+      company: "Placeholder Inc.",
+      avatar: "/avatars/avatar-2.svg",
+    },
+    {
+      quote:
+        "Guil plugged in seamlessly and brought deeply researched insights and strategic thinking to our concept. The final work was polished and shipped \u2014 not just a deck.",
+      company: "Placeholder Labs",
+      avatar: "/avatars/avatar-3.svg",
     },
   ] satisfies Testimonial[],
+
+  contact: {
+    greeting: "Hi there! Ask me anything.",
+    suggestions: [
+      "Can I see examples of your past work?",
+      "Do you work on branding or just product design?",
+      "What makes you different from a design agency?",
+      "What happens if we\u2019re not the right fit?",
+    ],
+  },
 
   socials: [
     { label: "Email", href: "mailto:hello@example.com" },
     { label: "LinkedIn", href: "https://www.linkedin.com/" },
     { label: "Twitter", href: "https://twitter.com/" },
-    { label: "GitHub", href: "https://github.com/" },
   ] satisfies Social[],
 } as const;
