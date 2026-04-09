@@ -11,20 +11,19 @@ export function Hero() {
         {site.introHeading}
       </h1>
 
-      <div className="grid grid-cols-1 items-center gap-10 pt-10 md:grid-cols-2 md:pt-12">
-        <div>
+      <div className="grid grid-cols-1 items-stretch gap-10 pt-10 md:grid-cols-2 md:pt-12">
+        <div className="relative aspect-square w-full overflow-hidden rounded-[16px] md:aspect-auto md:h-full md:min-h-[400px]">
           {site.hero.portrait ? (
             <Image
               src={site.hero.portrait}
               alt={site.hero.portraitAlt}
-              width={1200}
-              height={1200}
+              fill
               sizes="(min-width: 768px) 400px, 100vw"
               priority
-              className="aspect-square w-full rounded-[16px] object-cover"
+              className="object-cover"
             />
           ) : (
-            <Placeholder label="GM" aspect="square" />
+            <Placeholder label="GM" aspect="fill" />
           )}
         </div>
 
