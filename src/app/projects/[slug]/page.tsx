@@ -8,6 +8,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { CtaFooter } from "@/components/CtaFooter";
 import { VideoEmbed } from "@/components/VideoEmbed";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { FadeIn } from "@/components/FadeIn";
+import { ProjectSideTitle } from "@/components/ProjectSideTitle";
 
 type Params = { slug: string };
 
@@ -40,7 +42,8 @@ export default async function ProjectDetailPage({
   if (index === -1) notFound();
 
   const project = pastProjects[index];
-  const prev = pastProjects[(index - 1 + pastProjects.length) % pastProjects.length];
+  const prev =
+    pastProjects[(index - 1 + pastProjects.length) % pastProjects.length];
   const next = pastProjects[(index + 1) % pastProjects.length];
 
   return (
@@ -49,90 +52,134 @@ export default async function ProjectDetailPage({
         <ThemeToggle />
       </div>
 
-      <main className="px-6 md:px-8">
+      <ProjectSideTitle title={project.name} client={project.client} />
+
+      <main className="page-fade-in px-6 md:px-10">
         <PageHeader />
 
         {/* Breadcrumb + title */}
-        <section className="mx-auto w-full max-w-[800px] pb-6 pt-8">
-          <div className="flex items-center gap-2 font-caption text-[12px] uppercase tracking-[1.5px] text-muted">
+        <section className="mx-auto w-full max-w-[960px] pt-6 pb-10 md:pt-10">
+          <div className="flex items-center gap-2 font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted">
             <Link href="/" className="hover:text-ink">
               guil
             </Link>
-            <span>/</span>
+            <span>&gt;</span>
             <Link href="/#work" className="hover:text-ink">
               work
             </Link>
-            <span>/</span>
+            <span>&gt;</span>
             <span className="text-ink">{project.name}</span>
           </div>
-          <h1 className="mt-4 font-display text-[2.4rem] font-bold leading-tight text-ink md:text-[3rem]">
+          <h1 className="intro-rise mt-6 font-display text-[2.2rem] font-bold leading-tight text-ink md:text-[3rem]">
             {project.name}
           </h1>
         </section>
 
         {/* Hero media */}
-        <section className="mx-auto w-full max-w-[800px] py-6">
-          {project.heroVideo ? (
-            <VideoEmbed url={project.heroVideo} title={project.name} />
-          ) : (
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
-              <Image
-                src={project.gridImage}
-                alt={project.name}
-                fill
-                sizes="(min-width: 768px) 800px, 100vw"
-                unoptimized
-                className="object-cover"
-              />
+        <FadeIn>
+          <section className="mx-auto w-full max-w-[960px] pb-10">
+            {project.heroVideo ? (
+              <VideoEmbed url={project.heroVideo} title={project.name} />
+            ) : (
+              <div className="relative aspect-[16/9] max-h-[960px] w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
+                <Image
+                  src={project.gridImage}
+                  alt={project.name}
+                  fill
+                  sizes="(min-width: 768px) 960px, 100vw"
+                  unoptimized
+                  className="object-cover"
+                />
+              </div>
+            )}
+          </section>
+        </FadeIn>
+
+        {/* Meta grid — item-bordered style: top border + 20px padding-top */}
+        <FadeIn>
+          <section className="mx-auto w-full max-w-[960px] pb-16">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-0">
+              <MetaBlock label="Client" value={project.client} first />
+              <MetaBlock label="Services" value={project.services} />
+              <div className="flex flex-col gap-3 border-t border-rule-soft pt-5 md:border-l md:pl-10">
+                <h6 className="text-[10px] font-semibold uppercase leading-[22px] tracking-[1px] text-ink/35">
+                  Link
+                </h6>
+                {project.link ? (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-2 font-caption text-[12px] font-semibold uppercase tracking-[1px] text-ink transition-colors hover:text-accent"
+                  >
+                    visit live website
+                    <span
+                      aria-hidden
+                      className="inline-block transition-transform duration-300 group-hover:translate-x-1"
+                    >
+                      →
+                    </span>
+                  </a>
+                ) : (
+                  <span className="font-caption text-[12px] uppercase text-muted">
+                    —
+                  </span>
+                )}
+              </div>
             </div>
-          )}
-        </section>
+          </section>
+        </FadeIn>
 
-        {/* Meta grid */}
-        <section className="mx-auto w-full max-w-[800px] border-t border-rule py-10">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <MetaBlock label="Client" value={project.client} />
-            <MetaBlock label="Services" value={project.services} />
-            <div className="flex flex-col gap-2">
-              <h6 className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted">
-                Link
-              </h6>
-              {project.link ? (
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-[0.95rem] text-ink hover:text-accent"
-                >
-                  visit live website <span aria-hidden>→</span>
-                </a>
-              ) : (
-                <span className="text-[0.95rem] text-muted">—</span>
-              )}
+        {/* Project summary — big centered display text, bordered section */}
+        <FadeIn>
+          <section className="border-y border-[#ebebeb] py-[70px] dark:border-rule">
+            <div className="mx-auto w-full max-w-[620px] px-4 text-center">
+              <p className="font-display text-[1.75rem] font-bold leading-[1.35] text-ink md:text-[2.375rem] md:leading-[1.25]">
+                {project.summary}
+              </p>
             </div>
-          </div>
-        </section>
+          </section>
+        </FadeIn>
 
-        {/* Project summary */}
-        <section className="mx-auto w-full max-w-[800px] border-t border-rule py-16">
-          <h2 className="font-caption mb-6 text-[12px] font-medium uppercase tracking-[1.5px] text-muted">
-            Project Summary
-          </h2>
-          <p className="font-display text-[1.5rem] leading-[2.2rem] text-ink md:text-[1.75rem] md:leading-[2.5rem]">
-            {project.summary}
-          </p>
-        </section>
+        {/* Still-frames gallery (if available) */}
+        {project.stillFrames && project.stillFrames.length > 0 && (
+          <FadeIn>
+            <section className="mx-auto w-full max-w-[1200px] py-16">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {project.stillFrames.map((src, i) => (
+                  <div
+                    key={i}
+                    className="relative aspect-[16/9] overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
+                  >
+                    <Image
+                      src={src}
+                      alt={`${project.name} still frame ${i + 1}`}
+                      fill
+                      sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+                      unoptimized
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
+          </FadeIn>
+        )}
 
-        {/* Prev/Next */}
-        <section className="mx-auto w-full max-w-[800px] border-t border-rule py-12">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        {/* Prev/Next — bordered item-navigation style, 80px padding */}
+        <section className="mx-auto w-full max-w-[1200px]">
+          <div className="grid grid-cols-1 md:grid-cols-2">
             <ProjectNavCard project={prev} direction="prev" />
-            <ProjectNavCard project={next} direction="next" />
+            <ProjectNavCard
+              project={next}
+              direction="next"
+              borderLeft
+            />
           </div>
-          <div className="mt-12 flex justify-center">
+          <div className="flex justify-center py-12">
             <Link
               href="/#work"
-              className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted hover:text-ink"
+              className="font-caption text-[12px] font-medium uppercase tracking-[1px] text-muted transition-colors hover:text-ink"
             >
               ← back to portfolio
             </Link>
@@ -145,13 +192,27 @@ export default async function ProjectDetailPage({
   );
 }
 
-function MetaBlock({ label, value }: { label: string; value: string }) {
+function MetaBlock({
+  label,
+  value,
+  first,
+}: {
+  label: string;
+  value: string;
+  first?: boolean;
+}) {
   return (
-    <div className="flex flex-col gap-2">
-      <h6 className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted">
+    <div
+      className={`flex flex-col gap-3 border-t border-rule-soft pt-5 ${
+        first ? "" : "md:border-l md:pl-10"
+      }`}
+    >
+      <h6 className="text-[10px] font-semibold uppercase leading-[22px] tracking-[1px] text-ink/35">
         {label}
       </h6>
-      <p className="text-[0.95rem] leading-[1.5rem] text-ink">{value || "—"}</p>
+      <p className="font-caption text-[12px] font-semibold uppercase tracking-[1px] text-ink">
+        {value || "—"}
+      </p>
     </div>
   );
 }
@@ -159,40 +220,40 @@ function MetaBlock({ label, value }: { label: string; value: string }) {
 function ProjectNavCard({
   project,
   direction,
+  borderLeft,
 }: {
   project: (typeof pastProjects)[number];
   direction: "prev" | "next";
+  borderLeft?: boolean;
 }) {
   return (
     <Link
       href={`/projects/${project.slug}`}
-      className={`group flex flex-col gap-3 ${
-        direction === "next" ? "md:text-right" : ""
-      }`}
+      className={`group flex flex-col gap-5 border-y border-rule-soft px-6 py-16 md:px-20 md:py-20 ${
+        borderLeft ? "md:border-l" : ""
+      } ${direction === "next" ? "md:text-right" : ""}`}
     >
-      <span className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted">
+      <span className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
         {direction === "prev" ? "← previous" : "next →"}
       </span>
-      <div
-        className={`relative aspect-[4/3] overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] ${
-          direction === "next" ? "md:order-2" : ""
-        }`}
-      >
+      <div className="relative aspect-[16/9] overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
         <Image
           src={project.gridImage}
           alt={project.name}
           fill
-          sizes="(min-width: 768px) 400px, 100vw"
+          sizes="(min-width: 768px) 600px, 100vw"
           unoptimized
-          className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
       </div>
-      <h3 className="font-display text-[1.25rem] leading-tight text-ink">
-        {project.name}
-      </h3>
-      <span className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted">
-        {project.client}
-      </span>
+      <div className="flex flex-col gap-1">
+        <h3 className="font-display text-[1.75rem] font-bold leading-tight text-ink transition-colors group-hover:text-accent md:text-[2rem]">
+          {project.name}
+        </h3>
+        <span className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          {project.client}
+        </span>
+      </div>
     </Link>
   );
 }
