@@ -10,18 +10,18 @@ export function CtaFooter() {
         <h3 className="font-display text-[2rem] leading-tight text-ink md:text-[2.4rem]">
           {site.bottomCta.heading}
         </h3>
-        <h3 className="mb-10 font-display text-[2rem] italic leading-tight text-ink md:text-[2.4rem]">
+        <h3 className="font-display text-[2rem] italic leading-tight text-ink md:text-[2.4rem]">
           {site.bottomCta.sub}
         </h3>
 
-        <div className="flex justify-center">
+        <div className="mt-16 flex justify-center">
           <CtaButton
             href={site.bottomCta.cta.href}
             label={site.bottomCta.cta.label}
           />
         </div>
 
-        <div className="mt-16 flex justify-center">
+        <div className="mt-20 flex justify-center">
           <SocialIconsRow socials={site.footerSocials} />
         </div>
       </CenterFocus>

@@ -55,22 +55,25 @@ export default async function ProjectDetailPage({
       <ProjectSideTitle title={project.name} client={project.client} />
 
       <main className="page-fade-in px-6 md:px-10">
-        <PageHeader />
+        <PageHeader
+          left={
+            <div className="flex min-w-0 items-center gap-2 font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted">
+              <Link href="/" className="hover:text-ink">
+                guil
+              </Link>
+              <span>&gt;</span>
+              <Link href="/#work" className="hover:text-ink">
+                work
+              </Link>
+              <span>&gt;</span>
+              <span className="truncate text-ink">{project.name}</span>
+            </div>
+          }
+        />
 
-        {/* Breadcrumb + title */}
-        <section className="mx-auto w-full max-w-[960px] pt-6 pb-10 md:pt-10">
-          <div className="flex items-center gap-2 font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted">
-            <Link href="/" className="hover:text-ink">
-              guil
-            </Link>
-            <span>&gt;</span>
-            <Link href="/#work" className="hover:text-ink">
-              work
-            </Link>
-            <span>&gt;</span>
-            <span className="text-ink">{project.name}</span>
-          </div>
-          <h1 className="intro-rise mt-6 font-display text-[2.2rem] font-bold leading-tight text-ink md:text-[3rem]">
+        {/* Title */}
+        <section className="mx-auto w-full max-w-[960px] pb-10 pt-10 md:pt-16">
+          <h1 className="intro-rise font-display text-[2.2rem] font-bold leading-tight text-ink md:text-[3rem]">
             {project.name}
           </h1>
         </section>
@@ -130,11 +133,11 @@ export default async function ProjectDetailPage({
           </section>
         </FadeIn>
 
-        {/* Project summary — big centered display text, bordered section */}
+        {/* Project summary — large left-aligned display text, bordered section */}
         <FadeIn>
           <section className="border-y border-[#ebebeb] py-[70px] dark:border-rule">
-            <div className="mx-auto w-full max-w-[620px] px-4 text-center">
-              <p className="font-display text-[1.75rem] font-bold leading-[1.35] text-ink md:text-[2.375rem] md:leading-[1.25]">
+            <div className="mx-auto w-full max-w-[960px]">
+              <p className="max-w-[720px] font-display text-[1.75rem] font-bold leading-[1.35] text-ink md:text-[2.375rem] md:leading-[1.25]">
                 {project.summary}
               </p>
             </div>
