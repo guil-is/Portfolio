@@ -7,17 +7,19 @@
   --foreground: #0a0a0a;
   --muted: #6b7280;
   --border: #e5e7eb;
-  --card: #ffffff;
+  --card: #f4f4f5;
+  --card-hover: #e8e8ea;
   --accent: #0a0a0a;
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #f5f5f5;
-  --muted: #a1a1aa;
-  --border: #1f1f22;
-  --card: #111113;
-  --accent: #f5f5f5;
+  --background: #000000;
+  --foreground: #fafafa;
+  --muted: #8a8a92;
+  --border: #1d1d21;
+  --card: #141418;
+  --card-hover: #1a1a1f;
+  --accent: #fafafa;
 }
 
 @theme inline {
@@ -26,6 +28,7 @@
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-card: var(--card);
+  --color-card-hover: var(--card-hover);
   --color-accent: var(--accent);
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
@@ -43,4 +46,13 @@ body {
 ::selection {
   background: var(--foreground);
   color: var(--background);
+}
+
+/* Hide scrollbar on horizontal scroll rows but keep functionality */
+.scroll-row {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scroll-row::-webkit-scrollbar {
+  display: none;
 }

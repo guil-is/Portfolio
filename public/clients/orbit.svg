@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 32">
+  <circle cx="14" cy="16" r="10" fill="none" stroke="#e6e6ea" stroke-width="2"/>
+  <circle cx="14" cy="16" r="3" fill="#e6e6ea"/>
+  <text x="34" y="22" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="600" fill="#e6e6ea">Orbit</text>
+</svg>
