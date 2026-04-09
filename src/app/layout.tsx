@@ -3,13 +3,28 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { site } from "@/content/site";
 
+// Google Fonts are loaded via a runtime stylesheet link (instead of
+// next/font/google) because the build sandbox cannot reach fonts.googleapis.com.
+// The user's browser will fetch these at runtime. Neueaugenblick is served
+// locally from /public/fonts/ via @font-face in globals.css.
+const googleFontsHref =
+  "https://fonts.googleapis.com/css2" +
+  "?family=Inter:wght@300;400;500;600;700" +
+  "&family=Public+Sans:wght@400;500;600;700" +
+  "&display=swap";
+
 export const metadata: Metadata = {
-  title: `${site.name} \u2014 ${site.title}`,
-  description: site.hero,
+  title: site.metaTitle,
+  description: site.description,
   openGraph: {
-    title: `${site.name} \u2014 ${site.title}`,
-    description: site.hero,
+    title: site.metaTitle,
+    description: site.description,
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: site.metaTitle,
+    description: site.description,
   },
 };
 
@@ -20,10 +35,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="h-full antialiased">
-      <body className="min-h-full bg-background text-foreground font-sans">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link rel="stylesheet" href={googleFontsHref} />
+      </head>
+      <body className="min-h-full bg-bg text-body">
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem={false}
           disableTransitionOnChange
         >
