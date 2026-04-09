@@ -1,7 +1,7 @@
 import { Map, Eye, PenTool, Users, type LucideIcon } from "lucide-react";
 import { site } from "@/content/site";
 import { SectionHeading } from "./SectionHeading";
-import { FadeIn } from "./FadeIn";
+import { CenterFocus } from "./CenterFocus";
 
 const iconMap: Record<string, LucideIcon> = {
   map: Map,
@@ -15,7 +15,7 @@ export function Expertise() {
     <section id="about" className="mx-auto w-full max-w-[800px]">
       <SectionHeading>expertise</SectionHeading>
 
-      <FadeIn>
+      <CenterFocus minOpacity={0.35} falloff={0.6}>
         <div className="grid grid-cols-1 gap-x-20 gap-y-10 py-16 md:grid-cols-2">
           {site.expertise.map((e) => {
             const Icon = iconMap[e.icon] ?? Map;
@@ -32,7 +32,7 @@ export function Expertise() {
             );
           })}
         </div>
-      </FadeIn>
+      </CenterFocus>
     </section>
   );
 }

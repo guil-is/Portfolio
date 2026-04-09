@@ -2,7 +2,7 @@ import { site } from "@/content/site";
 import { SectionHeading } from "./SectionHeading";
 import { PulsingDot } from "./PulsingDot";
 import { Placeholder } from "./Placeholder";
-import { FadeIn } from "./FadeIn";
+import { CenterFocus } from "./CenterFocus";
 
 export function ActiveProjects() {
   return (
@@ -53,7 +53,7 @@ export function ActiveProjects() {
           );
 
           return (
-            <FadeIn key={p.title}>
+            <CenterFocus key={p.title} minOpacity={0.25} falloff={0.55}>
               <div className="grid grid-cols-1 items-center gap-8 py-12 md:grid-cols-2">
                 {p.reverse ? (
                   <>
@@ -67,7 +67,7 @@ export function ActiveProjects() {
                   </>
                 )}
               </div>
-            </FadeIn>
+            </CenterFocus>
           );
         })}
       </div>

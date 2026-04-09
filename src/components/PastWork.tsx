@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SectionHeading } from "./SectionHeading";
-import { FadeIn } from "./FadeIn";
+import { CenterFocus } from "./CenterFocus";
 import { pastProjects } from "@/content/projects";
 
 export function PastWork() {
@@ -9,7 +9,7 @@ export function PastWork() {
     <section id="work" className="mx-auto w-full max-w-[800px]">
       <SectionHeading>Past work</SectionHeading>
 
-      <FadeIn>
+      <CenterFocus minOpacity={0.35} falloff={0.7}>
         <div className="grid grid-cols-1 gap-8 py-16 md:grid-cols-2">
           {pastProjects.map((p) => (
             <Link
@@ -38,7 +38,7 @@ export function PastWork() {
             </Link>
           ))}
         </div>
-      </FadeIn>
+      </CenterFocus>
     </section>
   );
 }
