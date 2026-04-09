@@ -83,7 +83,7 @@ export default async function ProjectDetailPage({
             ) : (
               <div className="relative aspect-[16/9] max-h-[960px] w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
                 <Image
-                  src={project.gridImage}
+                  src={project.mainImage || project.gridImage}
                   alt={project.name}
                   fill
                   sizes="(min-width: 768px) 960px, 100vw"
@@ -140,6 +140,56 @@ export default async function ProjectDetailPage({
             </div>
           </section>
         </FadeIn>
+
+        {/* Project details article — rendered as rich HTML from the CSV
+            Project Details field. Uses .project-article styles in
+            globals.css to approximate the Webflow article typography. */}
+        {project.projectDetails && (
+          <FadeIn>
+            <section className="py-16">
+              <div
+                className="project-article"
+                dangerouslySetInnerHTML={{ __html: project.projectDetails }}
+              />
+            </section>
+          </FadeIn>
+        )}
+
+        {/* Feature image + caption rows (currently only Octopus has these). */}
+        {project.features && project.features.length > 0 && (
+          <section className="mx-auto w-full max-w-[1200px] py-16">
+            <div className="flex flex-col gap-20">
+              {project.features.map((feat, i) => (
+                <FadeIn key={i}>
+                  <div
+                    className={`flex flex-col items-center gap-6 md:flex-row ${
+                      i % 2 === 1 ? "md:flex-row-reverse" : ""
+                    }`}
+                  >
+                    {feat.image && (
+                      <div className="relative w-full max-w-[700px] overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
+                        <Image
+                          src={feat.image}
+                          alt={feat.caption ?? `${project.name} feature ${i + 1}`}
+                          width={1600}
+                          height={1200}
+                          sizes="(min-width: 768px) 700px, 100vw"
+                          unoptimized
+                          className="h-auto w-full object-cover"
+                        />
+                      </div>
+                    )}
+                    {feat.caption && (
+                      <p className="max-w-[400px] text-[0.95rem] leading-[1.6rem] text-body">
+                        {feat.caption}
+                      </p>
+                    )}
+                  </div>
+                </FadeIn>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Still-frames gallery (if available) */}
         {project.stillFrames && project.stillFrames.length > 0 && (

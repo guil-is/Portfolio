@@ -76,8 +76,18 @@ export const site = {
       description:
         "An open\u2011source crypto wallet for community currencies that leverages account abstraction, catering to the non\u2011web3 audience. No sign\u2011up, no setup required, no gas fees. Anyone can do it.",
       href: "https://citizenwallet.xyz/",
-      image: "",
+      image: "/projects/Citizen-Wallet.jpg",
       imageAlt: "Citizen Wallet",
+    },
+    {
+      title: "Chinwags",
+      role: "lead designer",
+      description:
+        "Focused retreats for web3 builders. Think hackathons but in beautiful natural spots, with facilitated workshops to address the biggest issues in web3.",
+      href: "https://chinwags.webflow.io/chinwag-0",
+      image: "/projects/Chinwags.jpg",
+      imageAlt: "Chinwags",
+      reverse: true,
     },
   ] satisfies ActiveProject[],
 
