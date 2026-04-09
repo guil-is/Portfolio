@@ -36,18 +36,6 @@ export default function AboutPage() {
                   {p}
                 </p>
               ))}
-              <p className="font-display text-[1.25rem] leading-[1.9rem] text-ink/85">
-                {hero.collageCta.prefix}{" "}
-                <a
-                  href={hero.collageCta.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-accent decoration-2 underline-offset-4 transition-colors hover:text-accent"
-                >
-                  {hero.collageCta.label}
-                </a>
-                .
-              </p>
             </div>
 
             <div className="md:pt-2">
