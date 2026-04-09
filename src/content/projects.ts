@@ -28,6 +28,28 @@ export type PastProject = {
 
 export const pastProjects: PastProject[] = [
   {
+    name: "General Magic",
+    slug: "general-magic",
+    client: "General Magic",
+    services: "Creative Direction, Design Lead",
+    summary:
+      "A group of Web3 professionals exclusively supporting public goods and crypto\u2011philanthropic organizations that create greater value for society. We do that by building digital products, governance systems, and economic models.",
+    gridImage: "/projects/GM-cover.jpg",
+    link: "https://www.generalmagic.io/",
+    featured: true,
+  },
+  {
+    name: "Citizen Wallet",
+    slug: "citizen-wallet",
+    client: "Citizen Wallet",
+    services: "Lead Designer",
+    summary:
+      "An open\u2011source crypto wallet for community currencies that leverages account abstraction, catering to the non\u2011web3 audience. No sign\u2011up, no setup required, no gas fees. Anyone can do it.",
+    gridImage: "/projects/Citizen-Wallet.jpg",
+    link: "https://citizenwallet.xyz/",
+    featured: true,
+  },
+  {
     name: "Commons Stack Rebrand",
     slug: "commons-stack",
     client: "Commons Stack",
