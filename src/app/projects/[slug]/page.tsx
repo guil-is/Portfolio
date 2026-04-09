@@ -133,8 +133,8 @@ export default async function ProjectDetailPage({
         {/* Project summary — large left-aligned display text, bordered section */}
         <FadeIn>
           <section className="border-y border-[#ebebeb] py-[70px] dark:border-rule">
-            <div className="mx-auto w-full max-w-[960px]">
-              <p className="max-w-[720px] font-display text-[1.75rem] font-bold leading-[1.35] text-ink md:text-[2.375rem] md:leading-[1.25]">
+            <div className="mx-auto w-full max-w-[960px] px-6 md:px-10">
+              <p className="mx-auto max-w-[720px] font-display text-[1.75rem] font-bold leading-[1.35] text-ink md:text-[2.375rem] md:leading-[1.25]">
                 {project.summary}
               </p>
             </div>
