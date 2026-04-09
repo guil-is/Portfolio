@@ -8,9 +8,15 @@ type CtaButtonProps = {
   external?: boolean;
 };
 
-// Pill CTA with a left circle containing an arrow icon and uppercase label
-// text. Matches the `.cta-button` / `.button4_*` pattern from the Webflow
-// export: 3.5em tall, 16px radius, #161616 circle + text row.
+// Pill CTA matching the Webflow `.cta-button` / `.button4_*` structure.
+//
+// Default state: transparent pill with a visible 56px dark circle on the
+// left (drawn by the `.cta-pill::before` pseudo-element via globals.css)
+// and the ink-colored label to its right.
+//
+// Hover: the dark ::before expands from 56px to 100% width, turning the
+// pill dark, and the label color flips to the page background color.
+// The circle's arrow also subtly rotates to match the motion vocabulary.
 export function CtaButton({
   href,
   label,
@@ -26,10 +32,13 @@ export function CtaButton({
     <Comp
       href={href}
       {...externalProps}
-      className={`group relative inline-flex h-14 items-center gap-4 overflow-hidden rounded-[16px] bg-dark pr-6 text-dark-contrast transition-opacity hover:opacity-90 ${className}`}
+      className={`cta-pill group inline-flex h-14 items-center gap-4 pr-6 ${className}`}
     >
-      <span className="flex h-14 w-14 items-center justify-center rounded-[16px] bg-dark text-dark-contrast">
-        <ArrowUpRight className="h-5 w-5" strokeWidth={2} />
+      <span className="flex h-14 w-14 items-center justify-center text-bg">
+        <ArrowUpRight
+          className="h-5 w-5 transition-transform duration-500 group-hover:-rotate-45"
+          strokeWidth={2}
+        />
       </span>
       <span className="font-caption text-[13px] font-bold uppercase tracking-[1px]">
         {label}

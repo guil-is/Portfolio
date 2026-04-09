@@ -100,3 +100,109 @@ h1, h2, h3, h4, h5 {
 .pulse-dot {
   animation: pulse-dot 1.6s ease-in-out infinite;
 }
+
+/* -----------------------------------------------------------------------
+ * Entrance animations
+ * ---------------------------------------------------------------------*/
+
+@keyframes page-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes intro-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.page-fade-in {
+  animation: page-fade-in 600ms ease-out both;
+}
+
+.intro-rise {
+  animation: intro-rise 900ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+}
+
+/* -----------------------------------------------------------------------
+ * Scroll-triggered fade-in — used by <FadeIn> client component.
+ *
+ * Matches the Webflow `.content-grid-b { opacity: 0.25 }` base state
+ * with a transition to full opacity once the element enters the viewport.
+ * FadeIn adds the `.is-visible` class via an IntersectionObserver.
+ * ---------------------------------------------------------------------*/
+
+.fade-in-on-scroll {
+  opacity: 0.08;
+  transform: translate3d(0, 24px, 0);
+  transition:
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.fade-in-on-scroll.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Respect reduced motion preference — skip entrance and scroll animations. */
+@media (prefers-reduced-motion: reduce) {
+  .page-fade-in,
+  .intro-rise,
+  .pulse-dot {
+    animation: none;
+  }
+  .fade-in-on-scroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* -----------------------------------------------------------------------
+ * CTA button hover — dark fill expands from the left circle to cover the
+ * entire pill (matches the Webflow `.button4_bg` interaction).
+ *
+ * Default state: transparent pill with a 56px dark circle visible on the
+ * left (drawn by .cta-pill::before at width 56px). Ink-colored text sits
+ * to the right of the circle inside the pill.
+ *
+ * Hover state: .cta-pill::before expands from 56px to 100% over 500ms,
+ * turning the whole pill dark. Text color flips to --color-bg.
+ * ---------------------------------------------------------------------*/
+
+.cta-pill {
+  position: relative;
+  isolation: isolate;
+  color: var(--color-ink);
+  background: transparent;
+  border-radius: 16px;
+  transition: color 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cta-pill::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 56px;
+  border-radius: 16px;
+  background: var(--color-ink);
+  z-index: -1;
+  transition: width 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cta-pill:hover,
+.cta-pill:focus-visible {
+  color: var(--color-bg);
+}
+
+.cta-pill:hover::before,
+.cta-pill:focus-visible::before {
+  width: 100%;
+}
