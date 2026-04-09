@@ -6,7 +6,9 @@ import { Placeholder } from "./Placeholder";
 export function Hero() {
   return (
     <section className="mx-auto w-full max-w-[800px] pt-12 pb-8 md:pt-16 md:pb-[30px]">
-      <h1 className="sr-only">{site.introHeading}</h1>
+      <h1 className="max-w-[800px] font-display text-[1.75rem] font-bold leading-[1.3] text-ink md:text-[2.2rem] md:leading-[3rem]">
+        {site.introHeading}
+      </h1>
 
       <div className="grid grid-cols-1 items-center gap-10 py-12 md:grid-cols-2">
         <div>
@@ -17,12 +19,12 @@ export function Hero() {
           {site.hero.bio.map((p, i) => (
             <p
               key={i}
-              className="text-[0.9rem] leading-[1.5rem] text-ink text-balance"
+              className="text-[0.95rem] leading-[1.6rem] text-ink"
             >
               {p}
             </p>
           ))}
-          <p className="text-[0.9rem] leading-[1.5rem] font-bold text-ink text-balance">
+          <p className="text-[0.95rem] leading-[1.6rem] font-bold text-ink">
             {site.hero.bioClosing}
           </p>
 
