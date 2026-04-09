@@ -66,7 +66,7 @@ export const site = {
       description:
         "A movement of events and educational media bridging the gaps between the broad range of sectors working on regenerative solutions, connecting expertise with innovation.",
       href: "https://regensunite.earth",
-      image: "",
+      image: "/projects/Regens-Unite.jpg",
       imageAlt: "Regens Unite",
       reverse: true,
     },
