@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e7e5e4"/>
+      <stop offset="100%" stop-color="#a8a29e"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g2)"/>
+  <g fill="none" stroke="#78716c" stroke-width="1.5" opacity="0.6">
+    <rect x="200" y="150" width="400" height="300" rx="12"/>
+    <rect x="240" y="190" width="320" height="220" rx="8"/>
+    <line x1="240" y1="240" x2="560" y2="240"/>
+  </g>
+  <text x="400" y="308" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="600" fill="#44403c" text-anchor="middle">Project Two</text>
+</svg>
