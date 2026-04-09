@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Reference files kept for cloning — not part of the app.
+    "reference/**",
   ]),
 ]);
 

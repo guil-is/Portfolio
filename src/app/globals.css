@@ -2,36 +2,68 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@font-face {
+  font-family: "Neueaugenblick";
+  src: url("/fonts/NeueAugenblick-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Neueaugenblick";
+  src: url("/fonts/NeueAugenblick-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
-  --muted: #6b7280;
-  --border: #e5e7eb;
-  --card: #f4f4f5;
-  --card-hover: #e8e8ea;
-  --accent: #0a0a0a;
+  --color-bg: #ffffff;
+  --color-ink: #0a0a0a;
+  --color-body: #333333;
+  --color-muted: #7e7e7e;
+  --color-faint: #afafaf;
+  --color-rule: #d8d8d8;
+  --color-rule-soft: #2222221a;
+  --color-dark: #161616;
+  --color-dark-contrast: #ffffff;
+  --color-accent: #299c68;
+  --color-card: #e8e8e8;
+  --shadow-card: 0 4px 40px #cfc8c433;
 }
 
 .dark {
-  --background: #000000;
-  --foreground: #fafafa;
-  --muted: #8a8a92;
-  --border: #1d1d21;
-  --card: #141418;
-  --card-hover: #1a1a1f;
-  --accent: #fafafa;
+  --color-bg: #0a0a0a;
+  --color-ink: #fafafa;
+  --color-body: #d4d4d4;
+  --color-muted: #8a8a8a;
+  --color-faint: #666666;
+  --color-rule: #2a2a2a;
+  --color-rule-soft: #ffffff1a;
+  --color-dark: #fafafa;
+  --color-dark-contrast: #0a0a0a;
+  --color-accent: #4ade80;
+  --color-card: #1a1a1a;
+  --shadow-card: 0 4px 40px #00000040;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-border: var(--border);
-  --color-card: var(--card);
-  --color-card-hover: var(--card-hover);
-  --color-accent: var(--accent);
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  --color-bg: var(--color-bg);
+  --color-ink: var(--color-ink);
+  --color-body: var(--color-body);
+  --color-muted: var(--color-muted);
+  --color-faint: var(--color-faint);
+  --color-rule: var(--color-rule);
+  --color-rule-soft: var(--color-rule-soft);
+  --color-dark: var(--color-dark);
+  --color-dark-contrast: var(--color-dark-contrast);
+  --color-accent: var(--color-accent);
+  --color-card: var(--color-card);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-caption: "Public Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Neueaugenblick", "Public Sans", ui-sans-serif, system-ui, serif;
 }
 
 html {
@@ -39,20 +71,32 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-bg);
+  color: var(--color-body);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 27px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-ink);
+  margin: 0;
 }
 
 ::selection {
-  background: var(--foreground);
-  color: var(--background);
+  background: var(--color-ink);
+  color: var(--color-bg);
 }
 
-/* Hide scrollbar on horizontal scroll rows but keep functionality */
-.scroll-row {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.55); opacity: 0.5; }
 }
-.scroll-row::-webkit-scrollbar {
-  display: none;
+
+.pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
 }
