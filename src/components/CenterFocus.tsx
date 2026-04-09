@@ -8,6 +8,8 @@ type Props = {
   minOpacity?: number;
   /** Distance (as fraction of viewport height) at which opacity hits min. */
   falloff?: number;
+  /** Minimum scale at max distance. Default 0.96 — subtle shrink off-center. */
+  minScale?: number;
   className?: string;
 };
 
@@ -21,6 +23,7 @@ export function CenterFocus({
   children,
   minOpacity = 0.25,
   falloff = 0.55,
+  minScale = 0.96,
   className = "",
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
@@ -32,6 +35,7 @@ export function CenterFocus({
     // Respect reduced motion — skip the listener entirely.
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
       el.style.opacity = "1";
+      el.style.transform = "none";
       return;
     }
 
@@ -45,7 +49,9 @@ export function CenterFocus({
       const distance = Math.abs(elCenter - viewportCenter);
       const normalized = Math.min(distance / (viewportH * falloff), 1);
       const opacity = 1 - normalized * (1 - minOpacity);
+      const scale = 1 - normalized * (1 - minScale);
       el.style.opacity = opacity.toFixed(3);
+      el.style.transform = `scale(${scale.toFixed(4)})`;
     };
 
     const schedule = () => {
@@ -61,15 +67,16 @@ export function CenterFocus({
       window.removeEventListener("resize", schedule);
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [minOpacity, falloff]);
+  }, [minOpacity, falloff, minScale]);
 
   return (
     <div
       ref={ref}
       className={className}
       style={{
-        transition: "opacity 200ms ease-out",
-        willChange: "opacity",
+        transition: "opacity 280ms ease-out, transform 280ms ease-out",
+        willChange: "opacity, transform",
+        transformOrigin: "center",
       }}
     >
       {children}

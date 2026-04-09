@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { site } from "@/content/site";
 import { CtaButton } from "./CtaButton";
 import { SocialIconsRow } from "./SocialIconsRow";
@@ -12,7 +13,19 @@ export function Hero() {
 
       <div className="grid grid-cols-1 items-center gap-10 pt-10 md:grid-cols-2 md:pt-12">
         <div>
-          <Placeholder label="GM" aspect="square" />
+          {site.hero.portrait ? (
+            <Image
+              src={site.hero.portrait}
+              alt={site.hero.portraitAlt}
+              width={1200}
+              height={1200}
+              sizes="(min-width: 768px) 400px, 100vw"
+              priority
+              className="aspect-square w-full rounded-[16px] object-cover"
+            />
+          ) : (
+            <Placeholder label="GM" aspect="square" />
+          )}
         </div>
 
         <div className="flex flex-col gap-5">
