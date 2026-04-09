@@ -220,8 +220,8 @@ h1, h2, h3, h4, h5 {
   font-family: var(--font-sans);
 }
 
-/* Text content stays narrow for readability, left-aligned so it
-   shares the same left edge as the project summary above. */
+/* Text content stays narrow for readability, horizontally centered
+   within the 960 article container. */
 .project-article p,
 .project-article ul,
 .project-article ol,
@@ -229,8 +229,8 @@ h1, h2, h3, h4, h5 {
 .project-article h2,
 .project-article h3 {
   max-width: 720px;
-  margin-left: 0;
-  margin-right: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .project-article p {
@@ -298,34 +298,39 @@ h1, h2, h3, h4, h5 {
   display: block;
 }
 
-/* Webflow video figures use the padding-bottom aspect-ratio trick.
-   The inner div must be positioned absolute so height is driven only
-   by the figure's inline padding-bottom, not the iframe on top of it. */
+/* Video figures: override Webflow's inline padding-bottom trick and
+   use a plain aspect-ratio so the iframe fills a proper 16:9 frame
+   that spans the full article body width (720px, centered). */
 .project-article .w-richtext-figure-type-video {
-  position: relative;
   max-width: 720px;
-  margin: 32px 0;
   width: 100%;
+  margin: 32px auto;
+  aspect-ratio: 16 / 9;
+  padding-bottom: 0 !important;
+  overflow: hidden;
+  border-radius: 16px;
 }
 
 .project-article .w-richtext-figure-type-video > div {
-  position: absolute;
-  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .project-article .w-richtext-figure-type-video iframe {
   width: 100%;
   height: 100%;
   border: 0;
-  border-radius: 16px;
   display: block;
 }
 
 .project-article figcaption {
   max-width: 720px;
   margin-top: 12px;
+  margin-left: auto;
+  margin-right: auto;
   font-size: 14px;
   color: var(--color-muted);
+  text-align: center;
 }
 
 .project-article h2,
