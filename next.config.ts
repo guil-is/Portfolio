@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "uploads-ssl.webflow.com" },
       { protocol: "https", hostname: "cdn.prod.website-files.com" },
+      { protocol: "https", hostname: "daks2k3a4ib2z.cloudfront.net" },
     ],
   },
 };
