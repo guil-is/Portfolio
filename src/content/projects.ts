@@ -12,6 +12,7 @@ export type PastProject = {
   heroVideo?: string;
   link?: string;
   featured?: boolean;
+  stillFrames?: string[];
 };
 
 export const pastProjects: PastProject[] = [
@@ -49,6 +50,24 @@ export const pastProjects: PastProject[] = [
       "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/68933d945669a734519abee3_Chinwags.jpg",
     link: "https://chinwags2023.webflow.io/chinwag-0",
     featured: true,
+    stillFrames: [
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/6893408b603b1da22d91eb72_DSC06850.jpg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/68934095c0cf8619bbf44f1b_DSC06724.jpg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/68934133e19da6cb61a1cd1d_Fv2yFw_aEAA1823.jpeg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/6893413346cc496e4f788006_Fv2yFwwaYAEggQu.jpeg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/689341331a855364e0425d07_Fv2yMzZaIAE8apR.jpeg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/689341332ec99b24ba692583_Fv8A5o4X0AEZnpf.jpeg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/68934133c995bf2e71ff1d8d_Fv8A5o5WcAItMEN.jpeg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/68934133df23e8da11337490_Fv8A6jJWwAUwEY1.jpeg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/68934133e96457565e0a0b84_Fv8A6kqX0AQK5Ml.jpeg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/6893413363c4f0318abadefa_FvxWIFsWAAImco3.jpeg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/68934133dfe3ddce59f6b430_FvxWIFsXsAAt2ul.jpeg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/689341339d9402cc9236256f_FvxWIFvWwAAeVOB.jpeg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/68934133bf2c1b15ca3a3f09_Fv8A5o7X0AUL4Ft.jpeg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/6893409744aee8ee9a53b08a_DSC06723.jpg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/689341332b1d44e42888d0df_FvxWIFwXsAAvEc5.jpeg",
+      "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/6893413344aee8ee9a53df8b_FwAK02yWwAAdmNg.jpeg",
+    ],
   },
   {
     name: "The DAOist",
@@ -119,6 +138,10 @@ export const pastProjects: PastProject[] = [
       "Packaging illustrations for Octopus, a Brazilian brewery specialised in delicious craft beers.",
     gridImage:
       "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb999eeea432fae4b207b42_octopus-grid-3.jpg",
+    stillFrames: [
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb979b0cbfe0707cb8c228e_70960290_716913662156199_2792294801094705818_n.jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb97b2536a3e8597be87340_72874420_156344765461768_1475098055660062759_sq.jpg",
+    ],
   },
   {
     name: "Distributed cooperatives",
@@ -130,6 +153,12 @@ export const pastProjects: PastProject[] = [
     gridImage:
       "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/6026cdee7a12e92375e4f199_DisCO-Elements-Thumbnail.gif",
     heroVideo: "https://www.youtube.com/watch?v=IcRkKuxgxXk",
+    stillFrames: [
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/6026cb0c4de16b65c7687306_Elements_Book%20Mockup4%20copy.jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/6026d114fb45897ef5b7e30c_Mockup_Elements_02.jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/6026cd99793eee26fef27b26_Mockup_Elements_03%20copy.jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/6026d11b918f05273ab5a6ce_Mockup_Elements_03.jpg",
+    ],
   },
   {
     name: "Metal",
@@ -196,6 +225,14 @@ export const pastProjects: PastProject[] = [
     gridImage:
       "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb9472fd2e1d321a3598fcb_Amigos-grid.gif",
     heroVideo: "https://www.youtube.com/watch?v=owfqYbXpchs",
+    stillFrames: [
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb5b3fd17e59afe14c450a2_56d0f7a4a09aa00a3733cff7_amigos_fantasmas6.jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb5b3fda7e51e6eefb1f636_56d0f7ac21e2d48d466ecfeb_amigos_fantasmas5.jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb5b3fda7e51e5f79b1f635_56d0f7ba1aaf2c323e14c6c3_amigos_fantasmas8.jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb5b3fd170d89848dab9f81_56d0f78e1aaf2c323e14c6c0_amigos_fantasmas3.jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb5b3fd57f79954856ac3f3_56d0f79ae867b1c13768240e_amigos_fantasmas4.jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb5b3fd57f79929036ac3f4_56d0f7831aaf2c323e14c6bf_amigos_fantasmas1.jpg",
+    ],
   },
   {
     name: "The mobile bank",
@@ -206,6 +243,12 @@ export const pastProjects: PastProject[] = [
     gridImage:
       "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb59347d4d4d9426178cc8d_030420_N26-OVERVIEW_EN_opt.gif",
     heroVideo: "https://www.youtube.com/watch?v=ig40B7n9kbM",
+    stillFrames: [
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb5941d51528bd39ec29371_030420_N26-OVERVIEW_EN%202%20(0-00-04-13).jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb5943eacb09801a8e9796a_030420_N26-OVERVIEW_EN%202%20(0-00-07-00).jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb5951c0956a187c080cc18_030420_N26-OVERVIEW_EN%202%20(0-00-14-04).jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb5951c090054fbcde7497d_030420_N26-OVERVIEW_EN%202%20(0-00-42-16).jpg",
+    ],
   },
   {
     name: "BeijosXXXX",
@@ -216,5 +259,9 @@ export const pastProjects: PastProject[] = [
       "Animated illustrations for Agora Collective\u2019s goodbye party BEIJOSXXXX.",
     gridImage:
       "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb99572233295464344c7a8_BEIJOSXXX-crop.gif",
+    stillFrames: [
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb9979a8e8bb96795bd9e9f_51223813_2375073435847972_5454755035973943296_o.jpg",
+      "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5eb9979abd4f3839ce4d6506_51231879_2375075692514413_5669672970377756672_o.jpg",
+    ],
   },
 ];
