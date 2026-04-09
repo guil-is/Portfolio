@@ -1,6 +1,7 @@
 type PlaceholderProps = {
   label: string;
-  aspect?: "square" | "video" | "portrait";
+  /** "fill" makes the placeholder fill its parent (use when caller sets aspect ratio). */
+  aspect?: "square" | "video" | "portrait" | "wide" | "fill";
   className?: string;
 };
 
@@ -19,8 +20,10 @@ function tintFor(label: string) {
 
 const aspectClass = {
   square: "aspect-square",
-  video: "aspect-[4/3]",
+  video: "aspect-[16/9]",
+  wide: "aspect-[16/9]",
   portrait: "aspect-[3/4]",
+  fill: "h-full",
 } as const;
 
 export function Placeholder({
