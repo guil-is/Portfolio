@@ -54,8 +54,9 @@ export default async function ProjectDetailPage({
 
       <ProjectSideTitle title={project.name} client={project.client} />
 
-      <main className="page-fade-in px-6 md:px-10">
+      <div className="page-fade-in">
         <PageHeader
+          maxWidth={960}
           left={
             <div className="flex min-w-0 items-center gap-2 font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted">
               <Link href="/" className="hover:text-ink">
@@ -66,21 +67,17 @@ export default async function ProjectDetailPage({
                 work
               </Link>
               <span>&gt;</span>
-              <span className="truncate text-ink">{project.name}</span>
+              <span className="truncate font-bold text-ink">
+                {project.name}
+              </span>
             </div>
           }
         />
 
-        {/* Title */}
-        <section className="mx-auto w-full max-w-[960px] pb-10 pt-10 md:pt-16">
-          <h1 className="intro-rise font-display text-[2.2rem] font-bold leading-tight text-ink md:text-[3rem]">
-            {project.name}
-          </h1>
-        </section>
-
-        {/* Hero media */}
-        <FadeIn>
-          <section className="mx-auto w-full max-w-[960px] pb-10">
+        <main className="px-6 md:px-10">
+          {/* Hero media */}
+          <FadeIn>
+            <section className="mx-auto w-full max-w-[960px] pb-10 pt-10">
             {project.heroVideo ? (
               <VideoEmbed url={project.heroVideo} title={project.name} />
             ) : (
@@ -239,8 +236,9 @@ export default async function ProjectDetailPage({
           </div>
         </section>
 
-        <CtaFooter />
-      </main>
+          <CtaFooter />
+        </main>
+      </div>
     </>
   );
 }

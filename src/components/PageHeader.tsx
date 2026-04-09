@@ -8,17 +8,29 @@ type PageHeaderProps = {
    * site name linking home. Project pages pass a breadcrumb element.
    */
   left?: ReactNode;
+  /**
+   * Max width of the inner nav container and the grey divider line.
+   * Defaults to 800px; project pages pass 960px to match the cover
+   * image width.
+   */
+  maxWidth?: number;
 };
 
 // Sticky top bar used on secondary pages. Homepage deliberately has no
-// nav bar (Webflow `.hide` on the navbar). The "about" link jumps to the
-// homepage expertise section and "get in touch" opens the cal.com link
-// — matching the single-page flow the user wants.
-export function PageHeader({ left }: PageHeaderProps = {}) {
+// nav bar. The "about" link jumps to the homepage expertise section and
+// "get in touch" opens the cal.com link — matching the single-page flow.
+//
+// This component renders as a sibling of <main>, NOT inside it, so its
+// 100%-opaque background naturally spans the full viewport width
+// without needing negative-margin breakout hacks.
+export function PageHeader({ left, maxWidth = 800 }: PageHeaderProps = {}) {
   return (
-    <header className="sticky top-0 z-40 -mx-6 bg-bg/80 backdrop-blur md:-mx-8">
-      <div className="mx-auto w-full max-w-[800px] px-6 pb-4 pt-6 md:px-8">
-        <nav className="flex items-center justify-between gap-6 border-b border-rule pb-4">
+    <header className="sticky top-0 z-40 bg-bg">
+      <div
+        className="mx-auto w-full px-6 md:px-10"
+        style={{ maxWidth: `${maxWidth}px` }}
+      >
+        <nav className="flex items-center justify-between gap-6 border-b border-rule pb-4 pt-6">
           <div className="min-w-0 flex-1">
             {left ?? (
               <Link
