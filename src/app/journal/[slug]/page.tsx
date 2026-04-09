@@ -43,8 +43,8 @@ export default async function JournalDetailPage({
         <ThemeToggle />
       </div>
 
+      <PageHeader />
       <main className="px-6 md:px-8">
-        <PageHeader />
 
         <article className="mx-auto w-full max-w-[800px] py-12 md:py-20">
           <header className="mb-10">

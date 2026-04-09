@@ -5,34 +5,21 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 type FadeInProps = {
   children: ReactNode;
   className?: string;
-  /** Intersection threshold (0–1). Higher = triggers later. */
-  threshold?: number;
-  /** Root margin to pre-trigger as element approaches. */
-  rootMargin?: string;
   /** Delay in ms before the element becomes visible. */
   delay?: number;
-  /** If true, element stays visible once revealed. Default: true. */
-  once?: boolean;
 };
 
-// Wraps children in a div that starts at reduced opacity + translateY,
-// then fades/slides into place when it enters the viewport. Plays the
-// same role as Webflow's scroll-triggered `.content-grid-b` opacity
-// ramp but without the GSAP dependency.
 // Detect IntersectionObserver support without triggering a setState in
 // an effect (which React 19's lint rule flags). Unsupported → initial
 // state is already visible.
 const hasIntersectionObserver =
   typeof globalThis !== "undefined" && "IntersectionObserver" in globalThis;
 
-export function FadeIn({
-  children,
-  className = "",
-  threshold = 0.15,
-  rootMargin = "0px 0px -10% 0px",
-  delay = 0,
-  once = true,
-}: FadeInProps) {
+// Wraps children in a div that starts at reduced opacity + translateY,
+// then fades/slides into place when it enters the viewport OR when the
+// user has already scrolled past its position (handles client-side
+// navigation where elements can spawn above the viewport).
+export function FadeIn({ children, className = "", delay = 0 }: FadeInProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(!hasIntersectionObserver);
 
@@ -41,28 +28,38 @@ export function FadeIn({
     const el = ref.current;
     if (!el) return;
 
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    const reveal = () => {
+      if (delay > 0) {
+        timeoutId = setTimeout(() => setVisible(true), delay);
+      } else {
+        setVisible(true);
+      }
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) {
-            if (delay > 0) {
-              const t = setTimeout(() => setVisible(true), delay);
-              if (once) observer.unobserve(entry.target);
-              return () => clearTimeout(t);
-            }
-            setVisible(true);
-            if (once) observer.unobserve(entry.target);
-          } else if (!once) {
-            setVisible(false);
+          // Trigger on any intersection, OR if the element has already
+          // been scrolled past (top above viewport) — handles SPA nav
+          // where sections mount above the current scroll position.
+          if (entry.isIntersecting || entry.boundingClientRect.top < 0) {
+            reveal();
+            observer.unobserve(entry.target);
+            return;
           }
         }
       },
-      { threshold, rootMargin },
+      { threshold: 0, rootMargin: "0px 0px 10% 0px" },
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
-  }, [threshold, rootMargin, delay, once]);
+    return () => {
+      observer.disconnect();
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [delay]);
 
   return (
     <div

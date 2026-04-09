@@ -214,14 +214,14 @@ h1, h2, h3, h4, h5 {
  * ---------------------------------------------------------------------*/
 
 .project-article {
-  max-width: 1400px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 0 24px;
   color: var(--color-body);
   font-family: var(--font-sans);
 }
 
-/* Text content stays narrow for readability */
+/* Text content stays narrow for readability, left-aligned so it
+   shares the same left edge as the project summary above. */
 .project-article p,
 .project-article ul,
 .project-article ol,
@@ -229,8 +229,8 @@ h1, h2, h3, h4, h5 {
 .project-article h2,
 .project-article h3 {
   max-width: 720px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .project-article p {
@@ -285,9 +285,9 @@ h1, h2, h3, h4, h5 {
   color: var(--color-ink);
 }
 
-/* Figures break out to full width — no max-width on the container */
+/* Non-video figures fill the 960px container width */
 .project-article figure {
-  margin: 80px 0;
+  margin: 64px 0;
   width: 100%;
 }
 
@@ -298,15 +298,24 @@ h1, h2, h3, h4, h5 {
   display: block;
 }
 
-/* Videos fill the same full width as figure images */
+/* Webflow video figures use the padding-bottom aspect-ratio trick.
+   The inner div must be positioned absolute so height is driven only
+   by the figure's inline padding-bottom, not the iframe on top of it. */
 .project-article .w-richtext-figure-type-video {
   position: relative;
+  max-width: 720px;
+  margin: 32px 0;
   width: 100%;
 }
 
-.project-article iframe {
+.project-article .w-richtext-figure-type-video > div {
+  position: absolute;
+  inset: 0;
+}
+
+.project-article .w-richtext-figure-type-video iframe {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100%;
   border: 0;
   border-radius: 16px;
   display: block;
@@ -314,10 +323,9 @@ h1, h2, h3, h4, h5 {
 
 .project-article figcaption {
   max-width: 720px;
-  margin: 12px auto 0;
+  margin-top: 12px;
   font-size: 14px;
   color: var(--color-muted);
-  text-align: center;
 }
 
 .project-article h2,

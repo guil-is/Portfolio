@@ -18,8 +18,8 @@ export default function ContactPage() {
       <div className="fixed right-4 top-4 z-50">
         <ThemeToggle />
       </div>
+      <PageHeader />
       <main className="px-6 md:px-8">
-        <PageHeader />
 
         <section className="mx-auto w-full max-w-[800px] py-12 md:py-20">
           <h1 className="font-display text-[2rem] leading-tight text-ink md:text-[2.4rem]">

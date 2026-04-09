@@ -19,8 +19,8 @@ export default function AboutExtendedPage() {
       <div className="fixed right-4 top-4 z-50">
         <ThemeToggle />
       </div>
+      <PageHeader />
       <main className="px-6 md:px-8">
-        <PageHeader />
 
         <section className="mx-auto w-full max-w-[800px] py-12 md:py-16">
           <div className="grid grid-cols-1 items-start gap-10 md:grid-cols-[1fr_291px]">
