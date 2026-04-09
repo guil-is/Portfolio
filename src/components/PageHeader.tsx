@@ -23,12 +23,6 @@ export function PageHeader() {
             about
           </Link>
           <Link
-            href="/collage"
-            className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink"
-          >
-            collage
-          </Link>
-          <Link
             href="/contact"
             className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink"
           >

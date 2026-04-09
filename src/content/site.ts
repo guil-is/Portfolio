@@ -131,11 +131,6 @@ export const site = {
         "I\u2019m a creative conspirer at the service of ideas that evolve how we can relate to the world and to each other. I believe in exponential impact through the power of communication, design, facilitation and community building.",
         "Currently working from Berlin as a freelancer for individual clients, agencies, collectives, NGOs and social enterprises. Since 2020, member and co\u2011creator of a few Web3 communities, where I investigate decentralised systems and the role design can play in shaping a more inclusive, diverse, distributed and democratic future.",
       ],
-      collageCta: {
-        prefix: "You can also check my work as a collage artist",
-        label: "here",
-        href: "https://collage.maueler.com",
-      },
       portrait: "",
       portraitAlt: "Portrait of Guil",
     },
@@ -190,73 +185,6 @@ export const site = {
         ],
       },
     ],
-  },
-
-  collage: {
-    metaTitle: "Collage Portfolio \u2014 Guil Maueler",
-    description:
-      "A selection of collage and illustration work by Guil Maueler, collected over the years.",
-    heading: "Guilherme Maueler",
-    subheading: "Collage & illustration",
-    shopHref: "https://shop.maueler.com",
-    flickrHref: "https://www.flickr.com/photos/ggatz",
-    instagramHref: "https://www.instagram.com/gmaueler/",
-  },
-  collageAbout: {
-    metaTitle: "Collage \u2014 Exhibitions & Awards",
-    description:
-      "Exhibitions and awards received by Guilherme Maueler as a collage artist.",
-    heading: "Exhibitions & Awards",
-    groups: [
-      {
-        title: "Past & Present",
-        items: [
-          {
-            date: "10/2020",
-            label: "Solo Exhibition @ Sari Sari Collective",
-            href: "https://www.facebook.com/events/261828788592248",
-          },
-        ],
-      },
-      {
-        title: "Gemstones",
-        items: [
-          { date: "09/2020", label: "Mein Schwules Auge #17" },
-          { date: "07/2019", label: "Queerness . Projektraum" },
-          { date: "04/2019", label: "Transition . Galerie Kungerkiez" },
-          { date: "01/2019", label: "BEIJOSXXXX . Agora\u2019s Goodbye Party" },
-        ],
-      },
-      {
-        title: "\u201CPaisagens Invis\u00edveis\u201D (Invisible Landscapes) \u2014 Series",
-        items: [
-          { date: "04/2015", label: "Collaborative Workspace CATETE92 (BR)" },
-          { date: "10/2014", label: "Vidi Arte \u2014 Vidigal (BR)" },
-          { date: "12/2013", label: "Vila Aberta / XCasa (BR)" },
-          {
-            date: "08/2013",
-            label: "Semana de Design do Rio / Templo Coworking (BR)",
-          },
-          { date: "06/2012", label: "D&AD New Blood (UK)" },
-          { date: "04/2012", label: "Edinburgh College of Art (UK)" },
-        ],
-      },
-    ],
-    awards: [
-      {
-        title: "\u2018Tesselation\u2019",
-        note: "Out of Hand International Festival 2009 \u2014 First Prize Winner",
-      },
-      {
-        title: "\u2018Peacock ride\u2019",
-        note: "Art of Nurture Contest by LloydsTSB Commercial Finance, 2011 \u2014 Regional Prize Winner",
-      },
-    ],
-  },
-  collageSeriesMeta: {
-    metaTitle: "Collage Series \u2014 Guil Maueler",
-    description:
-      "Collage series by Guil Maueler, including Orgia dos signos and Gemstones.",
   },
 
   contact: {
