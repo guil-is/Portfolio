@@ -3,10 +3,8 @@ import Link from "next/link";
 import { SectionHeading } from "./SectionHeading";
 import { CenterFocus } from "./CenterFocus";
 import { pastProjects, type PastProject } from "@/content/projects";
+import { getAllProjects } from "@/lib/queries";
 
-// Group projects into fixed-size pairs so each row of 2 cards can share
-// a single CenterFocus wrapper and fade/scale as a single visual unit
-// based on its own vertical distance from the viewport center.
 function chunk<T>(arr: readonly T[], size: number): T[][] {
   const out: T[][] = [];
   for (let i = 0; i < arr.length; i += size) {
@@ -15,8 +13,33 @@ function chunk<T>(arr: readonly T[], size: number): T[][] {
   return out;
 }
 
-export function PastWork() {
-  const rows = chunk(pastProjects, 2);
+async function getProjects(): Promise<PastProject[]> {
+  try {
+    const sanity = await getAllProjects();
+    if (sanity && sanity.length > 0) {
+      return sanity.map((p) => ({
+        name: p.name,
+        slug: p.slug,
+        client: p.client,
+        services: p.services,
+        summary: p.summary,
+        gridImage: p.gridImage ?? "",
+        heroVideo: p.heroVideo,
+        link: p.link,
+        featured: p.featured,
+      }));
+    }
+  } catch {
+    // fallback
+  }
+  return [...pastProjects];
+}
+
+export async function PastWork() {
+  const projects = await getProjects();
+  // Filter out projects without a grid image for the homepage grid
+  const withImages = projects.filter((p) => p.gridImage);
+  const rows = chunk(withImages, 2);
 
   return (
     <section id="work" className="mx-auto w-full max-w-[800px]">
@@ -46,14 +69,16 @@ function PastWorkCard({ project: p }: { project: PastProject }) {
   return (
     <Link href={`/projects/${p.slug}`} className="group flex flex-col gap-3">
       <div className="relative aspect-[16/9] overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
-        <Image
-          src={p.gridImage}
-          alt={p.name}
-          fill
-          sizes="(min-width: 768px) 400px, 100vw"
-          unoptimized
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-        />
+        {p.gridImage ? (
+          <Image
+            src={p.gridImage}
+            alt={p.name}
+            fill
+            sizes="(min-width: 768px) 400px, 100vw"
+            unoptimized
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+        ) : null}
       </div>
       <div className="flex flex-col gap-1 pt-1">
         <h5 className="font-display text-xl leading-tight text-ink">

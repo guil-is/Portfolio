@@ -4,11 +4,25 @@ import { CtaButton } from "./CtaButton";
 import { SocialIconsRow } from "./SocialIconsRow";
 import { Placeholder } from "./Placeholder";
 
-export function Hero() {
+type HeroProps = {
+  headline?: string;
+  bio?: readonly string[] | string[];
+  bioClosing?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+};
+
+export function Hero({
+  headline = site.introHeading,
+  bio = site.hero.bio,
+  bioClosing = site.hero.bioClosing,
+  ctaLabel = site.hero.cta.label,
+  ctaHref = site.hero.cta.href,
+}: HeroProps) {
   return (
     <section className="mx-auto w-full max-w-[800px] pb-[30px] pt-0">
       <h1 className="intro-rise max-w-[800px] font-display text-[1.75rem] font-bold leading-[1.3] text-ink md:text-[2.2rem] md:leading-[3rem]">
-        {site.introHeading}
+        {headline}
       </h1>
 
       <div className="grid grid-cols-1 items-stretch gap-10 pt-10 md:grid-cols-2 md:pt-12">
@@ -28,22 +42,19 @@ export function Hero() {
         </div>
 
         <div className="flex flex-col gap-5">
-          {site.hero.bio.map((p, i) => (
+          {bio.map((p, i) => (
             <p key={i} className="text-[0.95rem] leading-[1.6rem] text-ink">
               {p}
             </p>
           ))}
           <p className="text-[0.95rem] font-bold leading-[1.6rem] text-ink">
-            {site.hero.bioClosing}
+            {bioClosing}
           </p>
 
           <SocialIconsRow socials={site.heroSocials} className="mt-2" />
 
           <div className="mt-2">
-            <CtaButton
-              href={site.hero.cta.href}
-              label={site.hero.cta.label}
-            />
+            <CtaButton href={ctaHref} label={ctaLabel} />
           </div>
         </div>
       </div>

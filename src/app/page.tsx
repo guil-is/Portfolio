@@ -5,20 +5,39 @@ import { Expertise } from "@/components/Expertise";
 import { PastWork } from "@/components/PastWork";
 import { CtaFooter } from "@/components/CtaFooter";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { getSiteSettings } from "@/lib/queries";
+import { site } from "@/content/site";
 
-export default function Home() {
+export default async function Home() {
+  const settings = await getSiteSettings().catch(() => null);
+
+  // Merge Sanity settings over local defaults
+  const headline = settings?.headline || site.introHeading;
+  const bio = settings?.bio?.length ? settings.bio : site.hero.bio;
+  const bioClosing = settings?.bioClosing || site.hero.bioClosing;
+  const ctaLabel = settings?.ctaLabel || site.hero.cta.label;
+  const ctaHref = settings?.ctaHref || site.hero.cta.href;
+  const bottomHeading = settings?.bottomCtaHeading || site.bottomCta.heading;
+  const bottomSub = settings?.bottomCtaSub || site.bottomCta.sub;
+
   return (
     <>
       <div className="fixed right-4 top-4 z-50">
         <ThemeToggle />
       </div>
       <main className="page-fade-in px-6 pt-16 md:px-8 md:pt-24">
-        <Hero />
+        <Hero
+          headline={headline}
+          bio={bio}
+          bioClosing={bioClosing}
+          ctaLabel={ctaLabel}
+          ctaHref={ctaHref}
+        />
         <ClientLogos />
         <ActiveProjects />
         <Expertise />
         <PastWork />
-        <CtaFooter />
+        <CtaFooter heading={bottomHeading} sub={bottomSub} />
       </main>
     </>
   );

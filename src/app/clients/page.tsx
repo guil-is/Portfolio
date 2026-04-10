@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { site } from "@/content/site";
-import { clients } from "@/content/clients";
+import { clients as localClients } from "@/content/clients";
+import { getAllClients, type SanityClient } from "@/lib/queries";
 import { PageHeader } from "@/components/PageHeader";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -12,13 +13,16 @@ export const metadata: Metadata = {
 
 // Group clients alphabetically by first character
 function groupByLetter(
-  items: typeof clients,
-): { letter: string; items: typeof clients }[] {
+  items: { name: string; description: string; href?: string }[],
+) {
   const sorted = [...items].sort((a, b) =>
     a.name.localeCompare(b.name, "en", { sensitivity: "base" }),
   );
 
-  const groups: Map<string, typeof clients> = new Map();
+  const groups: Map<
+    string,
+    { name: string; description: string; href?: string }[]
+  > = new Map();
   for (const item of sorted) {
     const first = item.name[0].toUpperCase();
     const letter = /[A-Z]/.test(first) ? first : "#";
@@ -32,7 +36,25 @@ function groupByLetter(
   }));
 }
 
-export default function ClientsPage() {
+// Fetch from Sanity, fall back to local TS data if empty/error
+async function getClients() {
+  try {
+    const sanityClients = await getAllClients();
+    if (sanityClients && sanityClients.length > 0) {
+      return sanityClients.map((c: SanityClient) => ({
+        name: c.name,
+        description: c.description,
+        href: c.href,
+      }));
+    }
+  } catch {
+    // Sanity unreachable — use local fallback
+  }
+  return localClients;
+}
+
+export default async function ClientsPage() {
+  const clients = await getClients();
   const grouped = groupByLetter(clients);
 
   return (
