@@ -8,6 +8,10 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { getSiteSettings } from "@/lib/queries";
 import { site } from "@/content/site";
 
+// Re-fetch from Sanity every 60 seconds so Studio edits go live
+// without a full redeploy.
+export const revalidate = 60;
+
 export default async function Home() {
   const settings = await getSiteSettings().catch(() => null);
 
