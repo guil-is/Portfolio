@@ -60,7 +60,7 @@ function PastWorkCard({ project: p }: { project: PastProject }) {
           {p.name}
         </h5>
         <div className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted">
-          {p.services || p.client}
+          {p.client}
         </div>
       </div>
     </Link>
