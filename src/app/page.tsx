@@ -1,4 +1,5 @@
 import { Hero } from "@/components/Hero";
+import { ClientLogos } from "@/components/ClientLogos";
 import { ActiveProjects } from "@/components/ActiveProjects";
 import { Expertise } from "@/components/Expertise";
 import { PastWork } from "@/components/PastWork";
@@ -13,6 +14,7 @@ export default function Home() {
       </div>
       <main className="page-fade-in px-6 pt-16 md:px-8 md:pt-24">
         <Hero />
+        <ClientLogos />
         <ActiveProjects />
         <Expertise />
         <PastWork />
