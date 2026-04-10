@@ -22,7 +22,7 @@ export function generateMetadata({
     const post = journalPosts.find((p) => p.slug === slug);
     if (!post) return { title: "Post not found" };
     return {
-      title: `${post.title} \u2014 ${site.name}`,
+      title: `${post.title} | ${site.name}`,
       description: post.summary,
     };
   });

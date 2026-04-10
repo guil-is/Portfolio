@@ -27,8 +27,8 @@ export const site = {
   name: "Guil Maueler",
   title: "Fractional Design Partner",
   description:
-    "Fractional design partner for early\u2011stage teams. I help founders ship 0\u21921 products \u2014 brand, product, and everything in between. Based in Berlin.",
-  metaTitle: "Guil Maueler \u2014 Fractional Design Partner",
+    "Fractional design partner for early\u2011stage teams. I help founders ship 0\u21921 products: brand, product, and everything in between. Based in Berlin.",
+  metaTitle: "Guil Maueler | Fractional Design Partner",
 
   introHeading:
     "Fractional Design Partner for early\u2011stage teams shipping tech for good.",
@@ -37,8 +37,8 @@ export const site = {
     portrait: "/projects/guil-portrait-2023-2-sq.jpg",
     portraitAlt: "Portrait of Guil",
     bio: [
-      "I\u2019m Guil \u2014 a creative director and brand designer based in Berlin. I partner with founders and small teams to turn rough ideas into products people actually want to use, from brand strategy to shipped pixels.",
-      "My background spans creative direction at General Magic, co\u2011founding Regens Unite, and years of video and motion work at N26. These days I\u2019m drawn to projects at the intersection of design, community, and decentralized systems \u2014 work that deepens our connection with each other and the world around us.",
+      "I\u2019m Guil, a creative director and brand designer based in Berlin. I partner with founders and small teams to turn rough ideas into products people actually want to use, from brand strategy to shipped pixels.",
+      "My background spans creative direction at General Magic, co\u2011founding Regens Unite, and years of video and motion work at N26. These days I\u2019m drawn to projects at the intersection of design, community, and decentralized systems. Work that deepens our connection with each other and the world around us.",
     ],
     bioClosing: "Currently accepting new partnerships.",
     cta: { label: "let\u2019s talk", href: "https://cal.com/guil-is" },
@@ -86,7 +86,7 @@ export const site = {
   howIWork: {
     heading: "How I work",
     intro:
-      "I embed with your team as a design partner \u2014 not an agency, not a contractor. I treat every project like it\u2019s my own, and I move fast without cutting corners.",
+      "I embed with your team as a design partner, not an agency, not a contractor. I treat every project like it\u2019s my own, and I move fast without cutting corners.",
     items: [
       {
         title: "Brand & Identity",
@@ -97,7 +97,7 @@ export const site = {
       {
         title: "Product Design",
         description:
-          "End\u2011to\u2011end product design \u2014 research, prototypes, UI, and engineering handoff. I don\u2019t hand over a Figma file and disappear; I pair with your devs until the real thing ships.",
+          "End\u2011to\u2011end product design: research, prototypes, UI, and engineering handoff. I don\u2019t hand over a Figma file and disappear; I pair with your devs until the real thing ships.",
         icon: "pen" as const,
       },
       {
@@ -129,7 +129,7 @@ export const site = {
   ] satisfies Social[],
 
   about: {
-    metaTitle: "About \u2014 Guil Maueler",
+    metaTitle: "About | Guil Maueler",
     description:
       "Guilherme Maueler is a creative director, brand designer, and videographer residing in Berlin.",
     hero: {
@@ -145,7 +145,7 @@ export const site = {
       {
         title: "brand & motion design",
         description:
-          "I\u2019m specialised in branding and visual design. Together with great, international teams I\u2019ve helped shape the brand & product vision on a variety of initiatives \u2014 from single entrepreneurs and small start\u2011ups to large organisations.",
+          "I\u2019m specialised in branding and visual design. Together with great, international teams I\u2019ve helped shape the brand & product vision on a variety of initiatives, from single entrepreneurs and small start\u2011ups to large organisations.",
       },
       {
         title: "art direction",
@@ -167,9 +167,9 @@ export const site = {
   },
 
   aboutExtended: {
-    metaTitle: "About (extended) \u2014 Guil Maueler",
+    metaTitle: "About (extended) | Guil Maueler",
     description:
-      "A longer story about Guil Maueler \u2014 from Rio de Janeiro, to Pira, to Berlin and N26.",
+      "A longer story about Guil Maueler: from Rio de Janeiro, to Pira, to Berlin and N26.",
     hero: {
       heading: "Hello friends!",
       paragraph:
@@ -179,23 +179,23 @@ export const site = {
       {
         heading: "The basic stuff",
         paragraphs: [
-          "I\u2019m originally from Rio de Janeiro, Brazil, but have lived in many countries. Relocated to Berlin in July 2016. I\u2019ve been working as a designer for over a decade \u2014 wearing many creative hats along the way.",
+          "I\u2019m originally from Rio de Janeiro, Brazil, but have lived in many countries. Relocated to Berlin in July 2016. I\u2019ve been working as a designer for over a decade, wearing many creative hats along the way.",
           "In the past few years I\u2019ve been performing mainly as a Senior Motion Designer and Art Director.",
         ],
       },
       {
         heading: "The past",
         paragraphs: [
-          "For three years I worked at the German neo\u2011bank N26, where I was part of the global brand team developing creative video content \u2014 mostly for marketing campaigns, but also on the product side (app interactions) and internal comms (employee branding, company culture and knowledge sharing).",
-          "Before that, me and Felipe used to run our own design agency called Pira. We ran the company for six years, and one of our main drivers there was to use our combined creative power to inspire people and to be catalysts for social change. We did that by providing a wide range of design services, connecting with other socially\u2011driven organisations, and initiating a number of community\u2011led projects ourselves. Some of the services we provided were creative consultancy, graphic design, illustration, web design, video & motion, and we also performed graphic recording and facilitation under the brand \u201CF\u00e1cil\u201D. Pira was the birthplace of ideas and the operational backbone of many entrepreneurial initiatives \u2014 the most notable of which was Catete92.",
-          "Catete92 was a self\u2011managed coworking space that Felipe, myself and a few others co\u2011founded and bootstrapped in the heart of Rio de Janeiro. Based on P2P ideals, it essentially worked as an off\u2011chain DisCO (even though we didn\u2019t call it that at the time). Management and physical infrastructure were completely mutualized, everyone could own a copy of the keys to the space, and it ran on crowdfunding alone. The only rule was that no one was to live there (except for Z\u00e9, our beloved black cat). Participating in the co\u2011creation of this project was a life\u2011changer \u2014 it allowed for an enormous amount of learnings and connections that I carry to this day.",
+          "For three years I worked at the German neo\u2011bank N26, where I was part of the global brand team developing creative video content, mostly for marketing campaigns, but also on the product side (app interactions) and internal comms (employee branding, company culture and knowledge sharing).",
+          "Before that, me and Felipe used to run our own design agency called Pira. We ran the company for six years, and one of our main drivers there was to use our combined creative power to inspire people and to be catalysts for social change. We did that by providing a wide range of design services, connecting with other socially\u2011driven organisations, and initiating a number of community\u2011led projects ourselves. Some of the services we provided were creative consultancy, graphic design, illustration, web design, video & motion, and we also performed graphic recording and facilitation under the brand \u201CF\u00e1cil\u201D. Pira was the birthplace of ideas and the operational backbone of many entrepreneurial initiatives. The most notable of which was Catete92.",
+          "Catete92 was a self\u2011managed coworking space that Felipe, myself and a few others co\u2011founded and bootstrapped in the heart of Rio de Janeiro. Based on P2P ideals, it essentially worked as an off\u2011chain DisCO (even though we didn\u2019t call it that at the time). Management and physical infrastructure were completely mutualized, everyone could own a copy of the keys to the space, and it ran on crowdfunding alone. The only rule was that no one was to live there (except for Z\u00e9, our beloved black cat). Participating in the co\u2011creation of this project was a life\u2011changer. It allowed for an enormous amount of learnings and connections that I carry to this day.",
         ],
       },
     ],
   },
 
   contact: {
-    metaTitle: "Get in touch \u2014 Guil Maueler",
+    metaTitle: "Get in touch | Guil Maueler",
     description:
       "Use the form or email Guil directly at guil@maueler.com. Based in Berlin.",
     heading: "I am based in Berlin, Germany.",
