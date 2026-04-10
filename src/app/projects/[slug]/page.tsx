@@ -10,10 +10,23 @@ import { VideoEmbed } from "@/components/VideoEmbed";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { FadeIn } from "@/components/FadeIn";
 import { ProjectSideTitle } from "@/components/ProjectSideTitle";
+import {
+  getAllProjectSlugs,
+  getProjectBySlug,
+  getAllProjects,
+} from "@/lib/queries";
 
 type Params = { slug: string };
 
-export function generateStaticParams(): Params[] {
+export async function generateStaticParams(): Promise<Params[]> {
+  try {
+    const slugs = await getAllProjectSlugs();
+    if (slugs && slugs.length > 0) {
+      return slugs.map((slug: string) => ({ slug }));
+    }
+  } catch {
+    // fallback
+  }
   return pastProjects.map((p) => ({ slug: p.slug }));
 }
 
@@ -32,19 +45,66 @@ export function generateMetadata({
   });
 }
 
+// Get all projects for prev/next navigation, with Sanity fallback
+async function getProjectList() {
+  try {
+    const sanity = await getAllProjects();
+    if (sanity && sanity.length > 0) {
+      return sanity.map((p) => ({
+        name: p.name,
+        slug: p.slug,
+        client: p.client,
+        gridImage: p.gridImage ?? "",
+      }));
+    }
+  } catch {
+    // fallback
+  }
+  return pastProjects.map((p) => ({
+    name: p.name,
+    slug: p.slug,
+    client: p.client,
+    gridImage: p.gridImage,
+  }));
+}
+
 export default async function ProjectDetailPage({
   params,
 }: {
   params: Promise<Params>;
 }) {
   const { slug } = await params;
-  const index = pastProjects.findIndex((p) => p.slug === slug);
-  if (index === -1) notFound();
 
-  const project = pastProjects[index];
+  // Try Sanity first for metadata, fall back to TS
+  const sanityProject = await getProjectBySlug(slug).catch(() => null);
+  const localProject = pastProjects.find((p) => p.slug === slug);
+
+  if (!sanityProject && !localProject) notFound();
+
+  // Merge: Sanity for editable fields, local TS for rich content
+  // (projectDetails HTML, stillFrames, features) that aren't in Sanity yet
+  const project = {
+    ...localProject,
+    name: sanityProject?.name ?? localProject?.name ?? "",
+    slug: sanityProject?.slug ?? localProject?.slug ?? slug,
+    client: sanityProject?.client ?? localProject?.client ?? "",
+    services: sanityProject?.services ?? localProject?.services ?? "",
+    summary: sanityProject?.summary ?? localProject?.summary ?? "",
+    heroVideo: sanityProject?.heroVideo ?? localProject?.heroVideo,
+    link: sanityProject?.link ?? localProject?.link,
+    gridImage: localProject?.gridImage ?? "",
+    mainImage: localProject?.mainImage,
+    projectDetails: localProject?.projectDetails,
+    stillFrames: localProject?.stillFrames,
+    features: localProject?.features,
+  };
+
+  // Get full project list for prev/next
+  const allProjects = await getProjectList();
+  const index = allProjects.findIndex((p) => p.slug === slug);
   const prev =
-    pastProjects[(index - 1 + pastProjects.length) % pastProjects.length];
-  const next = pastProjects[(index + 1) % pastProjects.length];
+    allProjects[(index - 1 + allProjects.length) % allProjects.length];
+  const next = allProjects[(index + 1) % allProjects.length];
 
   return (
     <>
@@ -273,7 +333,7 @@ function ProjectNavCard({
   direction,
   borderLeft,
 }: {
-  project: (typeof pastProjects)[number];
+  project: { name: string; slug: string; client: string; gridImage: string };
   direction: "prev" | "next";
   borderLeft?: boolean;
 }) {
