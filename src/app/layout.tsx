@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     siteName: site.name,
     images: [
       {
-        url: "/Portfolio%20OpenGraph.jpg",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Guil Maueler | Fractional Design Partner",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: site.metaTitle,
     description: site.description,
     creator: "@guil_is",
-    images: ["/Portfolio%20OpenGraph.jpg"],
+    images: ["/og-image.jpg"],
   },
   icons: {
     icon: "/favicon.ico",
