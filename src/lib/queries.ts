@@ -41,8 +41,6 @@ export type SanityProject = {
   link?: string;
   featured?: boolean;
   sortOrder: number;
-  projectDetails?: string;
-  stillFrames?: string[];
 };
 
 export async function getAllProjects(): Promise<SanityProject[]> {
@@ -79,6 +77,40 @@ export async function getProjectBySlug(
       sortOrder
     }`,
     { slug },
+  );
+}
+
+export async function getAllProjectSlugs(): Promise<string[]> {
+  return sanityClient.fetch(
+    `*[_type == "project"].slug.current`,
+  );
+}
+
+// ---- Active Projects ----
+
+export type SanityActiveProject = {
+  _id: string;
+  name: string;
+  slug: string;
+  client: string;
+  services: string;
+  summary: string;
+  heroVideo?: string;
+  link?: string;
+};
+
+export async function getActiveProjects(): Promise<SanityActiveProject[]> {
+  return sanityClient.fetch(
+    `*[_type == "project" && featured == true] | order(sortOrder asc) [0...4] {
+      _id,
+      name,
+      "slug": slug.current,
+      client,
+      services,
+      summary,
+      heroVideo,
+      link
+    }`,
   );
 }
 
