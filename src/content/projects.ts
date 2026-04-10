@@ -257,7 +257,7 @@ export const pastProjects: PastProject[] = [
     slug: "annie-o",
     client: "N26",
     services: "End\u2011to\u2011end video production",
-    summary: "Investment banker to Berlin DJ \u2014 N26 Business Black",
+    summary: "Investment banker to Berlin DJ. N26 Business Black",
     gridImage:
       "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5ea02dfd9816bbe2495ae9d0_Annie-O.gif",
     heroVideo: "https://www.youtube.com/watch?v=QWXnppQNTcg",
@@ -271,7 +271,7 @@ export const pastProjects: PastProject[] = [
     client: "N26",
     services: "End\u2011to\u2011end video production",
     summary:
-      "Make your business bloom like Ruby Barber\u2019s \u2014 N26 Business Black",
+      "Make your business bloom like Ruby Barber\u2019s. N26 Business Black",
     gridImage:
       "https://uploads-ssl.webflow.com/5ea0098428bdbf1b20d2c9af/5ea04b503342e060df0d32a9_RubyBarber.gif",
     heroVideo: "https://youtu.be/ybT_cc4hfDI",

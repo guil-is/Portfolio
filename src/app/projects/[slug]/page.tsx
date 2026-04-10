@@ -26,7 +26,7 @@ export function generateMetadata({
     const project = pastProjects.find((p) => p.slug === slug);
     if (!project) return { title: "Project not found" };
     return {
-      title: `${project.name} \u2014 ${site.name}`,
+      title: `${project.name} | ${site.name}`,
       description: project.summary,
     };
   });
