@@ -14,17 +14,24 @@ const googleFontsHref =
   "&display=swap";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://guil.is"),
   title: site.metaTitle,
   description: site.description,
   openGraph: {
     title: site.metaTitle,
     description: site.description,
     type: "website",
+    url: "https://guil.is",
+    siteName: site.name,
   },
   twitter: {
     card: "summary_large_image",
     title: site.metaTitle,
     description: site.description,
+    creator: "@guil_is",
+  },
+  icons: {
+    icon: "/favicon.ico",
   },
 };
 
