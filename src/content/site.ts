@@ -31,14 +31,14 @@ export const site = {
   metaTitle: "Guil Maueler \u2014 Fractional Design Partner",
 
   introHeading:
-    "Fractional Design Partner helping founders ship 0\u2192\u202f1 products.",
+    "Fractional Design Partner for teams building towards a regenerative future.",
 
   hero: {
     portrait: "/projects/guil-portrait-2023-2-sq.jpg",
     portraitAlt: "Portrait of Guil",
     bio: [
-      "I partner with early\u2011stage teams to turn rough ideas into products people actually want to use \u2014 from brand strategy and identity to product design and launch.",
-      "Previously led creative direction at General Magic, co\u2011founded Regens Unite, and designed products at N26. Now I work as a fractional design partner, embedding with one or two teams at a time.",
+      "I\u2019m Guil \u2014 a creative director and brand designer based in Berlin. I partner with founders and small teams to turn rough ideas into products people actually want to use, from brand strategy to shipped pixels.",
+      "My background spans creative direction at General Magic, co\u2011founding Regens Unite, and years of video and motion work at N26. These days I\u2019m drawn to projects at the intersection of design, community, and decentralized systems \u2014 work that deepens our connection with each other and the world around us.",
     ],
     bioClosing: "Currently accepting new partnerships.",
     cta: { label: "let\u2019s talk", href: "https://cal.com/guil-is" },
@@ -86,30 +86,30 @@ export const site = {
   howIWork: {
     heading: "How I work",
     intro:
-      "I embed with your team as a fractional design partner \u2014 not an agency, not a contractor. I treat every project like it\u2019s my own.",
+      "I embed with your team as a design partner \u2014 not an agency, not a contractor. I treat every project like it\u2019s my own, and I move fast without cutting corners.",
     items: [
       {
         title: "Brand & Identity",
         description:
-          "From naming and strategy to visual identity and brand systems. I help you find the story that makes people care.",
+          "Strategy, naming, visual identity, brand systems. I\u2019ve shaped the brand vision for everything from solo founders to large organisations like N26 and Burger King. The goal is always the same: find the story that makes people care.",
         icon: "map" as const,
       },
       {
         title: "Product Design",
         description:
-          "End\u2011to\u2011end product design \u2014 research, wireframes, prototypes, UI, and handoff. I pair directly with engineering to ship in the real product.",
+          "End\u2011to\u2011end product design \u2014 research, prototypes, UI, and engineering handoff. I don\u2019t hand over a Figma file and disappear; I pair with your devs until the real thing ships.",
         icon: "pen" as const,
       },
       {
         title: "Creative Direction",
         description:
-          "Art direction, motion, video, and illustration. I set the visual bar and make sure everything that ships feels intentional.",
+          "Art direction, motion, video, and illustration. Years of building a body of work as a collage artist and animator taught me to sweat the details and set a visual bar the whole team can rally around.",
         icon: "eye" as const,
       },
       {
         title: "Team & Process",
         description:
-          "I help you hire your first designer, set up design ops, and build a creative culture that outlasts my engagement.",
+          "From co\u2011founding Regens Unite to building design culture at General Magic, I\u2019ve learned that great work comes from great coordination. I can help you hire, set up design ops, and build a creative culture.",
         icon: "users" as const,
       },
     ],
