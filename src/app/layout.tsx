@@ -45,9 +45,16 @@ export default function RootLayout({
         <link rel="stylesheet" href={googleFontsHref} />
       </head>
       <body className="min-h-full bg-bg text-body">
+        {/* Set dark mode if user's local hour is before 7am or after 7pm,
+            unless they've already chosen a theme via the toggle. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem('theme');if(!s||s==='"system"'){var h=new Date().getHours();document.documentElement.classList.toggle('dark',h<7||h>=19)}}catch(e){}})()`,
+          }}
+        />
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="system"
           enableSystem={false}
           disableTransitionOnChange
         >

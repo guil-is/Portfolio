@@ -44,16 +44,20 @@ export const site = {
     cta: { label: "let\u2019s talk", href: "https://cal.com/guil-is" },
   },
 
-  clients: [
-    "N26",
-    "General Magic",
-    "Regens Unite",
-    "ClawBank",
-    "Burger King",
-    "Citizen Wallet",
-    "The DAOist",
-    "Commons Stack",
-  ],
+  trustedBy: {
+    label: "Trusted by",
+    viewAllHref: "/clients",
+    viewAllLabel: "View all >",
+    logos: [
+      { name: "N26", src: "/logos/n26.svg" },
+      { name: "JKR Global", src: "/logos/jkr-global.svg" },
+      { name: "Arbitrum", src: "/logos/arbitrum.svg" },
+      { name: "Optimism", src: "/logos/optimism.svg" },
+      { name: "Native Instruments", src: "/logos/native-instruments.svg" },
+      { name: "Celo", src: "/logos/celo.svg" },
+      { name: "Gitcoin", src: "/logos/gitcoin.svg" },
+    ],
+  },
 
   heroSocials: [
     { label: "Twitter", href: "https://twitter.com/guil_is", icon: "twitter" },
