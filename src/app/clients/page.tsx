@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { site } from "@/content/site";
+
+export const revalidate = 60;
 import { clients as localClients } from "@/content/clients";
 import { getAllClients, type SanityClient } from "@/lib/queries";
 import { PageHeader } from "@/components/PageHeader";

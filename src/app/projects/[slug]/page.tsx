@@ -16,6 +16,8 @@ import {
   getAllProjects,
 } from "@/lib/queries";
 
+export const revalidate = 60;
+
 type Params = { slug: string };
 
 export async function generateStaticParams(): Promise<Params[]> {
