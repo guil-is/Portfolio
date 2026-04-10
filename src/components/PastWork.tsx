@@ -17,17 +17,23 @@ async function getProjects(): Promise<PastProject[]> {
   try {
     const sanity = await getAllProjects();
     if (sanity && sanity.length > 0) {
-      return sanity.map((p) => ({
-        name: p.name,
-        slug: p.slug,
-        client: p.client,
-        services: p.services,
-        summary: p.summary,
-        gridImage: p.gridImage ?? "",
-        heroVideo: p.heroVideo,
-        link: p.link,
-        featured: p.featured,
-      }));
+      // Merge Sanity metadata with local TS data for images
+      // (Sanity doesn't have image URLs yet — they're still local)
+      const localBySlug = new Map(pastProjects.map((p) => [p.slug, p]));
+      return sanity.map((p) => {
+        const local = localBySlug.get(p.slug);
+        return {
+          name: p.name,
+          slug: p.slug,
+          client: p.client,
+          services: p.services,
+          summary: p.summary,
+          gridImage: local?.gridImage ?? p.gridImage ?? "",
+          heroVideo: p.heroVideo,
+          link: p.link,
+          featured: p.featured,
+        };
+      });
     }
   } catch {
     // fallback
