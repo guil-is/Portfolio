@@ -47,15 +47,21 @@ export function generateMetadata({
 
 // Get all projects for prev/next navigation, with Sanity fallback
 async function getProjectList() {
+  const localBySlug = new Map(
+    pastProjects.map((p) => [p.slug, p]),
+  );
   try {
     const sanity = await getAllProjects();
     if (sanity && sanity.length > 0) {
-      return sanity.map((p) => ({
-        name: p.name,
-        slug: p.slug,
-        client: p.client,
-        gridImage: p.gridImage ?? "",
-      }));
+      return sanity.map((p) => {
+        const local = localBySlug.get(p.slug);
+        return {
+          name: p.name,
+          slug: p.slug,
+          client: p.client,
+          gridImage: local?.gridImage ?? p.gridImage ?? "",
+        };
+      });
     }
   } catch {
     // fallback
