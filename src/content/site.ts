@@ -34,7 +34,7 @@ export const site = {
     "Fractional Design Partner for early\u2011stage teams shipping tech for good.",
 
   hero: {
-    portrait: "/guil_prof_2026_1.jpeg",
+    portrait: "/guil_prof_2026_1.jpg",
     portraitAlt: "Portrait of Guil",
     bio: [
       "I\u2019m Guil, a creative director and brand designer based in Berlin. I partner with founders and small teams to turn rough ideas into products people actually want to use, from brand strategy to shipped pixels.",
