@@ -23,12 +23,21 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://guil.is",
     siteName: site.name,
+    images: [
+      {
+        url: "/Portfolio%20OpenGraph.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Guil Maueler | Fractional Design Partner",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: site.metaTitle,
     description: site.description,
     creator: "@guil_is",
+    images: ["/Portfolio%20OpenGraph.jpg"],
   },
   icons: {
     icon: "/favicon.ico",
