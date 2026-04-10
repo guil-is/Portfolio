@@ -37,14 +37,14 @@ export function ClientLogos() {
           {tripled.map((logo, i) => (
             <div
               key={`${logo.name}-${i}`}
-              className="flex h-8 shrink-0 items-center"
+              className="flex h-14 shrink-0 items-center"
             >
               <Image
                 src={logo.src}
                 alt={logo.name}
-                width={140}
-                height={32}
-                className="h-6 w-auto object-contain opacity-40 transition-opacity duration-300 hover:opacity-70 dark:invert md:h-8"
+                width={200}
+                height={56}
+                className="h-10 w-auto object-contain opacity-40 transition-opacity duration-300 hover:opacity-70 dark:invert md:h-14"
                 unoptimized
               />
             </div>
