@@ -19,7 +19,7 @@ export function Expertise() {
 
       <div className="flex flex-col gap-6 py-16">
         <CenterFocus minOpacity={0.4} falloff={0.6} minScale={0.98}>
-          <p className="max-w-[600px] text-[1.1rem] leading-[1.7rem] text-ink">
+          <p className="max-w-[600px] text-[0.95rem] leading-[1.6rem] text-ink">
             {intro}
           </p>
         </CenterFocus>

@@ -1,23 +1,55 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
 import { site } from "@/content/site";
 
-// Horizontal strip of past client names. Uses text labels rather than
-// image logos — works without any logo assets and still communicates
-// credibility. Visually light, uppercase, evenly spaced.
+// Infinite seamless looping marquee of client logos, inspired by the
+// reference screenshot. Duplicates the logo list 3× so the CSS
+// animation can loop without a visible seam. Pure CSS animation,
+// no JS scroll listener.
 export function ClientLogos() {
+  const { label, viewAllHref, viewAllLabel, logos } = site.trustedBy;
+
+  // Triple the list so the animation can loop seamlessly
+  const tripled = [...logos, ...logos, ...logos];
+
   return (
-    <section className="mx-auto w-full max-w-[800px] py-12">
-      <p className="mb-6 font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
-        Selected clients
-      </p>
-      <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-        {site.clients.map((name) => (
-          <span
-            key={name}
-            className="font-display text-[1.1rem] font-bold text-ink/40 md:text-[1.25rem]"
-          >
-            {name}
-          </span>
-        ))}
+    <section className="mx-auto w-full max-w-[800px] py-10">
+      <div className="mb-6 flex items-center justify-between">
+        <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
+          {label}
+        </p>
+        <Link
+          href={viewAllHref}
+          className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink"
+        >
+          {viewAllLabel}
+        </Link>
+      </div>
+
+      <div className="marquee-container relative overflow-hidden">
+        {/* Fade edges */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-bg to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-bg to-transparent" />
+
+        <div className="marquee-track flex w-max items-center gap-16">
+          {tripled.map((logo, i) => (
+            <div
+              key={`${logo.name}-${i}`}
+              className="flex h-8 shrink-0 items-center"
+            >
+              <Image
+                src={logo.src}
+                alt={logo.name}
+                width={140}
+                height={32}
+                className="h-6 w-auto object-contain opacity-40 transition-opacity duration-300 hover:opacity-70 dark:invert md:h-8"
+                unoptimized
+              />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
