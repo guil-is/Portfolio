@@ -3,15 +3,23 @@ import { CtaButton } from "./CtaButton";
 import { SocialIconsRow } from "./SocialIconsRow";
 import { CenterFocus } from "./CenterFocus";
 
-export function CtaFooter() {
+type CtaFooterProps = {
+  heading?: string;
+  sub?: string;
+};
+
+export function CtaFooter({
+  heading = site.bottomCta.heading,
+  sub = site.bottomCta.sub,
+}: CtaFooterProps) {
   return (
     <section className="mx-auto w-full max-w-[800px] py-[100px] text-center">
       <CenterFocus minOpacity={0.4} falloff={0.7}>
         <h3 className="font-display text-[2rem] leading-tight text-ink md:text-[2.4rem]">
-          {site.bottomCta.heading}
+          {heading}
         </h3>
         <h3 className="font-display text-[2rem] italic leading-tight text-ink md:text-[2.4rem]">
-          {site.bottomCta.sub}
+          {sub}
         </h3>
 
         <div className="mt-16 flex justify-center">
