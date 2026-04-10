@@ -25,24 +25,35 @@ export type Expertise = {
 
 export const site = {
   name: "Guil Maueler",
-  title: "Creative Direction & Brand Design",
+  title: "Fractional Design Partner",
   description:
-    "Guil is a creative director, brand designer, and videographer helping organisations build transformative products & brands. Based in Berlin",
-  metaTitle: "Guil Maueler | Creative Direction & Brand Design",
+    "Fractional design partner for early\u2011stage teams. I help founders ship 0\u21921 products \u2014 brand, product, and everything in between. Based in Berlin.",
+  metaTitle: "Guil Maueler \u2014 Fractional Design Partner",
 
   introHeading:
-    "\u{1F44B} Hi, I\u2019m Guil \u2014 a creative lead, brand designer, and community builder striving towards a regenerative future.",
+    "Fractional Design Partner helping founders ship 0\u2192\u202f1 products.",
 
   hero: {
     portrait: "/projects/guil-portrait-2023-2-sq.jpg",
     portraitAlt: "Portrait of Guil",
     bio: [
-      "I\u2019m driven by the belief that communication, design, and community can spark exponential systemic change. My passion is in crafting ideas that deepen our sense of connection with each other and the world around us.",
-      "As a member and co\u2011creator of several Web3 communities, I\u2019m deeply invested in exploring decentralized systems and how thoughtful design can shape a more inclusive, diverse, and democratic future.",
+      "I partner with early\u2011stage teams to turn rough ideas into products people actually want to use \u2014 from brand strategy and identity to product design and launch.",
+      "Previously led creative direction at General Magic, co\u2011founded Regens Unite, and designed products at N26. Now I work as a fractional design partner, embedding with one or two teams at a time.",
     ],
-    bioClosing: "Let\u2019s collaborate to bring your vision to life.",
+    bioClosing: "Currently accepting new partnerships.",
     cta: { label: "let\u2019s talk", href: "https://cal.com/guil-is" },
   },
+
+  clients: [
+    "N26",
+    "General Magic",
+    "Regens Unite",
+    "ClawBank",
+    "Burger King",
+    "Citizen Wallet",
+    "The DAOist",
+    "Commons Stack",
+  ],
 
   heroSocials: [
     { label: "Twitter", href: "https://twitter.com/guil_is", icon: "twitter" },
@@ -72,36 +83,41 @@ export const site = {
     },
   ] satisfies ActiveProject[],
 
-  expertise: [
-    {
-      title: "brand strategy",
-      description:
-        "I\u2019m specialised in strategic branding. Together with great, international teams i\u2019ve helped shape the brand & product vision on a variety of initiatives \u2014 from single entrepreneurs and small start\u2011ups to large organisations.",
-      icon: "map",
-    },
-    {
-      title: "art direction",
-      description:
-        "My expertise as a creative director has been in constant development since my years as co\u2011founder of Pira in 2011, a design agency and arthouse with a sharp focus on activism and social innovation projects.",
-      icon: "eye",
-    },
-    {
-      title: "motion design & illustration",
-      description:
-        "I have a deep passion for creating visually captivating images, both static and in motion. For many years I\u2019ve been developing a body of work as a collage illustrator and animator. You can check some of that work on my instagram or here.",
-      icon: "pen",
-    },
-    {
-      title: "organizational development",
-      description:
-        "Since working on many community\u2011driven projects and social enterprises, organizational development has become a big focus area for me. I naturally gravitate towards initiatives that encourage better collaboration and cooperation among their team members. It\u2019s all coordination, always has been ;)",
-      icon: "users",
-    },
-  ] satisfies Expertise[],
+  howIWork: {
+    heading: "How I work",
+    intro:
+      "I embed with your team as a fractional design partner \u2014 not an agency, not a contractor. I treat every project like it\u2019s my own.",
+    items: [
+      {
+        title: "Brand & Identity",
+        description:
+          "From naming and strategy to visual identity and brand systems. I help you find the story that makes people care.",
+        icon: "map" as const,
+      },
+      {
+        title: "Product Design",
+        description:
+          "End\u2011to\u2011end product design \u2014 research, wireframes, prototypes, UI, and handoff. I pair directly with engineering to ship in the real product.",
+        icon: "pen" as const,
+      },
+      {
+        title: "Creative Direction",
+        description:
+          "Art direction, motion, video, and illustration. I set the visual bar and make sure everything that ships feels intentional.",
+        icon: "eye" as const,
+      },
+      {
+        title: "Team & Process",
+        description:
+          "I help you hire your first designer, set up design ops, and build a creative culture that outlasts my engagement.",
+        icon: "users" as const,
+      },
+    ],
+  },
 
   bottomCta: {
-    heading: "Interested in working together?",
-    sub: "Let\u2019s chat.",
+    heading: "Let\u2019s build something together.",
+    sub: "Currently accepting 1\u20132 new partnerships.",
     cta: { label: "book a call", href: "https://cal.com/guil-is" },
   },
 
