@@ -33,7 +33,7 @@ export function ClientLogos() {
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-bg to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-bg to-transparent" />
 
-        <div className="marquee-track flex w-max items-center gap-16">
+        <div className="marquee-track flex w-max items-center gap-0">
           {tripled.map((logo, i) => (
             <div
               key={`${logo.name}-${i}`}
