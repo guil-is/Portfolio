@@ -31,7 +31,7 @@ export const site = {
   metaTitle: "Guil Maueler | Fractional Design Partner",
 
   introHeading:
-    "Fractional Design Partner for early\u2011stage teams shipping tech for good.",
+    "Design partner for startups building at the edge of what\u2019s possible.",
 
   hero: {
     portrait: "/guil_prof_2026_1.jpg",
