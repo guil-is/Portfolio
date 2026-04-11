@@ -26,7 +26,7 @@ export function Hero({
       </h1>
 
       <div className="grid grid-cols-1 items-stretch gap-10 pt-10 md:grid-cols-2 md:pt-12">
-        <div className="relative aspect-square w-full overflow-hidden rounded-[16px] md:aspect-auto md:h-full md:min-h-[400px]">
+        <div className="metallic-border relative aspect-square w-full overflow-hidden rounded-[16px] md:aspect-auto md:h-full md:min-h-[400px]">
           {site.hero.portrait ? (
             <Image
               src={site.hero.portrait}

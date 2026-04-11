@@ -23,13 +23,15 @@ export function ActiveProjects() {
             >
               {p.image ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={p.image}
-                  alt={p.imageAlt}
-                  className="aspect-[16/9] w-full rounded-[16px] object-cover shadow-[0_4px_40px_#cfc8c433]"
-                />
+                <div className="metallic-border rounded-[16px]">
+                  <img
+                    src={p.image}
+                    alt={p.imageAlt}
+                    className="aspect-[16/9] w-full rounded-[16px] object-cover shadow-[0_4px_40px_#cfc8c433]"
+                  />
+                </div>
               ) : (
-                <div className="aspect-[16/9] w-full overflow-hidden rounded-[16px]">
+                <div className="metallic-border aspect-[16/9] w-full overflow-hidden rounded-[16px]">
                   <Placeholder label={p.title} />
                 </div>
               )}
