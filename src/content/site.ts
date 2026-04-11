@@ -37,7 +37,7 @@ export const site = {
     portrait: "/guil_prof_2026_1.jpg",
     portraitAlt: "Portrait of Guil",
     bio: [
-      "I\u2019m Guil, a creative director and brand designer based in Berlin. I partner with founders and small teams to turn rough ideas into products people actually want to use, from brand strategy to shipped pixels.",
+      "I\u2019m Guil, a creative director and senior designer based in Berlin. I partner with founders and small teams to turn rough ideas into products people actually want to use, from brand strategy to shipped pixels.",
       "My background spans creative direction at General Magic, co\u2011founding Regens Unite, and years of video and motion work at N26. These days I\u2019m drawn to projects at the intersection of design, community, and decentralized systems. Work that deepens our connection with each other and the world around us.",
     ],
     bioClosing: "Currently accepting new partnerships.",

@@ -18,9 +18,12 @@ export function CtaFooter({
         <h3 className="font-display text-[2rem] leading-tight text-ink md:text-[2.4rem]">
           {heading}
         </h3>
-        <h3 className="font-display text-[2rem] italic leading-tight text-ink md:text-[2.4rem]">
-          {sub}
-        </h3>
+        <div className="mt-4 inline-flex items-center gap-2">
+          <span className="pulse-dot inline-block h-2 w-2 rounded-full bg-green-500" />
+          <span className="font-caption text-[13px] font-medium uppercase tracking-[1.5px] text-muted">
+            {sub}
+          </span>
+        </div>
 
         <div className="mt-16 flex justify-center">
           <CtaButton

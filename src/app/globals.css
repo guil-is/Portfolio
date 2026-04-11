@@ -139,6 +139,11 @@ h1, h2, h3, h4, h5 {
   mask-composite: exclude;
   pointer-events: none;
   z-index: 1;
+  opacity: 0;
+}
+
+.dark .metallic-border::before {
+  opacity: 1;
 }
 
 /* -----------------------------------------------------------------------

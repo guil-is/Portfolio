@@ -26,7 +26,8 @@ export function Hero({
       </h1>
 
       <div className="grid grid-cols-1 items-stretch gap-10 pt-10 md:grid-cols-2 md:pt-12">
-        <div className="metallic-border relative aspect-square w-full overflow-hidden rounded-[16px] md:aspect-auto md:h-full md:min-h-[400px]">
+        <div className="metallic-border relative aspect-square w-full rounded-[16px] md:aspect-auto md:h-full md:min-h-[400px]">
+          <div className="absolute inset-0 overflow-hidden rounded-[16px]">
           {site.hero.portrait ? (
             <Image
               src={site.hero.portrait}
@@ -39,6 +40,7 @@ export function Hero({
           ) : (
             <Placeholder label="GM" aspect="fill" />
           )}
+          </div>
         </div>
 
         <div className="flex flex-col gap-5">
