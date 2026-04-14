@@ -2,7 +2,6 @@ import { Hero } from "@/components/Hero";
 import { ClientLogos } from "@/components/ClientLogos";
 import { ActiveProjects } from "@/components/ActiveProjects";
 import { Expertise } from "@/components/Expertise";
-import { HowWeWork } from "@/components/HowWeWork";
 import { PastWork } from "@/components/PastWork";
 import { CtaFooter } from "@/components/CtaFooter";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -41,7 +40,6 @@ export default async function Home() {
         <ClientLogos />
         <ActiveProjects />
         <Expertise />
-        <HowWeWork />
         <PastWork />
         <CtaFooter heading={bottomHeading} sub={bottomSub} />
       </main>

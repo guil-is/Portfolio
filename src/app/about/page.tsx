@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { CtaFooter } from "@/components/CtaFooter";
 import { Placeholder } from "@/components/Placeholder";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { HowWeWork } from "@/components/HowWeWork";
 
 export const metadata: Metadata = {
   title: site.about.metaTitle,
@@ -59,6 +60,8 @@ export default function AboutPage() {
             ))}
           </div>
         </section>
+
+        <HowWeWork />
 
         <section className="mx-auto w-full max-w-[800px] border-t border-rule py-16">
           <h2 className="font-display text-[2rem] leading-tight text-ink">
