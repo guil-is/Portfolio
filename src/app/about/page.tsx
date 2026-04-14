@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
-  const { hero, expertise, extendedLink } = site.about;
+  const { hero, expertise, extendedLink, whyIDoThis } = site.about;
 
   return (
     <>
@@ -41,6 +41,22 @@ export default function AboutPage() {
             <div className="md:pt-2">
               <Placeholder label="GM" aspect="square" />
             </div>
+          </div>
+        </section>
+
+        <section className="mx-auto w-full max-w-[800px] border-t border-rule py-16">
+          <h2 className="font-display text-[2rem] leading-tight text-ink">
+            {whyIDoThis.heading}
+          </h2>
+          <div className="flex flex-col gap-6 pt-8">
+            {whyIDoThis.paragraphs.map((p, i) => (
+              <p
+                key={i}
+                className="font-display text-[1.25rem] leading-[1.9rem] text-ink/85"
+              >
+                {p}
+              </p>
+            ))}
           </div>
         </section>
 

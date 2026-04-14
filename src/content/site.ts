@@ -40,12 +40,13 @@ export const site = {
       "I\u2019m Guil, a creative director and senior designer based in Berlin. I partner with founders and small teams to turn rough ideas into products people actually want to use, from brand strategy to shipped pixels.",
       "My background spans creative direction at General Magic, co\u2011founding Regens Unite, and years of video and motion work at N26. These days I\u2019m drawn to projects at the intersection of design, community, and decentralized systems. Work that deepens our connection with each other and the world around us.",
     ],
-    bioClosing: "Currently accepting new partnerships.",
+    bioClosing:
+      "Currently open to new partnerships. Best fit: mission\u2011driven teams at the earliest stages.",
     cta: { label: "let\u2019s talk", href: "https://cal.com/guil-is" },
   },
 
   trustedBy: {
-    label: "Trusted by",
+    label: "Clients & collaborators",
     viewAllHref: "/clients",
     viewAllLabel: "View all >",
     logos: [
@@ -92,7 +93,7 @@ export const site = {
   howIWork: {
     heading: "How I work",
     intro:
-      "I embed with your team as a design partner, not an agency, not a contractor. I treat every project like it\u2019s my own, and I move fast without cutting corners.",
+      "I work as a design co\u2011founder for your earliest phase: figuring out what the thing is and setting the visual bar, so by the time you bring on your first full\u2011time designer, they inherit a foundation, not a mess.",
     items: [
       {
         title: "Brand & Identity",
@@ -121,9 +122,35 @@ export const site = {
     ],
   },
 
+  howWeWork: {
+    heading: "How we\u2019ll work together",
+    intro:
+      "Every engagement moves through three phases. I specialize in the first two, and make myself replaceable by the third.",
+    phases: [
+      {
+        label: "Phase 1",
+        title: "Discovery & direction",
+        description:
+          "We figure out what the thing is. Brand strategy, design system foundation, key flows, visual direction. The fog\u2011clearing phase where ideas become tangible.",
+      },
+      {
+        label: "Phase 2",
+        title: "Shipping & iteration",
+        description:
+          "We ship. Settings screens, edge cases, onboarding, marketing site, launch assets. Tight loops with your engineers until the real product is live.",
+      },
+      {
+        label: "Phase 3",
+        title: "Handoff",
+        description:
+          "When it\u2019s time for your first full\u2011time designer, I help you hire them, onboard them, and set up a creative culture that outlasts my engagement.",
+      },
+    ],
+  },
+
   bottomCta: {
     heading: "Let\u2019s build something together.",
-    sub: "Currently accepting 1\u20132 new partnerships.",
+    sub: "Currently open to new partnerships.",
     cta: { label: "book a call", href: "https://cal.com/guil-is" },
   },
 
@@ -146,6 +173,13 @@ export const site = {
       ],
       portrait: "",
       portraitAlt: "Portrait of Guil",
+    },
+    whyIDoThis: {
+      heading: "Why I do this",
+      paragraphs: [
+        "What draws me to this work isn\u2019t the exit or the flag on the hill. It\u2019s the craft itself: the moment in a room with a whiteboard where rough ideas click into a direction, and design becomes the tool for figuring out what something actually wants to be.",
+        "I\u2019ve been practicing that craft for over a decade across brand, product, motion, and community. The best days are still the ones that begin with \u201Cso what if we\u2026\u201D. I\u2019d rather dedicate my life to that practice than to any single product or legacy.",
+      ],
     },
     expertise: [
       {
