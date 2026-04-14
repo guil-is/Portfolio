@@ -34,7 +34,7 @@ export const site = {
     "Design partner for early\u2011stage teams building at the edge of what\u2019s possible.",
 
   hero: {
-    portrait: "/guil_prof_2026_1.jpg",
+    portrait: "/guil_profilepic-01.jpg",
     portraitAlt: "Portrait of Guil",
     bio: [
       "I\u2019m Guil, a creative director and senior designer based in Berlin. I partner with founders and small teams to turn rough ideas into products people actually want to use, from brand strategy to shipped pixels.",
@@ -98,7 +98,7 @@ export const site = {
       {
         title: "Brand & Identity",
         description:
-          "Strategy, naming, visual identity, brand systems. I\u2019ve shaped the brand vision for everything from solo founders to large organisations like N26 and Burger King. The goal is always the same: find the story that makes people care.",
+          "Strategy, naming, visual identity, brand systems. I\u2019ve shaped the brand vision for everything from solo founders to large organisations. The goal is always the same: find the story that makes people care.",
         icon: "map" as const,
       },
       {
