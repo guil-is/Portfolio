@@ -35,7 +35,7 @@ export function Hero({
               fill
               sizes="(min-width: 768px) 400px, 100vw"
               priority
-              className="object-cover object-top"
+              className="object-cover object-[center_25%]"
             />
           ) : (
             <Placeholder label="GM" aspect="fill" />
