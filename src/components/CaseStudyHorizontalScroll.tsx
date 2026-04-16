@@ -81,12 +81,24 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
       const translatePx = scrollDistance * progress;
       track.style.transform = `translate3d(-${translatePx}px, 0, 0)`;
 
-      // Soft fade driven by the section's position relative to the
-      // viewport. Entry: fade in as the section rises into view from
-      // below (rect.top going from viewportH → 0). Exit: fade out as
-      // the section leaves above (rect.bottom going from viewportH → 0).
-      // During the lock (rect.top ≤ 0 and rect.bottom ≥ viewportH) the
-      // fade stays at 1.
+      // Per-slide horizontal fade. Each slide's opacity is driven by
+      // how much of it is inside the viewport: fully visible → 1,
+      // fully off-screen → 0.15. This gives a natural spotlight effect
+      // on whichever slide is centered and dims the ones peeking at
+      // the edges.
+      const slides = track.children;
+      for (let i = 0; i < slides.length; i++) {
+        const slide = slides[i] as HTMLElement;
+        const sr = slide.getBoundingClientRect();
+        const overlapL = Math.max(sr.left, 0);
+        const overlapR = Math.min(sr.right, viewportW);
+        const visible = sr.width > 0
+          ? Math.max(0, overlapR - overlapL) / sr.width
+          : 0;
+        slide.style.opacity = (0.15 + visible * 0.85).toFixed(3);
+      }
+
+      // Section-level entry/exit fade applied to the sticky container.
       let fadeOpacity = 1;
       if (rect.top > 0) {
         fadeOpacity = Math.max(0, 1 - rect.top / viewportH);

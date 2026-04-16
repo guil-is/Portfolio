@@ -483,7 +483,7 @@ function Engagement() {
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>Engagement</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
-        <CenterFocus minOpacity={0} falloff={0.7} minScale={0.98} disableBelowMd>
+        <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
           <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
             Where do you want to start?
           </h2>
@@ -491,13 +491,18 @@ function Engagement() {
             Two starting points depending on where Odyssey is right now. Both
             are month-to-month and can flex after the first month.
           </p>
+        </CenterFocus>
 
-          <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2">
-            {tiers.map((tier) => (
-              <div
-                key={tier.label}
-                className="flex flex-col gap-8 rounded-[16px] border border-rule bg-transparent p-8"
-              >
+        <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2">
+          {tiers.map((tier) => (
+            <CenterFocus
+              key={tier.label}
+              minOpacity={0.15}
+              falloff={0.5}
+              minScale={0.98}
+              disableBelowMd
+            >
+              <div className="flex flex-col gap-8 rounded-[16px] border border-rule bg-transparent p-8">
                 <div>
                   <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
                     {tier.label}
@@ -527,9 +532,11 @@ function Engagement() {
                   {tier.response}
                 </p>
               </div>
-            ))}
-          </div>
+            </CenterFocus>
+          ))}
+        </div>
 
+        <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
           <p className="mt-10 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
             Both options are month-to-month. Scope is reviewed after the first
             month and adjusted if needed. If you&rsquo;re unsure which fits,
@@ -549,7 +556,7 @@ function NextStep() {
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>Next step</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
-        <CenterFocus minOpacity={0} falloff={0.7} minScale={0.98}>
+        <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99}>
           <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
             Ready to move?
           </h2>
@@ -559,12 +566,15 @@ function NextStep() {
             there we agree on a starting point and I can be live within a
             week.
           </p>
+        </CenterFocus>
 
+        <CenterFocus minOpacity={0.15} falloff={0.5} minScale={0.98}>
           <div className="mt-10">
             <CtaButton href="mailto:guil@guil.is" label="Get in touch" />
           </div>
+        </CenterFocus>
 
-          {/* Secondary action: link to full portfolio */}
+        <CenterFocus minOpacity={0.15} falloff={0.5} minScale={0.99}>
           <div className="mt-16 flex flex-wrap items-center gap-x-10 gap-y-5 border-t border-rule-soft pt-10">
             <a
               href="https://guil.is"
