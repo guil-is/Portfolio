@@ -215,12 +215,27 @@ h1, h2, h3, h4, h5 {
   animation-play-state: paused;
 }
 
+/* -----------------------------------------------------------------------
+ * Scroll hint — soft, looping vertical bounce for the down-chevron at
+ * the bottom of the cover screen. Subtle, not distracting.
+ * ---------------------------------------------------------------------*/
+
+@keyframes scroll-hint {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50%      { transform: translateY(6px); opacity: 1; }
+}
+
+.scroll-hint {
+  animation: scroll-hint 2.4s ease-in-out infinite;
+}
+
 /* Respect reduced motion preference — skip entrance and scroll animations. */
 @media (prefers-reduced-motion: reduce) {
   .page-fade-in,
   .intro-rise,
   .pulse-dot,
-  .marquee-track {
+  .marquee-track,
+  .scroll-hint {
     animation: none;
   }
   .fade-in-on-scroll {

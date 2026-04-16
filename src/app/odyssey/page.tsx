@@ -6,6 +6,7 @@ import {
   Hammer,
   LayoutGrid,
   Compass,
+  ChevronDown,
   type LucideIcon,
 } from "lucide-react";
 import { PasswordGate } from "@/components/PasswordGate";
@@ -42,11 +43,11 @@ export default function OdysseyPage() {
       </div>
 
       <PasswordGate password={PASSWORD}>
-        <main className="page-fade-in pb-40 pt-12 md:pt-20">
+        <main className="page-fade-in pb-40">
           <Header />
 
           <CaseStudy
-            number="01"
+            sectionLabel="Recent work · 01"
             meta="Fractional Design Partner · 10 hrs/week · Pre-launch"
             title="Clawbank"
             problem="A technically real product with no visual credibility. In crypto, perception precedes traction, they needed to look fundable before they could become fundable."
@@ -58,7 +59,7 @@ export default function OdysseyPage() {
           />
 
           <CaseStudy
-            number="02"
+            sectionLabel="Recent work · 02"
             meta="Full Rebrand · Web3 funding & intelligence platform"
             title="Thrive"
             problem="Make a VC-facing crypto platform feel credible to an audience conditioned to expect scams. Complex product, stigmatized category, small team."
@@ -76,34 +77,74 @@ export default function OdysseyPage() {
 }
 
 // ---------------------------------------------------------------------
-// Header — always visible on load, no fade.
+// Header — fills 90vh, content vertically centered, no scroll-linked
+// fade (always visible on load). Subtle bouncing chevron at the bottom
+// hints at the scroll-driven content below.
 // ---------------------------------------------------------------------
 function Header() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 pb-28 md:px-10 md:pb-40">
-      <div className="mx-auto w-full max-w-[960px]">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-5">
-          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-            Prepared for Nick DeNuzzo & Chris · Odyssey
-          </p>
-          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-            April 2026
-          </p>
-        </div>
-
-        <h1 className="intro-rise mt-16 font-display text-[3rem] font-bold leading-[1.05] text-ink md:text-[4rem]">
-          Guil Maueler
-        </h1>
-        <p className="mt-4 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-          Creative Director & Senior Brand Designer
+    <section className="relative flex min-h-[90vh] flex-col px-6 md:px-10">
+      {/* Top meta line */}
+      <div className="mx-auto mt-10 flex w-full max-w-[960px] flex-wrap items-center justify-between gap-3 border-b border-rule pb-5 md:mt-12">
+        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          Prepared for Nick DeNuzzo & Chris · Odyssey
         </p>
-
-        <p className="mt-10 max-w-[560px] text-[1rem] leading-[1.7rem] text-ink">
-          14+ years of visual identity, design systems, and product interfaces.
-          Two recent projects, and two ways to work together.
+        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          April 2026
         </p>
       </div>
+
+      {/* Centered hero content */}
+      <div className="mx-auto flex w-full max-w-[960px] flex-1 flex-col justify-center py-16">
+        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          A proposal from Guil Maueler
+        </p>
+        <h1 className="intro-rise mt-5 font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:text-[4rem]">
+          Design partner for Odyssey
+        </h1>
+
+        <p className="mt-10 max-w-[640px] text-[1.05rem] leading-[1.75rem] text-ink md:text-[1.15rem]">
+          You&rsquo;re building the on-ramp most of crypto is missing: a place
+          where new entrants learn to assess risk, prepare with intent, and
+          participate without getting burned. The product is real; the
+          challenge is making it feel as serious and trustworthy as it is, in
+          a category most people approach with skepticism.
+        </p>
+        <p className="mt-5 max-w-[640px] text-[1.05rem] leading-[1.75rem] text-ink md:text-[1.15rem]">
+          That&rsquo;s a design problem before it&rsquo;s a product problem,
+          and it&rsquo;s the one I&rsquo;ve spent the last two years solving
+          for clients in the same space. This is what that could look like for
+          Odyssey.
+        </p>
+      </div>
+
+      {/* Scroll hint */}
+      <div className="flex flex-col items-center gap-3 pb-10 text-muted">
+        <span className="font-caption text-[10px] font-medium uppercase tracking-[2px]">
+          Scroll
+        </span>
+        <ChevronDown
+          className="scroll-hint h-5 w-5"
+          strokeWidth={1.25}
+          aria-hidden
+        />
+      </div>
     </section>
+  );
+}
+
+// ---------------------------------------------------------------------
+// SectionLabel — soft top divider + small all-caps caption, mirrors the
+// homepage's SectionHeading pattern. Sits at the top of each major
+// section to create rhythm and orientation.
+// ---------------------------------------------------------------------
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mx-auto mb-12 w-full max-w-[1120px] border-t border-rule-soft pt-5 md:mb-16">
+      <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+        {children}
+      </p>
+    </div>
   );
 }
 
@@ -111,7 +152,7 @@ function Header() {
 // Case study — 2-column layout. Images left, info right.
 // ---------------------------------------------------------------------
 type CaseStudyProps = {
-  number: string;
+  sectionLabel: string;
   meta: string;
   title: string;
   problem: string;
@@ -123,7 +164,7 @@ type CaseStudyProps = {
 };
 
 function CaseStudy({
-  number,
+  sectionLabel,
   meta,
   title,
   problem,
@@ -134,7 +175,8 @@ function CaseStudy({
   relevance,
 }: CaseStudyProps) {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+      <SectionLabel>{sectionLabel}</SectionLabel>
       <CenterFocus minOpacity={0} falloff={0.8} minScale={0.98}>
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[1fr_1fr] md:items-center md:gap-16 lg:gap-20">
           {/* Left — images */}
@@ -143,7 +185,7 @@ function CaseStudy({
           {/* Right — info */}
           <div className="flex flex-col gap-7">
             <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-              {number} · {meta}
+              {meta}
             </p>
             <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
               {title}
@@ -286,7 +328,8 @@ const howItems = [
 
 function HowIWork() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+      <SectionLabel>Approach</SectionLabel>
       <CenterFocus minOpacity={0.25} falloff={0.6} minScale={0.99}>
         <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
           How I work
@@ -358,56 +401,60 @@ const tiers = [
 
 function Engagement() {
   return (
-    <section className="mx-auto w-full max-w-[960px] px-6 py-24 md:px-10 md:py-32">
-      <CenterFocus minOpacity={0} falloff={0.7} minScale={0.98}>
-        <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-          Two ways to work together
-        </h2>
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+      <SectionLabel>Engagement</SectionLabel>
+      <div className="mx-auto w-full max-w-[960px]">
+        <CenterFocus minOpacity={0} falloff={0.7} minScale={0.98}>
+          <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
+            Two ways to work together
+          </h2>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2">
-          {tiers.map((tier) => (
-            <div
-              key={tier.label}
-              className="flex flex-col gap-8 rounded-[16px] border border-rule bg-transparent p-8"
-            >
-              <div>
-                <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                  {tier.label}
-                </p>
-                <p className="mt-4 font-display text-[2rem] font-bold leading-none text-ink md:text-[2.5rem]">
-                  {tier.price}
-                  <span className="font-caption text-[13px] font-medium uppercase tracking-[1.5px] text-muted">
-                    {" "}
-                    / month
-                  </span>
-                </p>
-                <p className="mt-3 text-[0.9rem] leading-[1.5rem] text-muted">
-                  {tier.cadence}
-                </p>
-              </div>
-
-              <ul className="flex flex-col gap-3 border-t border-rule-soft pt-6">
-                {tier.includes.map((item, i) => (
-                  <li
-                    key={i}
-                    className="grid grid-cols-[16px_1fr] gap-3 text-[0.95rem] leading-[1.5rem] text-ink"
-                  >
-                    <span aria-hidden className="pt-[0.35rem] text-muted">
-                      —
+          <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2">
+            {tiers.map((tier) => (
+              <div
+                key={tier.label}
+                className="flex flex-col gap-8 rounded-[16px] border border-rule bg-transparent p-8"
+              >
+                <div>
+                  <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                    {tier.label}
+                  </p>
+                  <p className="mt-4 font-display text-[2rem] font-bold leading-none text-ink md:text-[2.5rem]">
+                    {tier.price}
+                    <span className="font-caption text-[13px] font-medium uppercase tracking-[1.5px] text-muted">
+                      {" "}
+                      / month
                     </span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+                  </p>
+                  <p className="mt-3 text-[0.9rem] leading-[1.5rem] text-muted">
+                    {tier.cadence}
+                  </p>
+                </div>
 
-        <p className="mt-10 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
-          Both tiers are month-to-month. Scope reviewed after month one. First
-          month of Design Partner includes a brand audit at no extra charge.
-        </p>
-      </CenterFocus>
+                <ul className="flex flex-col gap-3 border-t border-rule-soft pt-6">
+                  {tier.includes.map((item, i) => (
+                    <li
+                      key={i}
+                      className="grid grid-cols-[16px_1fr] gap-3 text-[0.95rem] leading-[1.5rem] text-ink"
+                    >
+                      <span aria-hidden className="pt-[0.35rem] text-muted">
+                        —
+                      </span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-10 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
+            Both tiers are month-to-month. Scope reviewed after month one.
+            First month of Design Partner includes a brand audit at no extra
+            charge.
+          </p>
+        </CenterFocus>
+      </div>
     </section>
   );
 }
@@ -417,26 +464,29 @@ function Engagement() {
 // ---------------------------------------------------------------------
 function NextStep() {
   return (
-    <section className="mx-auto w-full max-w-[960px] px-6 py-24 md:px-10 md:py-32">
-      <CenterFocus minOpacity={0} falloff={0.7} minScale={0.98}>
-        <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-          Ready to move?
-        </h2>
-        <p className="mt-6 max-w-[620px] text-[1rem] leading-[1.7rem] text-ink">
-          Next step is a 30-minute call. I&rsquo;ll come with specific
-          directions for the educational hub and the risk assessment UI,
-          concrete, not vague. We agree on scope and I can be live within a
-          week.
-        </p>
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+      <SectionLabel>Next step</SectionLabel>
+      <div className="mx-auto w-full max-w-[960px]">
+        <CenterFocus minOpacity={0} falloff={0.7} minScale={0.98}>
+          <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
+            Ready to move?
+          </h2>
+          <p className="mt-6 max-w-[620px] text-[1rem] leading-[1.7rem] text-ink">
+            Next step is a 30-minute call. I&rsquo;ll come with specific
+            directions for the educational hub and the risk assessment UI,
+            concrete, not vague. We agree on scope and I can be live within a
+            week.
+          </p>
 
-        <div className="mt-10">
-          <CtaButton href="mailto:guil@guil.is" label="Get in touch" />
-        </div>
+          <div className="mt-10">
+            <CtaButton href="mailto:guil@guil.is" label="Get in touch" />
+          </div>
 
-        <p className="mt-20 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-          guil.is
-        </p>
-      </CenterFocus>
+          <p className="mt-20 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+            guil.is
+          </p>
+        </CenterFocus>
+      </div>
     </section>
   );
 }
