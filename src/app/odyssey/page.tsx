@@ -355,13 +355,25 @@ function MobileGallery({ images, alt }: { images: string[]; alt: string }) {
           key={src}
           className="relative aspect-[4/3] w-[85%] shrink-0 snap-start overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
         >
-          <Image
-            src={src}
-            alt={`${alt} ${i + 1}`}
-            fill
-            sizes="85vw"
-            className="object-cover"
-          />
+          {/\.(mp4|webm|mov)$/i.test(src) ? (
+            <video
+              src={src}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="h-full w-full object-cover"
+              aria-label={`${alt} ${i + 1}`}
+            />
+          ) : (
+            <Image
+              src={src}
+              alt={`${alt} ${i + 1}`}
+              fill
+              sizes="85vw"
+              className="object-cover"
+            />
+          )}
         </div>
       ))}
     </div>

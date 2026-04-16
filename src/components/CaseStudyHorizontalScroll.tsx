@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useEffect, useRef, type ReactNode } from "react";
 
+const isVideo = (src: string) => /\.(mp4|webm|mov)$/i.test(src);
+
 type Props = {
   /** The half-width first slide — case study title, problem, stat, quote, relevance. */
   info: ReactNode;
@@ -135,8 +137,10 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
             <div className="w-full max-w-[520px]">{info}</div>
           </div>
 
-          {/* Image slides — 100vw each, with 5vw internal padding so the
-              image visual is ~90vw centered in each slide. */}
+          {/* Media slides — 100vw each, with 5vw internal padding so the
+              visual is ~90vw centered in each slide. Image files render
+              as next/image; video files render as autoplaying muted
+              inline <video>. */}
           {images.length === 0 ? (
             <PlaceholderSlide alt={alt} />
           ) : (
@@ -146,13 +150,25 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
                 className="flex h-full w-screen shrink-0 items-center px-[5vw] py-[10vh]"
               >
                 <div className="relative h-full w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
-                  <Image
-                    src={src}
-                    alt={`${alt} ${i + 1}`}
-                    fill
-                    sizes="90vw"
-                    className="object-cover"
-                  />
+                  {isVideo(src) ? (
+                    <video
+                      src={src}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="h-full w-full object-cover"
+                      aria-label={`${alt} ${i + 1}`}
+                    />
+                  ) : (
+                    <Image
+                      src={src}
+                      alt={`${alt} ${i + 1}`}
+                      fill
+                      sizes="90vw"
+                      className="object-cover"
+                    />
+                  )}
                 </div>
               </div>
             ))
