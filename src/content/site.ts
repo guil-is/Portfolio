@@ -34,7 +34,7 @@ export const site = {
     "Design partner for early\u2011stage teams building at the edge of what\u2019s possible.",
 
   hero: {
-    portrait: "/IMG_2536.jpeg",
+    portrait: "/guil_prof_2026_2.jpeg",
     portraitAlt: "Portrait of Guil",
     bio: [
       "I\u2019m Guil, a creative director and senior designer based in Berlin. I partner with founders and small teams to turn rough ideas into products people actually want to use, from brand strategy to shipped pixels.",

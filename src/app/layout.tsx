@@ -25,9 +25,9 @@ export const metadata: Metadata = {
     siteName: site.name,
     images: [
       {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
+        url: "/guil_og_image.jpg",
+        width: 1920,
+        height: 1080,
         alt: "Guil Maueler | Fractional Design Partner",
       },
     ],
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: site.metaTitle,
     description: site.description,
     creator: "@guil_is",
-    images: ["/og-image.jpg"],
+    images: ["/guil_og_image.jpg"],
   },
   icons: {
     icon: "/favicon.ico",
