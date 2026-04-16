@@ -63,11 +63,19 @@ export default function OdysseyPage() {
 
           <CaseStudy
             sectionLabel="Recent work · 02"
-            meta="Full Rebrand · Web3 funding & intelligence platform"
+            meta="Lead Designer · Brand, Design System & Product UI · 2025\u20132026"
             title="Thrive"
-            problem="Make a VC-facing crypto platform feel credible to an audience conditioned to expect scams. Complex product, stigmatized category, small team."
+            problem={[
+              "Thrive had a genuinely strong idea: a value layer for Web3 connecting proof of work, capital allocation, and ecosystem growth. The problem was that almost no one could explain it clearly \u2014 including the team. Positioning was fragmented. The brand leaned on Web3 buzzwords that meant nothing to outsiders. And inside the product, different modules felt like separate tools that happened to share a codebase.",
+              "Strong idea. Weak articulation. No coherent system holding it together.",
+            ]}
+            whatIDid={[
+              "Ran workshops and stakeholder interviews to map perception gaps, then built a Brand Canvas from scratch. Repositioned Thrive as \u201ccrypto\u2019s value layer\u201d with Proof of Value as a new primitive, not a feature. Defined voice, tone, messaging pillars, and archetypes. Pushed visual direction away from default crypto aesthetics toward something more ownable.",
+              "On the product side: audited UI across all key flows, standardised components across dashboards, and built a shared design system as a source of truth. Overhauled the core product areas: Decision Cockpit for investor flows, Verification Hub for founder flows, Power List and project pages. The work wasn\u2019t just direction. I was in Figma doing actual UI, copy, and system work alongside the team.",
+            ]}
+            whatChanged="The team stopped asking \u201cwhat are we building?\u201d and started asking \u201chow do we scale this?\u201d The product started to feel like one system. New features could be built faster with less rework. The \u201cvalue layer\u201d framing opened strategic conversations that hadn\u2019t been possible before."
             images={thriveImages}
-            relevance="Same core challenge: take something the mainstream doesn't fully trust yet, and design it into something they do."
+            relevance="Simultaneously brand and product. Fast-moving small team, a founder, a product lead, and a growth lead. All with strong opinions and limited time. Async-heavy, fast iteration, no room for slow feedback cycles. Similar structure as Odyssey."
           />
 
           <HowIWork />
@@ -154,12 +162,14 @@ type CaseStudyProps = {
   sectionLabel: string;
   meta: string;
   title: string;
-  problem: string;
-  whatIShipped?: string;
+  problem: Body;
+  whatIShipped?: Body;
+  whatIDid?: Body;
+  whatChanged?: Body;
   images: string[];
   stat?: string;
   statLabel?: string;
-  relevance: string;
+  relevance: Body;
 };
 
 function CaseStudy({
@@ -168,6 +178,8 @@ function CaseStudy({
   title,
   problem,
   whatIShipped,
+  whatIDid,
+  whatChanged,
   images,
   stat,
   statLabel,
@@ -179,6 +191,8 @@ function CaseStudy({
       title={title}
       problem={problem}
       whatIShipped={whatIShipped}
+      whatIDid={whatIDid}
+      whatChanged={whatChanged}
       stat={stat}
       statLabel={statLabel}
       relevance={relevance}
@@ -210,22 +224,70 @@ function CaseStudy({
 // ---------------------------------------------------------------------
 // CaseStudyInfo — shared content of the first (half-width) desktop
 // slide and the top of the mobile stacked layout.
+//
+// Body-text fields accept string | string[]. Passing an array renders
+// each element as its own paragraph with a small gap, for copy that
+// benefits from paragraph breaks.
 // ---------------------------------------------------------------------
+type Body = string | string[];
+
 type InfoProps = {
   meta: string;
   title: string;
-  problem: string;
-  whatIShipped?: string;
+  problem: Body;
+  whatIShipped?: Body;
+  whatIDid?: Body;
+  whatChanged?: Body;
   stat?: string;
   statLabel?: string;
-  relevance: string;
+  relevance: Body;
 };
+
+function Paragraphs({ body }: { body: Body }) {
+  const paras = Array.isArray(body) ? body : [body];
+  return (
+    <div className="flex flex-col gap-4">
+      {paras.map((p, i) => (
+        <p key={i} className="text-[1rem] leading-[1.7rem] text-ink">
+          {p}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+function LabeledBlock({
+  label,
+  body,
+  withDivider = false,
+}: {
+  label: string;
+  body: Body;
+  withDivider?: boolean;
+}) {
+  return (
+    <div
+      className={
+        withDivider ? "mt-2 border-t border-rule-soft pt-6" : undefined
+      }
+    >
+      <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+        {label}
+      </p>
+      <div className="mt-3">
+        <Paragraphs body={body} />
+      </div>
+    </div>
+  );
+}
 
 function CaseStudyInfo({
   meta,
   title,
   problem,
   whatIShipped,
+  whatIDid,
+  whatChanged,
   stat,
   statLabel,
   relevance,
@@ -238,17 +300,18 @@ function CaseStudyInfo({
       <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
         {title}
       </h2>
-      <p className="text-[1rem] leading-[1.7rem] text-ink">{problem}</p>
+      <Paragraphs body={problem} />
 
       {whatIShipped ? (
-        <div className="mt-2 border-t border-rule-soft pt-6">
-          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-            What I shipped
-          </p>
-          <p className="mt-3 text-[1rem] leading-[1.7rem] text-ink">
-            {whatIShipped}
-          </p>
-        </div>
+        <LabeledBlock label="What I shipped" body={whatIShipped} withDivider />
+      ) : null}
+
+      {whatIDid ? (
+        <LabeledBlock label="What I did" body={whatIDid} />
+      ) : null}
+
+      {whatChanged ? (
+        <LabeledBlock label="What changed" body={whatChanged} />
       ) : null}
 
       {stat ? (
@@ -264,14 +327,11 @@ function CaseStudyInfo({
         </div>
       ) : null}
 
-      <div className="mt-2 border-t border-rule-soft pt-6">
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-          Why it matters for Odyssey
-        </p>
-        <p className="mt-3 text-[1rem] leading-[1.7rem] text-ink">
-          {relevance}
-        </p>
-      </div>
+      <LabeledBlock
+        label="Why it matters for Odyssey"
+        body={relevance}
+        withDivider
+      />
     </div>
   );
 }
