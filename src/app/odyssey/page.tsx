@@ -15,7 +15,6 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { CtaButton } from "@/components/CtaButton";
 import { CenterFocus } from "@/components/CenterFocus";
 import { CaseStudyHorizontalScroll } from "@/components/CaseStudyHorizontalScroll";
-import { ShareButton } from "@/components/ShareButton";
 import { getGalleryImages } from "@/lib/gallery";
 
 const PASSWORD = "psilocybin";
@@ -561,9 +560,8 @@ function NextStep() {
             <CtaButton href="mailto:guil@guil.is" label="Get in touch" />
           </div>
 
-          {/* Secondary actions: share this proposal + link to full portfolio */}
+          {/* Secondary action: link to full portfolio */}
           <div className="mt-16 flex flex-wrap items-center gap-x-10 gap-y-5 border-t border-rule-soft pt-10">
-            <ShareButton />
             <a
               href="https://guil.is"
               target="_blank"
