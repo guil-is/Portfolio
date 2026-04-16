@@ -213,6 +213,17 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
               </div>
             ))
           )}
+
+          {/* Trailing spacer — extends the track so the last slide's
+              visual centers horizontally in the viewport at max scroll
+              instead of butting up against the right edge. */}
+          <div
+            className="shrink-0"
+            style={{
+              width: "calc((100vw - min(90vw, 80vh * 16 / 9)) / 3)",
+            }}
+            aria-hidden
+          />
         </div>
       </div>
     </section>
