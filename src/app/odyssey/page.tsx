@@ -65,8 +65,10 @@ export default function OdysseyPage() {
             meta="Lead Designer · Brand, Design System & Product UI · 2025–2026"
             title="Thrive"
             problem="Strong idea, weak articulation. The brand meant nothing to outsiders, and the product felt like separate tools that happened to share a codebase."
-            whatIDid="Full rebrand, design system, and product UI overhaul. Brand strategy alongside the team. AI integration."
-            whatChanged="Team reported working at a higher efficiency. The product started to feel like one system. New features could be built faster, with less rework."
+            whatIShipped={[
+              "Full rebrand, design system, and product UI overhaul. Brand strategy alongside the team. AI integration.",
+              "Team reported working at a higher efficiency. The product started to feel like one system. New features could be built faster, with less rework.",
+            ]}
             images={thriveImages}
             relevance="Brand and product simultaneously. Fast-moving small team. Async-heavy, fast iteration, no room for slow feedback cycles. Similar structure as Odyssey."
           />
