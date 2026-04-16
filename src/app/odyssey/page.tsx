@@ -104,22 +104,22 @@ function Header() {
           Design partner for Odyssey
         </h1>
 
-        <p className="mt-10 max-w-[640px] text-[1.05rem] leading-[1.75rem] text-ink md:text-[1.15rem]">
+        <p className="mt-10 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
           You&rsquo;re not looking for an agency or a full-time hire. You need
           an embedded design partner who can work on-demand with Nick and
           Chris: someone fast enough to keep up with a product roadmap
           that&rsquo;s moving, and strategic enough to shape new surfaces, not
-          just execute on them. The risk assessment tool, the prep courses,
-          the educational hub. These aren&rsquo;t maintenance tasks.
-          They&rsquo;re positioning decisions. That&rsquo;s where I work best.
+          just execute on them.
+        </p>
+        <p className="mt-5 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
+          The risk assessment tool, the prep courses, the educational hub.
+          These aren&rsquo;t maintenance tasks. They&rsquo;re positioning
+          decisions. That&rsquo;s where I work best.
         </p>
       </div>
 
       {/* Scroll hint */}
-      <div className="flex flex-col items-center gap-3 pb-10 text-muted">
-        <span className="font-caption text-[10px] font-medium uppercase tracking-[2px]">
-          Scroll
-        </span>
+      <div className="flex justify-center pb-10 text-muted">
         <ChevronDown
           className="scroll-hint h-5 w-5"
           strokeWidth={1.25}
@@ -328,37 +328,31 @@ const iconMap: Record<string, LucideIcon> = {
 
 const howItems = [
   {
-    number: "01",
     icon: "users",
     title: "Shared ownership",
     body: "Whether I work independently or integrate with your team, everyone comes along.",
   },
   {
-    number: "02",
     icon: "zap",
     title: "I work fast",
     body: "Quick iteration allows us to zoom through explorations until something feels right.",
   },
   {
-    number: "03",
     icon: "video",
     title: "Show and tell",
     body: "I frequently share work in progress via screen recordings with voice over.",
   },
   {
-    number: "04",
     icon: "hammer",
     title: "Bias for action",
     body: "I prefer tangible artifacts over lengthy documents that go ignored.",
   },
   {
-    number: "05",
     icon: "grid",
     title: "I work in systems",
     body: "I create reusable components whether it's a feature or a design system.",
   },
   {
-    number: "06",
     icon: "compass",
     title: "Design is thinking",
     body: "I explore divergent solutions. The more the merrier.",
@@ -368,14 +362,9 @@ const howItems = [
 function HowIWork() {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 pb-20 md:px-10 md:pb-28">
-      <SectionLabel>Approach</SectionLabel>
-      <CenterFocus minOpacity={0.25} falloff={0.6} minScale={0.99}>
-        <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-          How I work
-        </h2>
-      </CenterFocus>
+      <SectionLabel>My approach</SectionLabel>
 
-      <div className="mt-12 grid grid-cols-1 gap-x-12 gap-y-4 md:mt-16 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-x-12 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
         {howItems.map((item) => {
           const Icon = iconMap[item.icon] ?? Compass;
           return (
@@ -386,12 +375,7 @@ function HowIWork() {
               minScale={0.97}
             >
               <div className="flex flex-col gap-3 py-8">
-                <div className="flex items-center gap-3">
-                  <Icon className="h-5 w-5 text-ink" strokeWidth={1.75} />
-                  <span className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                    {item.number}
-                  </span>
-                </div>
+                <Icon className="h-5 w-5 text-ink" strokeWidth={1.75} />
                 <h6 className="font-caption text-[13px] font-semibold uppercase tracking-[1.5px] text-ink">
                   {item.title}
                 </h6>
@@ -416,23 +400,15 @@ const tiers = [
     label: "Start focused",
     price: "$4,800",
     cadence: "~10 hrs/week",
-    body: [
-      "For teams that want to move carefully, establish a working rhythm, and see the collaboration in action before committing to bigger product work.",
-      "In practice: site iterations, campaign and content assets, design QA on new features, fast turnaround on requests. Embedded design thinking from day one, scoped to what's most immediately useful.",
-    ],
+    body: "If you want to establish a working rhythm before moving to bigger product work. Site iterations, campaign assets, design QA, fast turnaround. You get embedded design thinking from day one, scoped to what's most immediately useful.",
     response: "Response time: 48 hours",
-    recommended: false,
   },
   {
     label: "Start building",
     price: "$8,800",
     cadence: "~20 hrs/week",
-    body: [
-      "For teams that are ready to move on new product surfaces now. The risk assessment tool, prep courses, and educational hub all need design thinking from the start, not squeezed into spare hours.",
-      "In practice: everything above, plus dedicated design on new product initiatives, brand system ownership, and a weekly live sync with Nick and Chris.",
-    ],
+    body: "If you are ready to move on new product surfaces immediately. The risk assessment tool, prep courses, and educational hub all need design thinking from the start. This scope includes dedicated design on new product initiatives and ownership of the design system as Odyssey scales.",
     response: "Response time: 24 hours",
-    recommended: true,
   },
 ];
 
@@ -454,18 +430,8 @@ function Engagement() {
             {tiers.map((tier) => (
               <div
                 key={tier.label}
-                className={`relative flex flex-col gap-8 rounded-[16px] border p-8 ${
-                  tier.recommended
-                    ? "border-ink bg-card/30"
-                    : "border-rule bg-transparent"
-                }`}
+                className="flex flex-col gap-8 rounded-[16px] border border-rule bg-transparent p-8"
               >
-                {tier.recommended ? (
-                  <span className="absolute -top-3 left-6 inline-flex items-center rounded-full bg-ink px-3 py-1 font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-bg">
-                    Recommended
-                  </span>
-                ) : null}
-
                 <div>
                   <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
                     {tier.label}
@@ -482,16 +448,9 @@ function Engagement() {
                   </p>
                 </div>
 
-                <div className="flex flex-col gap-4 border-t border-rule-soft pt-6">
-                  {tier.body.map((para, i) => (
-                    <p
-                      key={i}
-                      className="text-[0.95rem] leading-[1.6rem] text-ink"
-                    >
-                      {para}
-                    </p>
-                  ))}
-                </div>
+                <p className="border-t border-rule-soft pt-6 text-[0.95rem] leading-[1.6rem] text-ink">
+                  {tier.body}
+                </p>
 
                 <p className="mt-auto font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
                   {tier.response}
