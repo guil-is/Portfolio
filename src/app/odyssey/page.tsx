@@ -63,19 +63,13 @@ export default function OdysseyPage() {
 
           <CaseStudy
             sectionLabel="Recent work · 02"
-            meta="Lead Designer · Brand, Design System & Product UI · 2025\u20132026"
+            meta="Lead Designer · Brand, Design System & Product UI · 2025–2026"
             title="Thrive"
-            problem={[
-              "Thrive had a genuinely strong idea: a value layer for Web3 connecting proof of work, capital allocation, and ecosystem growth. The problem was that almost no one could explain it clearly \u2014 including the team. Positioning was fragmented. The brand leaned on Web3 buzzwords that meant nothing to outsiders. And inside the product, different modules felt like separate tools that happened to share a codebase.",
-              "Strong idea. Weak articulation. No coherent system holding it together.",
-            ]}
-            whatIDid={[
-              "Ran workshops and stakeholder interviews to map perception gaps, then built a Brand Canvas from scratch. Repositioned Thrive as \u201ccrypto\u2019s value layer\u201d with Proof of Value as a new primitive, not a feature. Defined voice, tone, messaging pillars, and archetypes. Pushed visual direction away from default crypto aesthetics toward something more ownable.",
-              "On the product side: audited UI across all key flows, standardised components across dashboards, and built a shared design system as a source of truth. Overhauled the core product areas: Decision Cockpit for investor flows, Verification Hub for founder flows, Power List and project pages. The work wasn\u2019t just direction. I was in Figma doing actual UI, copy, and system work alongside the team.",
-            ]}
-            whatChanged="The team stopped asking \u201cwhat are we building?\u201d and started asking \u201chow do we scale this?\u201d The product started to feel like one system. New features could be built faster with less rework. The \u201cvalue layer\u201d framing opened strategic conversations that hadn\u2019t been possible before."
+            problem="Strong idea, weak articulation. The brand leaned on buzzwords that meant nothing to outsiders, and inside the product, different modules felt like separate tools that happened to share a codebase."
+            whatIDid={`Built a Brand Canvas from scratch, repositioned Thrive as "crypto's value layer," and pushed visual direction away from default crypto aesthetics. On the product side: audited and standardised UI across all key flows, overhauled the core product areas, and established a shared design system as a source of truth.`}
+            whatChanged={`The team stopped asking "what are we building?" and started asking "how do we scale this?" The product started to feel like one system. New features could be built faster, with less rework.`}
             images={thriveImages}
-            relevance="Simultaneously brand and product. Fast-moving small team, a founder, a product lead, and a growth lead. All with strong opinions and limited time. Async-heavy, fast iteration, no room for slow feedback cycles. Similar structure as Odyssey."
+            relevance="Brand and product simultaneously — which is exactly what Odyssey's next phase requires. New surfaces like the risk assessment tool and educational hub aren't just build tasks. They're positioning decisions."
           />
 
           <HowIWork />
