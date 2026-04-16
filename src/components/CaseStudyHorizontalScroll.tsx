@@ -137,19 +137,25 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
             <div className="w-full max-w-[520px]">{info}</div>
           </div>
 
-          {/* Media slides — 100vw each, with 5vw internal padding so the
-              visual is ~90vw centered in each slide. Image files render
-              as next/image; video files render as autoplaying muted
-              inline <video>. */}
+          {/* Media slides — 100vw each. The visual inside each slide
+              holds a 16:9 aspect. Width is capped by 90vw; height is
+              capped by 80vh so the slide fits taller/portrait
+              viewports without overflow. */}
           {images.length === 0 ? (
             <PlaceholderSlide alt={alt} />
           ) : (
             images.map((src, i) => (
               <div
                 key={src}
-                className="flex h-full w-screen shrink-0 items-center px-[5vw] py-[10vh]"
+                className="flex h-full w-screen shrink-0 items-center justify-center"
               >
-                <div className="relative h-full w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
+                <div
+                  className="relative overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
+                  style={{
+                    aspectRatio: "16 / 9",
+                    width: "min(90vw, calc(80vh * 16 / 9))",
+                  }}
+                >
                   {isVideo(src) ? (
                     <video
                       src={src}
@@ -181,8 +187,14 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
 
 function PlaceholderSlide({ alt }: { alt: string }) {
   return (
-    <div className="flex h-full w-screen shrink-0 items-center px-[5vw] py-[10vh]">
-      <div className="flex h-full w-full items-center justify-center rounded-[16px] border border-dashed border-rule bg-card/30">
+    <div className="flex h-full w-screen shrink-0 items-center justify-center">
+      <div
+        className="flex items-center justify-center rounded-[16px] border border-dashed border-rule bg-card/30"
+        style={{
+          aspectRatio: "16 / 9",
+          width: "min(90vw, calc(80vh * 16 / 9))",
+        }}
+      >
         <p className="font-caption text-[13px] font-medium uppercase tracking-[2px] text-muted">
           {alt} images coming
         </p>

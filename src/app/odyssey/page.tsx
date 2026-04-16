@@ -65,11 +65,11 @@ export default function OdysseyPage() {
             sectionLabel="Recent work · 02"
             meta="Lead Designer · Brand, Design System & Product UI · 2025–2026"
             title="Thrive"
-            problem="Strong idea, weak articulation. The brand leaned on buzzwords that meant nothing to outsiders, and inside the product, different modules felt like separate tools that happened to share a codebase."
-            whatIDid={`Built a Brand Canvas from scratch, repositioned Thrive as "crypto's value layer," and pushed visual direction away from default crypto aesthetics. On the product side: audited and standardised UI across all key flows, overhauled the core product areas, and established a shared design system as a source of truth.`}
-            whatChanged={`The team stopped asking "what are we building?" and started asking "how do we scale this?" The product started to feel like one system. New features could be built faster, with less rework.`}
+            problem="Strong idea, weak articulation. The brand meant nothing to outsiders, and the product felt like separate tools that happened to share a codebase."
+            whatIDid="Full rebrand, design system, and product UI overhaul. Brand strategy alongside the team. AI integration."
+            whatChanged="Team reported working at a higher efficiency. The product started to feel like one system. New features could be built faster, with less rework."
             images={thriveImages}
-            relevance="Brand and product simultaneously — which is exactly what Odyssey's next phase requires. New surfaces like the risk assessment tool and educational hub aren't just build tasks. They're positioning decisions."
+            relevance="Brand and product simultaneously. Fast-moving small team. Async-heavy, fast iteration, no room for slow feedback cycles. Similar structure as Odyssey."
           />
 
           <HowIWork />
@@ -339,7 +339,7 @@ function MobileGallery({ images, alt }: { images: string[]; alt: string }) {
   if (images.length === 0) {
     return (
       <div className="px-6">
-        <div className="flex aspect-[4/3] w-full items-center justify-center rounded-[16px] border border-dashed border-rule bg-card/30">
+        <div className="flex aspect-[16/9] w-full items-center justify-center rounded-[16px] border border-dashed border-rule bg-card/30">
           <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
             {alt} images coming
           </p>
@@ -353,7 +353,7 @@ function MobileGallery({ images, alt }: { images: string[]; alt: string }) {
       {images.map((src, i) => (
         <div
           key={src}
-          className="relative aspect-[4/3] w-[85%] shrink-0 snap-start overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
+          className="relative aspect-[16/9] w-[85%] shrink-0 snap-start overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
         >
           {/\.(mp4|webm|mov)$/i.test(src) ? (
             <video
