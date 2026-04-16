@@ -13,6 +13,7 @@ import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { CtaButton } from "@/components/CtaButton";
 import { CenterFocus } from "@/components/CenterFocus";
+import { CaseStudyHorizontalScroll } from "@/components/CaseStudyHorizontalScroll";
 import { getGalleryImages } from "@/lib/gallery";
 
 const PASSWORD = "psilocybin";
@@ -170,97 +171,139 @@ function CaseStudy({
   quote,
   relevance,
 }: CaseStudyProps) {
+  const info = (
+    <CaseStudyInfo
+      meta={meta}
+      title={title}
+      problem={problem}
+      stat={stat}
+      statLabel={statLabel}
+      quote={quote}
+      relevance={relevance}
+    />
+  );
+
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
-      <SectionLabel>{sectionLabel}</SectionLabel>
-      <CenterFocus minOpacity={0} falloff={0.8} minScale={0.98}>
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-[1fr_1fr] md:items-center md:gap-16 lg:gap-20">
-          {/* Left — images */}
-          <CaseStudyGallery images={images} alt={title} />
+    <>
+      {/* Section label scrolls normally above the locked scroll section */}
+      <div className="mx-auto w-full max-w-[1200px] px-6 pt-20 md:px-10 md:pt-28">
+        <SectionLabel>{sectionLabel}</SectionLabel>
+      </div>
 
-          {/* Right — info */}
-          <div className="flex flex-col gap-7">
-            <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-              {meta}
-            </p>
-            <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-              {title}
-            </h2>
-            <p className="text-[1rem] leading-[1.7rem] text-ink">{problem}</p>
-
-            {stat ? (
-              <div className="mt-2">
-                <p className="font-display text-[2rem] font-bold leading-none text-ink md:text-[2.5rem]">
-                  {stat}
-                </p>
-                {statLabel ? (
-                  <p className="mt-3 text-[0.9rem] leading-[1.5rem] text-muted">
-                    {statLabel}
-                  </p>
-                ) : null}
-              </div>
-            ) : null}
-
-            {quote ? (
-              <blockquote className="border-l-2 border-accent pl-5">
-                <p className="font-display text-[1.15rem] italic leading-[1.5] text-ink">
-                  &ldquo;{quote}&rdquo;
-                </p>
-                <footer className="mt-3 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                  {title} founder
-                </footer>
-              </blockquote>
-            ) : null}
-
-            <div className="mt-2 border-t border-rule-soft pt-6">
-              <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                Why it matters for Odyssey
-              </p>
-              <p className="mt-3 text-[1rem] leading-[1.7rem] text-ink">
-                {relevance}
-              </p>
-            </div>
-          </div>
+      {/* Mobile: stacked info, then native horizontal scroll-snap gallery */}
+      <section className="px-6 pb-16 md:hidden">
+        {info}
+        <div className="-mx-6 mt-12">
+          <MobileGallery images={images} alt={title} />
         </div>
-      </CenterFocus>
-    </section>
+      </section>
+
+      {/* Desktop: scroll-hijacked horizontal track. Info is the first
+          (half-width) slide; images follow full-width. */}
+      <CaseStudyHorizontalScroll info={info} images={images} alt={title} />
+    </>
   );
 }
 
 // ---------------------------------------------------------------------
-// CaseStudyGallery — compact horizontal scroll-snap gallery inside the
-// left column of a case study. Shows one image at a time, user swipes
-// to see more. Falls back to a dashed placeholder when no images.
+// CaseStudyInfo — shared content of the first (half-width) desktop
+// slide and the top of the mobile stacked layout.
 // ---------------------------------------------------------------------
-function CaseStudyGallery({
-  images,
-  alt,
-}: {
-  images: string[];
-  alt: string;
-}) {
+type InfoProps = {
+  meta: string;
+  title: string;
+  problem: string;
+  stat?: string;
+  statLabel?: string;
+  quote?: string;
+  relevance: string;
+};
+
+function CaseStudyInfo({
+  meta,
+  title,
+  problem,
+  stat,
+  statLabel,
+  quote,
+  relevance,
+}: InfoProps) {
+  return (
+    <div className="flex flex-col gap-7">
+      <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+        {meta}
+      </p>
+      <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
+        {title}
+      </h2>
+      <p className="text-[1rem] leading-[1.7rem] text-ink">{problem}</p>
+
+      {stat ? (
+        <div className="mt-2">
+          <p className="font-display text-[2rem] font-bold leading-none text-ink md:text-[2.5rem]">
+            {stat}
+          </p>
+          {statLabel ? (
+            <p className="mt-3 text-[0.9rem] leading-[1.5rem] text-muted">
+              {statLabel}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
+      {quote ? (
+        <blockquote className="border-l-2 border-accent pl-5">
+          <p className="font-display text-[1.15rem] italic leading-[1.5] text-ink">
+            &ldquo;{quote}&rdquo;
+          </p>
+          <footer className="mt-3 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+            {title} founder
+          </footer>
+        </blockquote>
+      ) : null}
+
+      <div className="mt-2 border-t border-rule-soft pt-6">
+        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          Why it matters for Odyssey
+        </p>
+        <p className="mt-3 text-[1rem] leading-[1.7rem] text-ink">
+          {relevance}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------
+// MobileGallery — native horizontal scroll-snap gallery used under the
+// stacked info block on narrow viewports (desktop uses the
+// scroll-hijacked track instead).
+// ---------------------------------------------------------------------
+function MobileGallery({ images, alt }: { images: string[]; alt: string }) {
   if (images.length === 0) {
     return (
-      <div className="flex aspect-[4/3] w-full items-center justify-center rounded-[16px] border border-dashed border-rule bg-card/30">
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-          {alt} images coming
-        </p>
+      <div className="px-6">
+        <div className="flex aspect-[4/3] w-full items-center justify-center rounded-[16px] border border-dashed border-rule bg-card/30">
+          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+            {alt} images coming
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="scroll-row flex w-full snap-x snap-mandatory gap-3 overflow-x-auto rounded-[16px]">
+    <div className="scroll-row flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2">
       {images.map((src, i) => (
         <div
           key={src}
-          className="relative aspect-[4/3] w-full shrink-0 snap-start overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
+          className="relative aspect-[4/3] w-[85%] shrink-0 snap-start overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
         >
           <Image
             src={src}
             alt={`${alt} ${i + 1}`}
             fill
-            sizes="(min-width: 768px) 50vw, 100vw"
+            sizes="85vw"
             className="object-cover"
           />
         </div>
