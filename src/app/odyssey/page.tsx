@@ -186,7 +186,7 @@ function CaseStudy({
   return (
     <>
       {/* Section label scrolls normally above the locked scroll section */}
-      <div className="mx-auto w-full max-w-[1200px] px-6 pt-20 md:px-10 md:pt-28">
+      <div className="mx-auto w-full max-w-[1200px] px-6 md:px-10">
         <SectionLabel>{sectionLabel}</SectionLabel>
       </div>
 
@@ -367,7 +367,7 @@ const howItems = [
 
 function HowIWork() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+    <section className="mx-auto w-full max-w-[1200px] px-6 pb-20 md:px-10 md:pb-28">
       <SectionLabel>Approach</SectionLabel>
       <CenterFocus minOpacity={0.25} falloff={0.6} minScale={0.99}>
         <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">

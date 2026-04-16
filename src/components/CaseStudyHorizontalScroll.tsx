@@ -92,7 +92,7 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
   return (
     <section
       ref={sectionRef}
-      className="relative hidden overflow-hidden md:block"
+      className="relative hidden md:block"
       style={{ height: `${sectionHeightVh}vh` }}
     >
       <div className="sticky top-0 h-screen overflow-hidden">
@@ -101,8 +101,16 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
           className="flex h-full w-max items-center"
           style={{ willChange: "transform" }}
         >
-          {/* Info slide — 50vw wide */}
-          <div className="flex h-full w-[50vw] shrink-0 items-center px-[5vw]">
+          {/* Info slide — 50vw wide. Left padding is calculated so the
+              info content's left edge aligns with the SectionLabel
+              above it (centered max-w-[1200px] container + px-10). */}
+          <div
+            className="flex h-full w-[50vw] shrink-0 items-center pr-[5vw]"
+            style={{
+              paddingLeft:
+                "calc(max((100vw - 1200px) / 2, 0px) + 2.5rem)",
+            }}
+          >
             <div className="w-full max-w-[520px]">{info}</div>
           </div>
 
