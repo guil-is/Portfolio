@@ -110,16 +110,10 @@ function Header() {
         </h1>
 
         <p className="mt-10 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
-          You&rsquo;re not looking for an agency or a full-time hire. You need
-          an embedded design partner who can work on-demand with Nick and
-          Chris: someone fast enough to keep up with a product roadmap
-          that&rsquo;s moving, and strategic enough to shape new surfaces, not
-          just execute on them.
-        </p>
-        <p className="mt-5 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
-          The risk assessment tool, the prep courses, the educational hub.
-          These aren&rsquo;t maintenance tasks. They&rsquo;re positioning
-          decisions. That&rsquo;s where I work best.
+          Odyssey is tripling sales this year and launching new product
+          surfaces fast. You need a design partner embedded enough to move
+          with that pace, and strategic enough to shape what you&rsquo;re
+          building, not just execute on it.
         </p>
       </div>
 
