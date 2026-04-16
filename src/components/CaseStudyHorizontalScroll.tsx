@@ -172,7 +172,7 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
                 style={{ width: slideWidth }}
               >
                 <div
-                  className="relative overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
+                  className="relative overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none"
                   style={{
                     aspectRatio: "16 / 9",
                     width: visualWidth,

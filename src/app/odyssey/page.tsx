@@ -350,7 +350,7 @@ function MobileGallery({ images, alt }: { images: string[]; alt: string }) {
           key={src}
           className="w-screen shrink-0 snap-center px-4"
         >
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none">
             {/\.(mp4|webm|mov)$/i.test(src) ? (
               <video
                 src={src}
