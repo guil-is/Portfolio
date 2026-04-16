@@ -17,14 +17,18 @@ type Props = {
 // Scroll-hijacked horizontal case study — desktop only (md+).
 //
 // Layout of the track:
-//   | info 50vw | image 100vw | image 100vw | … |
+//   | info 50vw | media slide | media slide | … |
 //
-// When the section enters the viewport, it locks as sticky top-0
-// h-screen. Continued vertical scroll drives a horizontal translateX
-// on the track so the user moves sideways through the case study:
-// info slides off, each image slide moves in and out. Once the last
-// image is fully in view, the section unlocks and normal vertical
-// scroll resumes.
+// Each media slide is sized so the gap between adjacent visuals is
+// one-third of the full breathing room the visual's cap leaves inside
+// a 100vw column. Slide width =
+//   ( 2 · visual_width + 100vw ) / 3
+// which makes gap = (100vw − visual_width) / 3. The visual itself is
+// 16:9, capped by 90vw on width and 80vh on height.
+//
+// Because slide widths depend on viewport (min() uses vw + vh), the
+// scroll math reads the actual track width at runtime and the section
+// height is set dynamically in a resize-aware effect.
 //
 // Mobile renders nothing — the odyssey page shows a stacked version
 // (info above, scroll-snap gallery below) for narrow viewports.
@@ -34,14 +38,6 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
   const trackRef = useRef<HTMLDivElement>(null);
 
   const slideCount = Math.max(images.length, 1);
-
-  // Track width = 50vw (info) + slideCount × 100vw (images).
-  // Horizontal scroll distance = track − viewport = slideCount × 100 − 50 (vw).
-  const horizontalScrollVw = slideCount * 100 - 50;
-
-  // Section outer height: 100vh lock duration + horizontalScrollVw of
-  // scroll, treated 1:1 (1vh vertical scroll = 1vw horizontal travel).
-  const sectionHeightVh = 100 + horizontalScrollVw;
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -55,6 +51,17 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
     let rafId = 0;
     let active = mql.matches && !reducedMotion.matches;
 
+    const setSectionHeight = () => {
+      if (!active) {
+        section.style.height = "";
+        return;
+      }
+      const viewportH = window.innerHeight;
+      const viewportW = window.innerWidth;
+      const scrollDistance = Math.max(0, track.scrollWidth - viewportW);
+      section.style.height = `${viewportH + scrollDistance}px`;
+    };
+
     const update = () => {
       rafId = 0;
       if (!active) {
@@ -64,12 +71,15 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
       }
       const rect = section.getBoundingClientRect();
       const viewportH = window.innerHeight;
+      const viewportW = window.innerWidth;
       const scrolled = -rect.top;
       const scrollable = rect.height - viewportH;
       const progress =
         scrollable > 0 ? Math.max(0, Math.min(1, scrolled / scrollable)) : 0;
-      const translateVw = horizontalScrollVw * progress;
-      track.style.transform = `translate3d(-${translateVw}vw, 0, 0)`;
+
+      const scrollDistance = Math.max(0, track.scrollWidth - viewportW);
+      const translatePx = scrollDistance * progress;
+      track.style.transform = `translate3d(-${translatePx}px, 0, 0)`;
 
       // Soft fade driven by the section's position relative to the
       // viewport. Entry: fade in as the section rises into view from
@@ -91,29 +101,37 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
       rafId = requestAnimationFrame(update);
     };
 
-    const onBreakpointChange = () => {
-      active = mql.matches && !reducedMotion.matches;
+    const onResize = () => {
+      setSectionHeight();
       schedule();
     };
 
+    const onBreakpointChange = () => {
+      active = mql.matches && !reducedMotion.matches;
+      setSectionHeight();
+      schedule();
+    };
+
+    setSectionHeight();
     update();
     window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
     mql.addEventListener("change", onBreakpointChange);
     return () => {
       window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      window.removeEventListener("resize", onResize);
       mql.removeEventListener("change", onBreakpointChange);
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [horizontalScrollVw]);
+  }, [slideCount]);
+
+  // Slide width formula: (2 × visual + 100vw) / 3 = visual + gap/3.
+  const slideWidth =
+    "calc((2 * min(90vw, 80vh * 16 / 9) + 100vw) / 3)";
+  const visualWidth = "min(90vw, calc(80vh * 16 / 9))";
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative hidden md:block"
-      style={{ height: `${sectionHeightVh}vh` }}
-    >
+    <section ref={sectionRef} className="relative hidden md:block">
       <div
         ref={stickyRef}
         className="sticky top-0 h-screen overflow-hidden"
@@ -137,23 +155,27 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
             <div className="w-full max-w-[520px]">{info}</div>
           </div>
 
-          {/* Media slides — 100vw each. The visual inside each slide
-              holds a 16:9 aspect. Width is capped by 90vw; height is
-              capped by 80vh so the slide fits taller/portrait
-              viewports without overflow. */}
+          {/* Media slides. The slide container is slightly wider than
+              its 16:9 visual so the gap between two adjacent visuals
+              is 1/3 of what a 100vw slide would produce. */}
           {images.length === 0 ? (
-            <PlaceholderSlide alt={alt} />
+            <PlaceholderSlide
+              alt={alt}
+              slideWidth={slideWidth}
+              visualWidth={visualWidth}
+            />
           ) : (
             images.map((src, i) => (
               <div
                 key={src}
-                className="flex h-full w-screen shrink-0 items-center justify-center"
+                className="flex h-full shrink-0 items-center justify-center"
+                style={{ width: slideWidth }}
               >
                 <div
                   className="relative overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
                   style={{
                     aspectRatio: "16 / 9",
-                    width: "min(90vw, calc(80vh * 16 / 9))",
+                    width: visualWidth,
                   }}
                 >
                   {isVideo(src) ? (
@@ -185,14 +207,25 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
   );
 }
 
-function PlaceholderSlide({ alt }: { alt: string }) {
+function PlaceholderSlide({
+  alt,
+  slideWidth,
+  visualWidth,
+}: {
+  alt: string;
+  slideWidth: string;
+  visualWidth: string;
+}) {
   return (
-    <div className="flex h-full w-screen shrink-0 items-center justify-center">
+    <div
+      className="flex h-full shrink-0 items-center justify-center"
+      style={{ width: slideWidth }}
+    >
       <div
         className="flex items-center justify-center rounded-[16px] border border-dashed border-rule bg-card/30"
         style={{
           aspectRatio: "16 / 9",
-          width: "min(90vw, calc(80vh * 16 / 9))",
+          width: visualWidth,
         }}
       >
         <p className="font-caption text-[13px] font-medium uppercase tracking-[2px] text-muted">
