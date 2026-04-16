@@ -470,6 +470,7 @@ const tiers = [
     label: "Start building",
     price: "$8,800",
     cadence: "~20 hrs/week",
+    priceNote: "First month: $7,040 — then $8,800/month from month two.",
     body: "If you are ready to move on new product surfaces immediately. The risk assessment tool, prep courses, and educational hub all need design thinking from the start. This scope includes dedicated design on new product initiatives and ownership of the design system as Odyssey scales.",
     response: "Response time: 24 hours",
   },
@@ -509,6 +510,11 @@ function Engagement() {
                   <p className="mt-3 text-[0.9rem] leading-[1.5rem] text-muted">
                     {tier.cadence}
                   </p>
+                  {tier.priceNote ? (
+                    <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
+                      {tier.priceNote}
+                    </p>
+                  ) : null}
                 </div>
 
                 <p className="border-t border-rule-soft pt-6 text-[0.95rem] leading-[1.6rem] text-ink">
@@ -546,9 +552,9 @@ function NextStep() {
             Ready to move?
           </h2>
           <p className="mt-6 max-w-[620px] text-[1rem] leading-[1.7rem] text-ink">
-            Next step is a 30-minute call. I&rsquo;ll come with specific
-            directions for the educational hub and the risk assessment UI,
-            concrete, not vague. We agree on scope and I can be live within a
+            Next step is a 30-minute call with Nick and Chris. We answer
+            questions on both sides, talk through scope and SLA terms. From
+            there we agree on a starting point and I can be live within a
             week.
           </p>
 
