@@ -54,10 +54,10 @@ export default function OdysseyPage() {
             meta="Fractional Design Partner · 10 hrs/week · Pre-launch"
             title="Clawbank"
             problem="A technically real product with no visual credibility. In crypto, perception precedes traction, they needed to look fundable before they could become fundable."
+            whatIShipped="Full brand identity from scratch: mark, typography, color, and motion language. Landing page built to serve developers and investors simultaneously, zero to live in under two weeks. Design tokens into production CSS, structured for a team to scale from. Visual direction for product content: demo framing and video structure."
             images={clawbankImages}
             stat="$150K → $800K"
             statLabel="Market cap in 13 days · +433% · #5 trending on DexScreener"
-            quote="We wouldn't have launched if it weren't for you."
             relevance="Same mechanism Odyssey needs: design legitimacy unlocks trust, trust unlocks momentum."
           />
 
@@ -155,10 +155,10 @@ type CaseStudyProps = {
   meta: string;
   title: string;
   problem: string;
+  whatIShipped?: string;
   images: string[];
   stat?: string;
   statLabel?: string;
-  quote?: string;
   relevance: string;
 };
 
@@ -167,10 +167,10 @@ function CaseStudy({
   meta,
   title,
   problem,
+  whatIShipped,
   images,
   stat,
   statLabel,
-  quote,
   relevance,
 }: CaseStudyProps) {
   const info = (
@@ -178,9 +178,9 @@ function CaseStudy({
       meta={meta}
       title={title}
       problem={problem}
+      whatIShipped={whatIShipped}
       stat={stat}
       statLabel={statLabel}
-      quote={quote}
       relevance={relevance}
     />
   );
@@ -215,9 +215,9 @@ type InfoProps = {
   meta: string;
   title: string;
   problem: string;
+  whatIShipped?: string;
   stat?: string;
   statLabel?: string;
-  quote?: string;
   relevance: string;
 };
 
@@ -225,9 +225,9 @@ function CaseStudyInfo({
   meta,
   title,
   problem,
+  whatIShipped,
   stat,
   statLabel,
-  quote,
   relevance,
 }: InfoProps) {
   return (
@@ -240,28 +240,28 @@ function CaseStudyInfo({
       </h2>
       <p className="text-[1rem] leading-[1.7rem] text-ink">{problem}</p>
 
+      {whatIShipped ? (
+        <div className="mt-2 border-t border-rule-soft pt-6">
+          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+            What I shipped
+          </p>
+          <p className="mt-3 text-[1rem] leading-[1.7rem] text-ink">
+            {whatIShipped}
+          </p>
+        </div>
+      ) : null}
+
       {stat ? (
-        <div className="mt-2">
-          <p className="font-display text-[2rem] font-bold leading-none text-ink md:text-[2.5rem]">
+        <div>
+          <p className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
             {stat}
           </p>
           {statLabel ? (
-            <p className="mt-3 text-[0.9rem] leading-[1.5rem] text-muted">
+            <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
               {statLabel}
             </p>
           ) : null}
         </div>
-      ) : null}
-
-      {quote ? (
-        <blockquote className="border-l-2 border-accent pl-5">
-          <p className="font-display text-[1.15rem] italic leading-[1.5] text-ink">
-            &ldquo;{quote}&rdquo;
-          </p>
-          <footer className="mt-3 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-            {title} founder
-          </footer>
-        </blockquote>
       ) : null}
 
       <div className="mt-2 border-t border-rule-soft pt-6">
