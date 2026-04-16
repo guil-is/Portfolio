@@ -344,31 +344,33 @@ function MobileGallery({ images, alt }: { images: string[]; alt: string }) {
   }
 
   return (
-    <div className="scroll-row flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-2">
+    <div className="scroll-row flex snap-x snap-mandatory overflow-x-auto pb-2">
       {images.map((src, i) => (
         <div
           key={src}
-          className="relative aspect-[16/9] w-[85%] shrink-0 snap-start overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
+          className="w-screen shrink-0 snap-center px-4"
         >
-          {/\.(mp4|webm|mov)$/i.test(src) ? (
-            <video
-              src={src}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="h-full w-full object-cover"
-              aria-label={`${alt} ${i + 1}`}
-            />
-          ) : (
-            <Image
-              src={src}
-              alt={`${alt} ${i + 1}`}
-              fill
-              sizes="85vw"
-              className="object-cover"
-            />
-          )}
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
+            {/\.(mp4|webm|mov)$/i.test(src) ? (
+              <video
+                src={src}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="h-full w-full object-cover"
+                aria-label={`${alt} ${i + 1}`}
+              />
+            ) : (
+              <Image
+                src={src}
+                alt={`${alt} ${i + 1}`}
+                fill
+                sizes="100vw"
+                className="object-cover"
+              />
+            )}
+          </div>
         </div>
       ))}
     </div>
@@ -464,7 +466,7 @@ const tiers = [
     price: "$4,800",
     cadence: "~10 hrs/week",
     body: "If you want to establish a working rhythm before moving to bigger product work. Site iterations, campaign assets, design QA, fast turnaround. You get embedded design thinking from day one, scoped to what's most immediately useful.",
-    response: "Response time: 48 hours",
+    response: "Response time: within 24h",
   },
   {
     label: "Start building",
@@ -472,7 +474,7 @@ const tiers = [
     cadence: "~20 hrs/week",
     priceNote: "First month: $7,040 — then $8,800/month from month two.",
     body: "If you are ready to move on new product surfaces immediately. The risk assessment tool, prep courses, and educational hub all need design thinking from the start. This scope includes dedicated design on new product initiatives and ownership of the design system as Odyssey scales.",
-    response: "Response time: 24 hours",
+    response: "Response time: within 12h",
   },
 ];
 
@@ -481,7 +483,7 @@ function Engagement() {
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>Engagement</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
-        <CenterFocus minOpacity={0} falloff={0.7} minScale={0.98}>
+        <CenterFocus minOpacity={0} falloff={0.7} minScale={0.98} disableBelowMd>
           <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
             Where do you want to start?
           </h2>

@@ -10,6 +10,8 @@ type Props = {
   falloff?: number;
   /** Minimum scale at max distance. Default 0.96 — subtle shrink off-center. */
   minScale?: number;
+  /** If true, disables the effect below the md breakpoint (<768px). */
+  disableBelowMd?: boolean;
   className?: string;
 };
 
@@ -24,6 +26,7 @@ export function CenterFocus({
   minOpacity = 0.25,
   falloff = 0.55,
   minScale = 0.96,
+  disableBelowMd = false,
   className = "",
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
@@ -39,9 +42,17 @@ export function CenterFocus({
       return;
     }
 
+    const mql = disableBelowMd ? matchMedia("(min-width: 768px)") : null;
+    let active = !mql || mql.matches;
+
     let rafId = 0;
     const update = () => {
       rafId = 0;
+      if (!active) {
+        el.style.opacity = "1";
+        el.style.transform = "none";
+        return;
+      }
       const rect = el.getBoundingClientRect();
       const viewportH = window.innerHeight;
       const elCenter = rect.top + rect.height / 2;
@@ -59,15 +70,22 @@ export function CenterFocus({
       rafId = requestAnimationFrame(update);
     };
 
+    const onBreakpointChange = () => {
+      active = !mql || mql.matches;
+      schedule();
+    };
+
     update();
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule, { passive: true });
+    mql?.addEventListener("change", onBreakpointChange);
     return () => {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
+      mql?.removeEventListener("change", onBreakpointChange);
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [minOpacity, falloff, minScale]);
+  }, [minOpacity, falloff, minScale, disableBelowMd]);
 
   return (
     <div
