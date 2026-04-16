@@ -7,6 +7,7 @@ import {
   LayoutGrid,
   Compass,
   ChevronDown,
+  ArrowUpRight,
   type LucideIcon,
 } from "lucide-react";
 import { PasswordGate } from "@/components/PasswordGate";
@@ -14,6 +15,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { CtaButton } from "@/components/CtaButton";
 import { CenterFocus } from "@/components/CenterFocus";
 import { CaseStudyHorizontalScroll } from "@/components/CaseStudyHorizontalScroll";
+import { ShareButton } from "@/components/ShareButton";
 import { getGalleryImages } from "@/lib/gallery";
 
 const PASSWORD = "psilocybin";
@@ -491,6 +493,23 @@ function NextStep() {
 
           <div className="mt-10">
             <CtaButton href="mailto:guil@guil.is" label="Get in touch" />
+          </div>
+
+          {/* Secondary actions: share this proposal + link to full portfolio */}
+          <div className="mt-16 flex flex-wrap items-center gap-x-10 gap-y-5 border-t border-rule-soft pt-10">
+            <ShareButton />
+            <a
+              href="https://guil.is"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 font-caption text-[13px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted"
+            >
+              <ArrowUpRight
+                className="h-4 w-4 transition-transform group-hover:-rotate-45"
+                strokeWidth={1.75}
+              />
+              See my full portfolio
+            </a>
           </div>
 
           <p className="mt-20 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">

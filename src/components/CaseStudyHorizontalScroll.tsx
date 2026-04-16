@@ -28,6 +28,7 @@ type Props = {
 // (info above, scroll-snap gallery below) for narrow viewports.
 export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
   const slideCount = Math.max(images.length, 1);
@@ -42,8 +43,9 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
 
   useEffect(() => {
     const section = sectionRef.current;
+    const sticky = stickyRef.current;
     const track = trackRef.current;
-    if (!section || !track) return;
+    if (!section || !sticky || !track) return;
 
     const mql = matchMedia("(min-width: 768px)");
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -55,6 +57,7 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
       rafId = 0;
       if (!active) {
         track.style.transform = "";
+        sticky.style.opacity = "1";
         return;
       }
       const rect = section.getBoundingClientRect();
@@ -65,6 +68,20 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
         scrollable > 0 ? Math.max(0, Math.min(1, scrolled / scrollable)) : 0;
       const translateVw = horizontalScrollVw * progress;
       track.style.transform = `translate3d(-${translateVw}vw, 0, 0)`;
+
+      // Soft fade driven by the section's position relative to the
+      // viewport. Entry: fade in as the section rises into view from
+      // below (rect.top going from viewportH → 0). Exit: fade out as
+      // the section leaves above (rect.bottom going from viewportH → 0).
+      // During the lock (rect.top ≤ 0 and rect.bottom ≥ viewportH) the
+      // fade stays at 1.
+      let fadeOpacity = 1;
+      if (rect.top > 0) {
+        fadeOpacity = Math.max(0, 1 - rect.top / viewportH);
+      } else if (rect.bottom < viewportH) {
+        fadeOpacity = Math.max(0, rect.bottom / viewportH);
+      }
+      sticky.style.opacity = fadeOpacity.toFixed(3);
     };
 
     const schedule = () => {
@@ -95,7 +112,11 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
       className="relative hidden md:block"
       style={{ height: `${sectionHeightVh}vh` }}
     >
-      <div className="sticky top-0 h-screen overflow-hidden">
+      <div
+        ref={stickyRef}
+        className="sticky top-0 h-screen overflow-hidden"
+        style={{ willChange: "opacity" }}
+      >
         <div
           ref={trackRef}
           className="flex h-full w-max items-center"
