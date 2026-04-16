@@ -52,6 +52,7 @@ export default function OdysseyPage() {
             sectionLabel="Recent work · 01"
             meta="Fractional Design Partner · 10 hrs/week · Pre-launch"
             title="Clawbank"
+            url="https://clawbank.co"
             problem="A technically real product with no visual credibility. In crypto, perception precedes traction, they needed to look fundable before they could become fundable."
             whatIShipped="Full brand identity from scratch: mark, typography, color, and motion language. Landing page built to serve developers and investors simultaneously, zero to live in under two weeks. Design tokens into production CSS, structured for a team to scale from. Visual direction for product content: demo framing and video structure."
             images={clawbankImages}
@@ -64,6 +65,7 @@ export default function OdysseyPage() {
             sectionLabel="Recent work · 02"
             meta="Lead Designer · Brand, Design System & Product UI · 2025–2026"
             title="Thrive"
+            url="https://thrive.xyz"
             problem="Strong idea, weak articulation. The brand meant nothing to outsiders, and the product felt like separate tools that happened to share a codebase."
             whatIShipped={[
               "Full rebrand, design system, and product UI overhaul. Brand strategy alongside the team. AI integration.",
@@ -151,6 +153,7 @@ type CaseStudyProps = {
   sectionLabel: string;
   meta: string;
   title: string;
+  url?: string;
   problem: Body;
   whatIShipped?: Body;
   whatIDid?: Body;
@@ -165,6 +168,7 @@ function CaseStudy({
   sectionLabel,
   meta,
   title,
+  url,
   problem,
   whatIShipped,
   whatIDid,
@@ -178,6 +182,7 @@ function CaseStudy({
     <CaseStudyInfo
       meta={meta}
       title={title}
+      url={url}
       problem={problem}
       whatIShipped={whatIShipped}
       whatIDid={whatIDid}
@@ -223,6 +228,7 @@ type Body = string | string[];
 type InfoProps = {
   meta: string;
   title: string;
+  url?: string;
   problem: Body;
   whatIShipped?: Body;
   whatIDid?: Body;
@@ -273,6 +279,7 @@ function LabeledBlock({
 function CaseStudyInfo({
   meta,
   title,
+  url,
   problem,
   whatIShipped,
   whatIDid,
@@ -287,7 +294,19 @@ function CaseStudyInfo({
         {meta}
       </p>
       <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-        {title}
+        {url ? (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-3 transition-colors hover:text-muted"
+          >
+            {title}
+            <ArrowUpRight className="h-6 w-6 md:h-7 md:w-7" strokeWidth={2} />
+          </a>
+        ) : (
+          title
+        )}
       </h2>
       <Paragraphs body={problem} />
 
