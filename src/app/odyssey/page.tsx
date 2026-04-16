@@ -1,8 +1,17 @@
+import Image from "next/image";
+import {
+  Users,
+  Zap,
+  Video,
+  Hammer,
+  LayoutGrid,
+  Compass,
+  type LucideIcon,
+} from "lucide-react";
 import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { CtaButton } from "@/components/CtaButton";
-import { SlideSection } from "@/components/SlideSection";
-import { HorizontalSlider } from "@/components/HorizontalSlider";
+import { CenterFocus } from "@/components/CenterFocus";
 import { getGalleryImages } from "@/lib/gallery";
 
 const PASSWORD = "psilocybin";
@@ -17,14 +26,10 @@ const PASSWORD = "psilocybin";
 //   Body  text-[1rem] leading-[1.7rem] text-ink
 // ---------------------------------------------------------------------
 //
-// Layout is a scroll-driven pitch deck:
-//   • Each text section is a full-viewport SlideSection that fades in,
-//     holds, and fades out as the user scrolls.
-//   • Each case study has a HorizontalSlider between its intro and
-//     results slides: vertical scroll is hijacked and translated into
-//     horizontal motion across the image track, then releases once the
-//     track ends.
-//   • The overall rhythm: title → problem → gallery → outcome → repeat.
+// Layout: continuous-scroll pitch deck. Header is always visible at
+// the top. Each subsequent section is wrapped in <CenterFocus> so it
+// fades/scales based on distance from the viewport center — smooth,
+// real-time crossfades between sections instead of hard slide breaks.
 
 export default function OdysseyPage() {
   const clawbankImages = getGalleryImages("odyssey/clawbank");
@@ -37,229 +42,33 @@ export default function OdysseyPage() {
       </div>
 
       <PasswordGate password={PASSWORD}>
-        <main className="page-fade-in">
-          {/* 01 — Cover */}
-          <SlideSection>
-            <div className="mx-auto w-full max-w-[960px]">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-5">
-                <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                  Prepared for Nick DeNuzzo & Chris · Odyssey
-                </p>
-                <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                  April 2026
-                </p>
-              </div>
+        <main className="page-fade-in pb-40 pt-12 md:pt-20">
+          <Header />
 
-              <h1 className="mt-16 font-display text-[3rem] font-bold leading-[1.05] text-ink md:text-[4rem]">
-                Guil Maueler
-              </h1>
-              <p className="mt-4 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                Creative Director & Senior Brand Designer
-              </p>
+          <CaseStudy
+            number="01"
+            meta="Fractional Design Partner · 10 hrs/week · Pre-launch"
+            title="Clawbank"
+            problem="A technically real product with no visual credibility. In crypto, perception precedes traction, they needed to look fundable before they could become fundable."
+            images={clawbankImages}
+            stat="$150K → $800K"
+            statLabel="Market cap in 13 days · +433% · #5 trending on DexScreener"
+            quote="We wouldn't have launched if it weren't for you."
+            relevance="Same mechanism Odyssey needs: design legitimacy unlocks trust, trust unlocks momentum."
+          />
 
-              <p className="mt-10 max-w-[560px] text-[1rem] leading-[1.7rem] text-ink">
-                14+ years of visual identity, design systems, and product
-                interfaces. Two recent projects, and two ways to work together.
-              </p>
-            </div>
-          </SlideSection>
+          <CaseStudy
+            number="02"
+            meta="Full Rebrand · Web3 funding & intelligence platform"
+            title="Thrive"
+            problem="Make a VC-facing crypto platform feel credible to an audience conditioned to expect scams. Complex product, stigmatized category, small team."
+            images={thriveImages}
+            relevance="Same core challenge: take something the mainstream doesn't fully trust yet, and design it into something they do."
+          />
 
-          {/* 02 — Clawbank intro */}
-          <SlideSection>
-            <div className="mx-auto w-full max-w-[960px]">
-              <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                01 · Fractional Design Partner · 10 hrs/week · Pre-launch
-              </p>
-              <h2 className="mt-5 font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-                Clawbank
-              </h2>
-              <p className="mt-6 max-w-[620px] text-[1rem] leading-[1.7rem] text-ink">
-                A technically real product with no visual credibility. In
-                crypto, perception precedes traction, they needed to look
-                fundable before they could become fundable.
-              </p>
-            </div>
-          </SlideSection>
-
-          {/* 03 — Clawbank gallery (horizontal scroll-hijack) */}
-          <HorizontalSlider images={clawbankImages} alt="Clawbank" />
-
-          {/* 04 — Clawbank outcome */}
-          <SlideSection>
-            <div className="mx-auto w-full max-w-[960px]">
-              <div className="grid grid-cols-1 gap-12 md:grid-cols-[1fr_1fr]">
-                <div className="flex flex-col gap-8">
-                  <div>
-                    <p className="font-display text-[2.5rem] font-bold leading-none text-ink md:text-[3rem]">
-                      $150K → $800K
-                    </p>
-                    <p className="mt-3 max-w-[320px] text-[0.9rem] leading-[1.5rem] text-muted">
-                      Market cap in 13 days · +433% · #5 trending on
-                      DexScreener
-                    </p>
-                  </div>
-
-                  <blockquote className="border-l-2 border-accent pl-5">
-                    <p className="font-display text-[1.25rem] italic leading-[1.5] text-ink">
-                      &ldquo;We wouldn&rsquo;t have launched if it weren&rsquo;t
-                      for you.&rdquo;
-                    </p>
-                    <footer className="mt-3 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                      Clawbank founder
-                    </footer>
-                  </blockquote>
-                </div>
-
-                <div>
-                  <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                    Why it matters for Odyssey
-                  </p>
-                  <p className="mt-4 text-[1rem] leading-[1.7rem] text-ink">
-                    Same mechanism Odyssey needs: design legitimacy unlocks
-                    trust, trust unlocks momentum.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </SlideSection>
-
-          {/* 05 — Thrive intro */}
-          <SlideSection>
-            <div className="mx-auto w-full max-w-[960px]">
-              <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                02 · Full Rebrand · Web3 funding & intelligence platform
-              </p>
-              <h2 className="mt-5 font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-                Thrive
-              </h2>
-              <p className="mt-6 max-w-[620px] text-[1rem] leading-[1.7rem] text-ink">
-                Make a VC-facing crypto platform feel credible to an audience
-                conditioned to expect scams. Complex product, stigmatized
-                category, small team.
-              </p>
-            </div>
-          </SlideSection>
-
-          {/* 06 — Thrive gallery */}
-          <HorizontalSlider images={thriveImages} alt="Thrive" />
-
-          {/* 07 — Thrive relevance */}
-          <SlideSection>
-            <div className="mx-auto w-full max-w-[960px]">
-              <div className="grid grid-cols-1 gap-12 md:grid-cols-[1fr_1fr]">
-                <div />
-                <div>
-                  <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                    Why it matters for Odyssey
-                  </p>
-                  <p className="mt-4 text-[1rem] leading-[1.7rem] text-ink">
-                    Same core challenge: take something the mainstream
-                    doesn&rsquo;t fully trust yet, and design it into something
-                    they do.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </SlideSection>
-
-          {/* 08 — How I work */}
-          <SlideSection>
-            <div className="mx-auto w-full max-w-[960px]">
-              <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-                How I work
-              </h2>
-
-              <div className="mt-12 grid grid-cols-1 gap-x-16 gap-y-12 md:grid-cols-2 md:mt-16">
-                {howItems.map((item) => (
-                  <div key={item.title} className="flex flex-col gap-3">
-                    <h3 className="font-display text-[1.25rem] font-bold leading-tight text-ink">
-                      {item.title}
-                    </h3>
-                    <p className="text-[1rem] leading-[1.7rem] text-ink">
-                      {item.body}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </SlideSection>
-
-          {/* 09 — Engagement */}
-          <SlideSection>
-            <div className="mx-auto w-full max-w-[960px]">
-              <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-                Two ways to work together
-              </h2>
-
-              <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2">
-                {tiers.map((tier) => (
-                  <div
-                    key={tier.label}
-                    className="flex flex-col gap-8 rounded-[16px] border border-rule bg-transparent p-8"
-                  >
-                    <div>
-                      <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                        {tier.label}
-                      </p>
-                      <p className="mt-4 font-display text-[2rem] font-bold leading-none text-ink md:text-[2.5rem]">
-                        {tier.price}
-                        <span className="font-caption text-[13px] font-medium uppercase tracking-[1.5px] text-muted">
-                          {" "}
-                          / month
-                        </span>
-                      </p>
-                      <p className="mt-3 text-[0.9rem] leading-[1.5rem] text-muted">
-                        {tier.cadence}
-                      </p>
-                    </div>
-
-                    <ul className="flex flex-col gap-3 border-t border-rule-soft pt-6">
-                      {tier.includes.map((item, i) => (
-                        <li
-                          key={i}
-                          className="grid grid-cols-[16px_1fr] gap-3 text-[0.95rem] leading-[1.5rem] text-ink"
-                        >
-                          <span aria-hidden className="pt-[0.35rem] text-muted">
-                            —
-                          </span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-
-              <p className="mt-10 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
-                Both tiers are month-to-month. Scope reviewed after month one.
-                First month of Design Partner includes a brand audit at no
-                extra charge.
-              </p>
-            </div>
-          </SlideSection>
-
-          {/* 10 — Next step */}
-          <SlideSection>
-            <div className="mx-auto w-full max-w-[960px]">
-              <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-                Ready to move?
-              </h2>
-              <p className="mt-6 max-w-[620px] text-[1rem] leading-[1.7rem] text-ink">
-                Next step is a 30-minute call. I&rsquo;ll come with specific
-                directions for the educational hub and the risk assessment UI,
-                concrete, not vague. We agree on scope and I can be live within
-                a week.
-              </p>
-
-              <div className="mt-10">
-                <CtaButton href="mailto:guil@guil.is" label="Get in touch" />
-              </div>
-
-              <p className="mt-20 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                guil.is
-              </p>
-            </div>
-          </SlideSection>
+          <HowIWork />
+          <Engagement />
+          <NextStep />
         </main>
       </PasswordGate>
     </>
@@ -267,29 +76,257 @@ export default function OdysseyPage() {
 }
 
 // ---------------------------------------------------------------------
-// How I work — 4 short items, 2x2 grid
+// Header — always visible on load, no fade.
 // ---------------------------------------------------------------------
+function Header() {
+  return (
+    <section className="mx-auto w-full max-w-[1200px] px-6 pb-28 md:px-10 md:pb-40">
+      <div className="mx-auto w-full max-w-[960px]">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule pb-5">
+          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+            Prepared for Nick DeNuzzo & Chris · Odyssey
+          </p>
+          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+            April 2026
+          </p>
+        </div>
+
+        <h1 className="intro-rise mt-16 font-display text-[3rem] font-bold leading-[1.05] text-ink md:text-[4rem]">
+          Guil Maueler
+        </h1>
+        <p className="mt-4 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          Creative Director & Senior Brand Designer
+        </p>
+
+        <p className="mt-10 max-w-[560px] text-[1rem] leading-[1.7rem] text-ink">
+          14+ years of visual identity, design systems, and product interfaces.
+          Two recent projects, and two ways to work together.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------
+// Case study — 2-column layout. Images left, info right.
+// ---------------------------------------------------------------------
+type CaseStudyProps = {
+  number: string;
+  meta: string;
+  title: string;
+  problem: string;
+  images: string[];
+  stat?: string;
+  statLabel?: string;
+  quote?: string;
+  relevance: string;
+};
+
+function CaseStudy({
+  number,
+  meta,
+  title,
+  problem,
+  images,
+  stat,
+  statLabel,
+  quote,
+  relevance,
+}: CaseStudyProps) {
+  return (
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
+      <CenterFocus minOpacity={0} falloff={0.8} minScale={0.98}>
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-[1fr_1fr] md:items-center md:gap-16 lg:gap-20">
+          {/* Left — images */}
+          <CaseStudyGallery images={images} alt={title} />
+
+          {/* Right — info */}
+          <div className="flex flex-col gap-7">
+            <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+              {number} · {meta}
+            </p>
+            <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
+              {title}
+            </h2>
+            <p className="text-[1rem] leading-[1.7rem] text-ink">{problem}</p>
+
+            {stat ? (
+              <div className="mt-2">
+                <p className="font-display text-[2rem] font-bold leading-none text-ink md:text-[2.5rem]">
+                  {stat}
+                </p>
+                {statLabel ? (
+                  <p className="mt-3 text-[0.9rem] leading-[1.5rem] text-muted">
+                    {statLabel}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+
+            {quote ? (
+              <blockquote className="border-l-2 border-accent pl-5">
+                <p className="font-display text-[1.15rem] italic leading-[1.5] text-ink">
+                  &ldquo;{quote}&rdquo;
+                </p>
+                <footer className="mt-3 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                  {title} founder
+                </footer>
+              </blockquote>
+            ) : null}
+
+            <div className="mt-2 border-t border-rule-soft pt-6">
+              <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                Why it matters for Odyssey
+              </p>
+              <p className="mt-3 text-[1rem] leading-[1.7rem] text-ink">
+                {relevance}
+              </p>
+            </div>
+          </div>
+        </div>
+      </CenterFocus>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------
+// CaseStudyGallery — compact horizontal scroll-snap gallery inside the
+// left column of a case study. Shows one image at a time, user swipes
+// to see more. Falls back to a dashed placeholder when no images.
+// ---------------------------------------------------------------------
+function CaseStudyGallery({
+  images,
+  alt,
+}: {
+  images: string[];
+  alt: string;
+}) {
+  if (images.length === 0) {
+    return (
+      <div className="flex aspect-[4/3] w-full items-center justify-center rounded-[16px] border border-dashed border-rule bg-card/30">
+        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          {alt} images coming
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="scroll-row flex w-full snap-x snap-mandatory gap-3 overflow-x-auto rounded-[16px]">
+      {images.map((src, i) => (
+        <div
+          key={src}
+          className="relative aspect-[4/3] w-full shrink-0 snap-start overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
+        >
+          <Image
+            src={src}
+            alt={`${alt} ${i + 1}`}
+            fill
+            sizes="(min-width: 768px) 50vw, 100vw"
+            className="object-cover"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------
+// How I work — 6 items, homepage styling (small icon + caption label +
+// body), 3-col on large screens, 2-col on md, stack on mobile. Each
+// item fades independently via CenterFocus.
+// ---------------------------------------------------------------------
+const iconMap: Record<string, LucideIcon> = {
+  users: Users,
+  zap: Zap,
+  video: Video,
+  hammer: Hammer,
+  grid: LayoutGrid,
+  compass: Compass,
+};
+
 const howItems = [
   {
-    title: "Fast first drafts",
-    body: "Same-day or next-day rough concepts. We validate early, before I go deep.",
+    number: "01",
+    icon: "users",
+    title: "Shared ownership",
+    body: "Whether I work independently or integrate with your team, everyone comes along.",
   },
   {
-    title: "Embedded, not briefed",
-    body: "Strategic input before I open Figma. You bring business context, I bring design POV.",
+    number: "02",
+    icon: "zap",
+    title: "I work fast",
+    body: "Quick iteration allows us to zoom through explorations until something feels right.",
   },
   {
-    title: "Figma → Webflow, end-to-end",
-    body: "Design and delivery in one flow, AI-augmented via Claude Code + Webflow MCP.",
+    number: "03",
+    icon: "video",
+    title: "Show and tell",
+    body: "I frequently share work in progress via screen recordings with voice over.",
   },
   {
-    title: "Direct access",
-    body: "No layers, no account managers. You message me, I respond.",
+    number: "04",
+    icon: "hammer",
+    title: "Bias for action",
+    body: "I prefer tangible artifacts over lengthy documents that go ignored.",
+  },
+  {
+    number: "05",
+    icon: "grid",
+    title: "I work in systems",
+    body: "I create reusable components whether it's a feature or a design system.",
+  },
+  {
+    number: "06",
+    icon: "compass",
+    title: "Design is thinking",
+    body: "I explore divergent solutions. The more the merrier.",
   },
 ];
 
+function HowIWork() {
+  return (
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-24 md:px-10 md:py-32">
+      <CenterFocus minOpacity={0.25} falloff={0.6} minScale={0.99}>
+        <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
+          How I work
+        </h2>
+      </CenterFocus>
+
+      <div className="mt-12 grid grid-cols-1 gap-x-12 gap-y-4 md:mt-16 md:grid-cols-2 lg:grid-cols-3">
+        {howItems.map((item) => {
+          const Icon = iconMap[item.icon] ?? Compass;
+          return (
+            <CenterFocus
+              key={item.title}
+              minOpacity={0.2}
+              falloff={0.5}
+              minScale={0.97}
+            >
+              <div className="flex flex-col gap-3 py-8">
+                <div className="flex items-center gap-3">
+                  <Icon className="h-5 w-5 text-ink" strokeWidth={1.75} />
+                  <span className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                    {item.number}
+                  </span>
+                </div>
+                <h6 className="font-caption text-[13px] font-semibold uppercase tracking-[1.5px] text-ink">
+                  {item.title}
+                </h6>
+                <p className="text-[0.95rem] leading-[1.6rem] text-ink">
+                  {item.body}
+                </p>
+              </div>
+            </CenterFocus>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 // ---------------------------------------------------------------------
-// Engagement — two tiers, visually equal
+// Engagement — two tiers, visually equal.
 // ---------------------------------------------------------------------
 const tiers = [
   {
@@ -318,3 +355,88 @@ const tiers = [
     ],
   },
 ];
+
+function Engagement() {
+  return (
+    <section className="mx-auto w-full max-w-[960px] px-6 py-24 md:px-10 md:py-32">
+      <CenterFocus minOpacity={0} falloff={0.7} minScale={0.98}>
+        <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
+          Two ways to work together
+        </h2>
+
+        <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2">
+          {tiers.map((tier) => (
+            <div
+              key={tier.label}
+              className="flex flex-col gap-8 rounded-[16px] border border-rule bg-transparent p-8"
+            >
+              <div>
+                <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                  {tier.label}
+                </p>
+                <p className="mt-4 font-display text-[2rem] font-bold leading-none text-ink md:text-[2.5rem]">
+                  {tier.price}
+                  <span className="font-caption text-[13px] font-medium uppercase tracking-[1.5px] text-muted">
+                    {" "}
+                    / month
+                  </span>
+                </p>
+                <p className="mt-3 text-[0.9rem] leading-[1.5rem] text-muted">
+                  {tier.cadence}
+                </p>
+              </div>
+
+              <ul className="flex flex-col gap-3 border-t border-rule-soft pt-6">
+                {tier.includes.map((item, i) => (
+                  <li
+                    key={i}
+                    className="grid grid-cols-[16px_1fr] gap-3 text-[0.95rem] leading-[1.5rem] text-ink"
+                  >
+                    <span aria-hidden className="pt-[0.35rem] text-muted">
+                      —
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-10 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
+          Both tiers are month-to-month. Scope reviewed after month one. First
+          month of Design Partner includes a brand audit at no extra charge.
+        </p>
+      </CenterFocus>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------
+// Next step
+// ---------------------------------------------------------------------
+function NextStep() {
+  return (
+    <section className="mx-auto w-full max-w-[960px] px-6 py-24 md:px-10 md:py-32">
+      <CenterFocus minOpacity={0} falloff={0.7} minScale={0.98}>
+        <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
+          Ready to move?
+        </h2>
+        <p className="mt-6 max-w-[620px] text-[1rem] leading-[1.7rem] text-ink">
+          Next step is a 30-minute call. I&rsquo;ll come with specific
+          directions for the educational hub and the risk assessment UI,
+          concrete, not vague. We agree on scope and I can be live within a
+          week.
+        </p>
+
+        <div className="mt-10">
+          <CtaButton href="mailto:guil@guil.is" label="Get in touch" />
+        </div>
+
+        <p className="mt-20 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          guil.is
+        </p>
+      </CenterFocus>
+    </section>
+  );
+}
