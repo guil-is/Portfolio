@@ -104,17 +104,13 @@ function Header() {
         </h1>
 
         <p className="mt-10 max-w-[640px] text-[1.05rem] leading-[1.75rem] text-ink md:text-[1.15rem]">
-          You&rsquo;re building the on-ramp most of crypto is missing: a place
-          where new entrants learn to assess risk, prepare with intent, and
-          participate without getting burned. The product is real; the
-          challenge is making it feel as serious and trustworthy as it is, in
-          a category most people approach with skepticism.
-        </p>
-        <p className="mt-5 max-w-[640px] text-[1.05rem] leading-[1.75rem] text-ink md:text-[1.15rem]">
-          That&rsquo;s a design problem before it&rsquo;s a product problem,
-          and it&rsquo;s the one I&rsquo;ve spent the last two years solving
-          for clients in the same space. This is what that could look like for
-          Odyssey.
+          You&rsquo;re not looking for an agency or a full-time hire. You need
+          an embedded design partner who can work on-demand with Nick and
+          Chris: someone fast enough to keep up with a product roadmap
+          that&rsquo;s moving, and strategic enough to shape new surfaces, not
+          just execute on them. The risk assessment tool, the prep courses,
+          the educational hub. These aren&rsquo;t maintenance tasks.
+          They&rsquo;re positioning decisions. That&rsquo;s where I work best.
         </p>
       </div>
 
@@ -369,33 +365,31 @@ function HowIWork() {
 }
 
 // ---------------------------------------------------------------------
-// Engagement — two tiers, visually equal.
+// Engagement — two starting points. Second card gets a subtle
+// recommended treatment (stronger border + small pill badge).
 // ---------------------------------------------------------------------
 const tiers = [
   {
-    label: "Design Support",
+    label: "Start focused",
     price: "$4,800",
-    cadence: "~10 hrs/week · Monthly",
-    includes: [
-      "Site updates and iterations",
-      "Campaign and content asset design",
-      "Design QA on new features",
-      "48-hour turnaround",
-      "Async weekly update",
+    cadence: "~10 hrs/week",
+    body: [
+      "For teams that want to move carefully, establish a working rhythm, and see the collaboration in action before committing to bigger product work.",
+      "In practice: site iterations, campaign and content assets, design QA on new features, fast turnaround on requests. Embedded design thinking from day one, scoped to what's most immediately useful.",
     ],
+    response: "Response time: 48 hours",
+    recommended: false,
   },
   {
-    label: "Design Partner",
-    price: "$9,600",
-    cadence: "~20 hrs/week · Monthly",
-    includes: [
-      "Everything in Design Support",
-      "New product design: risk assessment, prep courses, educational hub",
-      "Brand system ownership",
-      "Weekly live sync with Nick & Chris",
-      "24-hour turnaround",
-      "Proactive strategic input",
+    label: "Start building",
+    price: "$8,800",
+    cadence: "~20 hrs/week",
+    body: [
+      "For teams that are ready to move on new product surfaces now. The risk assessment tool, prep courses, and educational hub all need design thinking from the start, not squeezed into spare hours.",
+      "In practice: everything above, plus dedicated design on new product initiatives, brand system ownership, and a weekly live sync with Nick and Chris.",
     ],
+    response: "Response time: 24 hours",
+    recommended: true,
   },
 ];
 
@@ -406,15 +400,29 @@ function Engagement() {
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0} falloff={0.7} minScale={0.98}>
           <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-            Two ways to work together
+            Where do you want to start?
           </h2>
+          <p className="mt-5 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
+            Two starting points depending on where Odyssey is right now. Both
+            are month-to-month and can flex after the first month.
+          </p>
 
           <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2">
             {tiers.map((tier) => (
               <div
                 key={tier.label}
-                className="flex flex-col gap-8 rounded-[16px] border border-rule bg-transparent p-8"
+                className={`relative flex flex-col gap-8 rounded-[16px] border p-8 ${
+                  tier.recommended
+                    ? "border-ink bg-card/30"
+                    : "border-rule bg-transparent"
+                }`}
               >
+                {tier.recommended ? (
+                  <span className="absolute -top-3 left-6 inline-flex items-center rounded-full bg-ink px-3 py-1 font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-bg">
+                    Recommended
+                  </span>
+                ) : null}
+
                 <div>
                   <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
                     {tier.label}
@@ -431,27 +439,28 @@ function Engagement() {
                   </p>
                 </div>
 
-                <ul className="flex flex-col gap-3 border-t border-rule-soft pt-6">
-                  {tier.includes.map((item, i) => (
-                    <li
+                <div className="flex flex-col gap-4 border-t border-rule-soft pt-6">
+                  {tier.body.map((para, i) => (
+                    <p
                       key={i}
-                      className="grid grid-cols-[16px_1fr] gap-3 text-[0.95rem] leading-[1.5rem] text-ink"
+                      className="text-[0.95rem] leading-[1.6rem] text-ink"
                     >
-                      <span aria-hidden className="pt-[0.35rem] text-muted">
-                        —
-                      </span>
-                      <span>{item}</span>
-                    </li>
+                      {para}
+                    </p>
                   ))}
-                </ul>
+                </div>
+
+                <p className="mt-auto font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                  {tier.response}
+                </p>
               </div>
             ))}
           </div>
 
           <p className="mt-10 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
-            Both tiers are month-to-month. Scope reviewed after month one.
-            First month of Design Partner includes a brand audit at no extra
-            charge.
+            Both options are month-to-month. Scope is reviewed after the first
+            month and adjusted if needed. If you&rsquo;re unsure which fits,
+            the first conversation will make it clear.
           </p>
         </CenterFocus>
       </div>
