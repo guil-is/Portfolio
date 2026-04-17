@@ -1,7 +1,7 @@
 {
-  "slugs": "the-daoist",
-  "fields": "projectDetails",
+  "slugs": "all",
+  "fields": "projectDetails,stillFrames,features",
   "force": true,
   "dry_run": false,
-  "_triggered": 4
+  "_triggered": 5
 }

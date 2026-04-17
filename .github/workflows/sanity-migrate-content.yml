@@ -56,10 +56,18 @@ jobs:
         id: cfg
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
-            echo "SLUGS=$(jq -r '.slugs // "all"' .github/triggers/migrate-content.json)" >> "$GITHUB_OUTPUT"
-            echo "FIELDS=$(jq -r '.fields // "projectDetails,stillFrames,features"' .github/triggers/migrate-content.json)" >> "$GITHUB_OUTPUT"
-            echo "FORCE=$(jq -r '.force // false' .github/triggers/migrate-content.json)" >> "$GITHUB_OUTPUT"
-            echo "DRY_RUN=$(jq -r '.dry_run // true' .github/triggers/migrate-content.json)" >> "$GITHUB_OUTPUT"
+            # NOTE: jq's `//` operator treats false the same as null, so
+            # we can't use `.dry_run // true` — a literal false would
+            # fall through to the default. Handle null explicitly.
+            F=.github/triggers/migrate-content.json
+            SLUGS=$(jq -r '.slugs // "all"' "$F")
+            FIELDS=$(jq -r '.fields // "projectDetails,stillFrames,features"' "$F")
+            FORCE=$(jq -r 'if has("force") then .force else false end | tostring' "$F")
+            DRY_RUN=$(jq -r 'if has("dry_run") then .dry_run else true end | tostring' "$F")
+            echo "SLUGS=$SLUGS" >> "$GITHUB_OUTPUT"
+            echo "FIELDS=$FIELDS" >> "$GITHUB_OUTPUT"
+            echo "FORCE=$FORCE" >> "$GITHUB_OUTPUT"
+            echo "DRY_RUN=$DRY_RUN" >> "$GITHUB_OUTPUT"
           else
             echo "SLUGS=${{ inputs.slugs }}" >> "$GITHUB_OUTPUT"
             echo "FIELDS=${{ inputs.fields }}" >> "$GITHUB_OUTPUT"
