@@ -32,7 +32,8 @@ const client = createClient({
   useCdn: false,
 });
 
-const doc = await client.fetch<{
+async function main() {
+  const doc = await client.fetch<{
   _id: string;
   projectDetails?: Array<Record<string, unknown>>;
 } | null>(
@@ -70,3 +71,9 @@ const typeCount: Record<string, number> = {};
 });
 
 console.log(`\nBlock type counts:`, typeCount);
+}
+
+main().catch((err) => {
+  console.error("Fatal:", err);
+  process.exit(1);
+});
