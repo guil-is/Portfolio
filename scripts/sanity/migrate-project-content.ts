@@ -68,7 +68,10 @@ const dryRun = (DRY_RUN ?? "true").toLowerCase() !== "false";
 const force = (FORCE ?? "false").toLowerCase() === "true";
 
 const allowedFields = new Set(
-  (FIELDS ?? "projectDetails,stillFrames,features")
+  (
+    FIELDS ??
+    "projectDetails,stillFrames,features,gridImage,mainImage,heroVideo,link"
+  )
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean),
@@ -335,6 +338,10 @@ type SanityProjectDoc = {
   slug?: { current?: string };
   projectDetails?: unknown[];
   stillFrames?: unknown[];
+  gridImage?: unknown;
+  mainImage?: unknown;
+  heroVideo?: string;
+  link?: string;
   [k: string]: unknown;
 };
 
@@ -428,6 +435,63 @@ async function migrateProject(local: PastProject): Promise<{
       }
     }
     if (frames.length > 0) patch.stillFrames = frames;
+  }
+
+  // gridImage — single image asset ref. Upload the local URL if the
+  // Sanity field is empty (or force=true).
+  if (
+    allowedFields.has("gridImage") &&
+    local.gridImage &&
+    (force || !sanity.gridImage)
+  ) {
+    try {
+      const assetId = await uploadImage(local.gridImage);
+      patch.gridImage = {
+        _type: "image",
+        asset: { _type: "reference", _ref: assetId },
+      };
+    } catch (err) {
+      console.warn(
+        `  ⚠ Skipped gridImage ${local.gridImage}: ${(err as Error).message}`,
+      );
+    }
+  }
+
+  // mainImage — same pattern.
+  if (
+    allowedFields.has("mainImage") &&
+    local.mainImage &&
+    (force || !sanity.mainImage)
+  ) {
+    try {
+      const assetId = await uploadImage(local.mainImage);
+      patch.mainImage = {
+        _type: "image",
+        asset: { _type: "reference", _ref: assetId },
+      };
+    } catch (err) {
+      console.warn(
+        `  ⚠ Skipped mainImage ${local.mainImage}: ${(err as Error).message}`,
+      );
+    }
+  }
+
+  // heroVideo — simple string copy, no upload.
+  if (
+    allowedFields.has("heroVideo") &&
+    local.heroVideo &&
+    (force || !sanity.heroVideo)
+  ) {
+    patch.heroVideo = local.heroVideo;
+  }
+
+  // link — simple string copy, no upload.
+  if (
+    allowedFields.has("link") &&
+    local.link &&
+    (force || !sanity.link)
+  ) {
+    patch.link = local.link;
   }
 
   return { slug: local.slug, patch, sanityDoc: sanity };

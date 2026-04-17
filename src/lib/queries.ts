@@ -81,7 +81,9 @@ export async function getAllProjects(): Promise<SanityProject[]> {
       heroVideo,
       link,
       featured,
-      sortOrder
+      sortOrder,
+      "gridImage": gridImage.asset->url,
+      "mainImage": mainImage.asset->url
     }`,
   );
 }
@@ -136,6 +138,8 @@ export type SanityActiveProject = {
   summary: string;
   heroVideo?: string;
   link?: string;
+  gridImage?: string;
+  mainImage?: string;
 };
 
 export async function getActiveProjects(): Promise<SanityActiveProject[]> {
@@ -148,7 +152,9 @@ export async function getActiveProjects(): Promise<SanityActiveProject[]> {
       services,
       summary,
       heroVideo,
-      link
+      link,
+      "gridImage": gridImage.asset->url,
+      "mainImage": mainImage.asset->url
     }`,
   );
 }

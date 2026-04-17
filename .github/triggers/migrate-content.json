@@ -1,7 +1,7 @@
 {
   "slugs": "all",
-  "fields": "projectDetails,stillFrames,features",
-  "force": true,
+  "fields": "projectDetails,stillFrames,features,gridImage,mainImage,heroVideo,link",
+  "force": false,
   "dry_run": false,
-  "_triggered": 5
+  "_triggered": 6
 }
