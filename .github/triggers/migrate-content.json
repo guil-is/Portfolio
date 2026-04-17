@@ -1,0 +1,6 @@
+{
+  "slugs": "all",
+  "fields": "projectDetails,stillFrames,features",
+  "force": true,
+  "dry_run": false
+}

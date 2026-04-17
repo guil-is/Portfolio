@@ -1,9 +1,13 @@
 name: Sanity — Migrate project content
 
-# Manually triggered: moves rich projectDetails (HTML), stillFrames
-# (image URLs), and features (image+caption rows) from the local
-# src/content/projects.ts fallback file into Sanity as Portable Text
-# blocks + uploaded image assets.
+# Moves rich projectDetails (HTML), stillFrames (image URLs), and
+# features (image+caption rows) from src/content/projects.ts into
+# Sanity as Portable Text blocks + uploaded image assets.
+#
+# Two trigger modes:
+#   1. Manual: Actions tab → Run workflow → fill inputs
+#   2. Automated: push a JSON trigger file at
+#      .github/triggers/migrate-content.json (Claude does this)
 #
 # See scripts/sanity/migrate-project-content.ts for the implementation.
 
@@ -30,6 +34,9 @@ on:
         required: true
         type: boolean
         default: true
+  push:
+    branches: [main]
+    paths: [".github/triggers/migrate-content.json"]
 
 jobs:
   migrate:
@@ -45,15 +52,30 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Resolve inputs
+        id: cfg
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "SLUGS=$(jq -r '.slugs // "all"' .github/triggers/migrate-content.json)" >> "$GITHUB_OUTPUT"
+            echo "FIELDS=$(jq -r '.fields // "projectDetails,stillFrames,features"' .github/triggers/migrate-content.json)" >> "$GITHUB_OUTPUT"
+            echo "FORCE=$(jq -r '.force // false' .github/triggers/migrate-content.json)" >> "$GITHUB_OUTPUT"
+            echo "DRY_RUN=$(jq -r '.dry_run // true' .github/triggers/migrate-content.json)" >> "$GITHUB_OUTPUT"
+          else
+            echo "SLUGS=${{ inputs.slugs }}" >> "$GITHUB_OUTPUT"
+            echo "FIELDS=${{ inputs.fields }}" >> "$GITHUB_OUTPUT"
+            echo "FORCE=${{ inputs.force }}" >> "$GITHUB_OUTPUT"
+            echo "DRY_RUN=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Run migration
         env:
           SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
           SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
-          SLUGS: ${{ inputs.slugs }}
-          FIELDS: ${{ inputs.fields }}
-          FORCE: ${{ inputs.force }}
-          DRY_RUN: ${{ inputs.dry_run }}
+          SLUGS: ${{ steps.cfg.outputs.SLUGS }}
+          FIELDS: ${{ steps.cfg.outputs.FIELDS }}
+          FORCE: ${{ steps.cfg.outputs.FORCE }}
+          DRY_RUN: ${{ steps.cfg.outputs.DRY_RUN }}
         run: npm run sanity:migrate-content
 
       - name: Upload pre-migration backup
