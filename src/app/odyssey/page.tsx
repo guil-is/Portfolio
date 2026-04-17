@@ -107,14 +107,14 @@ function Header() {
         <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
           A proposal from Guil Maueler
         </p>
-        <h1 className="intro-rise mt-5 font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:text-[4rem]">
+        <h1 className="intro-rise mt-8 font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:mt-10 md:text-[4rem]">
           Design partner for Odyssey
         </h1>
 
         <p className="mt-10 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
           Odyssey is tripling sales this year and launching new product
           surfaces fast. You need a design partner embedded enough to move
-          with that pace, and strategic enough to shape what you&rsquo;re
+          at that pace, and strategic enough to help shape what you&rsquo;re
           building, not just execute on it.
         </p>
       </div>
