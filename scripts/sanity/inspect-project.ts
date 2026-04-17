@@ -1,10 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * Diagnostic: dump a project's full metadata + block type counts.
- *
- * Usage via env:
- *   SLUG=<project-slug>   default "n26-product-videos"
- *   SANITY_*              required
+ * Diagnostic: list all projects in Sanity, with optional slug filter.
  */
 import { createClient } from "next-sanity";
 
@@ -14,8 +10,6 @@ const {
   SANITY_DATASET,
   SANITY_AUTH_TOKEN,
 } = process.env;
-
-const slug = SLUG || "n26-product-videos";
 
 if (!SANITY_PROJECT_ID || !SANITY_DATASET || !SANITY_AUTH_TOKEN) {
   console.error("Missing SANITY_* env vars");
@@ -31,36 +25,30 @@ const client = createClient({
 });
 
 async function main() {
-  const doc = await client.fetch<Record<string, unknown> | null>(
-    `*[_type == "project" && slug.current == $slug][0] {
+  const allProjects = await client.fetch<
+    Array<Record<string, unknown>>
+  >(
+    `*[_type == "project"] | order(sortOrder asc) {
       _id,
       name,
       "slug": slug.current,
       client,
-      services,
-      summary,
       featured,
       sortOrder,
-      heroVideo,
-      link,
       "hasGridImage": defined(gridImage),
-      "gridImageUrl": gridImage.asset->url,
-      "hasMainImage": defined(mainImage),
-      "mainImageUrl": mainImage.asset->url,
       "projectDetailsCount": count(projectDetails),
       "stillFramesCount": count(stillFrames)
     }`,
-    { slug },
   );
 
-  if (!doc) {
-    console.log(`No project with slug "${slug}"`);
-    process.exit(0);
-  }
-
-  console.log("Full doc metadata:");
-  for (const [k, v] of Object.entries(doc)) {
-    console.log(`  ${k}: ${JSON.stringify(v)}`);
+  console.log(`Total projects in Sanity: ${allProjects.length}\n`);
+  for (const p of allProjects) {
+    const match = !SLUG || (p.name as string)?.toLowerCase().includes(SLUG.toLowerCase()) ||
+      (p.slug as string)?.toLowerCase().includes(SLUG.toLowerCase());
+    if (!match) continue;
+    console.log(
+      `  ${p._id}  slug=${p.slug}  name="${p.name}"  client=${p.client}  featured=${p.featured}  sortOrder=${p.sortOrder}  gridImage=${p.hasGridImage}  details=${p.projectDetailsCount}  stills=${p.stillFramesCount}`,
+    );
   }
 }
 
