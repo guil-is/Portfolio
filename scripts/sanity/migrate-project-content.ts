@@ -360,7 +360,17 @@ async function migrateProject(local: PastProject): Promise<{
   ) {
     console.log(`  • Parsing projectDetails HTML (${local.projectDetails.length} chars)`);
     const blocks = await convertHtmlToBlocks(local.projectDetails);
-    if (blocks.length > 0) patch.projectDetails = blocks;
+    if (blocks.length > 0) {
+      const counts: Record<string, number> = {};
+      for (const b of blocks as Array<Record<string, unknown>>) {
+        const t = (b._type as string) ?? "unknown";
+        counts[t] = (counts[t] ?? 0) + 1;
+      }
+      console.log(
+        `    → parsed block types: ${JSON.stringify(counts)}`,
+      );
+      patch.projectDetails = blocks;
+    }
   }
 
   // features — append as image+caption blocks to projectDetails.
