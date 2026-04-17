@@ -9,6 +9,7 @@ import {
   Compass,
   ChevronDown,
   ArrowUpRight,
+  Play,
   type LucideIcon,
 } from "lucide-react";
 import { PasswordGate } from "@/components/PasswordGate";
@@ -121,7 +122,7 @@ function Header() {
 
       {/* Centered hero content */}
       <div className="mx-auto flex w-full max-w-[960px] flex-1 flex-col justify-center py-16">
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+        <p className="mb-4 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted md:mb-6">
           A proposal from Guil Maueler
         </p>
         <h1 className="intro-rise mt-16 font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:mt-24 md:text-[4rem]">
@@ -139,6 +140,7 @@ function Header() {
           <CtaButton
             href="https://www.loom.com/share/287197230f7d42d7be5b475fe30f535e"
             label="Watch the walkthrough"
+            icon={Play}
           />
         </div>
       </div>
