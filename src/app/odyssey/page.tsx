@@ -134,6 +134,13 @@ function Header() {
           at that pace, and strategic enough to shape what you&rsquo;re
           building, not just execute on it.
         </p>
+
+        <div className="mt-10">
+          <CtaButton
+            href="https://www.loom.com/share/287197230f7d42d7be5b475fe30f535e"
+            label="Watch the walkthrough"
+          />
+        </div>
       </div>
 
       {/* Scroll hint */}
