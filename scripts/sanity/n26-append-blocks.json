@@ -1,0 +1,164 @@
+[
+  {
+    "_type": "block",
+    "_key": "n26-6jzs60hk",
+    "style": "h3",
+    "children": [
+      {
+        "_type": "span",
+        "_key": "n26-zyph1h51",
+        "text": "N26 Metal",
+        "marks": []
+      }
+    ],
+    "markDefs": []
+  },
+  {
+    "_type": "videoEmbed",
+    "_key": "n26-0kubfk34",
+    "url": "https://www.youtube.com/watch?v=hHXb-WtHTTI",
+    "caption": "N26 Metal — hero video"
+  },
+  {
+    "_key": "70308b3d3c8f",
+    "children": [
+      {
+        "_type": "span",
+        "marks": [],
+        "text": "\"Metal was here before us, and will be here after us. It’s an authentic, raw element of what makes up our world",
+        "_key": "70308b3d3c8f0"
+      },
+      {
+        "_type": "span",
+        "marks": [
+          "em"
+        ],
+        "text": ". It also exists beyond our world. Metal is denser, more valuable and longer lasting. Weight is wealth.\"",
+        "_key": "70308b3d3c8f1"
+      }
+    ],
+    "markDefs": [],
+    "_type": "block",
+    "style": "blockquote"
+  },
+  {
+    "_key": "efb8a092487f",
+    "children": [
+      {
+        "_type": "span",
+        "marks": [],
+        "text": "Made in collaboration with ",
+        "_key": "efb8a092487f0"
+      },
+      {
+        "_type": "span",
+        "marks": [
+          "33757b7f5b15"
+        ],
+        "text": "Tim Doldissen",
+        "_key": "efb8a092487f1"
+      },
+      {
+        "_type": "span",
+        "marks": [],
+        "text": " and ",
+        "_key": "efb8a092487f2"
+      },
+      {
+        "_type": "span",
+        "marks": [
+          "8f42aea61485"
+        ],
+        "text": "Juan García",
+        "_key": "efb8a092487f3"
+      },
+      {
+        "_type": "span",
+        "marks": [],
+        "text": ", these two videos were created for the launch (below) and re-design (above) of N26's premium product.",
+        "_key": "efb8a092487f4"
+      }
+    ],
+    "markDefs": [
+      {
+        "_key": "33757b7f5b15",
+        "_type": "link",
+        "href": "http://timdoldissen.com"
+      },
+      {
+        "_key": "8f42aea61485",
+        "_type": "link",
+        "href": "http://juangarciasegura.com/"
+      }
+    ],
+    "_type": "block",
+    "style": "normal"
+  },
+  {
+    "_key": "95035e865ef6",
+    "children": [
+      {
+        "_type": "span",
+        "marks": [],
+        "text": "Focus on the design and physical features that makes the card stand out from the others. We aimed to transmit a sense of suspense, the thrilling sensation of something new and exciting being moulded into existence.",
+        "_key": "95035e865ef60"
+      }
+    ],
+    "markDefs": [],
+    "_type": "block",
+    "style": "normal"
+  },
+  {
+    "_key": "d287d5c01cb1",
+    "children": [
+      {
+        "_type": "span",
+        "marks": [],
+        "text": "‍",
+        "_key": "d287d5c01cb10"
+      }
+    ],
+    "markDefs": [],
+    "_type": "block",
+    "style": "normal"
+  },
+  {
+    "_type": "videoEmbed",
+    "url": "https://www.youtube.com/watch?v=CKqSSmN8lyk",
+    "_key": "0d4a5f378b38"
+  },
+  {
+    "_key": "3afa19019ef4",
+    "children": [
+      {
+        "_type": "span",
+        "marks": [],
+        "text": "\n",
+        "_key": "3afa19019ef40"
+      }
+    ],
+    "markDefs": [],
+    "_type": "block",
+    "style": "normal"
+  },
+  {
+    "_type": "block",
+    "_key": "n26-uikd8cge",
+    "style": "h3",
+    "children": [
+      {
+        "_type": "span",
+        "_key": "n26-oxtvv9g6",
+        "text": "N26 Spaces",
+        "marks": []
+      }
+    ],
+    "markDefs": []
+  },
+  {
+    "_type": "videoEmbed",
+    "_key": "n26-tg046j9c",
+    "url": "https://www.youtube.com/watch?v=rejvsITkYQI",
+    "caption": "N26 Spaces — hero video"
+  }
+]

@@ -1,0 +1,28 @@
+name: Sanity — Append N26 Metal + Spaces content
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/triggers/append-n26.json"]
+
+jobs:
+  append:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Resolve inputs
+        id: cfg
+        run: |
+          echo "DRY_RUN=$(jq -r 'if has("dry_run") then .dry_run else true end | tostring' .github/triggers/append-n26.json)" >> "$GITHUB_OUTPUT"
+      - name: Run append
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          DRY_RUN: ${{ steps.cfg.outputs.DRY_RUN }}
+        run: npx tsx scripts/sanity/append-n26-content.ts
