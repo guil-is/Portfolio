@@ -1,0 +1,42 @@
+name: Sanity — Inspect project (diagnostic)
+
+# Prints the raw projectDetails blocks of a given project to the run
+# log so we can see what's actually stored in Sanity.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "Project slug"
+        required: true
+        type: string
+        default: "the-daoist"
+  push:
+    branches: [main]
+    paths: [".github/triggers/inspect.json"]
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Resolve slug
+        id: cfg
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "SLUG=$(jq -r '.slug // "the-daoist"' .github/triggers/inspect.json)" >> "$GITHUB_OUTPUT"
+          else
+            echo "SLUG=${{ inputs.slug }}" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Inspect
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SLUG: ${{ steps.cfg.outputs.SLUG }}
+        run: npx tsx scripts/sanity/inspect-project.ts
