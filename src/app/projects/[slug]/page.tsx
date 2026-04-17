@@ -11,6 +11,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { FadeIn } from "@/components/FadeIn";
 import { ProjectSideTitle } from "@/components/ProjectSideTitle";
 import { ProjectArticle } from "@/components/ProjectArticle";
+import { StillFramesGallery } from "@/components/StillFramesGallery";
 import {
   getAllProjectSlugs,
   getProjectBySlug,
@@ -232,74 +233,43 @@ export default async function ProjectDetailPage({
           </FadeIn>
         ) : null}
 
-        {/* Feature image + caption rows (currently only Octopus has these). */}
-        {project.features && project.features.length > 0 && (
-          <section className="mx-auto w-full max-w-[1200px] py-16">
-            <div className="flex flex-col gap-20">
-              {project.features.map((feat, i) => (
-                <FadeIn key={i}>
-                  <div
-                    className={`flex flex-col items-center gap-6 md:flex-row ${
-                      i % 2 === 1 ? "md:flex-row-reverse" : ""
-                    }`}
-                  >
-                    {feat.image && (
-                      <div className="relative w-full max-w-[700px] overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
-                        <Image
-                          src={feat.image}
-                          alt={feat.caption ?? `${project.name} feature ${i + 1}`}
-                          width={1600}
-                          height={1200}
-                          sizes="(min-width: 768px) 700px, 100vw"
-                          unoptimized
-                          className="h-auto w-full object-cover"
-                        />
-                      </div>
-                    )}
-                    {feat.caption && (
-                      <p className="max-w-[400px] text-[0.95rem] leading-[1.6rem] text-body">
-                        {feat.caption}
-                      </p>
-                    )}
-                  </div>
-                </FadeIn>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Still-frames gallery. Prefer Sanity (each frame's asset
-            URL resolved via GROQ), fall back to the local TS file's
-            string URLs. */}
+        {/* Still-frames gallery. Uses Sanity's stillFrames with
+            resolved asset URLs + dimensions (needed for the
+            justified-rows layout). Falls back to the local TS file's
+            string URLs using a default aspect ratio when dimensions
+            aren't available.
+            NOTE: the legacy `features` array from local TS used to
+            render here as its own section. That caused duplicates for
+            projects whose features were migrated into projectDetails
+            (they now render once inside the article, via the appended
+            image blocks). Removed. */}
         {(() => {
-          const sanityFrames = (sanityProject?.stillFrames ?? [])
-            .map((f) => f.url)
-            .filter((u): u is string => !!u);
-          const frames =
+          type SrcFrame = { src: string; width: number; height: number };
+          const sanityFrames: SrcFrame[] = (sanityProject?.stillFrames ?? [])
+            .filter((f) => !!f.url)
+            .map((f) => ({
+              src: f.url as string,
+              width: f.width ?? 1600,
+              height: f.height ?? 900,
+            }));
+          const localFrames: SrcFrame[] =
             sanityFrames.length > 0
-              ? sanityFrames
-              : project.stillFrames ?? [];
+              ? []
+              : (project.stillFrames ?? []).map((src) => ({
+                  src,
+                  width: 1600,
+                  height: 900,
+                }));
+          const frames =
+            sanityFrames.length > 0 ? sanityFrames : localFrames;
           if (frames.length === 0) return null;
           return (
             <FadeIn>
-              <section className="mx-auto w-full max-w-[1200px] py-16">
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {frames.map((src, i) => (
-                    <div
-                      key={i}
-                      className="relative aspect-[16/9] overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
-                    >
-                      <Image
-                        src={src}
-                        alt={`${project.name} still frame ${i + 1}`}
-                        fill
-                        sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
-                        unoptimized
-                        className="object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
+              <section className="mx-auto w-full max-w-[1200px] px-6 py-16 md:px-10">
+                <StillFramesGallery
+                  frames={frames}
+                  alt={project.name}
+                />
               </section>
             </FadeIn>
           );

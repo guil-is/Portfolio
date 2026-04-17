@@ -34,6 +34,9 @@ export type SanityImageRef = {
   url?: string;
   caption?: string;
   hotspot?: { x: number; y: number; width?: number; height?: number };
+  /** Resolved via asset->metadata.dimensions in the GROQ query. */
+  width?: number;
+  height?: number;
 };
 
 export type SanityVideoEmbed = {
@@ -114,7 +117,9 @@ export async function getProjectBySlug(
       },
       stillFrames[] {
         ...,
-        "url": asset->url
+        "url": asset->url,
+        "width": asset->metadata.dimensions.width,
+        "height": asset->metadata.dimensions.height
       }
     }`,
     { slug },
