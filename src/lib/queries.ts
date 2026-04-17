@@ -28,6 +28,29 @@ export async function getFeaturedClients(): Promise<SanityClient[]> {
 
 // ---- Projects ----
 
+export type SanityImageRef = {
+  _type?: "image";
+  _key?: string;
+  url?: string;
+  caption?: string;
+  hotspot?: { x: number; y: number; width?: number; height?: number };
+};
+
+export type SanityVideoEmbed = {
+  _type: "videoEmbed";
+  _key?: string;
+  url: string;
+  caption?: string;
+};
+
+// Loose type for Portable Text blocks — we render via @portabletext/react
+// so we don't need to model block internals strictly here.
+export type PortableTextBlock = {
+  _type: string;
+  _key?: string;
+  [key: string]: unknown;
+};
+
 export type SanityProject = {
   _id: string;
   name: string;
@@ -41,6 +64,9 @@ export type SanityProject = {
   link?: string;
   featured?: boolean;
   sortOrder: number;
+  /** Portable Text body. Includes block, image, and videoEmbed types. */
+  projectDetails?: PortableTextBlock[];
+  stillFrames?: SanityImageRef[];
 };
 
 export async function getAllProjects(): Promise<SanityProject[]> {
@@ -74,7 +100,20 @@ export async function getProjectBySlug(
       heroVideo,
       link,
       featured,
-      sortOrder
+      sortOrder,
+      "gridImage": gridImage.asset->url,
+      "mainImage": mainImage.asset->url,
+      projectDetails[] {
+        ...,
+        _type == "image" => {
+          ...,
+          "url": asset->url
+        }
+      },
+      stillFrames[] {
+        ...,
+        "url": asset->url
+      }
     }`,
     { slug },
   );

@@ -171,6 +171,31 @@ async function uploadImage(url: string): Promise<string> {
   return asset._id;
 }
 
+/**
+ * Convert a provider embed URL (youtube.com/embed/ID, player.vimeo.com/
+ * video/ID, etc.) back to a canonical share URL so the live site's
+ * <VideoEmbed> component can parse it consistently. Pass-through for
+ * URLs that are already canonical.
+ */
+function normalizeEmbedUrl(src: string): string {
+  try {
+    const u = new URL(src);
+    // youtube.com/embed/VIDEOID → youtube.com/watch?v=VIDEOID
+    const ytEmbed = u.pathname.match(/^\/embed\/([A-Za-z0-9_-]+)/);
+    if (u.hostname.includes("youtube.com") && ytEmbed) {
+      return `https://www.youtube.com/watch?v=${ytEmbed[1]}`;
+    }
+    // player.vimeo.com/video/VIDEOID → vimeo.com/VIDEOID
+    const vmEmbed = u.pathname.match(/^\/video\/(\d+)/);
+    if (u.hostname.includes("vimeo.com") && vmEmbed) {
+      return `https://vimeo.com/${vmEmbed[1]}`;
+    }
+    return src;
+  } catch {
+    return src;
+  }
+}
+
 function imageBlock(assetId: string, caption?: string): Record<string, unknown> {
   return {
     _type: "image",
@@ -192,6 +217,25 @@ async function convertHtmlToBlocks(html: string): Promise<unknown[]> {
   // TypeScript can't prove that through the object literal spread —
   // we widen rules to the loose runtime shape via a local cast.
   const rules = [
+    {
+      // <figure> wrapping an <iframe> — YouTube / Vimeo embed. Must
+      // come BEFORE the image-figure rule so iframe-carrying figures
+      // aren't mis-parsed as images.
+      deserialize(el: Element, _next: unknown, block: (b: object) => object) {
+        if (el.tagName?.toLowerCase() !== "figure") return undefined;
+        const iframe = el.querySelector("iframe");
+        if (!iframe) return undefined;
+        const src = iframe.getAttribute("src");
+        if (!src) return undefined;
+        const caption =
+          el.querySelector("figcaption")?.textContent?.trim() || undefined;
+        return block({
+          _type: "videoEmbed",
+          url: normalizeEmbedUrl(src),
+          ...(caption ? { caption } : {}),
+        });
+      },
+    },
     {
       deserialize(el: Element, _next: unknown, block: (b: object) => object) {
         if (el.tagName?.toLowerCase() !== "figure") return undefined;
@@ -257,6 +301,12 @@ async function convertHtmlToBlocks(html: string): Promise<unknown[]> {
           `  ⚠ Skipped inline image ${url}: ${(err as Error).message}`,
         );
       }
+    } else if (maybeImg._type === "videoEmbed") {
+      // Pass through, ensure _key
+      out.push({
+        ...maybeImg,
+        _key: maybeImg._key ?? `vid-${Math.random().toString(36).slice(2, 10)}`,
+      });
     } else {
       // Ensure each block has a _key
       if (!maybeImg._key) {

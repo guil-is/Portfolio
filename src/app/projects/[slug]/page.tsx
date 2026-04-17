@@ -10,6 +10,7 @@ import { VideoEmbed } from "@/components/VideoEmbed";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { FadeIn } from "@/components/FadeIn";
 import { ProjectSideTitle } from "@/components/ProjectSideTitle";
+import { ProjectArticle } from "@/components/ProjectArticle";
 import {
   getAllProjectSlugs,
   getProjectBySlug,
@@ -209,10 +210,18 @@ export default async function ProjectDetailPage({
           </section>
         </FadeIn>
 
-        {/* Project details article — rendered as rich HTML from the CSV
-            Project Details field. Uses .project-article styles in
-            globals.css to approximate the Webflow article typography. */}
-        {project.projectDetails && (
+        {/* Project details article. Prefer Sanity's Portable Text
+            body (editable in Studio, can include image + videoEmbed
+            blocks). Fall back to the legacy HTML body from the local
+            TS file for any project that hasn't been migrated yet. */}
+        {sanityProject?.projectDetails &&
+        sanityProject.projectDetails.length > 0 ? (
+          <FadeIn>
+            <section className="py-16">
+              <ProjectArticle blocks={sanityProject.projectDetails} />
+            </section>
+          </FadeIn>
+        ) : project.projectDetails ? (
           <FadeIn>
             <section className="py-16">
               <div
@@ -221,7 +230,7 @@ export default async function ProjectDetailPage({
               />
             </section>
           </FadeIn>
-        )}
+        ) : null}
 
         {/* Feature image + caption rows (currently only Octopus has these). */}
         {project.features && project.features.length > 0 && (
@@ -259,30 +268,42 @@ export default async function ProjectDetailPage({
           </section>
         )}
 
-        {/* Still-frames gallery (if available) */}
-        {project.stillFrames && project.stillFrames.length > 0 && (
-          <FadeIn>
-            <section className="mx-auto w-full max-w-[1200px] py-16">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {project.stillFrames.map((src, i) => (
-                  <div
-                    key={i}
-                    className="relative aspect-[16/9] overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
-                  >
-                    <Image
-                      src={src}
-                      alt={`${project.name} still frame ${i + 1}`}
-                      fill
-                      sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
-                      unoptimized
-                      className="object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            </section>
-          </FadeIn>
-        )}
+        {/* Still-frames gallery. Prefer Sanity (each frame's asset
+            URL resolved via GROQ), fall back to the local TS file's
+            string URLs. */}
+        {(() => {
+          const sanityFrames = (sanityProject?.stillFrames ?? [])
+            .map((f) => f.url)
+            .filter((u): u is string => !!u);
+          const frames =
+            sanityFrames.length > 0
+              ? sanityFrames
+              : project.stillFrames ?? [];
+          if (frames.length === 0) return null;
+          return (
+            <FadeIn>
+              <section className="mx-auto w-full max-w-[1200px] py-16">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {frames.map((src, i) => (
+                    <div
+                      key={i}
+                      className="relative aspect-[16/9] overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]"
+                    >
+                      <Image
+                        src={src}
+                        alt={`${project.name} still frame ${i + 1}`}
+                        fill
+                        sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+                        unoptimized
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </FadeIn>
+          );
+        })()}
 
         {/* Prev/Next — bordered item-navigation style, 80px padding */}
         <section className="mx-auto w-full max-w-[1200px]">

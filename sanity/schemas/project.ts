@@ -84,6 +84,43 @@ export const project = defineType({
             },
           ],
         },
+        {
+          type: "object",
+          name: "videoEmbed",
+          title: "Video Embed",
+          fields: [
+            {
+              name: "url",
+              title: "YouTube or Vimeo URL",
+              type: "url",
+              description:
+                "Paste a full YouTube or Vimeo share URL. The embed is generated automatically.",
+              validation: (r) =>
+                r
+                  .required()
+                  .uri({ scheme: ["http", "https"] })
+                  .custom((value: string | undefined) => {
+                    if (!value) return true;
+                    const ok = /youtube\.com|youtu\.be|vimeo\.com/i.test(
+                      value,
+                    );
+                    return ok ? true : "Must be a YouTube or Vimeo URL";
+                  }),
+            },
+            {
+              name: "caption",
+              title: "Caption (optional)",
+              type: "string",
+            },
+          ],
+          preview: {
+            select: { title: "caption", subtitle: "url" },
+            prepare: ({ title, subtitle }) => ({
+              title: title || "Video embed",
+              subtitle,
+            }),
+          },
+        },
       ],
       description: "Rich text body content for the case study page",
     }),
