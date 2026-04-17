@@ -120,6 +120,14 @@ const defaultSchema = Schema.compile({
               type: "image",
               fields: [{ name: "caption", title: "Caption", type: "string" }],
             },
+            {
+              type: "object",
+              name: "videoEmbed",
+              fields: [
+                { name: "url", title: "URL", type: "url" },
+                { name: "caption", title: "Caption", type: "string" },
+              ],
+            },
           ],
         },
       ],
