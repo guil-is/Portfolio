@@ -48,6 +48,7 @@ const {
   SLUGS,
   FIELDS,
   DRY_RUN,
+  FORCE,
   SANITY_PROJECT_ID,
   SANITY_DATASET,
   SANITY_AUTH_TOKEN,
@@ -64,6 +65,7 @@ if (!SANITY_DATASET) die("Missing env SANITY_DATASET");
 if (!SANITY_AUTH_TOKEN) die("Missing env SANITY_AUTH_TOKEN");
 
 const dryRun = (DRY_RUN ?? "true").toLowerCase() !== "false";
+const force = (FORCE ?? "false").toLowerCase() === "true";
 
 const allowedFields = new Set(
   (FIELDS ?? "projectDetails,stillFrames,features")
@@ -82,7 +84,7 @@ const slugFilter =
       );
 
 console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-console.log(`Sanity migrate-project-content  (dryRun = ${dryRun})`);
+console.log(`Sanity migrate-project-content  (dryRun = ${dryRun}, force = ${force})`);
 console.log(`  slugs : ${slugFilter ? [...slugFilter].join(", ") : "all"}`);
 console.log(`  fields: ${[...allowedFields].join(", ")}`);
 console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
@@ -243,10 +245,10 @@ async function convertHtmlToBlocks(html: string): Promise<unknown[]> {
         if (!img) return undefined;
         const src = img.getAttribute("src");
         if (!src) return undefined;
+        const rawAlt = img.getAttribute("alt");
         const caption =
           el.querySelector("figcaption")?.textContent?.trim() ||
-          img.getAttribute("alt") ||
-          undefined;
+          (rawAlt && rawAlt !== "__wf_reserved_inherit" ? rawAlt : undefined);
         return block({
           _type: "image",
           _sanityAsset: `image@${src}`,
@@ -346,7 +348,7 @@ async function migrateProject(local: PastProject): Promise<{
   if (
     allowedFields.has("projectDetails") &&
     local.projectDetails &&
-    (!sanity.projectDetails || sanity.projectDetails.length === 0)
+    (force || !sanity.projectDetails || sanity.projectDetails.length === 0)
   ) {
     console.log(`  • Parsing projectDetails HTML (${local.projectDetails.length} chars)`);
     const blocks = await convertHtmlToBlocks(local.projectDetails);
@@ -394,7 +396,7 @@ async function migrateProject(local: PastProject): Promise<{
     allowedFields.has("stillFrames") &&
     local.stillFrames &&
     local.stillFrames.length > 0 &&
-    (!sanity.stillFrames || sanity.stillFrames.length === 0)
+    (force || !sanity.stillFrames || sanity.stillFrames.length === 0)
   ) {
     const frames: unknown[] = [];
     for (const url of local.stillFrames) {

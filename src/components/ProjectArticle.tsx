@@ -33,21 +33,23 @@ const components: PortableTextComponents = {
     image: ({ value }) => {
       const v = value as SanityImageRef;
       if (!v.url) return null;
+      const caption =
+        v.caption && v.caption !== "__wf_reserved_inherit"
+          ? v.caption
+          : undefined;
       return (
         <figure className="project-article-figure">
           <div className="relative w-full overflow-hidden rounded-[16px] bg-card">
             <Image
               src={v.url}
-              alt={v.caption ?? ""}
+              alt={caption ?? ""}
               width={1600}
               height={1200}
               sizes="(min-width: 768px) 720px, 100vw"
               className="h-auto w-full object-contain"
             />
           </div>
-          {v.caption ? (
-            <figcaption>{v.caption}</figcaption>
-          ) : null}
+          {caption ? <figcaption>{caption}</figcaption> : null}
         </figure>
       );
     },

@@ -20,6 +20,11 @@ on:
         required: true
         type: string
         default: "projectDetails,stillFrames,features"
+      force:
+        description: "Overwrite existing Sanity content (normally skips populated fields)"
+        required: true
+        type: boolean
+        default: false
       dry_run:
         description: "When true, log the plan without mutating Sanity"
         required: true
@@ -47,6 +52,7 @@ jobs:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           SLUGS: ${{ inputs.slugs }}
           FIELDS: ${{ inputs.fields }}
+          FORCE: ${{ inputs.force }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: npm run sanity:migrate-content
 
