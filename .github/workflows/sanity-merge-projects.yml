@@ -1,0 +1,62 @@
+name: Sanity — Merge projects
+
+# Manually triggered workflow to consolidate multiple `project`
+# documents in Sanity into a single keeper. See
+# scripts/sanity/merge-projects.ts for the implementation.
+#
+# Safety:
+#   - dry_run defaults to true — first run will just log the plan,
+#     not mutate anything.
+#   - A JSON backup of the pre-merge state is uploaded as an
+#     artifact on every run, dry or wet.
+#   - All mutations run in a single Sanity transaction.
+
+on:
+  workflow_dispatch:
+    inputs:
+      keeper_slug:
+        description: "Slug of the project that survives (e.g. n26-metal)"
+        required: true
+        type: string
+      source_slugs:
+        description: "Comma-separated slugs to merge INTO the keeper"
+        required: true
+        type: string
+      dry_run:
+        description: "When true, log the plan without mutating Sanity"
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run merge
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          KEEPER_SLUG: ${{ inputs.keeper_slug }}
+          SOURCE_SLUGS: ${{ inputs.source_slugs }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: npm run sanity:merge-projects
+
+      - name: Upload pre-merge backup
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-merge-backup-${{ github.run_id }}
+          path: scripts/sanity/backups/
+          if-no-files-found: ignore
+          retention-days: 90

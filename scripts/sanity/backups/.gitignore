@@ -1,0 +1,4 @@
+# Pre-merge JSON backups. Generated at runtime by the merge script
+# or any future mutation script. The GitHub Actions workflow
+# uploads them as artifacts, so there's no need to commit them.
+*.json
