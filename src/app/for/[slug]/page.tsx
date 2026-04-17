@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import {
   Users,
@@ -18,8 +19,16 @@ import { CtaButton } from "@/components/CtaButton";
 import { CenterFocus } from "@/components/CenterFocus";
 import { CaseStudyHorizontalScroll } from "@/components/CaseStudyHorizontalScroll";
 import { getGalleryImages } from "@/lib/gallery";
-
-const PASSWORD = "psilocybin";
+import {
+  getAllProposalSlugs,
+  getProposal,
+} from "@/content/proposals";
+import type {
+  Body,
+  CaseStudyData,
+  Proposal,
+  Tier,
+} from "@/content/proposals/types";
 
 // ---------------------------------------------------------------------
 // Unified text styles — keep to these 4, nothing else, so the page
@@ -36,9 +45,35 @@ const PASSWORD = "psilocybin";
 // fades/scales based on distance from the viewport center — smooth,
 // real-time crossfades between sections instead of hard slide breaks.
 
-export default function OdysseyPage() {
-  const clawbankImages = getGalleryImages("odyssey/clawbank");
-  const thriveImages = getGalleryImages("odyssey/thrive");
+// Next.js 16: route params arrive as a Promise.
+type RouteProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export function generateStaticParams() {
+  return getAllProposalSlugs().map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: RouteProps) {
+  const { slug } = await params;
+  const proposal = getProposal(slug);
+  if (!proposal) return {};
+  return {
+    title: proposal.metadata?.title ?? `${proposal.clientName} | Guil Maueler`,
+    description: proposal.metadata?.description ?? "Private proposal page",
+    robots: {
+      index: false,
+      follow: false,
+      nocache: true,
+      googleBot: { index: false, follow: false },
+    },
+  };
+}
+
+export default async function ProposalPage({ params }: RouteProps) {
+  const { slug } = await params;
+  const proposal = getProposal(slug);
+  if (!proposal) notFound();
 
   return (
     <>
@@ -46,56 +81,21 @@ export default function OdysseyPage() {
         <ThemeToggle />
       </div>
 
-      <PasswordGate password={PASSWORD}>
+      <PasswordGate password={proposal.password}>
         <main className="page-fade-in pb-40">
-          <Header />
+          <Header proposal={proposal} />
 
-          <CaseStudy
-            sectionLabel="Recent work · 01"
-            meta="Fractional Design Partner · 10 hrs/week · Pre-launch"
-            title="Clawbank"
-            url="https://clawbank.co"
-            problem="A technically real product with no visual credibility. In crypto, perception precedes traction, they needed to look fundable before they could become fundable."
-            whatIShipped="Brand identity, landing page from zero to live, design system, base marketing assets and promo videos. Zero to launch in two weeks."
-            images={clawbankImages}
-            mediaLinks={{
-              "Clawbank_promo.webm":
-                "https://x.com/singularityhack/status/2044519546610995356",
-            }}
-            stat="$150K → $800K"
-            statLabel={
-              <>
-                Market cap in 13 days · +433% · #5 trending on{" "}
-                <a
-                  href="https://dexscreener.com/base/0xb04b187062efbf94cf9b4b6f42bf688258d3c88b7c9283bbc74dbbfb1af40d54"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline decoration-rule-soft underline-offset-4 transition-colors hover:text-ink"
-                >
-                  DexScreener
-                </a>
-              </>
-            }
-            relevance="Fast building. Lean approach. Same mechanism Odyssey needs. Design legitimacy unlocks trust, trust unlocks momentum."
-          />
-
-          <CaseStudy
-            sectionLabel="Recent work · 02"
-            meta="Lead Designer · Brand, Design System & Product UI · 2025–2026"
-            title="Thrive"
-            url="https://thrive.xyz"
-            problem="Strong idea, weak articulation. The brand meant nothing to outsiders, and the product felt like separate tools that happened to share a codebase."
-            whatIShipped={[
-              "Partial rebrand, design system, and product UI overhaul. Brand strategy alongside the team. Hiring. AI integration.",
-              "Team reported working at a much higher efficiency. The product started to feel like one system. New features are built faster with less rework.",
-            ]}
-            images={thriveImages}
-            relevance="Brand and product simultaneously. Fast-moving small team. Async-heavy, fast iteration, no room for slow feedback cycles. Similar structure as Odyssey."
-          />
+          {proposal.caseStudies.map((cs) => (
+            <CaseStudy
+              key={cs.title}
+              data={cs}
+              clientName={proposal.clientName}
+            />
+          ))}
 
           <HowIWork />
-          <Engagement />
-          <NextStep />
+          <Engagement data={proposal.engagement} />
+          <NextStep data={proposal.nextStep} />
         </main>
       </PasswordGate>
     </>
@@ -103,46 +103,44 @@ export default function OdysseyPage() {
 }
 
 // ---------------------------------------------------------------------
-// Header — fills 90vh, content vertically centered, no scroll-linked
-// fade (always visible on load). Subtle bouncing chevron at the bottom
-// hints at the scroll-driven content below.
+// Header — fills 90vh, content vertically centered.
 // ---------------------------------------------------------------------
-function Header() {
+function Header({ proposal }: { proposal: Proposal }) {
+  const eyebrow = proposal.hero.eyebrow ?? "A proposal from Guil Maueler";
   return (
     <section className="relative flex min-h-[90vh] flex-col px-6 md:px-10">
       {/* Top meta line */}
       <div className="mx-auto mt-10 flex w-full max-w-[960px] flex-wrap items-center justify-between gap-3 border-b border-rule pb-3 md:mt-12">
         <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-          Prepared for Nick DeNuzzo & Chris · Odyssey
+          {proposal.preparedFor}
         </p>
         <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-          April 2026
+          {proposal.date}
         </p>
       </div>
 
       {/* Centered hero content */}
       <div className="mx-auto flex w-full max-w-[960px] flex-1 flex-col justify-center py-16">
         <p className="mb-4 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted md:mb-6">
-          A proposal from Guil Maueler
+          {eyebrow}
         </p>
         <h1 className="intro-rise mt-16 font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:mt-24 md:text-[4rem]">
-          Design partner for Odyssey
+          {proposal.hero.title}
         </h1>
 
         <p className="mt-10 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
-          Odyssey is tripling sales this year and launching new product
-          surfaces fast. You need a design partner embedded enough to move
-          at that pace, and strategic enough to shape what you&rsquo;re
-          building, not just execute on it.
+          {proposal.hero.blurb}
         </p>
 
-        <div className="mt-10">
-          <CtaButton
-            href="https://www.loom.com/share/287197230f7d42d7be5b475fe30f535e"
-            label="Watch the walkthrough"
-            icon={Play}
-          />
-        </div>
+        {proposal.hero.loomUrl ? (
+          <div className="mt-10">
+            <CtaButton
+              href={proposal.hero.loomUrl}
+              label={proposal.hero.loomLabel ?? "Watch the walkthrough"}
+              icon={Play}
+            />
+          </div>
+        ) : null}
       </div>
 
       {/* Scroll hint */}
@@ -158,11 +156,9 @@ function Header() {
 }
 
 // ---------------------------------------------------------------------
-// SectionLabel — soft top divider + small all-caps caption, mirrors the
-// homepage's SectionHeading pattern. Sits at the top of each major
-// section to create rhythm and orientation.
+// SectionLabel — soft top divider + small all-caps caption.
 // ---------------------------------------------------------------------
-function SectionLabel({ children }: { children: React.ReactNode }) {
+function SectionLabel({ children }: { children: ReactNode }) {
   return (
     <div className="mx-auto mb-12 w-full max-w-[1120px] border-t border-rule-soft pt-5 md:mb-16">
       <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
@@ -173,105 +169,48 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 // ---------------------------------------------------------------------
-// Case study — 2-column layout. Images left, info right.
+// Case study — desktop scroll-hijack + mobile stacked.
 // ---------------------------------------------------------------------
-type CaseStudyProps = {
-  sectionLabel: string;
-  meta: string;
-  title: string;
-  url?: string;
-  problem: Body;
-  whatIShipped?: Body;
-  whatIDid?: Body;
-  whatChanged?: Body;
-  images: string[];
-  /** Optional map of media basename → external URL. When a slide's
-   * filename matches, its visual is wrapped in an external anchor. */
-  mediaLinks?: Record<string, string>;
-  stat?: string;
-  statLabel?: ReactNode;
-  relevance: Body;
-};
-
 function CaseStudy({
-  sectionLabel,
-  meta,
-  title,
-  url,
-  problem,
-  whatIShipped,
-  whatIDid,
-  whatChanged,
-  images,
-  mediaLinks,
-  stat,
-  statLabel,
-  relevance,
-}: CaseStudyProps) {
+  data,
+  clientName,
+}: {
+  data: CaseStudyData;
+  clientName: string;
+}) {
+  const images = getGalleryImages(data.galleryFolder);
   const info = (
-    <CaseStudyInfo
-      meta={meta}
-      title={title}
-      url={url}
-      problem={problem}
-      whatIShipped={whatIShipped}
-      whatIDid={whatIDid}
-      whatChanged={whatChanged}
-      stat={stat}
-      statLabel={statLabel}
-      relevance={relevance}
-    />
+    <CaseStudyInfo data={data} clientName={clientName} />
   );
 
   return (
     <>
-      {/* Section label scrolls normally above the locked scroll section */}
       <div className="mx-auto w-full max-w-[1200px] px-6 md:px-10">
-        <SectionLabel>{sectionLabel}</SectionLabel>
+        <SectionLabel>{data.sectionLabel}</SectionLabel>
       </div>
 
       {/* Mobile: stacked info, then native horizontal scroll-snap gallery */}
       <section className="px-6 pb-16 md:hidden">
         {info}
         <div className="-mx-6 mt-12">
-          <MobileGallery images={images} alt={title} mediaLinks={mediaLinks} />
+          <MobileGallery
+            images={images}
+            alt={data.title}
+            mediaLinks={data.mediaLinks}
+          />
         </div>
       </section>
 
-      {/* Desktop: scroll-hijacked horizontal track. Info is the first
-          (half-width) slide; images follow full-width. */}
+      {/* Desktop: scroll-hijacked horizontal track */}
       <CaseStudyHorizontalScroll
         info={info}
         images={images}
-        alt={title}
-        mediaLinks={mediaLinks}
+        alt={data.title}
+        mediaLinks={data.mediaLinks}
       />
     </>
   );
 }
-
-// ---------------------------------------------------------------------
-// CaseStudyInfo — shared content of the first (half-width) desktop
-// slide and the top of the mobile stacked layout.
-//
-// Body-text fields accept string | string[]. Passing an array renders
-// each element as its own paragraph with a small gap, for copy that
-// benefits from paragraph breaks.
-// ---------------------------------------------------------------------
-type Body = string | string[];
-
-type InfoProps = {
-  meta: string;
-  title: string;
-  url?: string;
-  problem: Body;
-  whatIShipped?: Body;
-  whatIDid?: Body;
-  whatChanged?: Body;
-  stat?: string;
-  statLabel?: ReactNode;
-  relevance: Body;
-};
 
 function Paragraphs({ body }: { body: Body }) {
   const paras = Array.isArray(body) ? body : [body];
@@ -312,67 +251,66 @@ function LabeledBlock({
 }
 
 function CaseStudyInfo({
-  meta,
-  title,
-  url,
-  problem,
-  whatIShipped,
-  whatIDid,
-  whatChanged,
-  stat,
-  statLabel,
-  relevance,
-}: InfoProps) {
+  data,
+  clientName,
+}: {
+  data: CaseStudyData;
+  clientName: string;
+}) {
   return (
     <div className="flex flex-col gap-7">
       <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-        {meta}
+        {data.meta}
       </p>
       <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-        {url ? (
+        {data.url ? (
           <a
-            href={url}
+            href={data.url}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 transition-colors hover:text-muted"
           >
-            {title}
+            {data.title}
             <ArrowUpRight className="h-6 w-6 md:h-7 md:w-7" strokeWidth={2} />
           </a>
         ) : (
-          title
+          data.title
         )}
       </h2>
-      <Paragraphs body={problem} />
+      <Paragraphs body={data.problem} />
 
-      {whatIShipped ? (
-        <LabeledBlock label="What I shipped" body={whatIShipped} withDivider />
+      {data.whatIShipped ? (
+        <LabeledBlock
+          label="What I shipped"
+          body={data.whatIShipped}
+          withDivider
+        />
       ) : null}
 
-      {whatIDid ? (
-        <LabeledBlock label="What I did" body={whatIDid} />
+      {data.whatIDid ? (
+        <LabeledBlock label="What I did" body={data.whatIDid} />
       ) : null}
 
-      {whatChanged ? (
-        <LabeledBlock label="What changed" body={whatChanged} />
+      {data.whatChanged ? (
+        <LabeledBlock label="What changed" body={data.whatChanged} />
       ) : null}
 
-      {stat ? (
+      {data.stat ? (
         <div>
           <p className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
-            {stat}
+            {data.stat}
           </p>
-          {statLabel ? (
+          {data.statLabel ? (
             <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
-              {statLabel}
+              {data.statLabel}
             </p>
           ) : null}
         </div>
       ) : null}
 
       <LabeledBlock
-        label="Why it matters for Odyssey"
-        body={relevance}
+        label={`Why it matters for ${clientName}`}
+        body={data.relevance}
         withDivider
       />
     </div>
@@ -380,9 +318,7 @@ function CaseStudyInfo({
 }
 
 // ---------------------------------------------------------------------
-// MobileGallery — native horizontal scroll-snap gallery used under the
-// stacked info block on narrow viewports (desktop uses the
-// scroll-hijacked track instead).
+// MobileGallery — mobile-only scroll-snap gallery.
 // ---------------------------------------------------------------------
 function MobileGallery({
   images,
@@ -453,9 +389,7 @@ function MobileGallery({
 }
 
 // ---------------------------------------------------------------------
-// How I work — 6 items, homepage styling (small icon + caption label +
-// body), 3-col on large screens, 2-col on md, stack on mobile. Each
-// item fades independently via CenterFocus.
+// How I work — static across all proposals.
 // ---------------------------------------------------------------------
 const iconMap: Record<string, LucideIcon> = {
   users: Users,
@@ -532,44 +466,29 @@ function HowIWork() {
 }
 
 // ---------------------------------------------------------------------
-// Engagement — two starting points. Second card gets a subtle
-// recommended treatment (stronger border + small pill badge).
+// Engagement — proposal-specific tier cards.
 // ---------------------------------------------------------------------
-const tiers = [
-  {
-    label: "Start focused",
-    price: "$4,800",
-    cadence: "~10 hrs/week",
-    body: "If you want to establish a working rhythm before moving to bigger product work. Site iterations, campaign assets, design QA, fast turnaround. You get embedded design thinking from day one, scoped to what's most immediately useful.",
-    response: "Response time: within 24h",
-  },
-  {
-    label: "Start building",
-    price: "$8,800",
-    cadence: "~20 hrs/week",
-    priceNote: "First month: $7,040 — then $8,800/month from month two.",
-    body: "If you are ready to move on new product surfaces immediately. The risk assessment tool, prep courses, and educational hub all need design thinking from the start. This scope includes dedicated design on new product initiatives and ownership of the design system as Odyssey scales.",
-    response: "Response time: within 12h",
-  },
-];
-
-function Engagement() {
+function Engagement({ data }: { data: Proposal["engagement"] }) {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>Engagement</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
-        <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
+        <CenterFocus
+          minOpacity={0.15}
+          falloff={0.55}
+          minScale={0.99}
+          disableBelowMd
+        >
           <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-            Where do we want to start?
+            {data.heading}
           </h2>
           <p className="mt-5 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
-            Two starting points depending on where Odyssey is right now. Both
-            are month-to-month and can flex after the first month.
+            {data.subheading}
           </p>
         </CenterFocus>
 
         <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2">
-          {tiers.map((tier) => (
+          {data.tiers.map((tier) => (
             <CenterFocus
               key={tier.label}
               minOpacity={0.15}
@@ -577,45 +496,19 @@ function Engagement() {
               minScale={0.98}
               disableBelowMd
             >
-              <div className="flex flex-col gap-8 rounded-[16px] border border-rule bg-transparent p-8">
-                <div>
-                  <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                    {tier.label}
-                  </p>
-                  <p className="mt-4 font-display text-[2rem] font-bold leading-none text-ink md:text-[2.5rem]">
-                    {tier.price}
-                    <span className="font-caption text-[13px] font-medium uppercase tracking-[1.5px] text-muted">
-                      {" "}
-                      / month
-                    </span>
-                  </p>
-                  <p className="mt-3 text-[0.9rem] leading-[1.5rem] text-muted">
-                    {tier.cadence}
-                  </p>
-                  {tier.priceNote ? (
-                    <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
-                      {tier.priceNote}
-                    </p>
-                  ) : null}
-                </div>
-
-                <p className="border-t border-rule-soft pt-6 text-[0.95rem] leading-[1.6rem] text-ink">
-                  {tier.body}
-                </p>
-
-                <p className="mt-auto font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                  {tier.response}
-                </p>
-              </div>
+              <TierCard tier={tier} />
             </CenterFocus>
           ))}
         </div>
 
-        <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
+        <CenterFocus
+          minOpacity={0.15}
+          falloff={0.55}
+          minScale={0.99}
+          disableBelowMd
+        >
           <p className="mt-10 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
-            Both options are month-to-month. Scope is reviewed after the first
-            month and adjusted if needed. If you&rsquo;re unsure which fits,
-            the first conversation will make it clear.
+            {data.footnote}
           </p>
         </CenterFocus>
       </div>
@@ -623,29 +516,61 @@ function Engagement() {
   );
 }
 
+function TierCard({ tier }: { tier: Tier }) {
+  return (
+    <div className="flex flex-col gap-8 rounded-[16px] border border-rule bg-transparent p-8">
+      <div>
+        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          {tier.label}
+        </p>
+        <p className="mt-4 font-display text-[2rem] font-bold leading-none text-ink md:text-[2.5rem]">
+          {tier.price}
+          <span className="font-caption text-[13px] font-medium uppercase tracking-[1.5px] text-muted">
+            {" "}
+            / month
+          </span>
+        </p>
+        <p className="mt-3 text-[0.9rem] leading-[1.5rem] text-muted">
+          {tier.cadence}
+        </p>
+        {tier.priceNote ? (
+          <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
+            {tier.priceNote}
+          </p>
+        ) : null}
+      </div>
+
+      <p className="border-t border-rule-soft pt-6 text-[0.95rem] leading-[1.6rem] text-ink">
+        {tier.body}
+      </p>
+
+      <p className="mt-auto font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+        {tier.response}
+      </p>
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------------
-// Next step
+// Next step — proposal-specific closer.
 // ---------------------------------------------------------------------
-function NextStep() {
+function NextStep({ data }: { data: Proposal["nextStep"] }) {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>Next step</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99}>
           <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-            Ready to move?
+            {data.heading}
           </h2>
           <p className="mt-6 max-w-[620px] text-[1rem] leading-[1.7rem] text-ink">
-            Next step is a 30-minute call with Nick and Chris. We answer
-            questions on both sides, talk through scope and SLA terms. From
-            there we agree on a starting point and I can be live within a
-            week.
+            {data.body}
           </p>
         </CenterFocus>
 
         <CenterFocus minOpacity={0.15} falloff={0.5} minScale={0.98}>
           <div className="mt-10">
-            <CtaButton href="mailto:guil@guil.is" label="Get in touch" />
+            <CtaButton href={data.ctaHref} label={data.ctaLabel} />
           </div>
         </CenterFocus>
 

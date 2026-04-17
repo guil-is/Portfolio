@@ -9,6 +9,17 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.sanity.io" },
     ],
   },
+  async redirects() {
+    return [
+      // Proposals moved from /<slug> to /for/<slug>. The Odyssey link
+      // was already shared externally — keep it working.
+      {
+        source: "/odyssey",
+        destination: "/for/odyssey",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
