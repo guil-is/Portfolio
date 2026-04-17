@@ -75,7 +75,7 @@ export default function OdysseyPage() {
                 </a>
               </>
             }
-            relevance="Same mechanism Odyssey needs: design legitimacy unlocks trust, trust unlocks momentum."
+            relevance="Fast building. Lean approach. Same mechanism Odyssey needs. Design legitimacy unlocks trust, trust unlocks momentum."
           />
 
           <CaseStudy
