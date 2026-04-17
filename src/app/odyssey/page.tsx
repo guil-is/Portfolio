@@ -54,7 +54,7 @@ export default function OdysseyPage() {
             title="Clawbank"
             url="https://clawbank.co"
             problem="A technically real product with no visual credibility. In crypto, perception precedes traction, they needed to look fundable before they could become fundable."
-            whatIShipped="Full brand identity from scratch: mark, typography, color, and motion language. Landing page built to serve developers and investors simultaneously, zero to live in under two weeks. Design tokens into production CSS, structured for a team to scale from. Visual direction for product content: demo framing and video structure."
+            whatIShipped="Brand identity, landing page from zero to live, design system, base marketing assets and promo videos. Zero to launch in two weeks."
             images={clawbankImages}
             stat="$150K → $800K"
             statLabel="Market cap in 13 days · +433% · #5 trending on DexScreener"
@@ -68,8 +68,8 @@ export default function OdysseyPage() {
             url="https://thrive.xyz"
             problem="Strong idea, weak articulation. The brand meant nothing to outsiders, and the product felt like separate tools that happened to share a codebase."
             whatIShipped={[
-              "Full rebrand, design system, and product UI overhaul. Brand strategy alongside the team. AI integration.",
-              "Team reported working at a higher efficiency. The product started to feel like one system. New features could be built faster, with less rework.",
+              "Full rebrand, design system, and product UI overhaul. Brand strategy alongside the team. Hiring. AI integration.",
+              "Team reported working at a much higher efficiency. The product started to feel like one system. New features are built faster with less rework.",
             ]}
             images={thriveImages}
             relevance="Brand and product simultaneously. Fast-moving small team. Async-heavy, fast iteration, no room for slow feedback cycles. Similar structure as Odyssey."
@@ -504,7 +504,7 @@ function Engagement() {
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
           <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-            Where do you want to start?
+            Where do we want to start?
           </h2>
           <p className="mt-5 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
             Two starting points depending on where Odyssey is right now. Both
