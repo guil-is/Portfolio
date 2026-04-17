@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 import {
   Users,
   Zap,
@@ -57,7 +58,19 @@ export default function OdysseyPage() {
             whatIShipped="Brand identity, landing page from zero to live, design system, base marketing assets and promo videos. Zero to launch in two weeks."
             images={clawbankImages}
             stat="$150K → $800K"
-            statLabel="Market cap in 13 days · +433% · #5 trending on DexScreener"
+            statLabel={
+              <>
+                Market cap in 13 days · +433% · #5 trending on{" "}
+                <a
+                  href="https://dexscreener.com/base/0xb04b187062efbf94cf9b4b6f42bf688258d3c88b7c9283bbc74dbbfb1af40d54"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline decoration-rule-soft underline-offset-4 transition-colors hover:text-ink"
+                >
+                  DexScreener
+                </a>
+              </>
+            }
             relevance="Same mechanism Odyssey needs: design legitimacy unlocks trust, trust unlocks momentum."
           />
 
@@ -107,14 +120,14 @@ function Header() {
         <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
           A proposal from Guil Maueler
         </p>
-        <h1 className="intro-rise mt-8 font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:mt-10 md:text-[4rem]">
+        <h1 className="intro-rise mt-12 font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:mt-16 md:text-[4rem]">
           Design partner for Odyssey
         </h1>
 
         <p className="mt-10 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
           Odyssey is tripling sales this year and launching new product
           surfaces fast. You need a design partner embedded enough to move
-          at that pace, and strategic enough to help shape what you&rsquo;re
+          at that pace, and strategic enough to shape what you&rsquo;re
           building, not just execute on it.
         </p>
       </div>
@@ -160,7 +173,7 @@ type CaseStudyProps = {
   whatChanged?: Body;
   images: string[];
   stat?: string;
-  statLabel?: string;
+  statLabel?: ReactNode;
   relevance: Body;
 };
 
@@ -234,7 +247,7 @@ type InfoProps = {
   whatIDid?: Body;
   whatChanged?: Body;
   stat?: string;
-  statLabel?: string;
+  statLabel?: ReactNode;
   relevance: Body;
 };
 
