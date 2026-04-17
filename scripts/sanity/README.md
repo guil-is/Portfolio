@@ -56,6 +56,32 @@ Takes a **keeper slug** + comma-separated **source slugs**, and:
 **Workflow**: `.github/workflows/sanity-merge-projects.yml`
 **Inputs**: `keeper_slug`, `source_slugs`, `dry_run`
 
+### `migrate-project-content.ts` — import local rich content into Sanity
+
+Lifts `projectDetails` (HTML body), `stillFrames` (image URL list),
+and `features` (image+caption rows) from `src/content/projects.ts`
+into the matching Sanity `project` documents. For each local project:
+
+- Parses the HTML body into Portable Text blocks via
+  `@sanity/block-tools` with JSDOM.
+- For every `<figure>`/`<img>` inside the body, fetches the image
+  bytes (remote URL or local `/public/…` path), uploads to Sanity's
+  asset pipeline, and swaps in an asset reference on the resulting
+  block. Captions come from `<figcaption>` or `alt` attributes.
+- Does the same for each entry in `stillFrames`.
+- Appends `features` rows (only 1 project uses these) as inline
+  image blocks with captions at the end of `projectDetails`.
+- **Never overwrites**: fields already populated in Sanity are left
+  alone. The script only fills empty fields.
+- Per-project failures are isolated — one broken image URL doesn't
+  stop the rest of the migration.
+
+**Workflow**: `.github/workflows/sanity-migrate-content.yml`
+**Inputs**:
+- `slugs` — comma-separated project slugs to migrate, or `all`
+- `fields` — subset of `projectDetails,stillFrames,features` (default: all)
+- `dry_run` — log the plan without mutating
+
 ## Adding more scripts
 
 1. Write `scripts/sanity/<name>.ts` — use the merge script as a

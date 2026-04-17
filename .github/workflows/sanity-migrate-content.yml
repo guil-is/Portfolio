@@ -1,0 +1,60 @@
+name: Sanity — Migrate project content
+
+# Manually triggered: moves rich projectDetails (HTML), stillFrames
+# (image URLs), and features (image+caption rows) from the local
+# src/content/projects.ts fallback file into Sanity as Portable Text
+# blocks + uploaded image assets.
+#
+# See scripts/sanity/migrate-project-content.ts for the implementation.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slugs:
+        description: "Comma-separated project slugs to migrate, or 'all'"
+        required: true
+        type: string
+        default: "all"
+      fields:
+        description: "Fields to migrate (comma-separated). Subset of: projectDetails,stillFrames,features"
+        required: true
+        type: string
+        default: "projectDetails,stillFrames,features"
+      dry_run:
+        description: "When true, log the plan without mutating Sanity"
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run migration
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SLUGS: ${{ inputs.slugs }}
+          FIELDS: ${{ inputs.fields }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: npm run sanity:migrate-content
+
+      - name: Upload pre-migration backup
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-migrate-content-backup-${{ github.run_id }}
+          path: scripts/sanity/backups/
+          if-no-files-found: ignore
+          retention-days: 90
