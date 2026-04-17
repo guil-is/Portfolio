@@ -1,11 +1,9 @@
 #!/usr/bin/env tsx
 /**
- * One-off diagnostic: fetch the raw projectDetails from a given
- * project and dump it so we can see what block types are actually
- * stored in Sanity.
+ * Diagnostic: dump a project's full metadata + block type counts.
  *
- * Usage via env (set by the GitHub workflow):
- *   SLUG=<project-slug>   default "the-daoist"
+ * Usage via env:
+ *   SLUG=<project-slug>   default "n26-product-videos"
  *   SANITY_*              required
  */
 import { createClient } from "next-sanity";
@@ -17,7 +15,7 @@ const {
   SANITY_AUTH_TOKEN,
 } = process.env;
 
-const slug = SLUG || "the-daoist";
+const slug = SLUG || "n26-product-videos";
 
 if (!SANITY_PROJECT_ID || !SANITY_DATASET || !SANITY_AUTH_TOKEN) {
   console.error("Missing SANITY_* env vars");
@@ -33,44 +31,37 @@ const client = createClient({
 });
 
 async function main() {
-  const doc = await client.fetch<{
-  _id: string;
-  projectDetails?: Array<Record<string, unknown>>;
-} | null>(
-  `*[_type == "project" && slug.current == $slug][0] {
-    _id,
-    projectDetails
-  }`,
-  { slug },
-);
+  const doc = await client.fetch<Record<string, unknown> | null>(
+    `*[_type == "project" && slug.current == $slug][0] {
+      _id,
+      name,
+      "slug": slug.current,
+      client,
+      services,
+      summary,
+      featured,
+      sortOrder,
+      heroVideo,
+      link,
+      "hasGridImage": defined(gridImage),
+      "gridImageUrl": gridImage.asset->url,
+      "hasMainImage": defined(mainImage),
+      "mainImageUrl": mainImage.asset->url,
+      "projectDetailsCount": count(projectDetails),
+      "stillFramesCount": count(stillFrames)
+    }`,
+    { slug },
+  );
 
-if (!doc) {
-  console.log(`No project with slug "${slug}"`);
-  process.exit(0);
-}
+  if (!doc) {
+    console.log(`No project with slug "${slug}"`);
+    process.exit(0);
+  }
 
-console.log(`Doc: ${doc._id}`);
-console.log(`projectDetails: ${doc.projectDetails?.length ?? 0} blocks\n`);
-
-const typeCount: Record<string, number> = {};
-(doc.projectDetails ?? []).forEach((b, i) => {
-  const t = (b._type as string) ?? "unknown";
-  typeCount[t] = (typeCount[t] ?? 0) + 1;
-  const preview =
-    t === "videoEmbed"
-      ? `url=${b.url}`
-      : t === "image"
-        ? `asset=${JSON.stringify(b.asset ?? {}).slice(0, 80)}`
-        : t === "block"
-          ? (b.children as Array<{ text?: string }> | undefined)
-              ?.map((c) => c.text)
-              .join(" ")
-              .slice(0, 80)
-          : "";
-  console.log(`  [${i.toString().padStart(2)}] _type=${t}  ${preview}`);
-});
-
-console.log(`\nBlock type counts:`, typeCount);
+  console.log("Full doc metadata:");
+  for (const [k, v] of Object.entries(doc)) {
+    console.log(`  ${k}: ${JSON.stringify(v)}`);
+  }
 }
 
 main().catch((err) => {
