@@ -85,7 +85,7 @@ export default function OdysseyPage() {
             url="https://thrive.xyz"
             problem="Strong idea, weak articulation. The brand meant nothing to outsiders, and the product felt like separate tools that happened to share a codebase."
             whatIShipped={[
-              "Full rebrand, design system, and product UI overhaul. Brand strategy alongside the team. Hiring. AI integration.",
+              "Partial rebrand, design system, and product UI overhaul. Brand strategy alongside the team. Hiring. AI integration.",
               "Team reported working at a much higher efficiency. The product started to feel like one system. New features are built faster with less rework.",
             ]}
             images={thriveImages}
