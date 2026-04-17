@@ -44,7 +44,7 @@ export function ClientLogos() {
                 alt={logo.name}
                 width={240}
                 height={80}
-                className="h-16 w-auto object-contain opacity-40 transition-opacity duration-300 hover:opacity-70 dark:invert md:h-20"
+                className="h-16 w-auto object-contain opacity-40 transition-opacity duration-300 hover:opacity-70 dark:brightness-0 dark:invert md:h-20"
                 unoptimized
               />
             </div>
