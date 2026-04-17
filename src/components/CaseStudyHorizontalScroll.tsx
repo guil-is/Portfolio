@@ -12,6 +12,9 @@ type Props = {
   images: string[];
   /** Alt text base — "Clawbank" → "Clawbank 1", "Clawbank 2", … */
   alt: string;
+  /** Optional map of media basename → external URL. When a slide's
+   * filename matches, its visual frame becomes a clickable anchor. */
+  mediaLinks?: Record<string, string>;
 };
 
 // Scroll-hijacked horizontal case study — desktop only (md+).
@@ -32,7 +35,12 @@ type Props = {
 //
 // Mobile renders nothing — the odyssey page shows a stacked version
 // (info above, scroll-snap gallery below) for narrow viewports.
-export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
+export function CaseStudyHorizontalScroll({
+  info,
+  images,
+  alt,
+  mediaLinks,
+}: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -177,41 +185,58 @@ export function CaseStudyHorizontalScroll({ info, images, alt }: Props) {
               visualWidth={visualWidth}
             />
           ) : (
-            images.map((src, i) => (
-              <div
-                key={src}
-                className="flex h-full shrink-0 items-center justify-center"
-                style={{ width: slideWidth }}
-              >
+            images.map((src, i) => {
+              const basename = src.split("/").pop() ?? src;
+              const href = mediaLinks?.[basename];
+              const frameStyle = {
+                aspectRatio: "16 / 9",
+                width: visualWidth,
+              };
+              const frameClass =
+                "relative block overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none";
+              const inner = isVideo(src) ? (
+                <video
+                  src={src}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="h-full w-full object-cover"
+                  aria-label={`${alt} ${i + 1}`}
+                />
+              ) : (
+                <Image
+                  src={src}
+                  alt={`${alt} ${i + 1}`}
+                  fill
+                  sizes="90vw"
+                  className="object-cover"
+                />
+              );
+              return (
                 <div
-                  className="relative overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none"
-                  style={{
-                    aspectRatio: "16 / 9",
-                    width: visualWidth,
-                  }}
+                  key={src}
+                  className="flex h-full shrink-0 items-center justify-center"
+                  style={{ width: slideWidth }}
                 >
-                  {isVideo(src) ? (
-                    <video
-                      src={src}
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="h-full w-full object-cover"
-                      aria-label={`${alt} ${i + 1}`}
-                    />
+                  {href ? (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={frameClass}
+                      style={frameStyle}
+                    >
+                      {inner}
+                    </a>
                   ) : (
-                    <Image
-                      src={src}
-                      alt={`${alt} ${i + 1}`}
-                      fill
-                      sizes="90vw"
-                      className="object-cover"
-                    />
+                    <div className={frameClass} style={frameStyle}>
+                      {inner}
+                    </div>
                   )}
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
 
           {/* Trailing spacer — extends the track so the last slide's

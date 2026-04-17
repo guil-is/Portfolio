@@ -57,6 +57,10 @@ export default function OdysseyPage() {
             problem="A technically real product with no visual credibility. In crypto, perception precedes traction, they needed to look fundable before they could become fundable."
             whatIShipped="Brand identity, landing page from zero to live, design system, base marketing assets and promo videos. Zero to launch in two weeks."
             images={clawbankImages}
+            mediaLinks={{
+              "Clawbank_promo.webm":
+                "https://x.com/singularityhack/status/2044519546610995356",
+            }}
             stat="$150K → $800K"
             statLabel={
               <>
@@ -106,7 +110,7 @@ function Header() {
   return (
     <section className="relative flex min-h-[90vh] flex-col px-6 md:px-10">
       {/* Top meta line */}
-      <div className="mx-auto mt-10 flex w-full max-w-[960px] flex-wrap items-center justify-between gap-3 border-b border-rule pb-5 md:mt-12">
+      <div className="mx-auto mt-10 flex w-full max-w-[960px] flex-wrap items-center justify-between gap-3 border-b border-rule pb-3 md:mt-12">
         <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
           Prepared for Nick DeNuzzo & Chris · Odyssey
         </p>
@@ -120,7 +124,7 @@ function Header() {
         <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
           A proposal from Guil Maueler
         </p>
-        <h1 className="intro-rise mt-12 font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:mt-16 md:text-[4rem]">
+        <h1 className="intro-rise mt-16 font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:mt-24 md:text-[4rem]">
           Design partner for Odyssey
         </h1>
 
@@ -172,6 +176,9 @@ type CaseStudyProps = {
   whatIDid?: Body;
   whatChanged?: Body;
   images: string[];
+  /** Optional map of media basename → external URL. When a slide's
+   * filename matches, its visual is wrapped in an external anchor. */
+  mediaLinks?: Record<string, string>;
   stat?: string;
   statLabel?: ReactNode;
   relevance: Body;
@@ -187,6 +194,7 @@ function CaseStudy({
   whatIDid,
   whatChanged,
   images,
+  mediaLinks,
   stat,
   statLabel,
   relevance,
@@ -217,13 +225,18 @@ function CaseStudy({
       <section className="px-6 pb-16 md:hidden">
         {info}
         <div className="-mx-6 mt-12">
-          <MobileGallery images={images} alt={title} />
+          <MobileGallery images={images} alt={title} mediaLinks={mediaLinks} />
         </div>
       </section>
 
       {/* Desktop: scroll-hijacked horizontal track. Info is the first
           (half-width) slide; images follow full-width. */}
-      <CaseStudyHorizontalScroll info={info} images={images} alt={title} />
+      <CaseStudyHorizontalScroll
+        info={info}
+        images={images}
+        alt={title}
+        mediaLinks={mediaLinks}
+      />
     </>
   );
 }
@@ -362,7 +375,15 @@ function CaseStudyInfo({
 // stacked info block on narrow viewports (desktop uses the
 // scroll-hijacked track instead).
 // ---------------------------------------------------------------------
-function MobileGallery({ images, alt }: { images: string[]; alt: string }) {
+function MobileGallery({
+  images,
+  alt,
+  mediaLinks,
+}: {
+  images: string[];
+  alt: string;
+  mediaLinks?: Record<string, string>;
+}) {
   if (images.length === 0) {
     return (
       <div className="px-6">
@@ -377,34 +398,47 @@ function MobileGallery({ images, alt }: { images: string[]; alt: string }) {
 
   return (
     <div className="scroll-row flex snap-x snap-mandatory overflow-x-auto pb-2">
-      {images.map((src, i) => (
-        <div
-          key={src}
-          className="w-screen shrink-0 snap-center px-4"
-        >
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none">
-            {/\.(mp4|webm|mov)$/i.test(src) ? (
-              <video
-                src={src}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="h-full w-full object-cover"
-                aria-label={`${alt} ${i + 1}`}
-              />
+      {images.map((src, i) => {
+        const basename = src.split("/").pop() ?? src;
+        const href = mediaLinks?.[basename];
+        const frameClass =
+          "relative aspect-[16/9] block w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none";
+        const inner = /\.(mp4|webm|mov)$/i.test(src) ? (
+          <video
+            src={src}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="h-full w-full object-cover"
+            aria-label={`${alt} ${i + 1}`}
+          />
+        ) : (
+          <Image
+            src={src}
+            alt={`${alt} ${i + 1}`}
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+        );
+        return (
+          <div key={src} className="w-screen shrink-0 snap-center px-4">
+            {href ? (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={frameClass}
+              >
+                {inner}
+              </a>
             ) : (
-              <Image
-                src={src}
-                alt={`${alt} ${i + 1}`}
-                fill
-                sizes="100vw"
-                className="object-cover"
-              />
+              <div className={frameClass}>{inner}</div>
             )}
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
