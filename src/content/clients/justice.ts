@@ -99,8 +99,10 @@ export const justice: JusticeClient = {
         { project: "Clawbank", description: "Blog page design", hours: 2 },
         { project: "Clawbank", description: "Audiogram asset + template", hours: 2 },
       ],
-      // TODO(guil): replace with real values when invoice is issued.
-      // invoice: { number: "INV-002", issuedAt: "2026-04-18" },
+      invoice: {
+        number: "INV-26005",
+        issuedAt: "2026-04-18",
+      },
     },
     {
       label: "Mar 23 – Apr 3, 2026",
@@ -114,9 +116,8 @@ export const justice: JusticeClient = {
           hours: 10,
         },
       ],
-      // TODO(guil): replace with real invoice number + dates.
       invoice: {
-        number: "INV-001",
+        number: "INV-26004",
         issuedAt: "2026-04-04",
         paidAt: "2026-04-08",
       },
