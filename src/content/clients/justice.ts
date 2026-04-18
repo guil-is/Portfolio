@@ -118,8 +118,8 @@ export const justice: JusticeClient = {
       ],
       invoice: {
         number: "INV-26004",
-        issuedAt: "2026-04-04",
-        paidAt: "2026-04-08",
+        issuedAt: "2026-04-03",
+        paidAt: "2026-04-04",
       },
     },
   ],
