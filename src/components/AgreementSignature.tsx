@@ -35,6 +35,40 @@ export function AgreementSignature({
   );
 }
 
+/**
+ * Fires a celebratory confetti burst. Dynamically imported so
+ * canvas-confetti only lands in the bundle for users who actually
+ * reach the sign action — not every visitor to the page.
+ */
+async function celebrate() {
+  if (typeof window === "undefined") return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const { default: confetti } = await import("canvas-confetti");
+
+  const fire = (angle: number, origin: { x: number; y: number }) => {
+    confetti({
+      particleCount: 70,
+      spread: 70,
+      startVelocity: 55,
+      angle,
+      origin,
+      scalar: 0.9,
+      ticks: 220,
+    });
+  };
+  fire(60, { x: 0.05, y: 0.85 });
+  fire(120, { x: 0.95, y: 0.85 });
+  setTimeout(() => {
+    confetti({
+      particleCount: 100,
+      spread: 110,
+      startVelocity: 40,
+      origin: { x: 0.5, y: 0.75 },
+      scalar: 0.9,
+    });
+  }, 180);
+}
+
 // ---------------------------------------------------------------------
 // Form
 // ---------------------------------------------------------------------
@@ -85,7 +119,10 @@ function SignatureForm({
         setError("error" in data ? data.error : "Something went wrong.");
         return;
       }
-      if ("signature" in data) onSigned(data.signature);
+      if ("signature" in data) {
+        onSigned(data.signature);
+        void celebrate();
+      }
     } catch {
       setError("Network error. Please try again.");
     } finally {
