@@ -101,9 +101,7 @@ export const justice: JusticeClient = {
       "This document confirms the working agreement between Guilherme Maueler (designer) and Justice Conder (client).",
     effectiveDate: "March 26, 2026",
     acknowledgments: [
-      "I am Justice Conder, and I have the authority to bind myself to this agreement.",
-      "I have read and agree to the terms of this Statement of Work.",
-      "I consent to sign electronically. I understand that my full name, email, and checkbox confirmations constitute my legal signature under the ESIGN Act and equivalent electronic signature laws.",
+      "I have read and agree to the terms of this Statement of Work, and I consent to sign it electronically. My full name, email, and this confirmation together constitute my legal signature under the ESIGN Act and equivalent electronic signature laws.",
     ],
     sections: [
       {
