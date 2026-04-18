@@ -267,10 +267,6 @@ export function AgreementPdf({
             </Text>
           </View>
           <View style={styles.metaCell}>
-            <Text style={styles.metaLabel}>Active project</Text>
-            <Text style={styles.metaValue}>{engagement.currentProject}</Text>
-          </View>
-          <View style={styles.metaCell}>
             <Text style={styles.metaLabel}>Start</Text>
             <Text style={styles.metaValue}>{engagement.startDate}</Text>
           </View>

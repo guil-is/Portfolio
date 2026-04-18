@@ -16,7 +16,6 @@ export function serializeSow(client: JusticeClient): string {
   lines.push(`EFFECTIVE: ${sow.effectiveDate}`);
   lines.push(`RATE: $${engagement.rateUsd}/hr`);
   lines.push(`WEEKLY: ${engagement.weeklyHoursMin}-${engagement.weeklyHoursMax}h`);
-  lines.push(`PROJECT: ${engagement.currentProject}`);
   lines.push(`START: ${engagement.startDate}`);
   lines.push("");
   lines.push(`PREAMBLE: ${sow.preamble}`);

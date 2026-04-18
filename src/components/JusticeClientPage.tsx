@@ -256,13 +256,12 @@ function SowView({
         <p className="max-w-[640px] text-[1rem] italic leading-[1.75rem] text-ink">
           {sow.preamble}
         </p>
-        <div className="mt-4 grid grid-cols-2 gap-6 border-y border-rule-soft py-6 md:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-6 border-y border-rule-soft py-6 md:grid-cols-3">
           <MetaCell label="Rate" value={`$${engagement.rateUsd} / hr`} />
           <MetaCell
             label="Weekly"
             value={`${engagement.weeklyHoursMin}–${engagement.weeklyHoursMax} h`}
           />
-          <MetaCell label="Active project" value={engagement.currentProject} />
           <MetaCell label="Start" value={engagement.startDate} />
         </div>
       </header>

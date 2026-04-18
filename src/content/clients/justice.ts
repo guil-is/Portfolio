@@ -39,7 +39,6 @@ export type JusticeClient = {
     rateUsd: number;
     weeklyHoursMin: number;
     weeklyHoursMax: number;
-    currentProject: string;
   };
   hoursLog: HoursWeek[];
   sow: {
@@ -66,7 +65,6 @@ export const justice: JusticeClient = {
     rateUsd: 120,
     weeklyHoursMin: 5,
     weeklyHoursMax: 10,
-    currentProject: "Clawbank",
   },
 
   // Most recent week first. Add new weeks at the top.
