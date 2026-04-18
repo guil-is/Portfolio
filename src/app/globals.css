@@ -429,3 +429,22 @@ h1, h2, h3, h4, h5 {
   font-size: 22px;
   line-height: 1.3;
 }
+
+/* -----------------------------------------------------------------------
+ * Lightbox — customize yet-another-react-lightbox for a quick fade + slide
+ * transition between images. The library already slides slides horizontally
+ * via inline transforms; we layer an opacity transition on top so the
+ * outgoing slide fades out as it moves left and the incoming fades in as it
+ * moves right (or the inverse on left-arrow). Non-current slides carry
+ * aria-hidden="true", which we key off of.
+ * ---------------------------------------------------------------------*/
+
+.yarl-fade-slide .yarl__slide {
+  transition:
+    opacity 180ms ease-out,
+    transform 180ms ease-out;
+}
+
+.yarl-fade-slide .yarl__slide[aria-hidden="true"] {
+  opacity: 0;
+}

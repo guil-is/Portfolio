@@ -71,6 +71,9 @@ export function StillFramesGallery({
         slides={photos}
         index={openAt < 0 ? 0 : openAt}
         controller={{ closeOnBackdropClick: true }}
+        animation={{ fade: 150, swipe: 180, navigation: 180 }}
+        carousel={{ finite: false, preload: 2 }}
+        className="yarl-fade-slide"
       />
     </>
   );
