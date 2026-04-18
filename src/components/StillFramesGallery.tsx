@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { RowsPhotoAlbum } from "react-photo-album";
 import "react-photo-album/rows.css";
-import Lightbox from "yet-another-react-lightbox";
+import Lightbox, { type SlideImage } from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
 type Frame = {
@@ -15,9 +15,13 @@ type Frame = {
 
 /**
  * Justified-row gallery with a fullscreen lightbox. Images fill each
- * row fully (no orphan gaps on the last row by setting
- * `spacing` + `targetRowHeight` — the library distributes widths
+ * row fully (no orphan gaps on the last row — widths are distributed
  * proportional to aspect ratio so rows balance out).
+ *
+ * Lightbox transitions: the library translates slides horizontally
+ * during prev/next; we layer opacity on top via render.slideContainer
+ * so the incoming slide fades in while the outgoing fades out —
+ * tracked via a React state current-index that updates on view.
  *
  * Requires image dimensions, resolved via GROQ:
  *   stillFrames[] { ..., "url": asset->url,
@@ -32,6 +36,9 @@ export function StillFramesGallery({
   alt: string;
 }) {
   const [openAt, setOpenAt] = useState<number>(-1);
+  // Track the currently visible slide index so we can gate opacity
+  // in render.slideContainer. Kept in sync via the `on.view` callback.
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   if (frames.length === 0) return null;
 
@@ -48,12 +55,12 @@ export function StillFramesGallery({
         photos={photos}
         targetRowHeight={260}
         spacing={12}
-        onClick={({ index }) => setOpenAt(index)}
+        onClick={({ index }) => {
+          setCurrentIndex(index);
+          setOpenAt(index);
+        }}
         render={{
           image: (props, { photo }) => (
-            // Using native <img> inside RowsPhotoAlbum: the library
-            // computes per-photo width/height at runtime so next/image
-            // wouldn't give us anything. We still set loading=lazy.
             // eslint-disable-next-line @next/next/no-img-element
             <img
               {...props}
@@ -73,7 +80,29 @@ export function StillFramesGallery({
         controller={{ closeOnBackdropClick: true }}
         animation={{ fade: 150, swipe: 180, navigation: 180 }}
         carousel={{ finite: false, preload: 2 }}
-        className="yarl-fade-slide"
+        on={{ view: ({ index }) => setCurrentIndex(index) }}
+        render={{
+          slideContainer: ({ slide, children }) => {
+            const s = slide as SlideImage;
+            const isCurrent =
+              s.src === photos[currentIndex]?.src;
+            return (
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  opacity: isCurrent ? 1 : 0,
+                  transition: "opacity 180ms ease-out",
+                }}
+              >
+                {children}
+              </div>
+            );
+          },
+        }}
       />
     </>
   );
