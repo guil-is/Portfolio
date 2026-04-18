@@ -3,7 +3,8 @@ import { Resend } from "resend";
 import { getSanityWriteClient } from "@/lib/sanity-write";
 import { justice } from "@/content/clients/justice";
 import { hashSow } from "@/lib/sow-hash";
-import { getLatestSignature } from "@/lib/signed-agreement";
+import { getLatestSignature, type SignedAgreement } from "@/lib/signed-agreement";
+import { renderAgreementPdf } from "@/lib/agreement-pdf";
 
 export const runtime = "nodejs";
 
@@ -36,6 +37,7 @@ function formatConfirmationEmail(params: {
   documentVersion: string;
   documentHash: string;
   acknowledgments: string[];
+  pdfAttached: boolean;
 }): { subject: string; html: string; text: string } {
   const {
     clientName,
@@ -47,6 +49,7 @@ function formatConfirmationEmail(params: {
     documentVersion,
     documentHash,
     acknowledgments,
+    pdfAttached,
   } = params;
 
   const subject = `Signed: ${clientName} × Guil Maueler — Statement of Work`;
@@ -65,7 +68,9 @@ function formatConfirmationEmail(params: {
     "Acknowledgments confirmed:",
     bulletList,
     "",
-    "A full copy of the agreement is retained at https://guil.is/for/justice.",
+    pdfAttached
+      ? "A signed PDF copy of the full agreement is attached to this email."
+      : "A full copy of the agreement is retained at https://guil.is/for/justice.",
   ].join("\n");
 
   const htmlBullets = acknowledgments
@@ -84,7 +89,7 @@ function formatConfirmationEmail(params: {
   </table>
   <p style="margin:16px 0 8px;font-weight:600;">Acknowledgments confirmed:</p>
   <ul style="padding-left:20px;margin:0 0 16px;">${htmlBullets}</ul>
-  <p style="margin:24px 0 0;font-size:13px;color:#7e7e7e;">A full copy of the agreement is retained at <a href="https://guil.is/for/justice" style="color:#0a0a0a;">guil.is/for/justice</a>.</p>
+  <p style="margin:24px 0 0;font-size:13px;color:#7e7e7e;">${pdfAttached ? "A signed PDF copy of the full agreement is attached to this email." : `A full copy of the agreement is retained at <a href="https://guil.is/for/justice" style="color:#0a0a0a;">guil.is/for/justice</a>.`}</p>
 </div>`;
 
   return { subject, html, text };
@@ -176,6 +181,28 @@ export async function POST(req: Request) {
     );
   }
 
+  const signature: SignedAgreement = {
+    _id: record._id,
+    clientSlug,
+    signerName: name,
+    signerEmail: email,
+    signedAt,
+    ipAddress,
+    userAgent,
+    documentVersion: client.sow.version,
+    documentHash,
+    acknowledgments: requiredAcks,
+  };
+
+  // Render a PDF of the signed agreement — best-effort. If it fails we
+  // still return success since the Sanity record is the legal artifact.
+  let pdfBuffer: Buffer | null = null;
+  try {
+    pdfBuffer = await renderAgreementPdf(client, signature);
+  } catch (err) {
+    console.error("[sign-agreement] PDF render failed", err);
+  }
+
   // Email — best-effort. Sanity record is the primary artifact; we
   // don't want to fail the whole request if email is down or the API
   // key isn't configured yet.
@@ -195,6 +222,7 @@ export async function POST(req: Request) {
         documentVersion: client.sow.version,
         documentHash,
         acknowledgments: requiredAcks,
+        pdfAttached: !!pdfBuffer,
       });
       await resend.emails.send({
         from: `Guil Maueler <${fromAddress}>`,
@@ -203,6 +231,14 @@ export async function POST(req: Request) {
         html: mail.html,
         text: mail.text,
         replyTo: notifyAddress,
+        attachments: pdfBuffer
+          ? [
+              {
+                filename: `${clientSlug}-sow-${client.sow.version}-signed.pdf`,
+                content: pdfBuffer,
+              },
+            ]
+          : undefined,
       });
     } catch (err) {
       console.error("[sign-agreement] email send failed", err);
@@ -213,19 +249,5 @@ export async function POST(req: Request) {
     );
   }
 
-  return NextResponse.json({
-    ok: true,
-    signature: {
-      _id: record._id,
-      clientSlug,
-      signerName: name,
-      signerEmail: email,
-      signedAt,
-      ipAddress,
-      userAgent,
-      documentVersion: client.sow.version,
-      documentHash,
-      acknowledgments: requiredAcks,
-    },
-  });
+  return NextResponse.json({ ok: true, signature });
 }
