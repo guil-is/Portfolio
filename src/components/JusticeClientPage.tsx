@@ -139,19 +139,21 @@ function HoursView() {
 
   return (
     <div className="flex flex-col gap-14">
-      <p className="max-w-[620px] text-[0.95rem] italic leading-[1.7rem] text-muted">
-        No action needed — this page mirrors your invoices.
-        {lastActivity ? ` Last updated ${formatLongDate(lastActivity)}.` : ""}
-      </p>
-
-      <SummaryStrip
-        hours={hours}
-        rate={rate}
-        earned={earned}
-        paid={paid}
-        outstanding={outstanding}
-        lastPaid={lastPaid}
-      />
+      <div className="flex flex-col gap-3">
+        {lastActivity ? (
+          <p className="self-end font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
+            Updated {formatLongDate(lastActivity)}
+          </p>
+        ) : null}
+        <SummaryStrip
+          hours={hours}
+          rate={rate}
+          earned={earned}
+          paid={paid}
+          outstanding={outstanding}
+          lastPaid={lastPaid}
+        />
+      </div>
 
       <section className="flex flex-col gap-12">
         {periods.map((p) => (
