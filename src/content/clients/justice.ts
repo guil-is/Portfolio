@@ -91,6 +91,18 @@ export const justice: JusticeClient = {
         { project: "Clawbank", description: "Design explorations", hours: 1 },
       ],
     },
+    {
+      label: "Mar 23 – Apr 3",
+      weekStart: "2026-03-23",
+      note: "Two-week kickoff — hours not tracked per task, logged as a block.",
+      items: [
+        {
+          project: "Justice Conder",
+          description: "Discovery, branding, logo design, website design",
+          hours: 10,
+        },
+      ],
+    },
   ],
 
   sow: {
