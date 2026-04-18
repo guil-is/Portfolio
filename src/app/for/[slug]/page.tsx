@@ -81,7 +81,7 @@ export default async function ProposalPage({ params }: RouteProps) {
         <ThemeToggle />
       </div>
 
-      <PasswordGate password={proposal.password}>
+      <PasswordGate password={proposal.password} storageKey={`for-${proposal.slug}-unlocked`}>
         <main className="page-fade-in pb-40">
           <Header proposal={proposal} />
 
