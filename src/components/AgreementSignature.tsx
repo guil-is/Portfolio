@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Check, Download, ShieldCheck } from "lucide-react";
+import { Check, ChevronDown, Download, ShieldCheck } from "lucide-react";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 
 type Props = {
@@ -132,7 +132,7 @@ function SignatureForm({
         />
       </div>
 
-      <ul className="flex flex-col gap-3 border-t border-rule-soft pt-6">
+      <ul className="flex flex-col gap-3">
         {acknowledgments.map((ack, i) => (
           <li key={i}>
             <label className="flex cursor-pointer items-start gap-3 text-[0.95rem] leading-[1.55rem] text-ink">
@@ -222,6 +222,8 @@ function Field({
 // Signed state — certificate card
 // ---------------------------------------------------------------------
 function SignedCertificate({ signature }: { signature: SignedAgreement }) {
+  const [expanded, setExpanded] = useState(false);
+
   const signedAt = new Date(signature.signedAt);
   const formattedDate = signedAt.toLocaleString("en-US", {
     dateStyle: "long",
@@ -230,56 +232,80 @@ function SignedCertificate({ signature }: { signature: SignedAgreement }) {
 
   return (
     <div className="flex flex-col gap-6 rounded-[16px] border border-rule bg-card/40 p-7 md:p-9">
-      <div className="flex items-center gap-3">
-        <ShieldCheck className="h-5 w-5 text-ink" strokeWidth={1.75} />
-        <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-ink">
-          Agreement signed
-        </p>
+      <div className="flex items-start gap-5">
+        <ShieldCheck
+          className="mt-1 h-10 w-10 shrink-0 text-ink"
+          strokeWidth={1.5}
+        />
+        <div className="flex flex-col gap-3">
+          <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-ink">
+            Agreement signed
+          </p>
+          <p className="max-w-[520px] text-[0.95rem] leading-[1.65rem] text-ink">
+            This agreement has been electronically signed and recorded. Both
+            parties received a copy of this confirmation by email.
+          </p>
+          <div className="mt-1 flex items-center gap-4">
+            <a
+              href={`/api/sign-agreement/pdf?id=${encodeURIComponent(signature._id)}`}
+              aria-label="Download signed PDF"
+              title="Download signed PDF"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-rule text-ink transition-colors hover:border-ink hover:bg-ink hover:text-bg"
+            >
+              <Download className="h-4 w-4" strokeWidth={1.75} />
+            </a>
+            <button
+              type="button"
+              onClick={() => setExpanded((v) => !v)}
+              aria-expanded={expanded}
+              className="inline-flex items-center gap-1.5 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink"
+            >
+              {expanded ? "Hide details" : "View details"}
+              <ChevronDown
+                className={[
+                  "h-3.5 w-3.5 transition-transform duration-200",
+                  expanded ? "rotate-180" : "",
+                ].join(" ")}
+                strokeWidth={2}
+              />
+            </button>
+          </div>
+        </div>
       </div>
 
-      <p className="max-w-[560px] text-[0.95rem] leading-[1.65rem] text-ink">
-        This agreement has been electronically signed and recorded. A signed
-        PDF copy was emailed to both parties at the time of signing.
-      </p>
+      {expanded ? (
+        <div className="flex flex-col gap-6 border-t border-rule-soft pt-6">
+          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-[0.9rem] md:gap-x-8">
+            <CertRow label="Signed by" value={signature.signerName} />
+            <CertRow label="Email" value={signature.signerEmail} />
+            <CertRow label="Signed at" value={formattedDate} />
+            <CertRow
+              label="Document"
+              value={`Version ${signature.documentVersion}`}
+            />
+            <CertRow label="Hash" value={signature.documentHash} mono />
+            {signature.ipAddress ? (
+              <CertRow label="IP address" value={signature.ipAddress} />
+            ) : null}
+          </dl>
 
-      <a
-        href={`/api/sign-agreement/pdf?id=${encodeURIComponent(signature._id)}`}
-        className="inline-flex items-center gap-2 self-start border-b border-ink pb-[2px] font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-ink transition-opacity hover:opacity-70"
-      >
-        <Download className="h-3.5 w-3.5" strokeWidth={2} />
-        Download signed PDF
-      </a>
-
-      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 border-t border-rule-soft pt-5 text-[0.9rem] md:gap-x-8">
-        <CertRow label="Signed by" value={signature.signerName} />
-        <CertRow label="Email" value={signature.signerEmail} />
-        <CertRow label="Signed at" value={formattedDate} />
-        <CertRow label="Document" value={`Version ${signature.documentVersion}`} />
-        <CertRow
-          label="Hash"
-          value={signature.documentHash}
-          mono
-        />
-        {signature.ipAddress ? (
-          <CertRow label="IP address" value={signature.ipAddress} />
-        ) : null}
-      </dl>
-
-      {signature.acknowledgments && signature.acknowledgments.length > 0 ? (
-        <div className="border-t border-rule-soft pt-5">
-          <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-            Confirmed acknowledgments
-          </p>
-          <ul className="mt-3 flex flex-col gap-2 pl-5">
-            {signature.acknowledgments.map((a, i) => (
-              <li
-                key={i}
-                className="list-disc text-[0.9rem] leading-[1.55rem] text-ink marker:text-muted"
-              >
-                {a}
-              </li>
-            ))}
-          </ul>
+          {signature.acknowledgments && signature.acknowledgments.length > 0 ? (
+            <div className="border-t border-rule-soft pt-5">
+              <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+                Confirmed acknowledgments
+              </p>
+              <ul className="mt-3 flex flex-col gap-2 pl-5">
+                {signature.acknowledgments.map((a, i) => (
+                  <li
+                    key={i}
+                    className="list-disc text-[0.9rem] leading-[1.55rem] text-ink marker:text-muted"
+                  >
+                    {a}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       ) : null}
     </div>
