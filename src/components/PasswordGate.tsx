@@ -3,8 +3,6 @@
 import { useState, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 
-const STORAGE_KEY = "odyssey-unlocked";
-
 // Local pub-sub so same-tab sessionStorage updates trigger re-reads.
 const listeners = new Set<() => void>();
 function subscribe(cb: () => void) {
@@ -17,9 +15,11 @@ function notify() {
   for (const cb of listeners) cb();
 }
 
-function getSnapshot() {
-  if (typeof window === "undefined") return false;
-  return window.sessionStorage.getItem(STORAGE_KEY) === "1";
+function makeSnapshot(key: string) {
+  return () => {
+    if (typeof window === "undefined") return false;
+    return window.sessionStorage.getItem(key) === "1";
+  };
 }
 function getServerSnapshot() {
   return false;
@@ -28,14 +28,16 @@ function getServerSnapshot() {
 type Props = {
   children: ReactNode;
   password: string;
+  /** Unique per-page key so unlocking one client page doesn't unlock another. */
+  storageKey?: string;
 };
 
 // Simple client-side password gate. Stores an "unlocked" flag in
 // sessionStorage so it persists for the tab lifetime. Not real auth —
 // the password ships in the client bundle. Good enough for sharing a
 // hidden URL with one client.
-export function PasswordGate({ children, password }: Props) {
-  const unlocked = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+export function PasswordGate({ children, password, storageKey = "odyssey-unlocked" }: Props) {
+  const unlocked = useSyncExternalStore(subscribe, makeSnapshot(storageKey), getServerSnapshot);
   const [input, setInput] = useState("");
   const [error, setError] = useState(false);
 
@@ -44,7 +46,7 @@ export function PasswordGate({ children, password }: Props) {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (input === password) {
-      window.sessionStorage.setItem(STORAGE_KEY, "1");
+      window.sessionStorage.setItem(storageKey, "1");
       notify();
     } else {
       setError(true);
