@@ -108,13 +108,12 @@ export const justice: JusticeClient = {
       label: "Mar 23 – Apr 3, 2026",
       weekStart: "2026-03-23",
       weeks: 2,
-      note: "Two-week kickoff — hours not tracked per task, logged as a block.",
+      note: "Two-week kickoff — hours ballparked per task rather than tracked in real time.",
       items: [
-        {
-          project: "Justice Conder",
-          description: "Discovery, branding, logo design, website design",
-          hours: 10,
-        },
+        { project: "Clawbank", description: "Discovery", hours: 1 },
+        { project: "Clawbank", description: "Branding direction", hours: 3 },
+        { project: "Clawbank", description: "Logo design", hours: 3 },
+        { project: "Clawbank", description: "Website design", hours: 3 },
       ],
       invoice: {
         number: "INV-26004",

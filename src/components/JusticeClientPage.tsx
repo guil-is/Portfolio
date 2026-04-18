@@ -203,7 +203,6 @@ function Stat({
   label,
   value,
   sub,
-  accent = false,
 }: {
   label: string;
   value: string;
@@ -211,23 +210,18 @@ function Stat({
   accent?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-2 bg-bg px-5 py-5 md:px-6 md:py-6">
+    <div className="flex flex-col bg-bg px-5 py-5 md:px-6 md:py-6">
       <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
         {label}
       </p>
-      <p
-        className={[
-          "font-display text-[1.35rem] font-bold leading-none md:text-[1.75rem]",
-          accent ? "text-ink" : "text-ink",
-        ].join(" ")}
-      >
+      <p className="mt-2 font-display text-[1.35rem] font-bold leading-none text-ink md:text-[1.75rem]">
         {value}
       </p>
-      {sub ? (
-        <p className="font-caption text-[11px] leading-[1.4] text-muted">
-          {sub}
-        </p>
-      ) : null}
+      {/* Always reserve the sub line so all three cells have identical
+          content height — keeps the strip visually balanced. */}
+      <p className="mt-2 font-caption text-[11px] leading-[1.4] text-muted">
+        {sub ?? "\u00A0"}
+      </p>
     </div>
   );
 }
@@ -247,21 +241,20 @@ function PeriodBlock({
   const pace = paceStatus(period, justice.engagement);
   const label = displayLabel(period.label, currentYear);
 
-  const noted = !!period.note;
-  const wrapperClass = noted
-    ? "flex flex-col gap-5 rounded-[14px] border border-rule-soft bg-card/40 px-5 py-6 md:px-7 md:py-7"
-    : "flex flex-col gap-5";
-
   return (
-    <article className={wrapperClass}>
+    <article className="flex flex-col gap-5">
       <header className="flex flex-col gap-3 border-b border-rule-soft pb-4">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
           <h3 className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
             {label}
           </h3>
-          <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-            Total&nbsp;
-            <span className="text-ink">{total.toFixed(1)} h</span>
+          <p className="flex items-baseline gap-2">
+            <span className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+              Total
+            </span>
+            <span className="font-display text-[1.125rem] font-bold tabular-nums leading-none text-ink md:text-[1.375rem]">
+              {total.toFixed(1)} h
+            </span>
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[10px]">
@@ -326,8 +319,10 @@ function Pill({
     neutral:
       "border-rule-soft bg-card/50 text-muted",
     muted: "border-transparent bg-transparent text-muted",
-    positive: "border-transparent bg-[#16a34a] text-white",
-    warning: "border-transparent bg-[#f97316] text-white",
+    positive:
+      "border-[#16a34a]/40 bg-[#16a34a]/10 text-[#16a34a]",
+    warning:
+      "border-[#f97316]/45 bg-[#f97316]/10 text-[#f97316]",
   }[tone];
   return (
     <span
