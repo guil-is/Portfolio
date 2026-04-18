@@ -34,6 +34,11 @@ export default defineConfig({
             S.documentTypeListItem("project").title("Projects"),
             // Clients
             S.documentTypeListItem("client").title("Clients & Partners"),
+            S.divider(),
+            // Signed agreement audit log
+            S.documentTypeListItem("signedAgreement").title(
+              "Signed Agreements",
+            ),
           ]),
     }),
     visionTool({ defaultApiVersion: "2024-01-01" }),
