@@ -107,7 +107,7 @@ export const justice: JusticeClient = {
         blocks: [
           {
             type: "p",
-            text: "Guil provides creative direction and design services for Justice on an ongoing basis, across any projects Justice brings to the engagement. The current active project is Clawbank. Additional projects may be added week to week by mutual agreement.",
+            text: "Guil provides creative direction and design services for Justice on an ongoing basis, across any projects Justice brings to the engagement. Projects may be added, paused, or reprioritized week to week by mutual agreement.",
           },
           {
             type: "p",
