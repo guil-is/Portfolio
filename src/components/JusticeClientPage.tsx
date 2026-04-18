@@ -174,7 +174,7 @@ function SummaryStrip({
   return (
     <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-3">
       <Stat
-        label="Earned"
+        label="Total"
         value={formatUsd(earned)}
         sub={`${hours.toFixed(1)} h at $${rate}/h`}
       />
