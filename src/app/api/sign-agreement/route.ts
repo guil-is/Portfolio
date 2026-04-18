@@ -199,8 +199,14 @@ export async function POST(req: Request) {
   let pdfBuffer: Buffer | null = null;
   try {
     pdfBuffer = await renderAgreementPdf(client, signature);
+    console.log(
+      `[sign-agreement] PDF rendered: ${pdfBuffer.byteLength} bytes`,
+    );
   } catch (err) {
-    console.error("[sign-agreement] PDF render failed", err);
+    console.error(
+      "[sign-agreement] PDF render failed:",
+      err instanceof Error ? err.stack ?? err.message : err,
+    );
   }
 
   // Email — best-effort. Sanity record is the primary artifact; we

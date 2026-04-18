@@ -5,35 +5,26 @@ import {
   View,
   StyleSheet,
   renderToBuffer,
-  Font,
 } from "@react-pdf/renderer";
 import type { JusticeClient, SowSection } from "@/content/clients/justice";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 
 /**
- * Register a serif body face for the contract. Helvetica (the default)
- * reads too "app-like" for a legal document; a humanist serif sets the
- * right tone and keeps line breaks readable at small sizes.
+ * Uses only @react-pdf/renderer's built-in fonts (Helvetica, Times-Roman,
+ * Courier) so the renderer never has to fetch anything at runtime —
+ * remote font fetches silently fail on Vercel cold starts and tank the
+ * entire render.
  */
-Font.register({
-  family: "EBGaramond",
-  fonts: [
-    {
-      src: "https://fonts.gstatic.com/s/ebgaramond/v30/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-6_RUA4V-.ttf",
-    },
-    {
-      src: "https://fonts.gstatic.com/s/ebgaramond/v30/SlGFmQSNjdsmc35JDF1K5FR0SBkpGwGGEpbqgwFCIxBg5Fn9sg.ttf",
-      fontWeight: 600,
-    },
-  ],
-});
+const SERIF = "Times-Roman";
+const SANS = "Helvetica";
+const MONO = "Courier";
 
 const styles = StyleSheet.create({
   page: {
     paddingTop: 56,
     paddingBottom: 72,
     paddingHorizontal: 64,
-    fontFamily: "EBGaramond",
+    fontFamily: SERIF,
     fontSize: 11,
     lineHeight: 1.55,
     color: "#0a0a0a",
@@ -43,7 +34,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
     textTransform: "uppercase",
     color: "#7e7e7e",
-    fontFamily: "Helvetica",
+    fontFamily: SANS,
     fontWeight: 600,
   },
   title: {
@@ -82,7 +73,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     textTransform: "uppercase",
     color: "#7e7e7e",
-    fontFamily: "Helvetica",
+    fontFamily: SANS,
     fontWeight: 600,
     marginBottom: 2,
   },
@@ -94,7 +85,7 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     marginTop: 16,
     marginBottom: 8,
-    fontFamily: "Helvetica",
+    fontFamily: SANS,
   },
   paragraph: {
     marginBottom: 8,
@@ -126,7 +117,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 600,
     marginBottom: 4,
-    fontFamily: "Helvetica",
+    fontFamily: SANS,
   },
   certBody: {
     marginTop: 14,
@@ -145,7 +136,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     textTransform: "uppercase",
     color: "#7e7e7e",
-    fontFamily: "Helvetica",
+    fontFamily: SANS,
     fontWeight: 600,
     paddingTop: 2,
   },
@@ -156,7 +147,7 @@ const styles = StyleSheet.create({
   certMono: {
     flex: 1,
     fontSize: 8.5,
-    fontFamily: "Courier",
+    fontFamily: MONO,
     color: "#333",
   },
   ackHeading: {
@@ -164,7 +155,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     textTransform: "uppercase",
     color: "#7e7e7e",
-    fontFamily: "Helvetica",
+    fontFamily: SANS,
     fontWeight: 600,
     marginTop: 14,
     marginBottom: 6,
@@ -188,7 +179,7 @@ const styles = StyleSheet.create({
     right: 64,
     fontSize: 8,
     color: "#7e7e7e",
-    fontFamily: "Helvetica",
+    fontFamily: SANS,
     textAlign: "center",
     letterSpacing: 0.5,
   },
