@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { sanityWriteClient } from "@/lib/sanity-write";
+import { getSanityWriteClient } from "@/lib/sanity-write";
 import { justice } from "@/content/clients/justice";
 import { hashSow } from "@/lib/sow-hash";
 import { getLatestSignature } from "@/lib/signed-agreement";
@@ -156,7 +156,7 @@ export async function POST(req: Request) {
 
   let record;
   try {
-    record = await sanityWriteClient.create({
+    record = await getSanityWriteClient().create({
       _type: "signedAgreement",
       clientSlug,
       signerName: name,

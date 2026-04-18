@@ -1,4 +1,4 @@
-import { createClient } from "next-sanity";
+import { createClient, type SanityClient } from "next-sanity";
 import { projectId, dataset } from "./sanity";
 
 /**
@@ -11,28 +11,30 @@ import { projectId, dataset } from "./sanity";
  *     has no NEXT_PUBLIC_ prefix, so it stays server-side only.
  *   • `useCdn: false` — mutations must hit the live API, not the CDN.
  *
- * Throws on import if the token isn't set, which is intentional:
- * calling code will fail fast rather than silently corrupt data.
+ * Lazy-initialized: the token is only checked on first use, so missing
+ * configuration produces a runtime error on the specific endpoint
+ * that needs it — not a build failure that breaks the whole site.
  */
 
 const apiVersion = "2024-01-01";
 
-const token = process.env.SANITY_AUTH_TOKEN;
+let cached: SanityClient | null = null;
 
-function assertToken(value: string | undefined): string {
-  if (!value) {
+export function getSanityWriteClient(): SanityClient {
+  if (cached) return cached;
+  const token = process.env.SANITY_AUTH_TOKEN;
+  if (!token) {
     throw new Error(
-      "SANITY_AUTH_TOKEN is not set. Add it to .env.local to enable Sanity writes.",
+      "SANITY_AUTH_TOKEN is not set. Add it to Vercel env vars (or .env.local) to enable Sanity writes.",
     );
   }
-  return value;
+  cached = createClient({
+    projectId,
+    dataset,
+    apiVersion,
+    token,
+    useCdn: false,
+    perspective: "published",
+  });
+  return cached;
 }
-
-export const sanityWriteClient = createClient({
-  projectId,
-  dataset,
-  apiVersion,
-  token: assertToken(token),
-  useCdn: false,
-  perspective: "published",
-});
