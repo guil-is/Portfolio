@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { AgreementSignature } from "@/components/AgreementSignature";
+import type { SignedAgreement } from "@/lib/signed-agreement";
 import {
   justice,
   weekTotal,
@@ -12,7 +14,11 @@ import {
 
 type TabKey = "hours" | "sow";
 
-export function JusticeClientPage() {
+export function JusticeClientPage({
+  initialSignature,
+}: {
+  initialSignature: SignedAgreement | null;
+}) {
   const [tab, setTab] = useState<TabKey>("hours");
 
   return (
@@ -20,7 +26,11 @@ export function JusticeClientPage() {
       <Header />
       <Tabs tab={tab} setTab={setTab} />
       <div className="mt-12 md:mt-16">
-        {tab === "hours" ? <HoursView /> : <SowView />}
+        {tab === "hours" ? (
+          <HoursView />
+        ) : (
+          <SowView initialSignature={initialSignature} />
+        )}
       </div>
     </main>
   );
@@ -231,7 +241,11 @@ function formatUsd(n: number): string {
 // ---------------------------------------------------------------------
 // SOW view
 // ---------------------------------------------------------------------
-function SowView() {
+function SowView({
+  initialSignature,
+}: {
+  initialSignature: SignedAgreement | null;
+}) {
   const { sow, engagement } = justice;
   return (
     <article className="flex flex-col gap-14">
@@ -257,21 +271,14 @@ function SowView() {
         <SowSectionBlock key={s.heading} section={s} />
       ))}
 
-      <footer className="mt-4 border-t border-rule-soft pt-10">
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-          Parties
-        </p>
-        <div className="mt-4 flex flex-col gap-2">
-          {sow.signatories.map(([k, v]) => (
-            <div key={k} className="flex items-baseline justify-between gap-6 border-b border-rule-soft py-2 last:border-b-0">
-              <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-                {k}
-              </p>
-              <p className="text-[0.95rem] leading-[1.6rem] text-ink">{v}</p>
-            </div>
-          ))}
-        </div>
-      </footer>
+      <section className="mt-4 border-t border-rule-soft pt-10">
+        <AgreementSignature
+          clientSlug="justice"
+          acknowledgments={sow.acknowledgments}
+          documentVersion={sow.version}
+          initialSignature={initialSignature}
+        />
+      </section>
     </article>
   );
 }

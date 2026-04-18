@@ -2,6 +2,7 @@ import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { JusticeClientPage } from "@/components/JusticeClientPage";
 import { justice } from "@/content/clients/justice";
+import { getLatestSignature } from "@/lib/signed-agreement";
 
 export const metadata = {
   title: "Justice × Guil | Private",
@@ -14,14 +15,20 @@ export const metadata = {
   },
 };
 
-export default function JusticePage() {
+// Always fetch fresh signature state — once signed, it should appear
+// immediately on every visit.
+export const dynamic = "force-dynamic";
+
+export default async function JusticePage() {
+  const signature = await getLatestSignature("justice", justice.sow.version);
+
   return (
     <>
       <div className="fixed right-4 top-4 z-50">
         <ThemeToggle />
       </div>
       <PasswordGate password={justice.password} storageKey="for-justice-unlocked">
-        <JusticeClientPage />
+        <JusticeClientPage initialSignature={signature} />
       </PasswordGate>
     </>
   );

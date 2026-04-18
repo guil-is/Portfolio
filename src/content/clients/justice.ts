@@ -43,10 +43,17 @@ export type JusticeClient = {
   };
   hoursLog: HoursWeek[];
   sow: {
+    /** Bump this when the SOW content changes substantively. Previous
+     * signatures remain valid records of what was signed then, but the
+     * new version requires a fresh signature. */
+    version: string;
     preamble: string;
     effectiveDate: string;
     sections: SowSection[];
     signatories: Array<[string, string]>;
+    /** Wording of each checkbox the signer must tick. These exact
+     * strings are stored on the signature record. */
+    acknowledgments: string[];
   };
 };
 
@@ -89,9 +96,15 @@ export const justice: JusticeClient = {
   ],
 
   sow: {
+    version: "v1-2026-03-26",
     preamble:
       "This document confirms the working agreement between Guilherme Maueler (designer) and Justice Conder (client).",
     effectiveDate: "March 26, 2026",
+    acknowledgments: [
+      "I am Justice Conder, and I have the authority to bind myself to this agreement.",
+      "I have read and agree to the terms of this Statement of Work.",
+      "I consent to sign electronically. I understand that my full name, email, and checkbox confirmations constitute my legal signature under the ESIGN Act and equivalent electronic signature laws.",
+    ],
     sections: [
       {
         heading: "Scope of Work",
