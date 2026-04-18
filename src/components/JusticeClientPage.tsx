@@ -182,7 +182,6 @@ function SummaryStrip({
       <Stat
         label={settled ? "Status" : "Outstanding"}
         value={settled ? "Paid in full" : formatUsd(outstanding)}
-        sub={settled ? undefined : `${formatUsd(paid)} paid`}
         accent={!settled}
       />
     </div>
@@ -296,10 +295,8 @@ function Pill({
     neutral:
       "border-rule-soft bg-card/50 text-muted",
     muted: "border-transparent bg-transparent text-muted",
-    positive:
-      "border-[color:var(--ink)]/20 bg-[color:var(--ink)]/[0.06] text-ink",
-    warning:
-      "border-[#d2a04f] bg-[#d2a04f]/10 text-[#8a6420] dark:text-[#e0b56b]",
+    positive: "border-transparent bg-[#16a34a] text-white",
+    warning: "border-transparent bg-[#f97316] text-white",
   }[tone];
   return (
     <span
