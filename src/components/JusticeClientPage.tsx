@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Info } from "lucide-react";
+import { Check, Info } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import {
   justice,
   invoiceStatus,
+  lastInvoiceActivity,
+  lastPaidInvoice,
   paceStatus,
   periodTotal,
   periodWeeks,
@@ -131,12 +133,15 @@ function HoursView() {
   const earned = totalEarned(periods, rate);
   const paid = totalPaid(periods, rate);
   const outstanding = totalOutstanding(periods, rate);
+  const lastPaid = lastPaidInvoice(periods);
+  const lastActivity = lastInvoiceActivity(periods);
+  const currentYear = new Date().getFullYear();
 
   return (
     <div className="flex flex-col gap-14">
       <p className="max-w-[620px] text-[0.95rem] italic leading-[1.7rem] text-muted">
-        No action needed — this page mirrors your invoices. Updated within a
-        day of each invoice cycle.
+        No action needed — this page mirrors your invoices.
+        {lastActivity ? ` Last updated ${formatLongDate(lastActivity)}.` : ""}
       </p>
 
       <SummaryStrip
@@ -145,11 +150,12 @@ function HoursView() {
         earned={earned}
         paid={paid}
         outstanding={outstanding}
+        lastPaid={lastPaid}
       />
 
       <section className="flex flex-col gap-12">
         {periods.map((p) => (
-          <PeriodBlock key={p.weekStart} period={p} />
+          <PeriodBlock key={p.weekStart} period={p} currentYear={currentYear} />
         ))}
       </section>
     </div>
@@ -163,22 +169,27 @@ function SummaryStrip({
   earned,
   paid,
   outstanding,
+  lastPaid,
 }: {
   hours: number;
   rate: number;
   earned: number;
   paid: number;
   outstanding: number;
+  lastPaid: { number?: string; paidAt: string } | null;
 }) {
   const settled = outstanding <= 0;
+  const paidSub = lastPaid
+    ? `Last: ${lastPaid.number ?? formatLongDate(lastPaid.paidAt)}`
+    : undefined;
   return (
     <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-3">
       <Stat
-        label="Total"
-        value={formatUsd(earned)}
-        sub={`${hours.toFixed(1)} h at $${rate}/h`}
+        label="Hours"
+        value={`${hours.toFixed(1)} h`}
+        sub={`${formatUsd(earned)} at $${rate}/h`}
       />
-      <Stat label="Paid" value={formatUsd(paid)} />
+      <Stat label="Paid" value={formatUsd(paid)} sub={paidSub} />
       <Stat
         label={settled ? "Status" : "Outstanding"}
         value={settled ? "Paid in full" : formatUsd(outstanding)}
@@ -222,19 +233,31 @@ function Stat({
 }
 
 // ---------- Period block ----------
-function PeriodBlock({ period }: { period: HoursPeriod }) {
+function PeriodBlock({
+  period,
+  currentYear,
+}: {
+  period: HoursPeriod;
+  currentYear: number;
+}) {
   const total = periodTotal(period);
   const weeks = periodWeeks(period);
   const project = singleProject(period);
   const status = invoiceStatus(period);
   const pace = paceStatus(period, justice.engagement);
+  const label = displayLabel(period.label, currentYear);
+
+  const noted = !!period.note;
+  const wrapperClass = noted
+    ? "flex flex-col gap-5 rounded-[14px] border border-rule-soft bg-card/40 px-5 py-6 md:px-7 md:py-7"
+    : "flex flex-col gap-5";
 
   return (
-    <article className="flex flex-col gap-5">
+    <article className={wrapperClass}>
       <header className="flex flex-col gap-3 border-b border-rule-soft pb-4">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
           <h3 className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
-            {period.label}
+            {label}
           </h3>
           <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
             Total&nbsp;
@@ -250,6 +273,17 @@ function PeriodBlock({ period }: { period: HoursPeriod }) {
           </span>
         </div>
       </header>
+
+      {period.note ? (
+        <p className="flex items-start gap-2 text-[0.9rem] italic leading-[1.55rem] text-muted">
+          <Info
+            className="mt-[3px] h-3.5 w-3.5 shrink-0 not-italic"
+            strokeWidth={1.75}
+            aria-hidden
+          />
+          <span>{period.note}</span>
+        </p>
+      ) : null}
 
       <ul className="flex flex-col">
         {period.items.map((item, i) => (
@@ -269,19 +303,16 @@ function PeriodBlock({ period }: { period: HoursPeriod }) {
           </li>
         ))}
       </ul>
-
-      {period.note ? (
-        <p className="flex items-start gap-2 text-[0.9rem] italic leading-[1.55rem] text-muted">
-          <Info
-            className="mt-[3px] h-3.5 w-3.5 shrink-0 not-italic"
-            strokeWidth={1.75}
-            aria-hidden
-          />
-          <span>{period.note}</span>
-        </p>
-      ) : null}
     </article>
   );
+}
+
+/** Strip a trailing ", YYYY" from a label when YYYY matches the current
+ * year. Keeps the year visible when a period spans an unusual year so
+ * the date is never ambiguous. */
+function displayLabel(label: string, currentYear: number): string {
+  const suffix = `, ${currentYear}`;
+  return label.endsWith(suffix) ? label.slice(0, -suffix.length) : label;
 }
 
 function Pill({
@@ -324,7 +355,12 @@ function InvoicePill({ status }: { status: InvoiceStatus }) {
 function PacePill({ pace }: { pace: PaceStatus }) {
   if (pace.state === "on") {
     return (
-      <span className="font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
+      <span className="inline-flex items-center gap-1.5 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
+        <Check
+          className="h-3 w-3 text-[#16a34a]"
+          strokeWidth={3}
+          aria-hidden
+        />
         Within {pace.min}–{pace.max} h target
       </span>
     );
@@ -354,6 +390,14 @@ function formatUsd(n: number): string {
     currency: "USD",
     maximumFractionDigits: 0,
   }).format(n);
+}
+
+function formatLongDate(iso: string): string {
+  return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 // ---------------------------------------------------------------------

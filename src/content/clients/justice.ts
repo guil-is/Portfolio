@@ -318,3 +318,29 @@ export function invoiceStatus(p: HoursPeriod): InvoiceStatus {
     number: p.invoice.number,
   };
 }
+
+/** Most recently paid invoice across all periods, if any. */
+export function lastPaidInvoice(
+  periods: HoursPeriod[],
+): { number?: string; paidAt: string } | null {
+  const paid = periods
+    .map((p) => p.invoice)
+    .filter(
+      (inv): inv is Invoice & { paidAt: string } =>
+        !!inv && !!inv.paidAt,
+    )
+    .sort((a, b) => b.paidAt.localeCompare(a.paidAt));
+  return paid[0] ?? null;
+}
+
+/** Most recent invoice event (issued or paid) across all periods. */
+export function lastInvoiceActivity(periods: HoursPeriod[]): string | null {
+  const dates: string[] = [];
+  for (const p of periods) {
+    if (p.invoice?.issuedAt) dates.push(p.invoice.issuedAt);
+    if (p.invoice?.paidAt) dates.push(p.invoice.paidAt);
+  }
+  if (dates.length === 0) return null;
+  dates.sort((a, b) => b.localeCompare(a));
+  return dates[0]!;
+}
