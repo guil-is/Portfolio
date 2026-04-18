@@ -1,8 +1,9 @@
 /**
  * Data for the private client page at /for/justice.
  *
- * Update `hoursLog` each week: prepend a new week block at the top of
- * the array so the most recent week renders first on the page.
+ * Update `hoursLog` after each bi-weekly invoice cycle:
+ * prepend a new period block at the top of the array so the most
+ * recent period renders first on the page.
  */
 
 export type HoursItem = {
@@ -11,14 +12,27 @@ export type HoursItem = {
   hours: number;
 };
 
-export type HoursWeek = {
-  /** Display label, e.g. "Apr 6 – 10". */
+export type Invoice = {
+  /** Optional human identifier shown in the UI (e.g. "INV-001"). */
+  number?: string;
+  /** ISO date the invoice was sent. */
+  issuedAt: string;
+  /** ISO date payment was received. Undefined = outstanding. */
+  paidAt?: string;
+};
+
+export type HoursPeriod = {
+  /** Display label, e.g. "Apr 6 – 17, 2026". */
   label: string;
-  /** ISO date for the Monday of the week (used for sorting). */
+  /** ISO date for the Monday of the first week (used for sorting). */
   weekStart: string;
+  /** Number of weeks the period covers. Defaults to 2 (bi-weekly). */
+  weeks?: number;
   items: HoursItem[];
-  /** Optional one-line note for the weekly summary sent with the invoice. */
+  /** Optional one-line context shown alongside the period. */
   note?: string;
+  /** Invoice metadata. Omit while a period is still in progress. */
+  invoice?: Invoice;
 };
 
 export type SowSection = {
@@ -40,7 +54,7 @@ export type JusticeClient = {
     weeklyHoursMin: number;
     weeklyHoursMax: number;
   };
-  hoursLog: HoursWeek[];
+  hoursLog: HoursPeriod[];
   sow: {
     /** Bump this when the SOW content changes substantively. Previous
      * signatures remain valid records of what was signed then, but the
@@ -67,20 +81,12 @@ export const justice: JusticeClient = {
     weeklyHoursMax: 10,
   },
 
-  // Most recent week first. Add new weeks at the top.
+  // Most recent period first. Add new periods at the top.
   hoursLog: [
     {
-      label: "Apr 13 – 17",
-      weekStart: "2026-04-13",
-      items: [
-        { project: "Clawbank", description: "Launch / promo video", hours: 6 },
-        { project: "Clawbank", description: "Blog page design", hours: 2 },
-        { project: "Clawbank", description: "Audiogram asset + template", hours: 2 },
-      ],
-    },
-    {
-      label: "Apr 6 – 10",
+      label: "Apr 6 – 17, 2026",
       weekStart: "2026-04-06",
+      weeks: 2,
       items: [
         {
           project: "Clawbank",
@@ -89,11 +95,17 @@ export const justice: JusticeClient = {
           hours: 4,
         },
         { project: "Clawbank", description: "Design explorations", hours: 1 },
+        { project: "Clawbank", description: "Launch / promo video", hours: 6 },
+        { project: "Clawbank", description: "Blog page design", hours: 2 },
+        { project: "Clawbank", description: "Audiogram asset + template", hours: 2 },
       ],
+      // TODO(guil): replace with real values when invoice is issued.
+      // invoice: { number: "INV-002", issuedAt: "2026-04-18" },
     },
     {
-      label: "Mar 23 – Apr 3",
+      label: "Mar 23 – Apr 3, 2026",
       weekStart: "2026-03-23",
+      weeks: 2,
       note: "Two-week kickoff — hours not tracked per task, logged as a block.",
       items: [
         {
@@ -102,6 +114,12 @@ export const justice: JusticeClient = {
           hours: 10,
         },
       ],
+      // TODO(guil): replace with real invoice number + dates.
+      invoice: {
+        number: "INV-001",
+        issuedAt: "2026-04-04",
+        paidAt: "2026-04-08",
+      },
     },
   ],
 
@@ -216,14 +234,86 @@ export const justice: JusticeClient = {
 
 // -------- Derived helpers --------
 
-export function weekTotal(week: HoursWeek): number {
-  return week.items.reduce((sum, i) => sum + i.hours, 0);
+export const DEFAULT_PERIOD_WEEKS = 2;
+
+export function periodWeeks(p: HoursPeriod): number {
+  return p.weeks ?? DEFAULT_PERIOD_WEEKS;
 }
 
-export function totalHours(weeks: HoursWeek[]): number {
-  return weeks.reduce((sum, w) => sum + weekTotal(w), 0);
+export function periodTotal(p: HoursPeriod): number {
+  return p.items.reduce((sum, i) => sum + i.hours, 0);
 }
 
-export function totalEarned(weeks: HoursWeek[], rate: number): number {
-  return totalHours(weeks) * rate;
+export function totalHours(periods: HoursPeriod[]): number {
+  return periods.reduce((sum, p) => sum + periodTotal(p), 0);
+}
+
+export function totalEarned(periods: HoursPeriod[], rate: number): number {
+  return totalHours(periods) * rate;
+}
+
+export function periodAmount(p: HoursPeriod, rate: number): number {
+  return periodTotal(p) * rate;
+}
+
+export function totalPaid(periods: HoursPeriod[], rate: number): number {
+  return periods
+    .filter((p) => p.invoice?.paidAt)
+    .reduce((sum, p) => sum + periodAmount(p, rate), 0);
+}
+
+export function totalOutstanding(periods: HoursPeriod[], rate: number): number {
+  return totalEarned(periods, rate) - totalPaid(periods, rate);
+}
+
+/** If every item in a period shares one project, return that name. */
+export function singleProject(p: HoursPeriod): string | null {
+  const first = p.items[0]?.project;
+  if (!first) return null;
+  return p.items.every((i) => i.project === first) ? first : null;
+}
+
+export type PaceStatus = {
+  state: "on" | "over" | "under";
+  /** Hours over (positive) or under (negative) the nearest bound. */
+  delta: number;
+  /** Lower bound of expected hours for this period. */
+  min: number;
+  /** Upper bound of expected hours for this period. */
+  max: number;
+};
+
+export function paceStatus(
+  p: HoursPeriod,
+  engagement: JusticeClient["engagement"],
+): PaceStatus {
+  const weeks = periodWeeks(p);
+  const min = engagement.weeklyHoursMin * weeks;
+  const max = engagement.weeklyHoursMax * weeks;
+  const total = periodTotal(p);
+  if (total > max) return { state: "over", delta: total - max, min, max };
+  if (total < min) return { state: "under", delta: total - min, min, max };
+  return { state: "on", delta: 0, min, max };
+}
+
+export type InvoiceStatus =
+  | { kind: "pending" }
+  | { kind: "issued"; issuedAt: string; number?: string }
+  | { kind: "paid"; issuedAt: string; paidAt: string; number?: string };
+
+export function invoiceStatus(p: HoursPeriod): InvoiceStatus {
+  if (!p.invoice) return { kind: "pending" };
+  if (p.invoice.paidAt) {
+    return {
+      kind: "paid",
+      issuedAt: p.invoice.issuedAt,
+      paidAt: p.invoice.paidAt,
+      number: p.invoice.number,
+    };
+  }
+  return {
+    kind: "issued",
+    issuedAt: p.invoice.issuedAt,
+    number: p.invoice.number,
+  };
 }

@@ -20,5 +20,8 @@
 
 # Hours log updates (Justice)
 
-- Prepend a new week to the top of `hoursLog` in `src/content/clients/justice.ts`.
-- Each item: `{ project, description, hours }`. Totals and billable $ recalc automatically.
+- Bi-weekly cadence — one period block per invoice cycle.
+- Prepend a new period to the top of `hoursLog` in `src/content/clients/justice.ts`. Shape:
+  `{ label, weekStart, weeks: 2, items: [{ project, description, hours }, ...], invoice?, note? }`
+- `invoice`: `{ number?, issuedAt, paidAt? }`. Omit while the period is still in progress; add when issued; set `paidAt` when payment lands.
+- Totals, paid/outstanding, pace status, and project-rollup pills all derive automatically from the data.

@@ -1,14 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { Info } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import {
   justice,
-  weekTotal,
-  totalHours,
+  invoiceStatus,
+  paceStatus,
+  periodTotal,
+  periodWeeks,
+  singleProject,
   totalEarned,
-  type HoursWeek,
+  totalHours,
+  totalOutstanding,
+  totalPaid,
+  type HoursPeriod,
+  type InvoiceStatus,
+  type PaceStatus,
   type SowSection,
 } from "@/content/clients/justice";
 
@@ -59,7 +68,7 @@ function Header() {
       </h1>
       <p className="max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
         A shared workspace for our engagement — the scope we agreed on, and a
-        live log of hours billed each week.
+        live log of hours billed each invoice period.
       </p>
     </section>
   );
@@ -116,92 +125,141 @@ function Tabs({
 // Hours view
 // ---------------------------------------------------------------------
 function HoursView() {
-  const weeks = justice.hoursLog;
-  const total = totalHours(weeks);
-  const earned = totalEarned(weeks, justice.engagement.rateUsd);
-  const latest = weeks[0];
-  const latestHours = latest ? weekTotal(latest) : 0;
+  const periods = justice.hoursLog;
+  const rate = justice.engagement.rateUsd;
+  const hours = totalHours(periods);
+  const earned = totalEarned(periods, rate);
+  const paid = totalPaid(periods, rate);
+  const outstanding = totalOutstanding(periods, rate);
 
   return (
     <div className="flex flex-col gap-14">
       <p className="max-w-[620px] text-[0.95rem] italic leading-[1.7rem] text-muted">
-        This page is updated weekly. Each entry is submitted with the invoice
-        for that period.
+        No action needed — this page mirrors your invoices. Updated within a
+        day of each invoice cycle.
       </p>
 
       <SummaryStrip
-        total={total}
+        hours={hours}
+        rate={rate}
         earned={earned}
-        latestLabel={latest?.label}
-        latestHours={latestHours}
+        paid={paid}
+        outstanding={outstanding}
       />
 
       <section className="flex flex-col gap-12">
-        {weeks.map((w) => (
-          <WeekBlock key={w.weekStart} week={w} />
+        {periods.map((p) => (
+          <PeriodBlock key={p.weekStart} period={p} />
         ))}
       </section>
     </div>
   );
 }
 
+// ---------- Summary strip ----------
 function SummaryStrip({
-  total,
+  hours,
+  rate,
   earned,
-  latestLabel,
-  latestHours,
+  paid,
+  outstanding,
 }: {
-  total: number;
+  hours: number;
+  rate: number;
   earned: number;
-  latestLabel?: string;
-  latestHours: number;
+  paid: number;
+  outstanding: number;
 }) {
+  const settled = outstanding <= 0;
   return (
-    <div className="grid grid-cols-3 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule">
-      <Stat label="Engagement total" value={`${total.toFixed(1)} h`} />
-      <Stat label="Billable" value={formatUsd(earned)} />
+    <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-3">
       <Stat
-        label={latestLabel ? `Latest · ${latestLabel}` : "Latest week"}
-        value={`${latestHours.toFixed(1)} h`}
+        label="Earned"
+        value={formatUsd(earned)}
+        sub={`${hours.toFixed(1)} h at $${rate}/h`}
+      />
+      <Stat label="Paid" value={formatUsd(paid)} />
+      <Stat
+        label={settled ? "Status" : "Outstanding"}
+        value={settled ? "Paid in full" : formatUsd(outstanding)}
+        sub={settled ? undefined : `${formatUsd(paid)} paid`}
+        accent={!settled}
       />
     </div>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({
+  label,
+  value,
+  sub,
+  accent = false,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  accent?: boolean;
+}) {
   return (
     <div className="flex flex-col gap-2 bg-bg px-5 py-5 md:px-6 md:py-6">
       <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
         {label}
       </p>
-      <p className="font-display text-[1.35rem] font-bold leading-none text-ink md:text-[1.75rem]">
+      <p
+        className={[
+          "font-display text-[1.35rem] font-bold leading-none md:text-[1.75rem]",
+          accent ? "text-ink" : "text-ink",
+        ].join(" ")}
+      >
         {value}
       </p>
+      {sub ? (
+        <p className="font-caption text-[11px] leading-[1.4] text-muted">
+          {sub}
+        </p>
+      ) : null}
     </div>
   );
 }
 
-function WeekBlock({ week }: { week: HoursWeek }) {
-  const total = weekTotal(week);
+// ---------- Period block ----------
+function PeriodBlock({ period }: { period: HoursPeriod }) {
+  const total = periodTotal(period);
+  const weeks = periodWeeks(period);
+  const project = singleProject(period);
+  const status = invoiceStatus(period);
+  const pace = paceStatus(period, justice.engagement);
+
   return (
     <article className="flex flex-col gap-5">
-      <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-rule-soft pb-4">
-        <h3 className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
-          {week.label}
-        </h3>
-        <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-          Total&nbsp;<span className="text-ink">{total.toFixed(1)} h</span>
-        </p>
-      </div>
+      <header className="flex flex-col gap-3 border-b border-rule-soft pb-4">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+          <h3 className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
+            {period.label}
+          </h3>
+          <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+            Total&nbsp;
+            <span className="text-ink">{total.toFixed(1)} h</span>
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[10px]">
+          <Pill label={`${weeks} ${weeks === 1 ? "week" : "weeks"}`} />
+          {project ? <Pill label={project} /> : null}
+          <InvoicePill status={status} />
+          <span className="ml-auto">
+            <PacePill pace={pace} />
+          </span>
+        </div>
+      </header>
 
       <ul className="flex flex-col">
-        {week.items.map((item, i) => (
+        {period.items.map((item, i) => (
           <li
             key={i}
             className="flex items-start justify-between gap-6 border-b border-rule-soft py-3 last:border-b-0"
           >
             <div className="flex min-w-0 items-start gap-3">
-              <ProjectChip name={item.project} />
+              {project ? null : <ProjectChip name={item.project} />}
               <p className="text-[0.95rem] leading-[1.6rem] text-ink">
                 {item.description}
               </p>
@@ -213,12 +271,75 @@ function WeekBlock({ week }: { week: HoursWeek }) {
         ))}
       </ul>
 
-      {week.note ? (
-        <p className="text-[0.9rem] italic leading-[1.55rem] text-muted">
-          {week.note}
+      {period.note ? (
+        <p className="flex items-start gap-2 text-[0.9rem] italic leading-[1.55rem] text-muted">
+          <Info
+            className="mt-[3px] h-3.5 w-3.5 shrink-0 not-italic"
+            strokeWidth={1.75}
+            aria-hidden
+          />
+          <span>{period.note}</span>
         </p>
       ) : null}
     </article>
+  );
+}
+
+function Pill({
+  label,
+  tone = "neutral",
+}: {
+  label: string;
+  tone?: "neutral" | "muted" | "positive" | "warning";
+}) {
+  const toneClass = {
+    neutral:
+      "border-rule-soft bg-card/50 text-muted",
+    muted: "border-transparent bg-transparent text-muted",
+    positive:
+      "border-[color:var(--ink)]/20 bg-[color:var(--ink)]/[0.06] text-ink",
+    warning:
+      "border-[#d2a04f] bg-[#d2a04f]/10 text-[#8a6420] dark:text-[#e0b56b]",
+  }[tone];
+  return (
+    <span
+      className={[
+        "inline-flex items-center rounded-[6px] border px-2 py-[2px] font-caption text-[10px] font-semibold uppercase tracking-[1px]",
+        toneClass,
+      ].join(" ")}
+    >
+      {label}
+    </span>
+  );
+}
+
+function InvoicePill({ status }: { status: InvoiceStatus }) {
+  if (status.kind === "pending") {
+    return <Pill label="Pending invoice" tone="muted" />;
+  }
+  const id = status.number ? `${status.number} · ` : "";
+  if (status.kind === "paid") {
+    return <Pill label={`${id}Paid`} tone="positive" />;
+  }
+  return <Pill label={`${id}Awaiting payment`} tone="warning" />;
+}
+
+function PacePill({ pace }: { pace: PaceStatus }) {
+  if (pace.state === "on") {
+    return (
+      <span className="font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
+        Within {pace.min}–{pace.max} h target
+      </span>
+    );
+  }
+  const sign = pace.delta > 0 ? "+" : "−";
+  const abs = Math.abs(pace.delta).toFixed(1);
+  const label = pace.state === "over" ? "Over" : "Under";
+  return (
+    <span className="font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
+      {label} target · {sign}
+      {abs} h
+    </span>
   );
 }
 
