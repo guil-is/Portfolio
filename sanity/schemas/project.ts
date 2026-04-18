@@ -55,6 +55,11 @@ export const project = defineType({
       title: "Hero Video URL",
       type: "url",
       description: "YouTube or Vimeo URL. Shown instead of the hero image when set.",
+      validation: (r) =>
+        r.uri({
+          scheme: ["http", "https"],
+          allowRelative: false,
+        }),
     }),
     defineField({
       name: "link",
