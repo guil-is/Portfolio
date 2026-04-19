@@ -34,7 +34,7 @@ export function ViewTransitions() {
   useLayoutEffect(() => {
     if (!document.documentElement.classList.contains("page-leaving")) return;
     if (!window.location.hash) {
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     }
     document.documentElement.classList.remove("page-leaving");
   }, [pathname]);
@@ -95,7 +95,7 @@ export function ViewTransitions() {
         // offset. Skip when the destination has a hash — we want Next
         // to scroll to it instead.
         if (!hasHash) {
-          window.scrollTo(0, 0);
+          window.scrollTo({ top: 0, left: 0, behavior: "instant" });
           router.push(destination, { scroll: false });
         } else {
           router.push(destination);
