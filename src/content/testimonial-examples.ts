@@ -59,7 +59,7 @@ export const testimonialExamples: TestimonialExample[] = [
   {
     angle: "Working rhythm",
     quote:
-      "Calm, funny, and never makes a meeting feel like a chore. Working with Guil is one of the few things on our roadmap I actually look forward to.",
+      "Calm, funny, and never makes a meeting feel like a chore. Working with Guil is one of the few things I actually look forward to.",
   },
   {
     angle: "Hiring decision",
