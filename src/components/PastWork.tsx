@@ -18,22 +18,26 @@ async function getProjects(): Promise<PastProject[]> {
     const sanity = await getAllProjects();
     if (sanity && sanity.length > 0) {
       // Merge Sanity metadata with local TS data for images
-      // (Sanity doesn't have image URLs yet — they're still local)
+      // (Sanity doesn't have image URLs yet — they're still local).
+      // Skip projects that are currently featured in 'Recent / Active'
+      // so they don't appear twice on the homepage.
       const localBySlug = new Map(pastProjects.map((p) => [p.slug, p]));
-      return sanity.map((p) => {
-        const local = localBySlug.get(p.slug);
-        return {
-          name: p.name,
-          slug: p.slug,
-          client: p.client,
-          services: p.services,
-          summary: p.summary,
-          gridImage: local?.gridImage ?? p.gridImage ?? "",
-          heroVideo: p.heroVideo,
-          link: p.link,
-          featured: p.featured,
-        };
-      });
+      return sanity
+        .filter((p) => !p.isActiveProject)
+        .map((p) => {
+          const local = localBySlug.get(p.slug);
+          return {
+            name: p.name,
+            slug: p.slug,
+            client: p.client,
+            services: p.services,
+            summary: p.summary,
+            gridImage: local?.gridImage ?? p.gridImage ?? "",
+            heroVideo: p.heroVideo,
+            link: p.link,
+            featured: p.featured,
+          };
+        });
     }
   } catch {
     // fallback

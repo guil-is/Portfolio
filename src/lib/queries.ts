@@ -66,6 +66,7 @@ export type SanityProject = {
   heroVideo?: string;
   link?: string;
   featured?: boolean;
+  isActiveProject?: boolean;
   sortOrder: number;
   /** Portable Text body. Includes block, image, and videoEmbed types. */
   projectDetails?: PortableTextBlock[];
@@ -84,6 +85,7 @@ export async function getAllProjects(): Promise<SanityProject[]> {
       heroVideo,
       link,
       featured,
+      isActiveProject,
       sortOrder,
       "gridImage": gridImage.asset->url,
       "mainImage": mainImage.asset->url
