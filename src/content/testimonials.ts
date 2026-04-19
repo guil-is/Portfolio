@@ -34,15 +34,15 @@ export const dummyTestimonials: Testimonial[] = [
     initials: "XD",
   },
   {
-    name: "Marcus Alvaro",
-    role: "Head of Product",
-    project: "Clawbank",
-    projectHref: "/projects/clawbank",
+    name: "Griff Green",
+    role: "Co-founder",
+    project: "Giveth",
+    projectHref: "https://giveth.io",
     quote:
-      "Sharp instincts, fast hands, zero ego. Guil ships polished work without the typical freelance friction. Briefs get met, edges get found, the bar keeps going up.",
-    social: { platform: "linkedin", url: "https://linkedin.com/in/placeholder" },
-    avatarUrl: "https://i.pravatar.cc/120?img=12",
-    initials: "MA",
+      "Working with Guil is like hiring a whole design team in one person. He nails brand, product, and story all in one go and somehow still stays chill the whole time.",
+    social: { platform: "twitter", url: "https://x.com/thegrifft" },
+    avatarUrl: "https://unavatar.io/x/thegrifft",
+    initials: "GG",
   },
   {
     name: "Noor Hassani",
