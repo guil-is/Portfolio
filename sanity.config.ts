@@ -39,6 +39,8 @@ export default defineConfig({
             S.documentTypeListItem("signedAgreement").title(
               "Signed Agreements",
             ),
+            // Proposal visit log
+            S.documentTypeListItem("proposalVisit").title("Proposal Visits"),
           ]),
     }),
     visionTool({ defaultApiVersion: "2024-01-01" }),

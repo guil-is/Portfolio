@@ -18,6 +18,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { CtaButton } from "@/components/CtaButton";
 import { CenterFocus } from "@/components/CenterFocus";
 import { CaseStudyHorizontalScroll } from "@/components/CaseStudyHorizontalScroll";
+import { VisitTracker } from "@/components/VisitTracker";
 import { getGalleryImages } from "@/lib/gallery";
 import {
   getAllProposalSlugs,
@@ -82,6 +83,7 @@ export default async function ProposalPage({ params }: RouteProps) {
       </div>
 
       <PasswordGate password={proposal.password} storageKey={`for-${proposal.slug}-unlocked`}>
+        <VisitTracker slug={proposal.slug} />
         <main className="page-fade-in pb-40">
           <Header proposal={proposal} />
 
