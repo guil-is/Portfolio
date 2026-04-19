@@ -23,11 +23,16 @@ type PageHeaderProps = {
 // This component renders as a sibling of <main>, NOT inside it, so its
 // 100%-opaque background naturally spans the full viewport width
 // without needing negative-margin breakout hacks.
+//
+// Horizontal padding sits on the outer <header>, not on the inner
+// max-width wrapper — that way nav content starts at the same
+// absolute x as body sections below (which don't carry internal
+// padding once they hit their max-width).
 export function PageHeader({ left, maxWidth = 800 }: PageHeaderProps = {}) {
   return (
-    <header className="nav-drop-in sticky top-0 z-40 bg-bg">
+    <header className="nav-drop-in sticky top-0 z-40 bg-bg px-6 md:px-10">
       <div
-        className="mx-auto w-full px-6 md:px-10"
+        className="mx-auto w-full"
         style={{ maxWidth: `${maxWidth}px` }}
       >
         <nav className="flex items-center justify-between gap-6 border-b border-rule pb-4 pt-6">
