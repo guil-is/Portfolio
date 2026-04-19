@@ -25,7 +25,7 @@ type PageHeaderProps = {
 // without needing negative-margin breakout hacks.
 export function PageHeader({ left, maxWidth = 800 }: PageHeaderProps = {}) {
   return (
-    <header className="sticky top-0 z-40 bg-bg">
+    <header className="nav-drop-in sticky top-0 z-40 bg-bg">
       <div
         className="mx-auto w-full px-6 md:px-10"
         style={{ maxWidth: `${maxWidth}px` }}

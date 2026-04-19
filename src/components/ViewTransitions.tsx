@@ -22,9 +22,17 @@ export function ViewTransitions() {
   const pathname = usePathname();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Drop the leaving class whenever the URL changes so the new page
-  // can fade back in via its own mount animation.
+  // When the URL changes we're mid-navigation. Use the invisible
+  // window (body still faded out) to jump to the top of the new page
+  // before letting it fade back in — otherwise the browser shows the
+  // previous scroll offset briefly on the new page, which feels clunky.
+  // Skip the scroll if the destination has a hash so Next.js's own
+  // hash-scroll behavior isn't undone.
   useEffect(() => {
+    if (!document.documentElement.classList.contains("page-leaving")) return;
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+    }
     document.documentElement.classList.remove("page-leaving");
   }, [pathname]);
 
