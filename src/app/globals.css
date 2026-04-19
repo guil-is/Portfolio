@@ -87,6 +87,17 @@ h1, h2, h3, h4, h5 {
   margin: 0;
 }
 
+/* Sanity Studio lives under #sanity in its own layout. Reset our
+ * global heading overrides inside it so Studio's own typography +
+ * dark-mode colors take over — otherwise titles render as our ink
+ * color on Studio's dark chrome and become invisible. */
+#sanity :is(h1, h2, h3, h4, h5) {
+  color: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  margin: initial;
+}
+
 ::selection {
   background: var(--color-ink);
   color: var(--color-bg);
