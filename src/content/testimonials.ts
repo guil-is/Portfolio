@@ -29,7 +29,7 @@ export const dummyTestimonials: Testimonial[] = [
     project: "Odyssey",
     projectHref: "/for/odyssey",
     quote:
-      "Working with Guil felt like hiring a full design team in one person. He saw the whole system on day one — the brand, the product, and the story we were trying to tell — and moved all three forward at once.",
+      "Working with Guil felt like hiring a full design team in one person. He saw the whole system on day one: the brand, the product, and the story we were trying to tell. He moved all three forward at once.",
     social: { platform: "twitter", url: "https://twitter.com/placeholder" },
     avatarUrl: "https://i.pravatar.cc/120?img=47",
     initials: "SC",
@@ -40,7 +40,7 @@ export const dummyTestimonials: Testimonial[] = [
     project: "Clawbank",
     projectHref: "/projects/clawbank",
     quote:
-      "Sharp instincts, fast hands, zero ego. Guil ships polished work without the typical freelance friction — briefs get met, edges get found, and the bar keeps going up.",
+      "Sharp instincts, fast hands, zero ego. Guil ships polished work without the typical freelance friction. Briefs get met, edges get found, the bar keeps going up.",
     social: { platform: "linkedin", url: "https://linkedin.com/in/placeholder" },
     avatarUrl: "https://i.pravatar.cc/120?img=12",
     initials: "MA",

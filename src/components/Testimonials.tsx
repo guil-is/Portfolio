@@ -179,7 +179,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         </span>
       </blockquote>
 
-      <footer className="mt-auto flex items-start gap-3 border-t border-rule-soft pt-5">
+      <footer className="mt-auto flex items-center gap-3 border-t border-rule-soft pt-5">
         {social ? (
           <a
             href={social.url}
