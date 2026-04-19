@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ViewTransitions } from "@/components/ViewTransitions";
 import { site } from "@/content/site";
 
 // Google Fonts are loaded via a runtime stylesheet link (instead of
@@ -74,6 +75,7 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
+          <ViewTransitions />
           {children}
         </ThemeProvider>
       </body>
