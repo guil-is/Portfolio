@@ -170,41 +170,22 @@ h1, h2, h3, h4, h5 {
   animation: page-fade-in 600ms ease-out both;
 }
 
-/* When the browser supports View Transitions, the root cross-fade
- * below handles mount animations; skip the class-based one so pages
- * don't double-fade after navigation. */
-@supports (view-transition-name: root) {
-  .page-fade-in {
-    animation: none;
-  }
-}
-
 /* -----------------------------------------------------------------------
- * Cross-page fade via the View Transitions API.
- *
- * Triggered by the <ViewTransitions /> client component, which wraps
- * same-origin navigation in document.startViewTransition(). Firefox
- * and other non-supporting browsers fall back to instant navigation.
+ * Cross-page fade — the <ViewTransitions /> client component adds
+ * `page-leaving` to the <html> on same-origin link clicks, waits for
+ * this transition to complete, then runs the navigation. On new page
+ * mount it removes the class and the body fades back in. Page-level
+ * mount animations (like .page-fade-in) layer on top to stagger the
+ * entrance.
  * ---------------------------------------------------------------------*/
 
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 220ms;
-  animation-timing-function: ease-in-out;
-  mix-blend-mode: normal;
+body {
+  transition: opacity 200ms ease-in-out;
 }
 
-::view-transition-old(root) {
-  animation-name: page-fade-out;
-}
-
-::view-transition-new(root) {
-  animation-name: page-fade-in;
-}
-
-@keyframes page-fade-out {
-  from { opacity: 1; }
-  to { opacity: 0; }
+html.page-leaving body {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .intro-rise {
@@ -280,9 +261,8 @@ h1, h2, h3, h4, h5 {
     transform: none;
     transition: none;
   }
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation: none !important;
+  body {
+    transition: none;
   }
 }
 

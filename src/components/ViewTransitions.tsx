@@ -1,38 +1,36 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 
 /**
- * Enables cross-page fade transitions via the browser's View
- * Transitions API.
+ * Cross-page fade using a simple class-based approach: fade the
+ * body out on link click, wait for the animation, then run the
+ * navigation. When the new page mounts, the class is removed and
+ * the body fades back in.
  *
- * How it works: we attach a capture-phase click listener at the
- * document root so we see <a> clicks before <Link>'s own handler.
- * For internal, left-click, modifier-free navigations we
- * preventDefault and run the router.push inside
- * `document.startViewTransition(...)`. The browser snapshots the old
- * DOM, swaps in the new one, and cross-fades between them per the
- * CSS in globals.css.
- *
- * Gracefully degrades on browsers that don't expose
- * `startViewTransition` (Firefox at time of writing) — those clicks
- * go through <Link>'s native handling unchanged.
+ * This is less magical than the View Transitions API but works
+ * reliably with server components and async data fetching — the
+ * navigation itself is untouched, we only add a CSS opacity
+ * transition around it.
  */
+
+const FADE_MS = 200;
+
 export function ViewTransitions() {
   const router = useRouter();
+  const pathname = usePathname();
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Drop the leaving class whenever the URL changes so the new page
+  // can fade back in via its own mount animation.
+  useEffect(() => {
+    document.documentElement.classList.remove("page-leaving");
+  }, [pathname]);
 
   useEffect(() => {
-    if (typeof document === "undefined") return;
-    const startViewTransition = (
-      document as Document & {
-        startViewTransition?: (cb: () => void) => unknown;
-      }
-    ).startViewTransition;
-    if (typeof startViewTransition !== "function") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     function handler(event: MouseEvent) {
       if (event.defaultPrevented) return;
@@ -59,8 +57,6 @@ export function ViewTransitions() {
         return;
       }
 
-      // Resolve against current origin so we can distinguish internal
-      // from external URLs.
       let url: URL;
       try {
         url = new URL(href, window.location.href);
@@ -68,26 +64,28 @@ export function ViewTransitions() {
         return;
       }
       if (url.origin !== window.location.origin) return;
-
-      // Same-page hash navigation — skip, we don't want to fade.
+      // Same-page (only hash or identical) — skip the fade.
       if (
         url.pathname === window.location.pathname &&
-        url.search === window.location.search &&
-        url.hash
+        url.search === window.location.search
       ) {
         return;
       }
 
       event.preventDefault();
       const destination = url.pathname + url.search + url.hash;
-      startViewTransition!(() => {
+
+      document.documentElement.classList.add("page-leaving");
+      if (timer.current) clearTimeout(timer.current);
+      timer.current = setTimeout(() => {
         router.push(destination);
-      });
+      }, FADE_MS);
     }
 
     document.addEventListener("click", handler, { capture: true });
     return () => {
       document.removeEventListener("click", handler, { capture: true });
+      if (timer.current) clearTimeout(timer.current);
     };
   }, [router]);
 
