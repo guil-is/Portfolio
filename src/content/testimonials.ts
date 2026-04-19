@@ -22,7 +22,7 @@ export type Testimonial = {
   initials: string;
 };
 
-export const dummyTestimonials: Testimonial[] = [
+export const siteTestimonials: Testimonial[] = [
   {
     name: "Xavier Damman",
     role: "Steward",
@@ -43,35 +43,5 @@ export const dummyTestimonials: Testimonial[] = [
     social: { platform: "twitter", url: "https://x.com/griffgreen" },
     avatarUrl: "https://unavatar.io/x/griffgreen",
     initials: "GG",
-  },
-  {
-    name: "Noor Hassani",
-    role: "CEO",
-    project: "Northline",
-    quote:
-      "Guil's the rare designer who cares as much about why something exists as how it looks. Every call ended with us understanding our own product better.",
-    social: { platform: "twitter", url: "https://twitter.com/placeholder" },
-    avatarUrl: "https://i.pravatar.cc/120?img=32",
-    initials: "NH",
-  },
-  {
-    name: "Teo Martins",
-    role: "Creative Director",
-    project: "Prism Agency",
-    quote:
-      "I've worked with a lot of contractors. Guil is the only one my team asks for by name. His taste is strong and his output speaks for itself.",
-    social: { platform: "linkedin", url: "https://linkedin.com/in/placeholder" },
-    avatarUrl: "https://i.pravatar.cc/120?img=14",
-    initials: "TM",
-  },
-  {
-    name: "Rin Takahashi",
-    role: "Founding designer",
-    project: "Lumen",
-    quote:
-      "What I appreciated most: he pushed back when it mattered and got out of the way when it didn't. Shipped faster than any team I'd worked with.",
-    social: { platform: "twitter", url: "https://twitter.com/placeholder" },
-    avatarUrl: "https://i.pravatar.cc/120?img=48",
-    initials: "RT",
   },
 ];

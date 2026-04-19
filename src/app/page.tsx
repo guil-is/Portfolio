@@ -3,10 +3,12 @@ import { ClientLogos } from "@/components/ClientLogos";
 import { ActiveProjects } from "@/components/ActiveProjects";
 import { Expertise } from "@/components/Expertise";
 import { PastWork } from "@/components/PastWork";
+import { Testimonials } from "@/components/Testimonials";
 import { CtaFooter } from "@/components/CtaFooter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { getSiteSettings } from "@/lib/queries";
 import { site } from "@/content/site";
+import { siteTestimonials } from "@/content/testimonials";
 
 // Re-fetch from Sanity every 60 seconds so Studio edits go live
 // without a full redeploy.
@@ -40,6 +42,7 @@ export default async function Home() {
         <ClientLogos />
         <ActiveProjects />
         <Expertise />
+        <Testimonials testimonials={siteTestimonials} />
         <PastWork />
         <CtaFooter heading={bottomHeading} sub={bottomSub} />
       </main>

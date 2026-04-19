@@ -9,7 +9,7 @@ import { CtaFooter } from "@/components/CtaFooter";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { getSiteSettings } from "@/lib/queries";
 import { site } from "@/content/site";
-import { dummyTestimonials } from "@/content/testimonials";
+import { siteTestimonials } from "@/content/testimonials";
 
 /**
  * Staging mirror of the home page, used to preview in-progress
@@ -55,7 +55,7 @@ export default async function HomePreview() {
         <ClientLogos />
         <ActiveProjects />
         <Expertise />
-        <Testimonials testimonials={dummyTestimonials} />
+        <Testimonials testimonials={siteTestimonials} />
         <PastWork />
         <CtaFooter heading={bottomHeading} sub={bottomSub} />
       </main>
