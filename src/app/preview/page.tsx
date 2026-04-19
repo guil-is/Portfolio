@@ -55,8 +55,8 @@ export default async function HomePreview() {
         <ClientLogos />
         <ActiveProjects />
         <Expertise />
-        <PastWork />
         <Testimonials testimonials={dummyTestimonials} />
+        <PastWork />
         <CtaFooter heading={bottomHeading} sub={bottomSub} />
       </main>
     </>

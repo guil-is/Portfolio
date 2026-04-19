@@ -31,6 +31,7 @@ export const dummyTestimonials: Testimonial[] = [
     quote:
       "Working with Guil felt like hiring a full design team in one person. He saw the whole system on day one — the brand, the product, and the story we were trying to tell — and moved all three forward at once.",
     social: { platform: "twitter", url: "https://twitter.com/placeholder" },
+    avatarUrl: "https://i.pravatar.cc/120?img=47",
     initials: "SC",
   },
   {
@@ -41,6 +42,7 @@ export const dummyTestimonials: Testimonial[] = [
     quote:
       "Sharp instincts, fast hands, zero ego. Guil ships polished work without the typical freelance friction — briefs get met, edges get found, and the bar keeps going up.",
     social: { platform: "linkedin", url: "https://linkedin.com/in/placeholder" },
+    avatarUrl: "https://i.pravatar.cc/120?img=12",
     initials: "MA",
   },
   {
@@ -50,6 +52,7 @@ export const dummyTestimonials: Testimonial[] = [
     quote:
       "Guil's the rare designer who cares as much about why something exists as how it looks. Every call ended with us understanding our own product better.",
     social: { platform: "twitter", url: "https://twitter.com/placeholder" },
+    avatarUrl: "https://i.pravatar.cc/120?img=32",
     initials: "NH",
   },
   {
@@ -59,6 +62,7 @@ export const dummyTestimonials: Testimonial[] = [
     quote:
       "I've worked with a lot of contractors. Guil is the only one my team asks for by name. His taste is strong and his output speaks for itself.",
     social: { platform: "linkedin", url: "https://linkedin.com/in/placeholder" },
+    avatarUrl: "https://i.pravatar.cc/120?img=14",
     initials: "TM",
   },
   {
@@ -68,6 +72,7 @@ export const dummyTestimonials: Testimonial[] = [
     quote:
       "What I appreciated most: he pushed back when it mattered and got out of the way when it didn't. Shipped faster than any team I'd worked with.",
     social: { platform: "twitter", url: "https://twitter.com/placeholder" },
+    avatarUrl: "https://i.pravatar.cc/120?img=48",
     initials: "RT",
   },
 ];

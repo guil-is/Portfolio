@@ -164,24 +164,11 @@ function ArrowButton({
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   const { quote, name, role, project, projectHref, social, avatarUrl, initials } =
     testimonial;
-  return (
-    <article className="relative flex w-[calc(100%-1rem)] shrink-0 snap-start flex-col gap-6 rounded-[16px] border border-rule-soft bg-card/40 p-6 md:w-[calc((100%-3rem)/2)] md:p-7 lg:w-[calc((100%-3rem)/3)]">
-      {social ? (
-        <a
-          href={social.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`${name} on ${social.platform}`}
-          className="absolute right-5 top-5 inline-flex h-7 w-7 items-center justify-center rounded-full text-muted transition-colors hover:bg-card hover:text-ink"
-        >
-          {social.platform === "twitter" ? (
-            <XLogo className="h-3 w-3" />
-          ) : (
-            <LinkedInLogo className="h-3.5 w-3.5" />
-          )}
-        </a>
-      ) : null}
+  const SocialIcon =
+    social?.platform === "linkedin" ? LinkedInLogo : XLogo;
 
+  return (
+    <article className="flex w-[calc(100%-1rem)] shrink-0 snap-start flex-col gap-6 rounded-[16px] border border-rule p-6 md:w-[calc((100%-1.5rem)/2)] md:p-7">
       <blockquote className="text-[0.95rem] leading-[1.65rem] text-ink">
         <span aria-hidden className="select-none text-muted">
           “
@@ -192,18 +179,52 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         </span>
       </blockquote>
 
-      <footer className="mt-auto flex items-center gap-3 border-t border-rule-soft pt-5">
-        <Avatar avatarUrl={avatarUrl} name={name} initials={initials} />
-        <div className="min-w-0">
-          <p className="font-caption text-[13px] font-semibold text-ink">
-            {name}
-          </p>
+      <footer className="mt-auto flex items-start gap-3 border-t border-rule-soft pt-5">
+        {social ? (
+          <a
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${name} on ${social.platform === "linkedin" ? "LinkedIn" : "X"}`}
+            className="group/avatar relative shrink-0"
+          >
+            <Avatar avatarUrl={avatarUrl} name={name} initials={initials} />
+            <span
+              aria-hidden
+              className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full border border-rule bg-bg text-ink opacity-0 transition-opacity group-hover/avatar:opacity-100"
+            >
+              <SocialIcon className="h-2 w-2" />
+            </span>
+          </a>
+        ) : (
+          <div className="shrink-0">
+            <Avatar avatarUrl={avatarUrl} name={name} initials={initials} />
+          </div>
+        )}
+        <div className="min-w-0 flex-1">
+          {social ? (
+            <a
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group/name inline-flex items-center gap-1.5"
+            >
+              <span className="font-caption text-[13px] font-semibold text-ink underline-offset-2 group-hover/name:underline">
+                {name}
+              </span>
+              <SocialIcon className="h-2.5 w-2.5 text-muted opacity-0 transition-opacity group-hover/name:opacity-100" />
+            </a>
+          ) : (
+            <p className="font-caption text-[13px] font-semibold text-ink">
+              {name}
+            </p>
+          )}
           <p className="font-caption text-[11px] font-medium uppercase tracking-[1px] text-muted">
             {role} ·{" "}
             {projectHref ? (
               <Link
                 href={projectHref}
-                className="underline-offset-2 hover:underline"
+                className="underline-offset-2 hover:text-ink hover:underline"
               >
                 {project}
               </Link>
