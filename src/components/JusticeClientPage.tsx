@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Info } from "lucide-react";
+import { Info } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import {
@@ -349,19 +349,13 @@ function InvoicePill({ status }: { status: InvoiceStatus }) {
   return <Pill label={`${id}Awaiting payment`} tone="warning" />;
 }
 
+/**
+ * Only renders when pace is exceptional. "Within target" is the
+ * default expectation — showing it on every period turns the indicator
+ * into decoration instead of a signal.
+ */
 function PacePill({ pace }: { pace: PaceStatus }) {
-  if (pace.state === "on") {
-    return (
-      <span className="inline-flex items-center gap-1.5 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
-        <Check
-          className="h-3 w-3 text-[#16a34a]"
-          strokeWidth={3}
-          aria-hidden
-        />
-        Within {pace.min}–{pace.max} h target
-      </span>
-    );
-  }
+  if (pace.state === "on") return null;
   const sign = pace.delta > 0 ? "+" : "−";
   const abs = Math.abs(pace.delta).toFixed(1);
   const label = pace.state === "over" ? "Over" : "Under";
