@@ -209,17 +209,17 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
               rel="noopener noreferrer"
               className="group/name inline-flex items-center gap-1.5"
             >
-              <span className="font-caption text-[13px] font-semibold text-ink underline-offset-2 group-hover/name:underline">
+              <span className="font-caption text-[15px] font-semibold leading-[22px] text-ink underline-offset-2 group-hover/name:underline">
                 {name}
               </span>
               <SocialIcon className="h-2.5 w-2.5 text-muted opacity-0 transition-opacity group-hover/name:opacity-100" />
             </a>
           ) : (
-            <p className="font-caption text-[13px] font-semibold text-ink">
+            <p className="font-caption text-[15px] font-semibold leading-[22px] text-ink">
               {name}
             </p>
           )}
-          <p className="font-caption text-[11px] font-medium uppercase tracking-[1px] text-muted">
+          <p className="font-caption text-[11px] font-medium uppercase leading-[16px] tracking-[1px] text-muted">
             {role} ·{" "}
             {projectHref ? (
               <Link
@@ -275,19 +275,21 @@ function Avatar({
   name: string;
   initials: string;
 }) {
+  // Sized to exactly match the stacked name (22px line) + role (16px
+  // line) to its right, so the three elements share a baseline.
   if (avatarUrl) {
     return (
       /* eslint-disable-next-line @next/next/no-img-element */
       <img
         src={avatarUrl}
         alt={name}
-        className="h-10 w-10 shrink-0 rounded-full object-cover"
+        className="h-[38px] w-[38px] shrink-0 rounded-full object-cover"
       />
     );
   }
   return (
     <div
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-rule-soft bg-bg font-caption text-[11px] font-semibold uppercase tracking-[1px] text-muted"
+      className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full border border-rule-soft bg-bg font-caption text-[11px] font-semibold uppercase tracking-[1px] text-muted"
       aria-hidden
     >
       {initials}
