@@ -92,11 +92,11 @@ export const justice: JusticeClient = {
           project: "Clawbank",
           description:
             "Marketing assets — Twitter header, profile picture, X status update header",
-          hours: 4,
+          hours: 2,
         },
         { project: "Clawbank", description: "Design explorations", hours: 1 },
-        { project: "Clawbank", description: "Launch / promo video", hours: 6 },
-        { project: "Clawbank", description: "Blog page design", hours: 2 },
+        { project: "Clawbank", description: "Launch / promo video", hours: 7 },
+        { project: "Clawbank", description: "Blog page design", hours: 3 },
         { project: "Clawbank", description: "Audiogram asset + template", hours: 2 },
       ],
       invoice: {
