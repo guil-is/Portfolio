@@ -40,8 +40,8 @@ export const dummyTestimonials: Testimonial[] = [
     projectHref: "https://giveth.io",
     quote:
       "Working with Guil is like hiring a whole design team in one person. He nails brand, product, and story all in one go and somehow still stays chill the whole time.",
-    social: { platform: "twitter", url: "https://x.com/thegrifft" },
-    avatarUrl: "https://unavatar.io/x/thegrifft",
+    social: { platform: "twitter", url: "https://x.com/griffgreen" },
+    avatarUrl: "https://unavatar.io/x/griffgreen",
     initials: "GG",
   },
   {
