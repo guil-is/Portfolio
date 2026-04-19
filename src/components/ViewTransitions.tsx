@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 /**
  * Cross-page fade using a simple class-based approach: fade the
@@ -26,9 +26,12 @@ export function ViewTransitions() {
   // window (body still faded out) to jump to the top of the new page
   // before letting it fade back in — otherwise the browser shows the
   // previous scroll offset briefly on the new page, which feels clunky.
+  //
+  // useLayoutEffect (not useEffect) so the scroll fires synchronously
+  // after React commits the new DOM but before the browser paints.
   // Skip the scroll if the destination has a hash so Next.js's own
   // hash-scroll behavior isn't undone.
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!document.documentElement.classList.contains("page-leaving")) return;
     if (!window.location.hash) {
       window.scrollTo(0, 0);
@@ -82,11 +85,21 @@ export function ViewTransitions() {
 
       event.preventDefault();
       const destination = url.pathname + url.search + url.hash;
+      const hasHash = !!url.hash;
 
       document.documentElement.classList.add("page-leaving");
       if (timer.current) clearTimeout(timer.current);
       timer.current = setTimeout(() => {
-        router.push(destination);
+        // Scroll the window while the body is still faded out (nothing
+        // painted yet), so the new page never flashes the old scroll
+        // offset. Skip when the destination has a hash — we want Next
+        // to scroll to it instead.
+        if (!hasHash) {
+          window.scrollTo(0, 0);
+          router.push(destination, { scroll: false });
+        } else {
+          router.push(destination);
+        }
       }, FADE_MS);
     }
 
