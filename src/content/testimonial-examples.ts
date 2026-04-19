@@ -57,11 +57,6 @@ export const testimonialExamples: TestimonialExample[] = [
       "The kind of designer you hand a brief to on Friday and get something great back Monday morning, on time, every time. I don't check in because I don't have to.",
   },
   {
-    angle: "Product depth",
-    quote:
-      "Most designers stop at pretty screens. Guil asks about the funnel, the retention data, and whether the CTA is actually the most important thing on the page.",
-  },
-  {
     angle: "Working rhythm",
     quote:
       "Calm, funny, and never makes a meeting feel like a chore. Working with Guil is one of the few things on our roadmap I actually look forward to.",
@@ -90,5 +85,30 @@ export const testimonialExamples: TestimonialExample[] = [
     angle: "Long-term partnership",
     quote:
       "We've worked with Guil for over a year. Every engagement has punched above its weight: brand, site, deck, launches. He's become a permanent part of how we ship.",
+  },
+  {
+    angle: "Full team in one",
+    quote:
+      "Working with Guil felt like hiring a full design team in one person. He saw the whole system on day one: the brand, the product, and the story we were trying to tell. He moved all three forward at once.",
+  },
+  {
+    angle: "Low ego",
+    quote:
+      "Sharp instincts, fast hands, zero ego. Guil ships polished work without the typical freelance friction. Briefs get met, edges get found, the bar keeps going up.",
+  },
+  {
+    angle: "Why before how",
+    quote:
+      "Guil's the rare designer who cares as much about why something exists as how it looks. Every call ended with us understanding our own product better.",
+  },
+  {
+    angle: "Team favorite",
+    quote:
+      "I've worked with a lot of contractors. Guil is the only one my team asks for by name. His taste is strong and his output speaks for itself.",
+  },
+  {
+    angle: "Knows when to push",
+    quote:
+      "What I appreciated most: he pushed back when it mattered and got out of the way when it didn't. Shipped faster than any team I'd worked with.",
   },
 ];
