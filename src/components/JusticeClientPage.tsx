@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Info } from "lucide-react";
+import { Clock, FileSignature, Info } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import {
@@ -86,9 +86,13 @@ function Tabs({
   tab: TabKey;
   setTab: (t: TabKey) => void;
 }) {
-  const items: Array<{ key: TabKey; label: string }> = [
-    { key: "hours", label: "Billed hours" },
-    { key: "sow", label: "Agreement" },
+  const items: Array<{
+    key: TabKey;
+    label: string;
+    Icon: typeof Clock;
+  }> = [
+    { key: "hours", label: "Billed hours", Icon: Clock },
+    { key: "sow", label: "Agreement", Icon: FileSignature },
   ];
   return (
     <div
@@ -98,6 +102,7 @@ function Tabs({
     >
       {items.map((item) => {
         const active = tab === item.key;
+        const { Icon } = item;
         return (
           <button
             key={item.key}
@@ -105,10 +110,15 @@ function Tabs({
             aria-selected={active}
             onClick={() => setTab(item.key)}
             className={[
-              "relative -mb-px px-5 py-4 font-caption text-[12px] font-semibold uppercase tracking-[1.5px] transition-colors md:px-6",
+              "relative -mb-px inline-flex items-center gap-2 px-5 py-4 font-caption text-[12px] font-semibold uppercase tracking-[1.5px] transition-colors md:px-6",
               active ? "text-ink" : "text-muted hover:text-ink",
             ].join(" ")}
           >
+            <Icon
+              className="h-3.5 w-3.5"
+              strokeWidth={1.75}
+              aria-hidden
+            />
             {item.label}
             <span
               className={[
