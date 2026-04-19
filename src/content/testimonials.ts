@@ -28,7 +28,7 @@ export const dummyTestimonials: Testimonial[] = [
     role: "Steward",
     project: "Open Collective, Commons Hub BXL",
     quote:
-      "Forget Claude. Guil is the one you need. He just gets it. No prompt fatigue.\n\nThe perfect balance between art and professionalism. He immediately captured the vibe to design the logo and website of Regens Unite, the Commons Hub Brussels and the playful logo of the Citizen Wallet. I'd work with him again in a heartbeat.",
+      "Forget Claude. Guil is the one you need. He just gets it. No prompt fatigue. The perfect balance between art and professionalism. He immediately captured the vibe to design for Regens Unite, the Commons Hub BXL and the playful logo for Citizen Wallet. I'd work with him again in a heartbeat.",
     social: { platform: "twitter", url: "https://x.com/xdamman" },
     avatarUrl: "https://unavatar.io/x/xdamman",
     initials: "XD",
