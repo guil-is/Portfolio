@@ -169,14 +169,26 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 
   return (
     <article className="flex w-[calc(100%-1rem)] shrink-0 snap-start flex-col gap-6 rounded-[16px] border border-rule p-6 md:w-[calc((100%-1.5rem)/2)] md:p-7">
-      <blockquote className="text-[0.95rem] leading-[1.65rem] text-ink">
-        <span aria-hidden className="select-none text-muted">
-          “
-        </span>
-        {quote}
-        <span aria-hidden className="select-none text-muted">
-          ”
-        </span>
+      <blockquote className="flex flex-col gap-3 text-[0.95rem] leading-[1.65rem] text-ink">
+        {quote.split(/\n\n+/).map((para, i, arr) => {
+          const isFirst = i === 0;
+          const isLast = i === arr.length - 1;
+          return (
+            <p key={i}>
+              {isFirst ? (
+                <span aria-hidden className="select-none text-muted">
+                  “
+                </span>
+              ) : null}
+              {para}
+              {isLast ? (
+                <span aria-hidden className="select-none text-muted">
+                  ”
+                </span>
+              ) : null}
+            </p>
+          );
+        })}
       </blockquote>
 
       <footer className="mt-auto flex items-center gap-3 border-t border-rule-soft pt-5">

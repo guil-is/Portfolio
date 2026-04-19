@@ -24,15 +24,14 @@ export type Testimonial = {
 
 export const dummyTestimonials: Testimonial[] = [
   {
-    name: "Sarah Chen",
-    role: "Founder",
-    project: "Odyssey",
-    projectHref: "/for/odyssey",
+    name: "Xavier Damman",
+    role: "Steward",
+    project: "Open Collective, Commons Hub BXL",
     quote:
-      "Working with Guil felt like hiring a full design team in one person. He saw the whole system on day one: the brand, the product, and the story we were trying to tell. He moved all three forward at once.",
-    social: { platform: "twitter", url: "https://twitter.com/placeholder" },
-    avatarUrl: "https://i.pravatar.cc/120?img=47",
-    initials: "SC",
+      "Forget Claude. Guil is the one you need. He just gets it. No prompt fatigue.\n\nThe perfect balance between art and professionalism. He immediately captured the vibe to design the logo and website of Regens Unite, the Commons Hub Brussels and the playful logo of the Citizen Wallet. I'd work with him again in a heartbeat.",
+    social: { platform: "twitter", url: "https://x.com/xdamman" },
+    avatarUrl: "https://unavatar.io/x/xdamman",
+    initials: "XD",
   },
   {
     name: "Marcus Alvaro",
