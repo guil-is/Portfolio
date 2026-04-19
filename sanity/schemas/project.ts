@@ -143,6 +143,31 @@ export const project = defineType({
       description: "Lower numbers appear first in the grid. Default: 100.",
       initialValue: 100,
     }),
+    defineField({
+      name: "isActiveProject",
+      title: "Show in 'Recent / Active Projects'?",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "When on, this project appears in the prominent section just above 'Past work' on the homepage. Uses the role + blurb below.",
+    }),
+    defineField({
+      name: "activeRole",
+      title: "Active: role label",
+      type: "string",
+      description:
+        "Small caps label shown under the title, e.g. 'design partner'. Only used if 'Show in Recent / Active' is on.",
+      hidden: ({ parent }) => !parent?.isActiveProject,
+    }),
+    defineField({
+      name: "activeBlurb",
+      title: "Active: blurb",
+      type: "text",
+      rows: 3,
+      description:
+        "Short description rendered next to the thumbnail in the Active section. Only used if 'Show in Recent / Active' is on.",
+      hidden: ({ parent }) => !parent?.isActiveProject,
+    }),
   ],
   orderings: [
     {

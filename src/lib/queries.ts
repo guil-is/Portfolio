@@ -138,28 +138,26 @@ export type SanityActiveProject = {
   _id: string;
   name: string;
   slug: string;
-  client: string;
-  services: string;
-  summary: string;
-  heroVideo?: string;
+  activeRole?: string;
+  activeBlurb?: string;
   link?: string;
   gridImage?: string;
-  mainImage?: string;
+  /** True when the project has body content in `projectDetails`, i.e.
+   * the case study page at /projects/<slug> has something to show. */
+  hasCaseStudy?: boolean;
 };
 
 export async function getActiveProjects(): Promise<SanityActiveProject[]> {
   return sanityClient.fetch(
-    `*[_type == "project" && featured == true] | order(sortOrder asc) [0...4] {
+    `*[_type == "project" && isActiveProject == true] | order(sortOrder asc) {
       _id,
       name,
       "slug": slug.current,
-      client,
-      services,
-      summary,
-      heroVideo,
+      activeRole,
+      activeBlurb,
       link,
       "gridImage": gridImage.asset->url,
-      "mainImage": mainImage.asset->url
+      "hasCaseStudy": count(projectDetails) > 0
     }`,
   );
 }
