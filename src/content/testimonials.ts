@@ -54,7 +54,9 @@ export const siteTestimonials: Testimonial[] = [
       platform: "linkedin",
       url: "https://www.linkedin.com/in/tamarahelenius/",
     },
-    avatarUrl: "https://unavatar.io/linkedin/tamarahelenius",
+    // LinkedIn blocks unavatar.io proxying reliably — initials for now.
+    // Swap to `https://unavatar.io/x/<handle>` if Tam is on X, or host
+    // a local image at /public/testimonials/tamara.jpg.
     initials: "TH",
   },
 ];
