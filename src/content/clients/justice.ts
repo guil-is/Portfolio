@@ -90,8 +90,8 @@ export const justice: JusticeClient = {
       items: [
         { project: "Clawbank", description: "Blog page", hours: 1 },
         {
-          project: "Claude Design",
-          description: "Design system upgrade",
+          project: "Clawbank",
+          description: "Design system upgrade (Claude Design)",
           hours: 1,
         },
       ],
