@@ -44,4 +44,17 @@ export const siteTestimonials: Testimonial[] = [
     avatarUrl: "https://unavatar.io/x/griffgreen",
     initials: "GG",
   },
+  {
+    name: "Tamara Helenius",
+    role: "Co-founder",
+    project: "Commons Stack",
+    quote:
+      "Guil consistently delivers a level of taste and judgment shaped by years of obsessive attention to the smallest details. He has few equals in UX and branding.",
+    social: {
+      platform: "linkedin",
+      url: "https://www.linkedin.com/in/tamarahelenius/",
+    },
+    avatarUrl: "https://unavatar.io/linkedin/tamarahelenius",
+    initials: "TH",
+  },
 ];
