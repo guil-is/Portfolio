@@ -40,9 +40,8 @@ export const metadata: Metadata = {
     creator: "@guil_is",
     images: ["/guil_og_image.jpg"],
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
+  // icons left to Next.js auto-detection — it picks up
+  // src/app/icon.svg and src/app/apple-icon.png automatically.
 };
 
 export default function RootLayout({
