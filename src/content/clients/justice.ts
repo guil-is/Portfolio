@@ -88,7 +88,7 @@ export const justice: JusticeClient = {
       weekStart: "2026-04-20",
       weeks: 2,
       items: [
-        { project: "Clawbank", description: "Blog page", hours: 1 },
+        { project: "Clawbank", description: "Blog page", hours: 1.67 },
         {
           project: "Clawbank",
           description: "Design system upgrade (Claude Design)",
