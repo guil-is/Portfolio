@@ -24,6 +24,17 @@ export type Testimonial = {
 
 export const siteTestimonials: Testimonial[] = [
   {
+    name: "Justice Conder",
+    role: "Founder",
+    project: "ClawBank",
+    projectHref: "/projects/clawbank",
+    quote:
+      "I've never worked with a more talented designer. He invests his heart and soul into finding the thing you don't even know you're missing. His touch instantly elevates a project into a higher level of legitimacy.",
+    social: { platform: "twitter", url: "https://x.com/singularityhacker" },
+    avatarUrl: "https://unavatar.io/x/singularityhacker",
+    initials: "JC",
+  },
+  {
     name: "Xavier Damman",
     role: "Steward",
     project: "Open Collective, Commons Hub BXL",
