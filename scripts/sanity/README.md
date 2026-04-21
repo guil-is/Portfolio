@@ -54,7 +54,12 @@ Takes a **keeper slug** + comma-separated **source slugs**, and:
   everything commits or nothing does.
 
 **Workflow**: `.github/workflows/sanity-merge-projects.yml`
-**Inputs**: `keeper_slug`, `source_slugs`, `dry_run`
+**Inputs**: `keeper_slug`, `source_slugs`, `new_slug` (optional),
+`new_name` (optional), `dry_run`
+
+Use `new_slug` / `new_name` when the merged result should live under a
+different slug or display name than the keeper's — the patch applies in
+the same transaction so the rename and the merge succeed or fail together.
 
 ### `migrate-project-content.ts` — import local rich content into Sanity
 

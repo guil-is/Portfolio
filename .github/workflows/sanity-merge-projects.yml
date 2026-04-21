@@ -22,6 +22,14 @@ on:
         description: "Comma-separated slugs to merge INTO the keeper"
         required: true
         type: string
+      new_slug:
+        description: "Optional — rename the keeper's slug after merging"
+        required: false
+        type: string
+      new_name:
+        description: "Optional — rename the keeper's name after merging"
+        required: false
+        type: string
       dry_run:
         description: "When true, log the plan without mutating Sanity"
         required: true
@@ -49,6 +57,8 @@ jobs:
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
           KEEPER_SLUG: ${{ inputs.keeper_slug }}
           SOURCE_SLUGS: ${{ inputs.source_slugs }}
+          NEW_SLUG: ${{ inputs.new_slug }}
+          NEW_NAME: ${{ inputs.new_name }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: npm run sanity:merge-projects
 

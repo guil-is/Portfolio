@@ -5,6 +5,8 @@
  * Usage (via env vars — GitHub Actions workflow provides them):
  *   KEEPER_SLUG=<slug>          slug of the project that survives
  *   SOURCE_SLUGS=<s1,s2,...>    comma-separated slugs to merge INTO keeper
+ *   NEW_SLUG=<slug>             optional — rename keeper's slug after merge
+ *   NEW_NAME=<name>             optional — rename keeper's name after merge
  *   DRY_RUN=true|false          when true, logs the plan without mutating
  *   SANITY_PROJECT_ID           required
  *   SANITY_DATASET              required
@@ -34,6 +36,8 @@ import path from "node:path";
 const {
   KEEPER_SLUG,
   SOURCE_SLUGS,
+  NEW_SLUG,
+  NEW_NAME,
   DRY_RUN,
   SANITY_PROJECT_ID,
   SANITY_DATASET,
@@ -65,6 +69,8 @@ console.log("━━━━━━━━━━━━━━━━━━━━━━�
 console.log(`Sanity merge-projects  (dryRun = ${dryRun})`);
 console.log(`  keeper : ${KEEPER_SLUG}`);
 console.log(`  sources: ${sourceSlugs.join(", ")}`);
+if (NEW_SLUG) console.log(`  rename slug -> ${NEW_SLUG}`);
+if (NEW_NAME) console.log(`  rename name -> ${NEW_NAME}`);
 console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
 // ── client ───────────────────────────────────────────────────────────
@@ -251,6 +257,8 @@ async function main() {
   if (mergedProjectDetails !== undefined)
     patch.projectDetails = mergedProjectDetails;
   if (mergedStillFrames !== undefined) patch.stillFrames = mergedStillFrames;
+  if (NEW_NAME) patch.name = NEW_NAME;
+  if (NEW_SLUG) patch.slug = { _type: "slug", current: NEW_SLUG };
 
   console.log("\nPlanned merge into keeper:");
   console.log(
