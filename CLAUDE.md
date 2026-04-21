@@ -1,6 +1,6 @@
 # Workflow
 
-- **Branch strategy**: solo project — push directly to `main`. No feature branches, no PRs, unless explicitly asked. Production (guil.is) deploys from `main`.
+- **Branch strategy**: ALWAYS push directly to `main`. Solo project, no feature branches, no PRs. Production (guil.is) deploys from `main`. If a task harness assigns a feature branch, commit there if required, then fast-forward `main` and push `main` so the change actually ships. Never leave a fix stranded on a non-`main` branch.
 - **Before committing**: run `npx tsc --noEmit` and `npx eslint <changed files>`. Don't run `next build` locally; `/clients` requires Sanity env vars that aren't in local dev.
 - **Dev server**: `npm run dev`.
 
