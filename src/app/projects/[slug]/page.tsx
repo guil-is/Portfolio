@@ -34,19 +34,20 @@ export async function generateStaticParams(): Promise<Params[]> {
   return pastProjects.map((p) => ({ slug: p.slug }));
 }
 
-export function generateMetadata({
+export async function generateMetadata({
   params,
 }: {
   params: Promise<Params>;
 }): Promise<Metadata> {
-  return params.then(({ slug }) => {
-    const project = pastProjects.find((p) => p.slug === slug);
-    if (!project) return { title: "Project not found" };
-    return {
-      title: `${project.name} | ${site.name}`,
-      description: project.summary,
-    };
-  });
+  const { slug } = await params;
+  const sanityProject = await getProjectBySlug(slug).catch(() => null);
+  const localProject = pastProjects.find((p) => p.slug === slug);
+  const project = sanityProject ?? localProject;
+  if (!project) return { title: "Project not found" };
+  return {
+    title: `${project.name} | ${site.name}`,
+    description: project.summary,
+  };
 }
 
 // Get all projects for prev/next navigation, with Sanity fallback
@@ -102,8 +103,8 @@ export default async function ProjectDetailPage({
     summary: sanityProject?.summary ?? localProject?.summary ?? "",
     heroVideo: sanityProject?.heroVideo ?? localProject?.heroVideo,
     link: sanityProject?.link ?? localProject?.link,
-    gridImage: localProject?.gridImage ?? "",
-    mainImage: localProject?.mainImage,
+    gridImage: localProject?.gridImage ?? sanityProject?.gridImage ?? "",
+    mainImage: localProject?.mainImage ?? sanityProject?.mainImage,
     projectDetails: localProject?.projectDetails,
     stillFrames: localProject?.stillFrames,
     features: localProject?.features,
