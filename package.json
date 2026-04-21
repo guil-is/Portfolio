@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "sanity:merge-projects": "tsx scripts/sanity/merge-projects.ts",
-    "sanity:migrate-content": "tsx scripts/sanity/migrate-project-content.ts"
+    "sanity:migrate-content": "tsx scripts/sanity/migrate-project-content.ts",
+    "sanity:tidy-n26-business-black": "tsx scripts/sanity/tidy-n26-business-black.ts"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.5.1",
