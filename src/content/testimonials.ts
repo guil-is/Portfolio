@@ -30,8 +30,8 @@ export const siteTestimonials: Testimonial[] = [
     projectHref: "/projects/clawbank",
     quote:
       "I've never worked with a more talented designer. He invests his heart and soul into finding the thing you don't even know you're missing. His touch instantly elevates a project into a higher level of legitimacy.",
-    social: { platform: "twitter", url: "https://x.com/singularityhacker" },
-    avatarUrl: "https://unavatar.io/x/singularityhacker",
+    social: { platform: "twitter", url: "https://x.com/singularityhack" },
+    avatarUrl: "https://unavatar.io/x/singularityhack",
     initials: "JC",
   },
   {
