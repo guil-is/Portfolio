@@ -174,8 +174,8 @@ export default async function ProjectDetailPage({
         <FadeIn>
           <section className="mx-auto w-full max-w-[960px] border-y border-[#ebebeb] py-14 dark:border-rule md:py-20">
             <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_280px] md:gap-16">
-              <div className="flex flex-col gap-6">
-                <p className="font-display text-[1.25rem] leading-[1.45] text-ink md:text-[1.4rem] md:leading-[1.4]">
+              <div className="flex flex-col gap-8">
+                <p className="font-display text-[1.75rem] font-bold leading-[1.3] text-ink md:text-[2.125rem] md:leading-[1.25]">
                   {project.summary}
                 </p>
                 {project.link ? (
@@ -198,7 +198,7 @@ export default async function ProjectDetailPage({
 
               <div className="flex flex-col">
                 <MetaRow label="Team" first>
-                  <TeamAvatars team={project.team} client={project.client} />
+                  <TeamAvatars team={project.team} />
                 </MetaRow>
                 <MetaRow label="Services">
                   <ServiceTags services={project.services} />
@@ -327,17 +327,9 @@ function MetaRow({
   );
 }
 
-function TeamAvatars({
-  team,
-  client,
-}: {
-  team?: SanityProjectTeamMember[];
-  client: string;
-}) {
+function TeamAvatars({ team }: { team?: SanityProjectTeamMember[] }) {
   if (!team || team.length === 0) {
-    return (
-      <span className="font-display text-[1rem] text-ink">{client || "—"}</span>
-    );
+    return <span className="text-muted">—</span>;
   }
   return (
     <div className="flex items-center -space-x-2">
@@ -389,8 +381,11 @@ function TeamAvatar({ person }: { person: SanityProjectTeamMember }) {
 
 function ServiceTags({ services }: { services: string }) {
   if (!services) return <span className="text-muted">—</span>;
+  // Accept any of ",", "·", "•", "/", "|", " . " (period with spaces)
+  // as separators. A bare "." isn't a separator because it appears in
+  // abbreviations (e.g. "No.1").
   const tags = services
-    .split(/[,·]/)
+    .split(/\s*[,·•/|]\s*|\s+\.\s+/)
     .map((s) => s.trim())
     .filter(Boolean);
   return (
