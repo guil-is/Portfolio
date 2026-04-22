@@ -1,0 +1,44 @@
+name: Sanity — Dedupe clients
+
+# Manually triggered one-off to find + remove duplicate `client` docs
+# in Sanity. See scripts/sanity/dedupe-clients.ts.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "When true, log the plan without mutating"
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  dedupe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run dedupe
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: npx tsx scripts/sanity/dedupe-clients.ts
+
+      - name: Upload pre-dedupe backup
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-dedupe-clients-${{ github.run_id }}
+          path: scripts/sanity/backups/
+          if-no-files-found: ignore
+          retention-days: 90

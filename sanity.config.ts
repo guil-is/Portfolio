@@ -34,6 +34,10 @@ export default defineConfig({
             S.documentTypeListItem("project").title("Projects"),
             // Clients
             S.documentTypeListItem("client").title("Clients & Partners"),
+            // People
+            S.documentTypeListItem("person").title("People"),
+            // Testimonials
+            S.documentTypeListItem("testimonial").title("Testimonials"),
             S.divider(),
             // Signed agreement audit log
             S.documentTypeListItem("signedAgreement").title(
