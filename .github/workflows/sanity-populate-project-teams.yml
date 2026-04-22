@@ -1,0 +1,45 @@
+name: Sanity — Populate project teams
+
+# Backfills project `team[]` with an organisation reference matched
+# from the project's legacy `client` string. Projects with a non-empty
+# team are skipped so manual Studio edits are preserved.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "When true, log the plan without mutating"
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  populate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run populate
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: npx tsx scripts/sanity/populate-project-teams.ts
+
+      - name: Upload pre-patch backup
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-populate-project-teams-${{ github.run_id }}
+          path: scripts/sanity/backups/
+          if-no-files-found: ignore
+          retention-days: 90
