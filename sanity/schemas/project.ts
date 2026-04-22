@@ -77,8 +77,18 @@ export const project = defineType({
       title: "Team",
       type: "array",
       of: [
-        { type: "reference", to: [{ type: "person" }] },
-        { type: "reference", to: [{ type: "client" }] },
+        {
+          type: "reference",
+          name: "personRef",
+          title: "Person",
+          to: [{ type: "person" }],
+        },
+        {
+          type: "reference",
+          name: "orgRef",
+          title: "Organisation",
+          to: [{ type: "client" }],
+        },
       ],
       description:
         "Collaborators shown as avatars in the project meta row. Reference individual people (profile image) or an organisation/team (logo) when the project was done with an org rather than named individuals.",
