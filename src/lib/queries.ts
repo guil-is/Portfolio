@@ -56,8 +56,10 @@ export type PortableTextBlock = {
 
 export type SanityProjectTeamMember = {
   _id: string;
+  /** Discriminator — whether this row points at a `person` or a `client` doc. */
+  kind: "person" | "organization";
   name: string;
-  slug: string;
+  slug?: string;
   link?: string;
   image?: string;
 };
@@ -123,10 +125,14 @@ export async function getProjectBySlug(
       "mainImage": mainImage.asset->url,
       "team": team[]->{
         _id,
+        "kind": select(_type == "person" => "person", "organization"),
         name,
         "slug": slug.current,
-        link,
-        "image": image.asset->url
+        "link": select(_type == "person" => link, href),
+        "image": select(
+          _type == "person" => image.asset->url,
+          logo.asset->url
+        )
       },
       projectDetails[] {
         ...,

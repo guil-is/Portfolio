@@ -17,6 +17,12 @@
  *   - `projectLabel` is set from the legacy `project` field. If a
  *     `projectHref` starts with `/projects/<slug>` and that slug
  *     resolves to a Sanity project doc, we link the reference too.
+ *   - Org linking: the legacy `project` string is split on commas and
+ *     each piece is matched (case-insensitive, trimmed) against
+ *     existing `client` docs by name. Matches are added to the
+ *     person's `organizations[]` (merging with any pre-existing refs)
+ *     and the first match is also set as the testimonial's
+ *     `organization` ref.
  *
  * Env:
  *   DRY_RUN=true|false (default true)
@@ -56,6 +62,23 @@ function toSlug(s: string): string {
     .replace(/(^-|-$)/g, "");
 }
 
+function normalizeName(s: string): string {
+  return s.toLowerCase().trim().replace(/\s+/g, " ");
+}
+
+type ClientDoc = { _id: string; name?: string };
+
+async function loadClientIndex(): Promise<Map<string, string>> {
+  const docs = await client.fetch<ClientDoc[]>(
+    `*[_type == "client"]{ _id, name }`,
+  );
+  const idx = new Map<string, string>();
+  for (const d of docs) {
+    if (d.name) idx.set(normalizeName(d.name), d._id);
+  }
+  return idx;
+}
+
 async function findPersonIdBySlug(slug: string): Promise<string | null> {
   return client.fetch<string | null>(
     `*[_type == "person" && slug.current == $slug][0]._id`,
@@ -68,6 +91,16 @@ async function findProjectIdBySlug(slug: string): Promise<string | null> {
     `*[_type == "project" && slug.current == $slug][0]._id`,
     { slug },
   );
+}
+
+async function getPersonOrgRefs(
+  personId: string,
+): Promise<Array<{ _ref: string; _key?: string }>> {
+  const refs = await client.fetch<Array<{ _ref: string; _key?: string }>>(
+    `*[_type == "person" && _id == $id][0].organizations`,
+    { id: personId },
+  );
+  return refs ?? [];
 }
 
 async function findMatchingTestimonialId(
@@ -85,12 +118,16 @@ async function main() {
     `Migrating ${siteTestimonials.length} testimonial(s) ${dryRun ? "(DRY RUN)" : ""}\n`,
   );
 
+  const clientIndex = await loadClientIndex();
+  console.log(`Loaded ${clientIndex.size} client doc(s) for org matching.\n`);
+
   let sortOrder = 10;
   const summary: string[] = [];
 
   for (const t of siteTestimonials) {
     const personSlug = toSlug(t.name);
     let personId = await findPersonIdBySlug(personSlug);
+    const isNewPerson = !personId;
 
     if (!personId) {
       const personDoc: Record<string, unknown> = {
@@ -108,6 +145,48 @@ async function main() {
       }
     } else {
       summary.push(`= Person  ${t.name}  (exists, ${personId})`);
+    }
+
+    // Try to match org names against existing client docs.
+    const orgParts = (t.project || "")
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const matchedOrgIds: string[] = [];
+    for (const part of orgParts) {
+      const id = clientIndex.get(normalizeName(part));
+      if (id) matchedOrgIds.push(id);
+    }
+    if (matchedOrgIds.length) {
+      summary.push(
+        `  ↳ matched org(s): ${matchedOrgIds.length} (${orgParts.join(" | ")})`,
+      );
+    } else if (orgParts.length) {
+      summary.push(
+        `  ↳ no org match for: ${orgParts.join(" | ")} (create client docs to auto-link later)`,
+      );
+    }
+
+    // Merge org refs onto the person (dedupe by _ref).
+    if (matchedOrgIds.length && !dryRun) {
+      const existingRefs = isNewPerson
+        ? []
+        : await getPersonOrgRefs(personId);
+      const existingSet = new Set(existingRefs.map((r) => r._ref));
+      const newRefs = matchedOrgIds
+        .filter((id) => !existingSet.has(id))
+        .map((id, i) => ({
+          _type: "reference",
+          _ref: id,
+          _key: `org-${Date.now()}-${i}`,
+        }));
+      if (newRefs.length) {
+        await client
+          .patch(personId)
+          .setIfMissing({ organizations: [] })
+          .append("organizations", newRefs)
+          .commit({ autoGenerateArrayKeys: true });
+      }
     }
 
     const existing = await findMatchingTestimonialId(personId, t.quote);
@@ -136,9 +215,18 @@ async function main() {
     if (projectRefId) {
       testimonialDoc.project = { _type: "reference", _ref: projectRefId };
     }
+    if (matchedOrgIds.length) {
+      testimonialDoc.organization = {
+        _type: "reference",
+        _ref: matchedOrgIds[0],
+      };
+    }
 
+    const refTags: string[] = [];
+    if (projectRefId) refTags.push("→ project");
+    if (matchedOrgIds.length) refTags.push("→ org");
     summary.push(
-      `+ Testimonial  ${t.name} · ${t.role} · ${t.project}${projectRefId ? "  (→ project ref)" : ""}`,
+      `+ Testimonial  ${t.name} · ${t.role} · ${t.project}${refTags.length ? `  (${refTags.join(", ")})` : ""}`,
     );
     if (!dryRun) {
       await client.create(testimonialDoc);
@@ -151,7 +239,9 @@ async function main() {
   if (dryRun) {
     console.log("\nDRY RUN — no changes written.");
   } else {
-    console.log("\n✓ Migration complete. Add person profile images in Studio.");
+    console.log(
+      "\n✓ Migration complete. Add person profile images + any missing org links in Studio.",
+    );
   }
 }
 

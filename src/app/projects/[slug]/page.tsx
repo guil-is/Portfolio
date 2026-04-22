@@ -328,27 +328,28 @@ function TeamAvatars({ team }: { team?: SanityProjectTeamMember[] }) {
   }
   return (
     <div className="flex items-center -space-x-2">
-      {team.map((p) => (
-        <TeamAvatar key={p._id} person={p} />
+      {team.map((m) => (
+        <TeamAvatar key={m._id} member={m} />
       ))}
     </div>
   );
 }
 
-function TeamAvatar({ person }: { person: SanityProjectTeamMember }) {
-  const initials = person.name
+function TeamAvatar({ member }: { member: SanityProjectTeamMember }) {
+  const initials = member.name
     .split(/\s+/)
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
-  const inner = person.image ? (
+  const isOrg = member.kind === "organization";
+  const inner = member.image ? (
     <Image
-      src={person.image}
-      alt={person.name}
+      src={member.image}
+      alt={member.name}
       fill
       sizes="36px"
       unoptimized
-      className="object-cover"
+      className={isOrg ? "object-contain p-1" : "object-cover"}
     />
   ) : (
     <span className="flex h-full w-full items-center justify-center font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
@@ -357,16 +358,16 @@ function TeamAvatar({ person }: { person: SanityProjectTeamMember }) {
   );
   const content = (
     <span
-      title={person.name}
-      aria-label={person.name}
+      title={member.name}
+      aria-label={member.name}
       className="relative block h-9 w-9 overflow-hidden rounded-full border-2 border-bg bg-card transition-transform duration-200 hover:scale-110 hover:z-10"
     >
       {inner}
     </span>
   );
-  if (person.link) {
+  if (member.link) {
     return (
-      <a href={person.link} target="_blank" rel="noopener noreferrer">
+      <a href={member.link} target="_blank" rel="noopener noreferrer">
         {content}
       </a>
     );

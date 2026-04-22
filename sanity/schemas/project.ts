@@ -76,9 +76,12 @@ export const project = defineType({
       name: "team",
       title: "Team",
       type: "array",
-      of: [{ type: "reference", to: [{ type: "person" }] }],
+      of: [
+        { type: "reference", to: [{ type: "person" }] },
+        { type: "reference", to: [{ type: "client" }] },
+      ],
       description:
-        "Collaborators shown as avatars in the project meta row. Hover reveals the name.",
+        "Collaborators shown as avatars in the project meta row. Reference individual people (profile image) or an organisation/team (logo) when the project was done with an org rather than named individuals.",
     }),
     defineField({
       name: "featured",
