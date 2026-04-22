@@ -67,6 +67,20 @@ export const project = defineType({
       type: "url",
     }),
     defineField({
+      name: "date",
+      title: "Year",
+      type: "string",
+      description: "Year the project shipped, e.g. 2024.",
+    }),
+    defineField({
+      name: "team",
+      title: "Team",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "person" }] }],
+      description:
+        "Collaborators shown as avatars in the project meta row. Hover reveals the name.",
+    }),
+    defineField({
       name: "featured",
       title: "Featured?",
       type: "boolean",

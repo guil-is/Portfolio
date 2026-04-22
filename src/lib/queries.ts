@@ -54,6 +54,14 @@ export type PortableTextBlock = {
   [key: string]: unknown;
 };
 
+export type SanityProjectTeamMember = {
+  _id: string;
+  name: string;
+  slug: string;
+  link?: string;
+  image?: string;
+};
+
 export type SanityProject = {
   _id: string;
   name: string;
@@ -68,6 +76,8 @@ export type SanityProject = {
   featured?: boolean;
   isActiveProject?: boolean;
   sortOrder: number;
+  date?: string;
+  team?: SanityProjectTeamMember[];
   /** Portable Text body. Includes block, image, and videoEmbed types. */
   projectDetails?: PortableTextBlock[];
   stillFrames?: SanityImageRef[];
@@ -108,8 +118,16 @@ export async function getProjectBySlug(
       link,
       featured,
       sortOrder,
+      date,
       "gridImage": gridImage.asset->url,
       "mainImage": mainImage.asset->url,
+      "team": team[]->{
+        _id,
+        name,
+        "slug": slug.current,
+        link,
+        "image": image.asset->url
+      },
       projectDetails[] {
         ...,
         _type == "image" => {

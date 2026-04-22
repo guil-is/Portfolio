@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -16,6 +17,7 @@ import {
   getAllProjectSlugs,
   getProjectBySlug,
   getAllProjects,
+  type SanityProjectTeamMember,
 } from "@/lib/queries";
 
 export const revalidate = 60;
@@ -103,6 +105,8 @@ export default async function ProjectDetailPage({
     summary: sanityProject?.summary ?? localProject?.summary ?? "",
     heroVideo: sanityProject?.heroVideo ?? localProject?.heroVideo,
     link: sanityProject?.link ?? localProject?.link,
+    date: sanityProject?.date,
+    team: sanityProject?.team ?? [],
     gridImage: localProject?.gridImage ?? sanityProject?.gridImage ?? "",
     mainImage: localProject?.mainImage ?? sanityProject?.mainImage,
     projectDetails: localProject?.projectDetails,
@@ -166,22 +170,20 @@ export default async function ProjectDetailPage({
           </section>
         </FadeIn>
 
-        {/* Meta grid — item-bordered style: top border + 20px padding-top */}
+        {/* Info row — blurb on the left, team / services / date stacked on the right */}
         <FadeIn>
-          <section className="mx-auto w-full max-w-[960px] pb-16">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-0">
-              <MetaBlock label="Client" value={project.client} first />
-              <MetaBlock label="Services" value={project.services} />
-              <div className="flex flex-col gap-3 border-t border-rule-soft pt-5 md:border-l md:pl-10">
-                <h6 className="text-[10px] font-semibold uppercase leading-[22px] tracking-[1px] text-ink/35">
-                  Link
-                </h6>
+          <section className="mx-auto w-full max-w-[960px] border-y border-[#ebebeb] py-14 dark:border-rule md:py-20">
+            <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_280px] md:gap-16">
+              <div className="flex flex-col gap-6">
+                <p className="font-display text-[1.25rem] leading-[1.45] text-ink md:text-[1.4rem] md:leading-[1.4]">
+                  {project.summary}
+                </p>
                 {project.link ? (
                   <a
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group inline-flex items-center gap-2 font-caption text-[12px] font-semibold uppercase tracking-[1px] text-ink transition-colors hover:text-accent"
+                    className="group inline-flex items-center gap-2 self-start font-caption text-[12px] font-semibold uppercase tracking-[1px] text-ink transition-colors hover:text-accent"
                   >
                     visit live website
                     <span
@@ -191,23 +193,22 @@ export default async function ProjectDetailPage({
                       →
                     </span>
                   </a>
-                ) : (
-                  <span className="font-caption text-[12px] uppercase text-muted">
-                    —
-                  </span>
-                )}
+                ) : null}
               </div>
-            </div>
-          </section>
-        </FadeIn>
 
-        {/* Project summary — large left-aligned display text, bordered section */}
-        <FadeIn>
-          <section className="border-y border-[#ebebeb] py-[70px] dark:border-rule">
-            <div className="mx-auto w-full max-w-[960px] px-6 md:px-10">
-              <p className="mx-auto max-w-[720px] font-display text-[1.75rem] font-bold leading-[1.35] text-ink md:text-[2.375rem] md:leading-[1.25]">
-                {project.summary}
-              </p>
+              <div className="flex flex-col">
+                <MetaRow label="Team" first>
+                  <TeamAvatars team={project.team} client={project.client} />
+                </MetaRow>
+                <MetaRow label="Services">
+                  <ServiceTags services={project.services} />
+                </MetaRow>
+                <MetaRow label="Date">
+                  <span className="font-display text-[1rem] text-ink">
+                    {project.date || "—"}
+                  </span>
+                </MetaRow>
+              </div>
             </div>
           </section>
         </FadeIn>
@@ -303,27 +304,105 @@ export default async function ProjectDetailPage({
   );
 }
 
-function MetaBlock({
+function MetaRow({
   label,
-  value,
+  children,
   first,
 }: {
   label: string;
-  value: string;
+  children: ReactNode;
   first?: boolean;
 }) {
   return (
     <div
-      className={`flex flex-col gap-3 border-t border-rule-soft pt-5 ${
-        first ? "" : "md:border-l md:pl-10"
+      className={`grid grid-cols-[80px_1fr] items-center gap-4 py-4 ${
+        first ? "" : "border-t border-rule-soft"
       }`}
     >
       <h6 className="text-[10px] font-semibold uppercase leading-[22px] tracking-[1px] text-ink/35">
         {label}
       </h6>
-      <p className="font-caption text-[12px] font-semibold uppercase tracking-[1px] text-ink">
-        {value || "—"}
-      </p>
+      <div className="min-w-0">{children}</div>
+    </div>
+  );
+}
+
+function TeamAvatars({
+  team,
+  client,
+}: {
+  team?: SanityProjectTeamMember[];
+  client: string;
+}) {
+  if (!team || team.length === 0) {
+    return (
+      <span className="font-display text-[1rem] text-ink">{client || "—"}</span>
+    );
+  }
+  return (
+    <div className="flex items-center -space-x-2">
+      {team.map((p) => (
+        <TeamAvatar key={p._id} person={p} />
+      ))}
+    </div>
+  );
+}
+
+function TeamAvatar({ person }: { person: SanityProjectTeamMember }) {
+  const initials = person.name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+  const inner = person.image ? (
+    <Image
+      src={person.image}
+      alt={person.name}
+      fill
+      sizes="36px"
+      unoptimized
+      className="object-cover"
+    />
+  ) : (
+    <span className="flex h-full w-full items-center justify-center font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
+      {initials}
+    </span>
+  );
+  const content = (
+    <span
+      title={person.name}
+      aria-label={person.name}
+      className="relative block h-9 w-9 overflow-hidden rounded-full border-2 border-bg bg-card transition-transform duration-200 hover:scale-110 hover:z-10"
+    >
+      {inner}
+    </span>
+  );
+  if (person.link) {
+    return (
+      <a href={person.link} target="_blank" rel="noopener noreferrer">
+        {content}
+      </a>
+    );
+  }
+  return content;
+}
+
+function ServiceTags({ services }: { services: string }) {
+  if (!services) return <span className="text-muted">—</span>;
+  const tags = services
+    .split(/[,·]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return (
+    <div className="flex flex-wrap gap-2">
+      {tags.map((t) => (
+        <span
+          key={t}
+          className="rounded-full border border-rule-soft px-3 py-1 font-caption text-[11px] font-medium uppercase tracking-[1px] text-ink"
+        >
+          {t}
+        </span>
+      ))}
     </div>
   );
 }
