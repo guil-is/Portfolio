@@ -5,7 +5,6 @@ import { site } from "@/content/site";
 import { journalPosts } from "@/content/journal";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaFooter } from "@/components/CtaFooter";
-import { SiteNav } from "@/components/SiteNav";
 
 type Params = { slug: string };
 
@@ -39,10 +38,6 @@ export default async function JournalDetailPage({
 
   return (
     <>
-      <div className="fixed right-4 top-4 z-50">
-        <SiteNav />
-      </div>
-
       <PageHeader />
       <main className="px-6 md:px-8">
 

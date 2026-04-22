@@ -10,6 +10,7 @@ import { useSyncExternalStore } from "react";
 type NavItem = {
   label: string;
   href: string;
+  external?: boolean;
   /**
    * `exact` = only active when pathname === href.
    * Default matches pathname or its parents (e.g. /projects/foo under /).
@@ -24,14 +25,18 @@ const NAV_ITEMS: NavItem[] = [
     href: "/#work",
     match: (p) => p === "/" || p.startsWith("/projects/"),
   },
-  { label: "About", href: "/about", match: (p) => p.startsWith("/about") },
-  { label: "Chat", href: "/contact", match: (p) => p.startsWith("/contact") },
+  { label: "About", href: "/#about", match: () => false },
   {
     label: "Clients",
     href: "/clients",
     match: (p) => p.startsWith("/clients"),
   },
-  { label: "People", href: "/people", match: (p) => p.startsWith("/people") },
+  {
+    label: "Get in touch",
+    href: "https://cal.com/guil-is",
+    external: true,
+    match: () => false,
+  },
 ];
 
 function useHasMounted() {
@@ -68,44 +73,60 @@ export function SiteNav() {
     setOpen(false);
   }, [pathname]);
 
-  return (
-    <div ref={panelRef} className="relative">
-      <button
-        type="button"
-        aria-label={open ? "Close menu" : "Open menu"}
-        aria-expanded={open}
-        onClick={() => setOpen((v) => !v)}
-        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-rule bg-bg/80 text-ink/80 backdrop-blur transition-colors hover:bg-ink/5 hover:text-ink"
-      >
-        {open ? (
-          <X className="h-4 w-4" strokeWidth={1.75} />
-        ) : (
-          <Menu className="h-4 w-4" strokeWidth={1.75} />
-        )}
-      </button>
+  // Lock body scroll on mobile while the menu is open.
+  useEffect(() => {
+    if (!open) return;
+    const mq = window.matchMedia("(max-width: 767px)");
+    if (!mq.matches) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
 
+  return (
+    <>
+      {/* Backdrop — mobile only. Closes the menu when tapped. */}
       {open ? (
         <div
-          role="menu"
-          aria-label="Site navigation"
-          className="absolute right-0 top-12 min-w-[200px] overflow-hidden rounded-[18px] border border-rule bg-bg/95 p-2 shadow-[0_8px_40px_rgba(0,0,0,0.18)] backdrop-blur"
+          aria-hidden
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 z-40 bg-ink/30 backdrop-blur-sm md:hidden"
+        />
+      ) : null}
+
+      <div ref={panelRef} className="relative z-50">
+        <button
+          type="button"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-rule bg-bg/80 text-ink/80 backdrop-blur transition-colors hover:bg-ink/5 hover:text-ink"
         >
-          <ul className="flex flex-col py-1">
-            {NAV_ITEMS.map((item) => {
-              const active = item.match
-                ? item.match(pathname)
-                : pathname === item.href;
-              return (
-                <li key={item.href}>
-                  <Link
-                    role="menuitem"
-                    href={item.href}
-                    className={`flex items-center gap-3 rounded-lg px-4 py-2 font-display text-[1.25rem] transition-colors ${
-                      active
-                        ? "text-ink"
-                        : "text-muted hover:text-ink"
-                    }`}
-                  >
+          {open ? (
+            <X className="h-4 w-4" strokeWidth={1.75} />
+          ) : (
+            <Menu className="h-4 w-4" strokeWidth={1.75} />
+          )}
+        </button>
+
+        {open ? (
+          <div
+            role="menu"
+            aria-label="Site navigation"
+            className="absolute right-0 top-12 min-w-[220px] overflow-hidden rounded-[18px] border border-rule bg-bg/95 p-2 shadow-[0_8px_40px_rgba(0,0,0,0.18)] backdrop-blur"
+          >
+            <ul className="flex flex-col py-1">
+              {NAV_ITEMS.map((item) => {
+                const active = item.match
+                  ? item.match(pathname)
+                  : pathname === item.href;
+                const className = `flex items-center gap-3 rounded-lg px-4 py-2 font-display text-[1.25rem] transition-colors ${
+                  active ? "text-ink" : "text-muted hover:text-ink"
+                }`;
+                const inner = (
+                  <>
                     <span
                       aria-hidden
                       className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${
@@ -113,17 +134,40 @@ export function SiteNav() {
                       }`}
                     />
                     {item.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-          <div className="mt-1 border-t border-rule-soft px-2 pt-2">
-            <ThemeToggleRow />
+                  </>
+                );
+                return (
+                  <li key={item.href}>
+                    {item.external ? (
+                      <a
+                        role="menuitem"
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={className}
+                      >
+                        {inner}
+                      </a>
+                    ) : (
+                      <Link
+                        role="menuitem"
+                        href={item.href}
+                        className={className}
+                      >
+                        {inner}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="mt-1 border-t border-rule-soft px-2 pt-2">
+              <ThemeToggleRow />
+            </div>
           </div>
-        </div>
-      ) : null}
-    </div>
+        ) : null}
+      </div>
+    </>
   );
 }
 

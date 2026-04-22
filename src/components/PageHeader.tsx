@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { site } from "@/content/site";
+import { SiteNav } from "./SiteNav";
 
 type PageHeaderProps = {
   /**
@@ -16,18 +17,13 @@ type PageHeaderProps = {
   maxWidth?: number;
 };
 
-// Sticky top bar used on secondary pages. Homepage deliberately has no
-// nav bar. The "about" link jumps to the homepage expertise section and
-// "get in touch" opens the cal.com link — matching the single-page flow.
+// Sticky top bar used on secondary pages. The homepage has no nav
+// bar and shows the burger SiteNav directly as a fixed button. Here
+// the burger lives inside the nav row.
 //
-// This component renders as a sibling of <main>, NOT inside it, so its
-// 100%-opaque background naturally spans the full viewport width
-// without needing negative-margin breakout hacks.
-//
-// Horizontal padding sits on the outer <header>, not on the inner
-// max-width wrapper — that way nav content starts at the same
-// absolute x as body sections below (which don't carry internal
-// padding once they hit their max-width).
+// Rendered as a sibling of <main>, NOT inside it, so its opaque
+// background naturally spans the full viewport width without
+// needing negative-margin breakout hacks.
 export function PageHeader({ left, maxWidth = 800 }: PageHeaderProps = {}) {
   return (
     <header className="nav-drop-in sticky top-0 z-40 bg-bg px-6 md:px-10">
@@ -46,21 +42,8 @@ export function PageHeader({ left, maxWidth = 800 }: PageHeaderProps = {}) {
               </Link>
             )}
           </div>
-          <div className="flex shrink-0 items-center gap-6">
-            <Link
-              href="/#about"
-              className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink"
-            >
-              about
-            </Link>
-            <a
-              href="https://cal.com/guil-is"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink"
-            >
-              get in touch
-            </a>
+          <div className="flex shrink-0 items-center">
+            <SiteNav />
           </div>
         </nav>
       </div>

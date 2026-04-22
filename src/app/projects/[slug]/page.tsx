@@ -8,7 +8,6 @@ import { pastProjects } from "@/content/projects";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaFooter } from "@/components/CtaFooter";
 import { VideoEmbed } from "@/components/VideoEmbed";
-import { SiteNav } from "@/components/SiteNav";
 import { FadeIn } from "@/components/FadeIn";
 import { ProjectSideTitle } from "@/components/ProjectSideTitle";
 import { ProjectArticle } from "@/components/ProjectArticle";
@@ -123,10 +122,6 @@ export default async function ProjectDetailPage({
 
   return (
     <>
-      <div className="fixed right-4 top-4 z-50">
-        <SiteNav />
-      </div>
-
       <ProjectSideTitle title={project.name} client={project.client} />
 
       <div className="page-fade-in">

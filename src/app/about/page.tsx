@@ -4,7 +4,6 @@ import { site } from "@/content/site";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaFooter } from "@/components/CtaFooter";
 import { Placeholder } from "@/components/Placeholder";
-import { SiteNav } from "@/components/SiteNav";
 import { HowWeWork } from "@/components/HowWeWork";
 
 export const metadata: Metadata = {
@@ -17,9 +16,6 @@ export default function AboutPage() {
 
   return (
     <>
-      <div className="fixed right-4 top-4 z-50">
-        <SiteNav />
-      </div>
       <PageHeader />
       <main className="px-6 md:px-8">
 

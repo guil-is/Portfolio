@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { PageHeader } from "@/components/PageHeader";
 import { testimonialExamples } from "@/content/testimonial-examples";
 
@@ -22,9 +21,6 @@ export const metadata: Metadata = {
 export default function TestimonialExamplesPage() {
   return (
     <>
-      <div className="fixed right-4 top-4 z-50">
-        <ThemeToggle />
-      </div>
       <PageHeader maxWidth={960} />
       <main className="page-fade-in mx-auto w-full max-w-[960px] px-6 pb-40 pt-16 md:px-10 md:pt-24">
         <header className="mb-16 flex flex-col gap-5">
