@@ -193,7 +193,7 @@ export default async function ProjectDetailPage({
 
               <div className="flex flex-col">
                 <MetaRow label="Team" first>
-                  <TeamAvatars team={project.team} />
+                  <TeamAvatars team={project.team} client={project.client} />
                 </MetaRow>
                 <MetaRow label="Services">
                   <ServiceTags services={project.services} />
@@ -322,9 +322,19 @@ function MetaRow({
   );
 }
 
-function TeamAvatars({ team }: { team?: SanityProjectTeamMember[] }) {
+function TeamAvatars({
+  team,
+  client,
+}: {
+  team?: SanityProjectTeamMember[];
+  client?: string;
+}) {
   if (!team || team.length === 0) {
-    return <span className="text-muted">—</span>;
+    return (
+      <span className="font-display text-[1rem] text-ink">
+        {client || "—"}
+      </span>
+    );
   }
   return (
     <div className="flex items-center -space-x-2">

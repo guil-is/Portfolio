@@ -1,0 +1,46 @@
+name: Sanity — Clear org-only project teams
+
+# Undoes the populate-project-teams pass. Unsets `team` on any
+# project whose current team is exactly one reference pointing at a
+# `client` doc. Manual edits (multiple entries, or person refs) are
+# left alone.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "When true, log the plan without mutating"
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  clear:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run clear
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: npx tsx scripts/sanity/clear-org-only-teams.ts
+
+      - name: Upload pre-patch backup
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-clear-org-only-teams-${{ github.run_id }}
+          path: scripts/sanity/backups/
+          if-no-files-found: ignore
+          retention-days: 90
