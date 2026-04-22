@@ -37,7 +37,7 @@ export default async function Home() {
   return (
     <>
       <PageHeader />
-      <main className="page-fade-in px-6 pt-12 md:px-8 md:pt-16">
+      <main className="page-fade-in px-6 pt-4 md:px-8 md:pt-8">
         <Hero
           headline={headline}
           bio={bio}

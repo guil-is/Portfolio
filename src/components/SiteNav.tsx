@@ -23,7 +23,7 @@ const NAV_ITEMS: NavItem[] = [
   {
     label: "Work",
     href: "/#work",
-    match: (p) => p === "/" || p.startsWith("/projects/"),
+    match: (p) => p.startsWith("/projects/"),
   },
   { label: "About", href: "/#about", match: () => false },
   {
@@ -115,7 +115,7 @@ export function SiteNav() {
           <div
             role="menu"
             aria-label="Site navigation"
-            className="absolute right-0 top-12 min-w-[220px] overflow-hidden rounded-[18px] border border-rule bg-bg/95 p-2 shadow-[0_8px_40px_rgba(0,0,0,0.18)] backdrop-blur"
+            className="absolute right-0 top-12 min-w-[220px] overflow-hidden rounded-[18px] border border-rule bg-bg p-2 shadow-[0_8px_40px_rgba(0,0,0,0.18)]"
           >
             <ul className="flex flex-col py-1">
               {NAV_ITEMS.map((item) => {
