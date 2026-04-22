@@ -5,7 +5,7 @@ import { Expertise } from "@/components/Expertise";
 import { PastWork } from "@/components/PastWork";
 import { Testimonials } from "@/components/Testimonials";
 import { CtaFooter } from "@/components/CtaFooter";
-import { SiteNav } from "@/components/SiteNav";
+import { PageHeader } from "@/components/PageHeader";
 import {
   flattenTestimonial,
   getAllTestimonials,
@@ -36,10 +36,8 @@ export default async function Home() {
 
   return (
     <>
-      <div className="fixed right-4 top-4 z-50">
-        <SiteNav />
-      </div>
-      <main className="page-fade-in px-6 pt-16 md:px-8 md:pt-24">
+      <PageHeader />
+      <main className="page-fade-in px-6 pt-12 md:px-8 md:pt-16">
         <Hero
           headline={headline}
           bio={bio}
