@@ -7,7 +7,11 @@ import { PastWork } from "@/components/PastWork";
 import { Testimonials } from "@/components/Testimonials";
 import { CtaFooter } from "@/components/CtaFooter";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { getSiteSettings } from "@/lib/queries";
+import {
+  flattenTestimonial,
+  getAllTestimonials,
+  getSiteSettings,
+} from "@/lib/queries";
 import { site } from "@/content/site";
 import { siteTestimonials } from "@/content/testimonials";
 
@@ -30,6 +34,10 @@ export const revalidate = 60;
 
 export default async function HomePreview() {
   const settings = await getSiteSettings().catch(() => null);
+  const sanityTestimonials = await getAllTestimonials().catch(() => []);
+  const testimonials = sanityTestimonials.length
+    ? sanityTestimonials.map(flattenTestimonial)
+    : siteTestimonials;
 
   const headline = settings?.headline || site.introHeading;
   const bio = settings?.bio?.length ? settings.bio : site.hero.bio;
@@ -55,7 +63,7 @@ export default async function HomePreview() {
         <ClientLogos />
         <ActiveProjects />
         <Expertise />
-        <Testimonials testimonials={siteTestimonials} />
+        <Testimonials testimonials={testimonials} />
         <PastWork />
         <CtaFooter heading={bottomHeading} sub={bottomSub} />
       </main>

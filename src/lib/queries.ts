@@ -208,6 +208,90 @@ export async function getAllPeople(): Promise<SanityPerson[]> {
   );
 }
 
+// ---- Testimonials ----
+
+export type SanityTestimonial = {
+  _id: string;
+  quote: string;
+  role?: string;
+  project?: string;
+  projectHref?: string;
+  featured?: boolean;
+  person: {
+    _id: string;
+    name: string;
+    slug: string;
+    link?: string;
+    image?: string;
+  };
+};
+
+/**
+ * Flatten a Sanity testimonial into the shape the <Testimonials>
+ * component renders. Infers a twitter/linkedin platform from
+ * `person.link` so a single field drives both the inline name link
+ * and the avatar overlay.
+ */
+export function flattenTestimonial(t: SanityTestimonial): {
+  quote: string;
+  name: string;
+  role: string;
+  project: string;
+  projectHref?: string;
+  social?: { platform: "twitter" | "linkedin"; url: string };
+  avatarUrl?: string;
+  initials: string;
+} {
+  const { person, quote, role, project, projectHref } = t;
+  const initials = person.name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? "")
+    .join("");
+  let social: { platform: "twitter" | "linkedin"; url: string } | undefined;
+  if (person.link) {
+    const platform = /linkedin\.com/i.test(person.link)
+      ? "linkedin"
+      : /twitter\.com|x\.com/i.test(person.link)
+        ? "twitter"
+        : undefined;
+    if (platform) social = { platform, url: person.link };
+  }
+  return {
+    quote,
+    name: person.name,
+    role: role ?? "",
+    project: project ?? "",
+    projectHref,
+    social,
+    avatarUrl: person.image,
+    initials,
+  };
+}
+
+export async function getAllTestimonials(): Promise<SanityTestimonial[]> {
+  return sanityClient.fetch(
+    `*[_type == "testimonial"] | order(sortOrder asc) {
+      _id,
+      quote,
+      role,
+      featured,
+      "project": coalesce(projectLabel, project->name),
+      "projectHref": select(
+        defined(project->slug.current) => "/projects/" + project->slug.current,
+        null
+      ),
+      "person": person->{
+        _id,
+        name,
+        "slug": slug.current,
+        link,
+        "image": image.asset->url
+      }
+    }`,
+  );
+}
+
 // ---- Site Settings ----
 
 export type SanitySettings = {

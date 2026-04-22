@@ -4,7 +4,22 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SectionHeading } from "./SectionHeading";
-import type { Testimonial } from "@/content/testimonials";
+
+/**
+ * Shape the component renders. Callers flatten from Sanity
+ * (`SanityTestimonial`) or the legacy local TS fallback before passing
+ * in, so the UI stays presentation-only.
+ */
+export type Testimonial = {
+  quote: string;
+  name: string;
+  role: string;
+  project: string;
+  projectHref?: string;
+  social?: { platform: "twitter" | "linkedin"; url: string };
+  avatarUrl?: string;
+  initials: string;
+};
 
 export function Testimonials({
   testimonials,

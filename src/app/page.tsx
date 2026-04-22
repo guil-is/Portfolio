@@ -6,7 +6,11 @@ import { PastWork } from "@/components/PastWork";
 import { Testimonials } from "@/components/Testimonials";
 import { CtaFooter } from "@/components/CtaFooter";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { getSiteSettings } from "@/lib/queries";
+import {
+  flattenTestimonial,
+  getAllTestimonials,
+  getSiteSettings,
+} from "@/lib/queries";
 import { site } from "@/content/site";
 import { siteTestimonials } from "@/content/testimonials";
 
@@ -16,6 +20,10 @@ export const revalidate = 60;
 
 export default async function Home() {
   const settings = await getSiteSettings().catch(() => null);
+  const sanityTestimonials = await getAllTestimonials().catch(() => []);
+  const testimonials = sanityTestimonials.length
+    ? sanityTestimonials.map(flattenTestimonial)
+    : siteTestimonials;
 
   // Merge Sanity settings over local defaults
   const headline = settings?.headline || site.introHeading;
@@ -42,7 +50,7 @@ export default async function Home() {
         <ClientLogos />
         <ActiveProjects />
         <Expertise />
-        <Testimonials testimonials={siteTestimonials} />
+        <Testimonials testimonials={testimonials} />
         <PastWork />
         <CtaFooter heading={bottomHeading} sub={bottomSub} />
       </main>

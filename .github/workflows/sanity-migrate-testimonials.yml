@@ -1,0 +1,36 @@
+name: Sanity — Migrate testimonials
+
+# Manually triggered one-off to move src/content/testimonials.ts into
+# Sanity as `testimonial` docs, auto-creating `person` docs for each
+# author. Idempotent — re-running skips testimonials already present.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "When true, log the plan without mutating"
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run migration
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: npx tsx scripts/sanity/migrate-testimonials.ts
