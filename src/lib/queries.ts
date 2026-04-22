@@ -164,6 +164,32 @@ export async function getActiveProjects(): Promise<SanityActiveProject[]> {
   );
 }
 
+// ---- People ----
+
+export type SanityPerson = {
+  _id: string;
+  name: string;
+  slug: string;
+  tags?: string[];
+  link?: string;
+  bio?: string;
+  image?: string;
+};
+
+export async function getAllPeople(): Promise<SanityPerson[]> {
+  return sanityClient.fetch(
+    `*[_type == "person"] | order(name asc) {
+      _id,
+      name,
+      "slug": slug.current,
+      tags,
+      link,
+      bio,
+      "image": image.asset->url
+    }`,
+  );
+}
+
 // ---- Site Settings ----
 
 export type SanitySettings = {

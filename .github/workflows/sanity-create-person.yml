@@ -1,0 +1,60 @@
+name: Sanity — Create person
+
+# Manually triggered workflow to add a person document to Sanity.
+# Image uploads happen in Studio after creation.
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Full name (e.g. 'Tim Doldissen')"
+        required: true
+        type: string
+      slug:
+        description: "URL slug (optional — derived from name if omitted)"
+        required: false
+        type: string
+      link:
+        description: "Personal website / Twitter / LinkedIn URL (optional)"
+        required: false
+        type: string
+      tags:
+        description: "Comma-separated tags, e.g. 'Design, Animation'"
+        required: false
+        type: string
+      bio:
+        description: "Short bio (optional)"
+        required: false
+        type: string
+      dry_run:
+        description: "When true, log the plan without mutating"
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create person
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          NAME: ${{ inputs.name }}
+          SLUG: ${{ inputs.slug }}
+          LINK: ${{ inputs.link }}
+          TAGS: ${{ inputs.tags }}
+          BIO: ${{ inputs.bio }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: npx tsx scripts/sanity/create-person.ts
