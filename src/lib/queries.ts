@@ -184,6 +184,12 @@ export async function getActiveProjects(): Promise<SanityActiveProject[]> {
 
 // ---- People ----
 
+export type SanityPersonOrg = {
+  _id: string;
+  name: string;
+  href?: string;
+};
+
 export type SanityPerson = {
   _id: string;
   name: string;
@@ -192,6 +198,7 @@ export type SanityPerson = {
   link?: string;
   bio?: string;
   image?: string;
+  organizations?: SanityPersonOrg[];
 };
 
 export async function getAllPeople(): Promise<SanityPerson[]> {
@@ -203,7 +210,8 @@ export async function getAllPeople(): Promise<SanityPerson[]> {
       tags,
       link,
       bio,
-      "image": image.asset->url
+      "image": image.asset->url,
+      "organizations": organizations[]->{ _id, name, href }
     }`,
   );
 }
@@ -276,8 +284,9 @@ export async function getAllTestimonials(): Promise<SanityTestimonial[]> {
       quote,
       role,
       featured,
-      "project": coalesce(projectLabel, project->name),
+      "project": coalesce(organization->name, project->name, projectLabel),
       "projectHref": select(
+        defined(organization->href) => organization->href,
         defined(project->slug.current) => "/projects/" + project->slug.current,
         null
       ),

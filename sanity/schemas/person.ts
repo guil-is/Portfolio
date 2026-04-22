@@ -43,6 +43,14 @@ export const person = defineType({
         r.uri({ scheme: ["http", "https"], allowRelative: false }),
     }),
     defineField({
+      name: "organizations",
+      title: "Organizations",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "client" }] }],
+      description:
+        "Orgs / teams this person has been part of. A person can belong to more than one.",
+    }),
+    defineField({
       name: "bio",
       title: "Short bio",
       type: "text",

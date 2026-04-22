@@ -249,12 +249,23 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           <p className="font-caption text-[11px] font-medium uppercase leading-[16px] tracking-[1px] text-muted">
             {role} ·{" "}
             {projectHref ? (
-              <Link
-                href={projectHref}
-                className="underline-offset-2 hover:text-ink hover:underline"
-              >
-                {project}
-              </Link>
+              /^https?:\/\//.test(projectHref) ? (
+                <a
+                  href={projectHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline-offset-2 hover:text-ink hover:underline"
+                >
+                  {project}
+                </a>
+              ) : (
+                <Link
+                  href={projectHref}
+                  className="underline-offset-2 hover:text-ink hover:underline"
+                >
+                  {project}
+                </Link>
+              )
             ) : (
               <span>{project}</span>
             )}

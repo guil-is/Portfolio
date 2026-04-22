@@ -29,6 +29,14 @@ export const testimonial = defineType({
         "Title the person held during the engagement, e.g. 'Co-founder', 'Steward'.",
     }),
     defineField({
+      name: "organization",
+      title: "Organization",
+      type: "reference",
+      to: [{ type: "client" }],
+      description:
+        "Org / team this testimonial was given on behalf of. Drives the subtitle shown on the card.",
+    }),
+    defineField({
       name: "project",
       title: "Project",
       type: "reference",
@@ -38,10 +46,10 @@ export const testimonial = defineType({
     }),
     defineField({
       name: "projectLabel",
-      title: "Project label (override)",
+      title: "Subtitle override",
       type: "string",
       description:
-        "Shown next to the role. Defaults to the linked project's name. Use this when the engagement wasn't a case-study project (e.g. 'Open Collective, Commons Hub BXL').",
+        "Free-form subtitle. Only used when neither Organization nor Project is set.",
     }),
     defineField({
       name: "featured",
