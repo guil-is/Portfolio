@@ -5,7 +5,7 @@ import { site } from "@/content/site";
 import { journalPosts } from "@/content/journal";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaFooter } from "@/components/CtaFooter";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteNav } from "@/components/SiteNav";
 
 type Params = { slug: string };
 
@@ -40,7 +40,7 @@ export default async function JournalDetailPage({
   return (
     <>
       <div className="fixed right-4 top-4 z-50">
-        <ThemeToggle />
+        <SiteNav />
       </div>
 
       <PageHeader />

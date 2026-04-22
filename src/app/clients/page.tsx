@@ -5,7 +5,7 @@ export const revalidate = 60;
 import { clients as localClients } from "@/content/clients";
 import { getAllClients, type SanityClient } from "@/lib/queries";
 import { PageHeader } from "@/components/PageHeader";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteNav } from "@/components/SiteNav";
 
 export const metadata: Metadata = {
   title: `Clients & Partners | ${site.name}`,
@@ -62,7 +62,7 @@ export default async function ClientsPage() {
   return (
     <>
       <div className="fixed right-4 top-4 z-50">
-        <ThemeToggle />
+        <SiteNav />
       </div>
       <PageHeader />
       <main className="px-6 md:px-10">

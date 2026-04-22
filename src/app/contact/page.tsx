@@ -3,7 +3,7 @@ import { site } from "@/content/site";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaFooter } from "@/components/CtaFooter";
 import { ContactForm } from "@/components/ContactForm";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteNav } from "@/components/SiteNav";
 
 export const metadata: Metadata = {
   title: site.contact.metaTitle,
@@ -16,7 +16,7 @@ export default function ContactPage() {
   return (
     <>
       <div className="fixed right-4 top-4 z-50">
-        <ThemeToggle />
+        <SiteNav />
       </div>
       <PageHeader />
       <main className="px-6 md:px-8">

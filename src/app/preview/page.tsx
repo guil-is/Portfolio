@@ -6,7 +6,7 @@ import { Expertise } from "@/components/Expertise";
 import { PastWork } from "@/components/PastWork";
 import { Testimonials } from "@/components/Testimonials";
 import { CtaFooter } from "@/components/CtaFooter";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteNav } from "@/components/SiteNav";
 import {
   flattenTestimonial,
   getAllTestimonials,
@@ -50,7 +50,7 @@ export default async function HomePreview() {
   return (
     <>
       <div className="fixed right-4 top-4 z-50">
-        <ThemeToggle />
+        <SiteNav />
       </div>
       <main className="page-fade-in px-6 pt-16 md:px-8 md:pt-24">
         <Hero

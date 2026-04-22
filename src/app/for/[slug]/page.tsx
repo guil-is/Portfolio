@@ -14,7 +14,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { PasswordGate } from "@/components/PasswordGate";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteNav } from "@/components/SiteNav";
 import { CtaButton } from "@/components/CtaButton";
 import { CenterFocus } from "@/components/CenterFocus";
 import { CaseStudyHorizontalScroll } from "@/components/CaseStudyHorizontalScroll";
@@ -79,7 +79,7 @@ export default async function ProposalPage({ params }: RouteProps) {
   return (
     <>
       <div className="fixed right-4 top-4 z-50">
-        <ThemeToggle />
+        <SiteNav />
       </div>
 
       <PasswordGate password={proposal.password} storageKey={`for-${proposal.slug}-unlocked`}>

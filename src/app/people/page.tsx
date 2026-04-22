@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { site } from "@/content/site";
 import { getAllPeople } from "@/lib/queries";
 import { PageHeader } from "@/components/PageHeader";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { SiteNav } from "@/components/SiteNav";
 import { PeopleList } from "@/components/PeopleList";
 
 export const revalidate = 60;
@@ -19,7 +19,7 @@ export default async function PeoplePage() {
   return (
     <>
       <div className="fixed right-4 top-4 z-50">
-        <ThemeToggle />
+        <SiteNav />
       </div>
       <PageHeader />
       <main className="px-6 md:px-10">
