@@ -94,6 +94,8 @@ export const justice: JusticeClient = {
           description: "Design system upgrade (Claude Design)",
           hours: 1,
         },
+        { project: "Clawbank", description: "CLI teaser video", hours: 3 },
+        { project: "Clawbank", description: "Social assets", hours: 1 },
       ],
     },
     {
