@@ -24,6 +24,18 @@ export type Testimonial = {
 
 export const siteTestimonials: Testimonial[] = [
   {
+    name: "Matt Gillespie",
+    role: "Director of Strategy",
+    project: "Emergence Field Labs",
+    quote:
+      "I was pleasantly surprised by Guil's depth of thinking and thoroughness of execution. His fresh creative spark was exactly what our team needed.",
+    social: {
+      platform: "linkedin",
+      url: "https://www.linkedin.com/in/mattgillespieworks/",
+    },
+    initials: "MG",
+  },
+  {
     name: "Justice Conder",
     role: "Founder",
     project: "ClawBank",
