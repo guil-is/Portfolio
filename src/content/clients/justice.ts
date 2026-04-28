@@ -102,6 +102,11 @@ export const justice: JusticeClient = {
           description: "Visual assets — Manfred (AI agent)",
           hours: 2.33,
         },
+        {
+          project: "Clawbank",
+          description: "Quote headliner (audiogram)",
+          hours: 1.1,
+        },
       ],
     },
     {
