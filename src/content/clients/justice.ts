@@ -12,6 +12,13 @@ export type HoursItem = {
   hours: number;
 };
 
+export type Expense = {
+  project: string;
+  description: string;
+  /** Cost in USD, billed at-cost per the SOW. */
+  amountUsd: number;
+};
+
 export type Invoice = {
   /** Optional human identifier shown in the UI (e.g. "INV-001"). */
   number?: string;
@@ -29,6 +36,8 @@ export type HoursPeriod = {
   /** Number of weeks the period covers. Defaults to 2 (bi-weekly). */
   weeks?: number;
   items: HoursItem[];
+  /** Pass-through expenses billed at cost (fonts, plugins, stock, etc.). */
+  expenses?: Expense[];
   /** Optional one-line context shown alongside the period. */
   note?: string;
   /** Invoice metadata. Omit while a period is still in progress. */
@@ -113,6 +122,19 @@ export const justice: JusticeClient = {
           hours: 9,
         },
         { project: "Clawbank", description: "Sync calls", hours: 1 },
+      ],
+      expenses: [
+        {
+          project: "Clawbank",
+          description:
+            "Signal plugin for After Effects (one-time license fee)",
+          amountUsd: 39.99,
+        },
+        {
+          project: "Clawbank",
+          description: "Twitch plugin by VideoCopilot for After Effects",
+          amountUsd: 45,
+        },
       ],
     },
     {
@@ -277,16 +299,20 @@ export function periodTotal(p: HoursPeriod): number {
   return p.items.reduce((sum, i) => sum + i.hours, 0);
 }
 
+export function periodExpenses(p: HoursPeriod): number {
+  return (p.expenses ?? []).reduce((sum, e) => sum + e.amountUsd, 0);
+}
+
 export function totalHours(periods: HoursPeriod[]): number {
   return periods.reduce((sum, p) => sum + periodTotal(p), 0);
 }
 
-export function totalEarned(periods: HoursPeriod[], rate: number): number {
-  return totalHours(periods) * rate;
+export function periodAmount(p: HoursPeriod, rate: number): number {
+  return periodTotal(p) * rate + periodExpenses(p);
 }
 
-export function periodAmount(p: HoursPeriod, rate: number): number {
-  return periodTotal(p) * rate;
+export function totalEarned(periods: HoursPeriod[], rate: number): number {
+  return periods.reduce((sum, p) => sum + periodAmount(p, rate), 0);
 }
 
 export function totalPaid(periods: HoursPeriod[], rate: number): number {

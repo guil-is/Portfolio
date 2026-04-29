@@ -10,6 +10,7 @@ import {
   lastInvoiceActivity,
   lastPaidInvoice,
   paceStatus,
+  periodExpenses,
   periodTotal,
   periodWeeks,
   singleProject,
@@ -308,6 +309,40 @@ function PeriodBlock({
           </li>
         ))}
       </ul>
+
+      {period.expenses && period.expenses.length > 0 ? (
+        <div className="flex flex-col gap-2 pt-2">
+          <h4 className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
+            Expenses (billed at cost)
+          </h4>
+          <ul className="flex flex-col">
+            {period.expenses.map((e, i) => (
+              <li
+                key={i}
+                className="flex items-start justify-between gap-6 border-b border-rule-soft py-3 last:border-b-0"
+              >
+                <div className="flex min-w-0 items-start gap-3">
+                  {project ? null : <ProjectChip name={e.project} />}
+                  <p className="text-[0.95rem] leading-[1.6rem] text-ink">
+                    {e.description}
+                  </p>
+                </div>
+                <p className="shrink-0 font-caption text-[13px] font-semibold tabular-nums text-ink">
+                  ${e.amountUsd.toFixed(2)}
+                </p>
+              </li>
+            ))}
+            <li className="flex items-start justify-between gap-6 py-3">
+              <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+                Expenses subtotal
+              </p>
+              <p className="shrink-0 font-caption text-[13px] font-semibold tabular-nums text-ink">
+                ${periodExpenses(period).toFixed(2)}
+              </p>
+            </li>
+          </ul>
+        </div>
+      ) : null}
     </article>
   );
 }
