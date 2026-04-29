@@ -107,6 +107,12 @@ export const justice: JusticeClient = {
           description: "Quote headliner (audiogram)",
           hours: 1.1,
         },
+        {
+          project: "Clawbank",
+          description: "Video asset — Manfred launch",
+          hours: 9,
+        },
+        { project: "Clawbank", description: "Sync calls", hours: 1 },
       ],
     },
     {
