@@ -123,7 +123,6 @@ export const justice: JusticeClient = {
         },
         { project: "Clawbank", description: "CLI teaser video", hours: 3 },
         { project: "Clawbank", description: "Social assets", hours: 1 },
-        { project: "Clawbank", description: "Meetings (×2)", hours: 1 },
         {
           project: "Clawbank",
           description: "Visual assets — Manfred (AI agent)",
@@ -136,17 +135,11 @@ export const justice: JusticeClient = {
         },
         {
           project: "Clawbank",
-          description: "Video asset — Manfred launch",
-          hours: 9,
+          description: "Manfred launch video (incl. captioned version)",
+          hours: 9.33,
         },
-        { project: "Clawbank", description: "Sync calls", hours: 1 },
         { project: "Clawbank", description: "Formation video", hours: 3 },
-        { project: "Clawbank", description: "Sync", hours: 0.5 },
-        {
-          project: "Clawbank",
-          description: "Captioned version of Manfred launch video",
-          hours: 0.33,
-        },
+        { project: "Clawbank", description: "Meetings & syncs", hours: 2.5 },
         {
           project: "Clawbank",
           description: "Documentation (IP contract amendment)",
