@@ -318,7 +318,7 @@ function PeriodBlock({
           <h3 className="flex items-baseline gap-2 font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
             <span
               aria-hidden
-              className={`inline-block text-[0.875rem] text-muted transition-transform duration-200 ${
+              className={`inline-block text-[1.75rem] leading-none text-muted transition-transform duration-200 ${
                 expanded ? "rotate-90" : ""
               }`}
             >
