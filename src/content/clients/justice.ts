@@ -140,6 +140,18 @@ export const justice: JusticeClient = {
           hours: 9,
         },
         { project: "Clawbank", description: "Sync calls", hours: 1 },
+        { project: "Clawbank", description: "Formation video", hours: 3 },
+        { project: "Clawbank", description: "Sync", hours: 0.5 },
+        {
+          project: "Clawbank",
+          description: "Captioned version of Manfred launch video",
+          hours: 0.33,
+        },
+        {
+          project: "Clawbank",
+          description: "Documentation (IP contract amendment)",
+          hours: 0.25,
+        },
       ],
       expenses: [
         {
