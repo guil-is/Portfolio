@@ -3,6 +3,9 @@ import { sanityClient } from "./sanity";
 export type SignedAgreement = {
   _id: string;
   clientSlug: string;
+  /** Which document on the client this signature applies to. Defaults
+   * to "sow" when missing for backwards compat with existing records. */
+  documentKey?: string;
   signerName: string;
   signerEmail: string;
   signedAt: string;

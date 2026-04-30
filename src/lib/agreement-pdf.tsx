@@ -6,7 +6,11 @@ import {
   StyleSheet,
   renderToBuffer,
 } from "@react-pdf/renderer";
-import type { JusticeClient, SowSection } from "@/content/clients/justice";
+import type {
+  JusticeClient,
+  SignableDocument,
+  SowSection,
+} from "@/content/clients/justice";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 
 /**
@@ -226,62 +230,75 @@ function SowBlocks({ section }: { section: SowSection }) {
 
 export function AgreementPdf({
   client,
+  document: doc,
   signature,
 }: {
   client: JusticeClient;
+  document: SignableDocument;
   signature: SignedAgreement;
 }) {
-  const { sow, engagement } = client;
+  const { engagement } = client;
   const signedAtReadable = new Date(signature.signedAt).toLocaleString("en-US", {
     dateStyle: "long",
     timeStyle: "short",
     timeZone: "UTC",
   });
+  const docTitle = doc.title ?? "Statement of Work";
+  const isSow = doc === client.sow;
 
   return (
     <Document
-      title={`Statement of Work — ${client.clientName} × Guil Maueler`}
+      title={`${docTitle} — ${client.clientName} × Guil Maueler`}
       author="Guilherme Maueler"
-      subject={`Signed SOW, version ${sow.version}`}
+      subject={`Signed ${docTitle}, version ${doc.version}`}
     >
       <Page size="LETTER" style={styles.page}>
         <Text style={styles.eyebrow}>
-          Statement of Work · Effective {sow.effectiveDate}
+          {docTitle} · Effective {doc.effectiveDate}
         </Text>
         <Text style={styles.title}>
           {client.clientName} × Guilherme Maueler
         </Text>
-        <Text style={styles.subtle}>Version {sow.version}</Text>
+        <Text style={styles.subtle}>Version {doc.version}</Text>
 
-        <Text style={styles.preamble}>{sow.preamble}</Text>
+        <Text style={styles.preamble}>{doc.preamble}</Text>
 
-        <View style={styles.metaRow}>
-          <View style={styles.metaCell}>
-            <Text style={styles.metaLabel}>Rate</Text>
-            <Text style={styles.metaValue}>${engagement.rateUsd} / hr</Text>
+        {isSow ? (
+          <View style={styles.metaRow}>
+            <View style={styles.metaCell}>
+              <Text style={styles.metaLabel}>Rate</Text>
+              <Text style={styles.metaValue}>${engagement.rateUsd} / hr</Text>
+            </View>
+            <View style={styles.metaCell}>
+              <Text style={styles.metaLabel}>Weekly</Text>
+              <Text style={styles.metaValue}>
+                {engagement.weeklyHoursMin}–{engagement.weeklyHoursMax} h
+              </Text>
+            </View>
+            <View style={styles.metaCell}>
+              <Text style={styles.metaLabel}>Start</Text>
+              <Text style={styles.metaValue}>{engagement.startDate}</Text>
+            </View>
           </View>
-          <View style={styles.metaCell}>
-            <Text style={styles.metaLabel}>Weekly</Text>
-            <Text style={styles.metaValue}>
-              {engagement.weeklyHoursMin}–{engagement.weeklyHoursMax} h
-            </Text>
-          </View>
-          <View style={styles.metaCell}>
-            <Text style={styles.metaLabel}>Start</Text>
-            <Text style={styles.metaValue}>{engagement.startDate}</Text>
-          </View>
-        </View>
+        ) : null}
 
         <View style={styles.rule} />
 
-        {sow.sections.map((s) => (
+        {doc.sections.map((s) => (
           <SowBlocks key={s.heading} section={s} />
         ))}
+
+        {doc.noteOnApproach ? (
+          <View style={{ marginTop: 8 }} wrap>
+            <Text style={styles.sectionHeading}>Note on the Approach</Text>
+            <Text style={styles.paragraph}>{doc.noteOnApproach}</Text>
+          </View>
+        ) : null}
 
         <Text
           style={styles.footer}
           render={({ pageNumber, totalPages }) =>
-            `${client.clientName} × Guilherme Maueler · SOW ${sow.version} · Page ${pageNumber} of ${totalPages}`
+            `${client.clientName} × Guilherme Maueler · ${docTitle} ${doc.version} · Page ${pageNumber} of ${totalPages}`
           }
           fixed
         />
@@ -347,7 +364,7 @@ export function AgreementPdf({
         <Text
           style={styles.footer}
           render={({ pageNumber, totalPages }) =>
-            `${client.clientName} × Guilherme Maueler · SOW ${sow.version} · Page ${pageNumber} of ${totalPages}`
+            `${client.clientName} × Guilherme Maueler · ${docTitle} ${doc.version} · Page ${pageNumber} of ${totalPages}`
           }
           fixed
         />
@@ -358,7 +375,10 @@ export function AgreementPdf({
 
 export async function renderAgreementPdf(
   client: JusticeClient,
+  document: SignableDocument,
   signature: SignedAgreement,
 ): Promise<Buffer> {
-  return renderToBuffer(<AgreementPdf client={client} signature={signature} />);
+  return renderToBuffer(
+    <AgreementPdf client={client} document={document} signature={signature} />,
+  );
 }

@@ -54,6 +54,33 @@ export type SowSection = {
   >;
 };
 
+/**
+ * Generic shape for a signable document — used by both the SOW and the
+ * Manfred Amendment. Keeps the signature flow / hash / PDF generic so
+ * adding a new amendment is data-only.
+ */
+export type SignableDocument = {
+  /** Display title shown above the doc. Defaults to "Statement of Work". */
+  title?: string;
+  /** Bump this when the doc content changes substantively. Previous
+   * signatures remain valid records of what was signed then, but the
+   * new version requires a fresh signature. */
+  version: string;
+  preamble: string;
+  effectiveDate: string;
+  sections: SowSection[];
+  signatories: Array<[string, string]>;
+  /** Wording of each checkbox the signer must tick. These exact
+   * strings are stored on the signature record. */
+  acknowledgments: string[];
+  /** Optional plain-English summary card shown above the legal text. */
+  tldr?: string[];
+  /** Optional plain-English breakdown table — section name → one-line summary. */
+  breakdown?: Array<{ section: string; summary: string }>;
+  /** Optional footer note (e.g. "no attorney reviewed this"). */
+  noteOnApproach?: string;
+};
+
 export type JusticeClient = {
   clientName: string;
   password: string;
@@ -64,19 +91,10 @@ export type JusticeClient = {
     weeklyHoursMax: number;
   };
   hoursLog: HoursPeriod[];
-  sow: {
-    /** Bump this when the SOW content changes substantively. Previous
-     * signatures remain valid records of what was signed then, but the
-     * new version requires a fresh signature. */
-    version: string;
-    preamble: string;
-    effectiveDate: string;
-    sections: SowSection[];
-    signatories: Array<[string, string]>;
-    /** Wording of each checkbox the signer must tick. These exact
-     * strings are stored on the signature record. */
-    acknowledgments: string[];
-  };
+  sow: SignableDocument;
+  /** Optional supplementary documents keyed by stable slug. The key
+   * doubles as the `documentKey` passed to the signature API. */
+  amendments?: Record<string, SignableDocument>;
 };
 
 export const justice: JusticeClient = {
@@ -284,6 +302,232 @@ export const justice: JusticeClient = {
       ["Client", "Justice Conder"],
       ["Effective date", "March 26, 2026"],
     ],
+  },
+
+  amendments: {
+    "manfred-amendment": {
+      title: "Manfred Project — Contractor Amendment",
+      version: "manfred-amendment-v1-2026-04-30",
+      preamble:
+        "This Amendment supplements and modifies the Contractor Services Agreement between the parties dated March 26, 2026. To the extent any terms in this Amendment conflict with the original, this Amendment controls.",
+      effectiveDate: "Upon signature by both parties (drafted April 30, 2026)",
+      tldr: [
+        "The Manfred work touches third-party IP (Max Headroom imagery, Matt Frewer's voice, Accelerando references). The strategy of using these references — including the public expectation that we might get sued for it — was decided by ClawBank, not by Guil. This amendment makes that reality match the paperwork.",
+        "If anyone sues over the Manfred work, ClawBank pays the lawyers and any judgments — not Guil. That includes copyright, voice cloning, character likeness, and any platform actions (e.g. ElevenLabs, YouTube takedowns).",
+        "Justice personally guarantees this so it holds even if the LLCs run dry.",
+        "Guil owns nothing of the Manfred or Aineko IP after delivery — ClawBank does. ClawBank is the public publisher. Guil's name doesn't go on it as creator/owner.",
+        "Guil can still show the work in his portfolio as contracted production work — just not as 'Guil created Manfred.'",
+        "If Guil ever receives a legal notice, threat, or takedown, he tells Justice within 5 business days and Justice takes over the response.",
+        "These protections last forever — they don't disappear if the agreement ends or the entity is sold.",
+        "This isn't aggressive. It's standard contractor hygiene for any creative work that involves known IP risk. It just spells out what we've all already verbally agreed to.",
+      ],
+      breakdown: [
+        {
+          section: "1. Acknowledgment of IP Context",
+          summary:
+            "Names exactly what IP is involved (Max Headroom, Frewer's voice, Accelerando) and confirms ClawBank decided to use them knowing the risk.",
+        },
+        {
+          section: "2. Indemnification",
+          summary:
+            "If a third party sues, ClawBank pays everything — defense, settlement, judgment. Includes the explicit 'willfulness' waiver.",
+        },
+        {
+          section: "3. Limit on Guil's Liability",
+          summary:
+            "Guil's exposure is capped at fees received in the last 12 months. No unlimited downside.",
+        },
+        {
+          section: "4. Ownership and Publication",
+          summary:
+            "Once paid, ClawBank owns everything. ClawBank publishes first and is the named originator. Guil keeps portfolio rights.",
+        },
+        {
+          section: "5. Notice of Claims",
+          summary:
+            "Process for handling any legal notice. Guil tells Justice fast; Justice takes over.",
+        },
+        {
+          section: "6. Reps and Warranties",
+          summary:
+            "ClawBank confirms it has authority to direct this work and accepts the risk. Includes Justice's personal guarantee.",
+        },
+        {
+          section: "7. Insurance",
+          summary:
+            "ClawBank maintains media liability insurance. Negotiable for pre-revenue companies.",
+        },
+        {
+          section: "8. Governing Law / Survival",
+          summary:
+            "Where lawsuits go (Berlin, Germany), and confirmation that protections last forever.",
+        },
+        {
+          section: "9. Entire Understanding",
+          summary: "Standard 'this is the deal' boilerplate.",
+        },
+      ],
+      noteOnApproach:
+        "This amendment was drafted from generic best-practice templates and the specific risk profile of the Manfred project. It has not been reviewed by an attorney. Both parties acknowledge they are signing it without legal counsel and accept the document as-is. If/when budget allows for legal review, either party may propose modifications, but the protections herein remain in force in the meantime.",
+      sections: [
+        {
+          heading:
+            "§1. Acknowledgment of Project Nature and IP Context",
+          blocks: [
+            {
+              type: "p",
+              text: "The parties acknowledge that Contractor's services include the production of creative video content, brand assets, and supporting materials for the 'Manfred' character and related ClawBank marketing campaigns. The parties further acknowledge that this work involves, by Client's specific creative direction:",
+            },
+            {
+              type: "ul",
+              items: [
+                "Visual reference to and stylistic derivation from 'Max Headroom,' a fictional character whose intellectual property rights are held by third parties;",
+                "AI-generated synthetic voice cloning derived from publicly available recordings of the actor Matt Frewer in the role of Max Headroom;",
+                "Reference to characters and concepts from the novel Accelerando by Charles Stross;",
+                "Use of broadcast footage, imagery, and audio from the Max Headroom television series and related media as source material for derivative compositing.",
+              ],
+            },
+            {
+              type: "p",
+              text: "Client represents that this creative direction has been independently determined by Client, that Client has evaluated or elected not to obtain third-party rights clearances, and that Client accepts all intellectual property and right-of-publicity risk arising from this direction.",
+            },
+          ],
+        },
+        {
+          heading: "§2. Indemnification",
+          blocks: [
+            {
+              type: "p",
+              text: "Client shall defend, indemnify, and hold harmless Contractor (and his agents, heirs, and assigns) from and against any and all third-party claims, demands, lawsuits, regulatory actions, settlements, judgments, damages, fines, penalties, costs, and reasonable attorneys' fees arising out of or related to:",
+            },
+            {
+              type: "ul",
+              items: [
+                "Any claim of copyright infringement, trademark infringement, or unfair competition relating to the Manfred character, Max Headroom imagery, the Accelerando references, or any other third-party intellectual property used in or referenced by the Work;",
+                "Any claim of violation of the right of publicity, right of privacy, or related personal rights of Matt Frewer or any other individual whose voice, likeness, or persona is referenced or replicated in the Work, including under California Civil Code §3344, New York Civil Rights Law §§50-51, the Tennessee ELVIS Act, or any analogous statute or common-law right in any jurisdiction;",
+                "Any claim arising from violation of the terms of service of any third-party AI service used at Client's direction, including but not limited to ElevenLabs, Flora, Kling, or similar tools;",
+                "Any defamation, false light, or misrepresentation claim arising from the content of the Work as scripted or directed by Client;",
+                "Any regulatory action under securities, advertising, or consumer-protection laws relating to the marketing of ClawBank, the $CLWB token, or the Manfred character;",
+                "Any claim by Manfred LLC, Aineko LLC, or any other entity affiliated with Client or formed in connection with the Project.",
+              ],
+            },
+            {
+              type: "p",
+              text: "This indemnity applies whether the claim is based on alleged negligent, knowing, willful, or strict-liability conduct by Client, and shall not be diminished or excluded on the basis that Client knew or should have known of the alleged infringement at the time the Work was directed. Client expressly waives any defense or carveout based on willfulness.",
+            },
+            {
+              type: "p",
+              text: "Client shall assume control of the defense of any covered claim with counsel reasonably acceptable to Contractor; Contractor may participate in the defense at his own expense and shall not unreasonably withhold cooperation. Client shall not settle any claim in a manner that imposes obligations on Contractor or admits Contractor's liability or wrongdoing without Contractor's prior written consent.",
+            },
+          ],
+        },
+        {
+          heading: "§3. Limitation of Contractor's Liability",
+          blocks: [
+            {
+              type: "p",
+              text: "In no event shall Contractor's aggregate liability to Client under this Agreement, the original Agreement, or in connection with the Work exceed the total fees actually paid to Contractor by Client during the twelve (12) months preceding the claim. Contractor shall not be liable for indirect, consequential, incidental, special, exemplary, or punitive damages of any kind, including lost profits, lost revenue, lost goodwill, or business interruption, regardless of legal theory.",
+            },
+            {
+              type: "p",
+              text: "This limitation does not apply to liability for Contractor's gross negligence or willful misconduct, but does apply to all other claims, including those based in contract, tort, statute, or otherwise.",
+            },
+          ],
+        },
+        {
+          heading: "§4. Ownership and Publication",
+          blocks: [
+            {
+              type: "p",
+              text: "(a) Ownership. Upon Contractor's receipt of full payment for each deliverable, all right, title, and interest in such deliverable — including all intellectual property rights — shall vest in Client. Contractor shall execute any documents reasonably required to perfect this transfer.",
+            },
+            {
+              type: "p",
+              text: "(b) Client as Originator and Publisher. Client shall be the sole party to publish, distribute, broadcast, post, or otherwise make the Work publicly available. All publications shall name Client (or its designated entity, including Manfred LLC or Aineko LLC) as the originator. Contractor shall not be required to publish, distribute, or host the Work on Contractor's personal channels, and Client shall not represent Contractor as the originator of the Manfred character or related intellectual property.",
+            },
+            {
+              type: "p",
+              text: "(c) Portfolio Rights. Notwithstanding the foregoing, Contractor retains a perpetual, royalty-free right to display the Work in his professional portfolio, on his personal website, in client-facing presentations, and on professional networking platforms, for the purpose of demonstrating his services. Contractor shall describe the Work as a contracted production for Client and not as Contractor's authorship of the underlying character or intellectual property.",
+            },
+          ],
+        },
+        {
+          heading: "§5. Notice of Claims",
+          blocks: [
+            {
+              type: "p",
+              text: "If Contractor receives any cease-and-desist letter, takedown notice (DMCA or otherwise), legal complaint, subpoena, regulatory inquiry, or threat of legal action relating to the Work, Contractor shall provide written notice to Client within five (5) business days of receipt. Client shall thereafter assume control of the response in accordance with Section 2 above.",
+            },
+            {
+              type: "p",
+              text: "If any third-party platform (including ElevenLabs, YouTube, Twitter/X, TikTok, or similar) takes adverse action against any account, model, or asset created by Contractor in connection with the Work, Client shall reimburse Contractor for any reasonable costs of remediation, including the cost of replacing affected service accounts or assets.",
+            },
+          ],
+        },
+        {
+          heading: "§6. Representations and Warranties",
+          blocks: [
+            {
+              type: "p",
+              text: "(a) Client represents and warrants that it has the full right and authority to direct the production of the Work as specified, that it has consulted (or knowingly elected not to consult) qualified legal counsel regarding the IP and right-of-publicity considerations described in Section 1, and that Contractor's reliance on Client's creative direction is reasonable.",
+            },
+            {
+              type: "p",
+              text: "(b) Client further represents that any entity formed in connection with the Project (including Manfred LLC and Aineko LLC) is and shall be solvent and capable of meeting the indemnification obligations under this Agreement, and Client (in its individual or principal capacity) personally guarantees the indemnification obligations under Section 2.",
+            },
+            {
+              type: "p",
+              text: "(c) Contractor represents and warrants that he will perform the services in a professional manner consistent with industry standards. Contractor makes no representation or warranty regarding the legality, IP-cleanliness, or non-infringement of the Work, the underlying creative direction having been provided by Client.",
+            },
+          ],
+        },
+        {
+          heading: "§7. Insurance",
+          blocks: [
+            {
+              type: "p",
+              text: "Client shall maintain, throughout the term of this Agreement and for a period of three (3) years thereafter, media liability and/or errors-and-omissions insurance with coverage of not less than $1,000,000 per claim, naming Contractor as an additional insured for matters arising from the Work. Upon request, Client shall provide Contractor with a certificate of insurance evidencing such coverage. Where insurance is not commercially obtainable for an entity of Client's stage, Client's indemnification obligations under §2 remain in force and are backed by the personal guarantee in §6(b).",
+            },
+          ],
+        },
+        {
+          heading: "§8. Governing Law; Jurisdiction; Survival",
+          blocks: [
+            {
+              type: "p",
+              text: "(a) Governing Law. This Amendment shall be governed by the laws of the Federal Republic of Germany.",
+            },
+            {
+              type: "p",
+              text: "(b) Jurisdiction. Any dispute between the parties shall be resolved in the courts located in Berlin, Germany. Notwithstanding, Client's indemnification obligations apply to claims brought against Contractor in any jurisdiction worldwide.",
+            },
+            {
+              type: "p",
+              text: "(c) Survival. Sections 1, 2, 3, 4(b), 4(c), 5, 6, and 7 shall survive termination of this Amendment and the underlying Agreement indefinitely, and shall be binding on Client's successors, assigns, and any entity to which the Manfred or Aineko intellectual property is transferred.",
+            },
+          ],
+        },
+        {
+          heading: "§9. Entire Understanding",
+          blocks: [
+            {
+              type: "p",
+              text: "This Amendment, together with the original Contractor Services Agreement, constitutes the entire agreement between the parties with respect to the subject matter, and supersedes any prior oral or written understandings.",
+            },
+          ],
+        },
+      ],
+      signatories: [
+        ["Client (Entity)", "Fraction Software LLC, by Justice Conder"],
+        ["Personal Guarantor (per §6(b))", "Justice Conder, individually"],
+        ["Contractor", "Guilherme Maueler"],
+      ],
+      acknowledgments: [
+        "I sign this Amendment in my capacity as authorised signer for Fraction Software LLC.",
+        "I sign this Amendment in my personal capacity as personal guarantor pursuant to §6(b).",
+        "I have read and agree to the terms of this Amendment, and I consent to sign it electronically. My full name, email, and this confirmation together constitute my legal signature under the ESIGN Act and equivalent electronic signature laws.",
+      ],
+    },
   },
 };
 

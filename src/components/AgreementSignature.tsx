@@ -6,6 +6,8 @@ import type { SignedAgreement } from "@/lib/signed-agreement";
 
 type Props = {
   clientSlug: string;
+  /** Which document on the client this form signs. Defaults to "sow". */
+  documentKey?: string;
   acknowledgments: string[];
   documentVersion: string;
   initialSignature: SignedAgreement | null;
@@ -13,6 +15,7 @@ type Props = {
 
 export function AgreementSignature({
   clientSlug,
+  documentKey = "sow",
   acknowledgments,
   documentVersion,
   initialSignature,
@@ -28,6 +31,7 @@ export function AgreementSignature({
   return (
     <SignatureForm
       clientSlug={clientSlug}
+      documentKey={documentKey}
       acknowledgments={acknowledgments}
       documentVersion={documentVersion}
       onSigned={setSignature}
@@ -74,10 +78,12 @@ async function celebrate() {
 // ---------------------------------------------------------------------
 function SignatureForm({
   clientSlug,
+  documentKey,
   acknowledgments,
   onSigned,
 }: {
   clientSlug: string;
+  documentKey: string;
   acknowledgments: string[];
   documentVersion: string;
   onSigned: (s: SignedAgreement) => void;
@@ -103,6 +109,7 @@ function SignatureForm({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           clientSlug,
+          documentKey,
           name: name.trim(),
           email: email.trim(),
           acknowledgments,

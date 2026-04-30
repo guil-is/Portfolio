@@ -20,7 +20,11 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function JusticePage() {
-  const signature = await getLatestSignature("justice", justice.sow.version);
+  const sowSignature = await getLatestSignature("justice", justice.sow.version);
+  const amendmentSignatures: Record<string, Awaited<ReturnType<typeof getLatestSignature>>> = {};
+  for (const [key, doc] of Object.entries(justice.amendments ?? {})) {
+    amendmentSignatures[key] = await getLatestSignature("justice", doc.version);
+  }
 
   return (
     <>
@@ -28,7 +32,10 @@ export default async function JusticePage() {
         <SiteNav />
       </div>
       <PasswordGate password={justice.password} storageKey="for-justice-unlocked">
-        <JusticeClientPage initialSignature={signature} />
+        <JusticeClientPage
+          initialSignature={sowSignature}
+          amendmentSignatures={amendmentSignatures}
+        />
       </PasswordGate>
     </>
   );

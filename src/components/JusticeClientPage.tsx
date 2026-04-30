@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, FileSignature, Info } from "lucide-react";
+import { Clock, FileSignature, Info, ShieldAlert } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import {
@@ -21,25 +21,31 @@ import {
   type HoursPeriod,
   type InvoiceStatus,
   type PaceStatus,
+  type SignableDocument,
   type SowSection,
 } from "@/content/clients/justice";
 
-type TabKey = "hours" | "sow";
+type TabKey = "hours" | "sow" | "amendments";
 
 export function JusticeClientPage({
   initialSignature,
+  amendmentSignatures,
 }: {
   initialSignature: SignedAgreement | null;
+  amendmentSignatures?: Record<string, SignedAgreement | null>;
 }) {
   const [tab, setTab] = useState<TabKey>("hours");
+  const hasAmendments = !!justice.amendments && Object.keys(justice.amendments).length > 0;
 
   return (
     <main className="page-fade-in mx-auto w-full max-w-[880px] px-6 pt-10 pb-40 md:px-10 md:pt-16">
       <Header />
-      <Tabs tab={tab} setTab={setTab} />
+      <Tabs tab={tab} setTab={setTab} hasAmendments={hasAmendments} />
       <div className="mt-12 md:mt-16">
         {tab === "hours" ? (
           <HoursView />
+        ) : tab === "amendments" ? (
+          <AmendmentsView signatures={amendmentSignatures ?? {}} />
         ) : (
           <SowView initialSignature={initialSignature} />
         )}
@@ -83,9 +89,11 @@ function Header() {
 function Tabs({
   tab,
   setTab,
+  hasAmendments,
 }: {
   tab: TabKey;
   setTab: (t: TabKey) => void;
+  hasAmendments: boolean;
 }) {
   const items: Array<{
     key: TabKey;
@@ -94,6 +102,9 @@ function Tabs({
   }> = [
     { key: "hours", label: "Billed hours", Icon: Clock },
     { key: "sow", label: "Agreement", Icon: FileSignature },
+    ...(hasAmendments
+      ? ([{ key: "amendments", label: "Amendments", Icon: ShieldAlert }] as const)
+      : []),
   ];
   return (
     <div
@@ -473,6 +484,141 @@ function SowView({
           clientSlug="justice"
           acknowledgments={sow.acknowledgments}
           documentVersion={sow.version}
+          initialSignature={initialSignature}
+        />
+      </section>
+    </article>
+  );
+}
+
+// ---------------------------------------------------------------------
+// Amendments view
+// ---------------------------------------------------------------------
+function AmendmentsView({
+  signatures,
+}: {
+  signatures: Record<string, SignedAgreement | null>;
+}) {
+  const entries = Object.entries(justice.amendments ?? {});
+  if (entries.length === 0) {
+    return (
+      <p className="text-[0.95rem] leading-[1.7rem] text-muted">
+        No amendments yet.
+      </p>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-20">
+      {entries.map(([key, doc]) => (
+        <AmendmentBlock
+          key={key}
+          documentKey={key}
+          doc={doc}
+          initialSignature={signatures[key] ?? null}
+        />
+      ))}
+    </div>
+  );
+}
+
+function AmendmentBlock({
+  documentKey,
+  doc,
+  initialSignature,
+}: {
+  documentKey: string;
+  doc: SignableDocument;
+  initialSignature: SignedAgreement | null;
+}) {
+  const [legalOpen, setLegalOpen] = useState(false);
+  return (
+    <article className="flex flex-col gap-12">
+      <header className="flex flex-col gap-5">
+        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          Amendment · Effective {doc.effectiveDate}
+        </p>
+        <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.5rem]">
+          {doc.title ?? "Amendment"}
+        </h2>
+        <p className="max-w-[640px] text-[0.95rem] italic leading-[1.7rem] text-muted">
+          {doc.preamble}
+        </p>
+      </header>
+
+      {doc.tldr && doc.tldr.length > 0 ? (
+        <section className="flex flex-col gap-4 rounded-[16px] border border-rule bg-card/40 p-7 md:p-9">
+          <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+            TL;DR — In Plain English
+          </p>
+          {doc.tldr.map((para, i) => (
+            <p
+              key={i}
+              className="text-[0.95rem] leading-[1.7rem] text-ink"
+            >
+              {para}
+            </p>
+          ))}
+        </section>
+      ) : null}
+
+      {doc.breakdown && doc.breakdown.length > 0 ? (
+        <section className="flex flex-col gap-4">
+          <h3 className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
+            Section-by-section
+          </h3>
+          <ul className="flex flex-col">
+            {doc.breakdown.map((row, i) => (
+              <li
+                key={i}
+                className="grid grid-cols-1 gap-1 border-b border-rule-soft py-3 md:grid-cols-[260px_1fr] md:gap-6"
+              >
+                <p className="font-caption text-[12px] font-semibold uppercase tracking-[1px] text-ink">
+                  {row.section}
+                </p>
+                <p className="text-[0.95rem] leading-[1.6rem] text-muted">
+                  {row.summary}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      <section className="flex flex-col gap-4 border-t border-rule-soft pt-8">
+        <button
+          type="button"
+          onClick={() => setLegalOpen((v) => !v)}
+          aria-expanded={legalOpen}
+          className="inline-flex items-center gap-2 self-start font-caption text-[12px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink"
+        >
+          {legalOpen ? "Hide" : "Show"} full legal text
+          <span aria-hidden>{legalOpen ? "−" : "+"}</span>
+        </button>
+        {legalOpen ? (
+          <div className="flex flex-col gap-12 pt-4">
+            {doc.sections.map((s) => (
+              <SowSectionBlock key={s.heading} section={s} />
+            ))}
+            {doc.noteOnApproach ? (
+              <section className="flex flex-col gap-3">
+                <h2 className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
+                  Note on the Approach
+                </h2>
+                <p className="text-[1rem] leading-[1.75rem] text-muted">
+                  {doc.noteOnApproach}
+                </p>
+              </section>
+            ) : null}
+          </div>
+        ) : null}
+      </section>
+
+      <section className="border-t border-rule-soft pt-10">
+        <AgreementSignature
+          clientSlug="justice"
+          documentKey={documentKey}
+          acknowledgments={doc.acknowledgments}
+          documentVersion={doc.version}
           initialSignature={initialSignature}
         />
       </section>

@@ -1,20 +1,33 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getSanityWriteClient } from "@/lib/sanity-write";
-import { justice } from "@/content/clients/justice";
-import { hashSow } from "@/lib/sow-hash";
+import {
+  justice,
+  type JusticeClient,
+  type SignableDocument,
+} from "@/content/clients/justice";
+import { hashDocument } from "@/lib/sow-hash";
 import { getLatestSignature, type SignedAgreement } from "@/lib/signed-agreement";
 import { renderAgreementPdf } from "@/lib/agreement-pdf";
 
 export const runtime = "nodejs";
 
-// Map of client slug → source of truth for that client's SOW.
+// Map of client slug → source of truth for that client.
 // Add new clients here as they come online.
 const clients = { justice } as const;
 type ClientSlug = keyof typeof clients;
 
 function isClientSlug(value: string): value is ClientSlug {
   return Object.prototype.hasOwnProperty.call(clients, value);
+}
+
+/** Resolve which signable document on the client a request targets. */
+function resolveDocument(
+  client: JusticeClient,
+  documentKey: string,
+): SignableDocument | null {
+  if (documentKey === "sow") return client.sow;
+  return client.amendments?.[documentKey] ?? null;
 }
 
 function isValidEmail(email: string): boolean {
@@ -29,6 +42,7 @@ function getIp(req: Request): string {
 
 function formatConfirmationEmail(params: {
   clientName: string;
+  documentTitle: string;
   signerName: string;
   signerEmail: string;
   signedAt: string;
@@ -41,6 +55,7 @@ function formatConfirmationEmail(params: {
 }): { subject: string; html: string; text: string } {
   const {
     clientName,
+    documentTitle,
     signerName,
     signerEmail,
     signedAt,
@@ -52,12 +67,12 @@ function formatConfirmationEmail(params: {
     pdfAttached,
   } = params;
 
-  const subject = `Signed: ${clientName} × Guil Maueler — Statement of Work`;
+  const subject = `Signed: ${clientName} × Guil Maueler — ${documentTitle}`;
 
   const bulletList = acknowledgments.map((a) => `  • ${a}`).join("\n");
 
   const text = [
-    `This confirms that ${signerName} (${signerEmail}) has electronically signed the Statement of Work between Guilherme Maueler and ${clientName}.`,
+    `This confirms that ${signerName} (${signerEmail}) has electronically signed the ${documentTitle} between Guilherme Maueler and ${clientName}.`,
     "",
     `Signed at: ${signedAt}`,
     `Document version: ${documentVersion}`,
@@ -79,7 +94,7 @@ function formatConfirmationEmail(params: {
 
   const html = `
 <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#0a0a0a;line-height:1.6;max-width:560px;margin:0 auto;padding:24px;">
-  <p style="margin:0 0 16px;">This confirms that <strong>${escapeHtml(signerName)}</strong> (${escapeHtml(signerEmail)}) has electronically signed the Statement of Work between Guilherme Maueler and <strong>${escapeHtml(clientName)}</strong>.</p>
+  <p style="margin:0 0 16px;">This confirms that <strong>${escapeHtml(signerName)}</strong> (${escapeHtml(signerEmail)}) has electronically signed the ${escapeHtml(documentTitle)} between Guilherme Maueler and <strong>${escapeHtml(clientName)}</strong>.</p>
   <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;">
     <tr><td style="color:#7e7e7e;padding:6px 12px 6px 0;width:40%;">Signed at</td><td style="padding:6px 0;">${escapeHtml(signedAt)}</td></tr>
     <tr><td style="color:#7e7e7e;padding:6px 12px 6px 0;">Document version</td><td style="padding:6px 0;">${escapeHtml(documentVersion)}</td></tr>
@@ -106,6 +121,7 @@ function escapeHtml(s: string): string {
 
 type Payload = {
   clientSlug: string;
+  documentKey?: string;
   name: string;
   email: string;
   acknowledgments: string[];
@@ -120,6 +136,7 @@ export async function POST(req: Request) {
   }
 
   const clientSlug = String(body.clientSlug ?? "").trim();
+  const documentKey = String(body.documentKey ?? "sow").trim() || "sow";
   const name = String(body.name ?? "").trim();
   const email = String(body.email ?? "").trim();
   const ackChecked = Array.isArray(body.acknowledgments)
@@ -137,7 +154,15 @@ export async function POST(req: Request) {
   }
 
   const client = clients[clientSlug];
-  const requiredAcks = client.sow.acknowledgments;
+  const doc = resolveDocument(client, documentKey);
+  if (!doc) {
+    return NextResponse.json(
+      { error: `Unknown document key: ${documentKey}` },
+      { status: 400 },
+    );
+  }
+
+  const requiredAcks = doc.acknowledgments;
   const allChecked = requiredAcks.every((a) => ackChecked.includes(a));
   if (!allChecked || ackChecked.length !== requiredAcks.length) {
     return NextResponse.json(
@@ -146,7 +171,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const existing = await getLatestSignature(clientSlug, client.sow.version);
+  const existing = await getLatestSignature(clientSlug, doc.version);
   if (existing) {
     return NextResponse.json(
       { error: "This agreement version has already been signed.", existing },
@@ -154,22 +179,24 @@ export async function POST(req: Request) {
     );
   }
 
-  const documentHash = hashSow(client);
+  const documentHash = hashDocument(client, doc);
   const signedAt = new Date().toISOString();
   const ipAddress = getIp(req);
   const userAgent = req.headers.get("user-agent") ?? "unknown";
+  const docTitle = doc.title ?? "Statement of Work";
 
   let record;
   try {
     record = await getSanityWriteClient().create({
       _type: "signedAgreement",
       clientSlug,
+      documentKey,
       signerName: name,
       signerEmail: email,
       signedAt,
       ipAddress,
       userAgent,
-      documentVersion: client.sow.version,
+      documentVersion: doc.version,
       documentHash,
       acknowledgments: requiredAcks,
     });
@@ -184,12 +211,13 @@ export async function POST(req: Request) {
   const signature: SignedAgreement = {
     _id: record._id,
     clientSlug,
+    documentKey,
     signerName: name,
     signerEmail: email,
     signedAt,
     ipAddress,
     userAgent,
-    documentVersion: client.sow.version,
+    documentVersion: doc.version,
     documentHash,
     acknowledgments: requiredAcks,
   };
@@ -198,7 +226,7 @@ export async function POST(req: Request) {
   // still return success since the Sanity record is the legal artifact.
   let pdfBuffer: Buffer | null = null;
   try {
-    pdfBuffer = await renderAgreementPdf(client, signature);
+    pdfBuffer = await renderAgreementPdf(client, doc, signature);
     console.log(
       `[sign-agreement] PDF rendered: ${pdfBuffer.byteLength} bytes`,
     );
@@ -220,12 +248,13 @@ export async function POST(req: Request) {
       const resend = new Resend(resendKey);
       const mail = formatConfirmationEmail({
         clientName: client.clientName,
+        documentTitle: docTitle,
         signerName: name,
         signerEmail: email,
         signedAt,
         ipAddress,
         userAgent,
-        documentVersion: client.sow.version,
+        documentVersion: doc.version,
         documentHash,
         acknowledgments: requiredAcks,
         pdfAttached: !!pdfBuffer,
@@ -240,7 +269,7 @@ export async function POST(req: Request) {
         attachments: pdfBuffer
           ? [
               {
-                filename: `${clientSlug}-sow-${client.sow.version}-signed.pdf`,
+                filename: `${clientSlug}-${documentKey}-${doc.version}-signed.pdf`,
                 content: pdfBuffer,
               },
             ]

@@ -13,6 +13,14 @@ function isClientSlug(value: string): value is ClientSlug {
   return Object.prototype.hasOwnProperty.call(clients, value);
 }
 
+function resolveDoc(
+  client: (typeof clients)[ClientSlug],
+  documentKey: string,
+) {
+  if (documentKey === "sow") return client.sow;
+  return client.amendments?.[documentKey] ?? null;
+}
+
 /**
  * Re-download the signed PDF for a given signature record.
  *
@@ -43,10 +51,18 @@ export async function GET(req: Request) {
   }
 
   const client = clients[signature.clientSlug];
+  const documentKey = signature.documentKey ?? "sow";
+  const doc = resolveDoc(client, documentKey);
+  if (!doc) {
+    return NextResponse.json(
+      { error: `Unknown document key: ${documentKey}` },
+      { status: 400 },
+    );
+  }
 
   let pdf: Buffer;
   try {
-    pdf = await renderAgreementPdf(client, signature);
+    pdf = await renderAgreementPdf(client, doc, signature);
   } catch (err) {
     console.error("[sign-agreement/pdf] render failed", err);
     return NextResponse.json(
@@ -55,7 +71,7 @@ export async function GET(req: Request) {
     );
   }
 
-  const filename = `${signature.clientSlug}-sow-${signature.documentVersion}-signed.pdf`;
+  const filename = `${signature.clientSlug}-${documentKey}-${signature.documentVersion}-signed.pdf`;
 
   return new NextResponse(new Uint8Array(pdf), {
     status: 200,

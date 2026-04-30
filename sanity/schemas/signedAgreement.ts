@@ -21,6 +21,13 @@ export const signedAgreement = defineType({
       validation: (r) => r.required(),
     }),
     defineField({
+      name: "documentKey",
+      title: "Document key",
+      type: "string",
+      description:
+        "Which signable doc on the client (e.g. 'sow', 'manfred-amendment'). Defaults to 'sow' for legacy records.",
+    }),
+    defineField({
       name: "signerName",
       title: "Signer full name",
       type: "string",
