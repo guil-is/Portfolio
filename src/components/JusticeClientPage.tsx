@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Clock, FileSignature, Info, ShieldAlert } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
 import type { SignedAgreement } from "@/lib/signed-agreement";
@@ -36,6 +36,31 @@ export function JusticeClientPage({
 }) {
   const [tab, setTab] = useState<TabKey>("hours");
   const hasAmendments = !!justice.amendments && Object.keys(justice.amendments).length > 0;
+
+  // Deep-link support — read the URL hash on mount and on hashchange.
+  // /for/justice#amendments, #sow, or #hours map to their respective tabs.
+  useEffect(() => {
+    function syncFromHash() {
+      const hash = window.location.hash.replace(/^#/, "");
+      if (hash === "amendments" || hash === "sow" || hash === "hours") {
+        setTab(hash);
+      }
+    }
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, []);
+
+  // Reflect the active tab in the URL hash so a refresh / share preserves
+  // it. `replaceState` instead of pushState so the browser back button
+  // doesn't get cluttered with tab toggles.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const desired = `#${tab}`;
+    if (window.location.hash !== desired) {
+      window.history.replaceState(null, "", desired);
+    }
+  }, [tab]);
 
   return (
     <main className="page-fade-in mx-auto w-full max-w-[880px] px-6 pt-10 pb-40 md:px-10 md:pt-16">
