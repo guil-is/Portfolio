@@ -38,6 +38,9 @@ export type HoursPeriod = {
   items: HoursItem[];
   /** Pass-through expenses billed at cost (fonts, plugins, stock, etc.). */
   expenses?: Expense[];
+  /** ISO date the period was last edited. Bump on every change so the
+   * "Updated" line on the dashboard reflects real activity. */
+  lastUpdated?: string;
   /** Optional one-line context shown alongside the period. */
   note?: string;
   /** Invoice metadata. Omit while a period is still in progress. */
@@ -114,6 +117,7 @@ export const justice: JusticeClient = {
       label: "Apr 20 – May 1, 2026",
       weekStart: "2026-04-20",
       weeks: 2,
+      lastUpdated: "2026-04-30",
       items: [
         { project: "Clawbank", description: "Blog page", hours: 1.67 },
         {
@@ -637,12 +641,15 @@ export function lastPaidInvoice(
   return paid[0] ?? null;
 }
 
-/** Most recent invoice event (issued or paid) across all periods. */
+/** Most recent activity across all periods — looks at invoice events
+ * (issued/paid) AND any explicit `lastUpdated` field. Drives the
+ * "Updated …" line on the dashboard. */
 export function lastInvoiceActivity(periods: HoursPeriod[]): string | null {
   const dates: string[] = [];
   for (const p of periods) {
     if (p.invoice?.issuedAt) dates.push(p.invoice.issuedAt);
     if (p.invoice?.paidAt) dates.push(p.invoice.paidAt);
+    if (p.lastUpdated) dates.push(p.lastUpdated);
   }
   if (dates.length === 0) return null;
   dates.sort((a, b) => b.localeCompare(a));
