@@ -203,8 +203,13 @@ function HoursView() {
       </div>
 
       <section className="flex flex-col gap-12">
-        {periods.map((p) => (
-          <PeriodBlock key={p.weekStart} period={p} currentYear={currentYear} />
+        {periods.map((p, i) => (
+          <PeriodBlock
+            key={p.weekStart}
+            period={p}
+            currentYear={currentYear}
+            defaultExpanded={i === 0}
+          />
         ))}
       </section>
     </div>
@@ -279,22 +284,46 @@ function Stat({
 function PeriodBlock({
   period,
   currentYear,
+  defaultExpanded = false,
 }: {
   period: HoursPeriod;
   currentYear: number;
+  defaultExpanded?: boolean;
 }) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const total = periodTotal(period);
   const weeks = periodWeeks(period);
   const project = singleProject(period);
   const status = invoiceStatus(period);
   const pace = paceStatus(period, justice.engagement);
   const label = displayLabel(period.label, currentYear);
+  // Display copy: items sorted by hours desc, ties broken by description.
+  const sortedItems = [...period.items].sort(
+    (a, b) =>
+      b.hours - a.hours || a.description.localeCompare(b.description),
+  );
+  const sortedExpenses = period.expenses
+    ? [...period.expenses].sort((a, b) => b.amountUsd - a.amountUsd)
+    : [];
 
   return (
     <article className="flex flex-col gap-5">
       <header className="flex flex-col gap-3 border-b border-rule-soft pb-4">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-          <h3 className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          className="-mx-1 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 rounded-md px-1 py-0.5 text-left transition-colors hover:bg-card/40"
+        >
+          <h3 className="flex items-baseline gap-2 font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
+            <span
+              aria-hidden
+              className={`inline-block text-[0.875rem] text-muted transition-transform duration-200 ${
+                expanded ? "rotate-90" : ""
+              }`}
+            >
+              ▸
+            </span>
             {label}
           </h3>
           <p className="flex items-baseline gap-2">
@@ -305,7 +334,7 @@ function PeriodBlock({
               {total.toFixed(1)} h
             </span>
           </p>
-        </div>
+        </button>
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[10px]">
           <Pill label={`${weeks} ${weeks === 1 ? "week" : "weeks"}`} />
           {project ? <Pill label={project} /> : null}
@@ -316,68 +345,72 @@ function PeriodBlock({
         </div>
       </header>
 
-      {period.note ? (
-        <p className="flex items-start gap-2 text-[0.9rem] italic leading-[1.55rem] text-muted">
-          <Info
-            className="mt-[3px] h-3.5 w-3.5 shrink-0 not-italic"
-            strokeWidth={1.75}
-            aria-hidden
-          />
-          <span>{period.note}</span>
-        </p>
-      ) : null}
-
-      <ul className="flex flex-col">
-        {period.items.map((item, i) => (
-          <li
-            key={i}
-            className="flex items-start justify-between gap-6 border-b border-rule-soft py-3 last:border-b-0"
-          >
-            <div className="flex min-w-0 items-start gap-3">
-              {project ? null : <ProjectChip name={item.project} />}
-              <p className="text-[0.95rem] leading-[1.6rem] text-ink">
-                {item.description}
-              </p>
-            </div>
-            <p className="shrink-0 font-caption text-[13px] font-semibold tabular-nums text-ink">
-              {item.hours.toFixed(1)}&nbsp;h
+      {expanded ? (
+        <>
+          {period.note ? (
+            <p className="flex items-start gap-2 text-[0.9rem] italic leading-[1.55rem] text-muted">
+              <Info
+                className="mt-[3px] h-3.5 w-3.5 shrink-0 not-italic"
+                strokeWidth={1.75}
+                aria-hidden
+              />
+              <span>{period.note}</span>
             </p>
-          </li>
-        ))}
-      </ul>
+          ) : null}
 
-      {period.expenses && period.expenses.length > 0 ? (
-        <div className="flex flex-col gap-2 pt-2">
-          <h4 className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
-            Expenses (billed at cost)
-          </h4>
           <ul className="flex flex-col">
-            {period.expenses.map((e, i) => (
+            {sortedItems.map((item, i) => (
               <li
                 key={i}
                 className="flex items-start justify-between gap-6 border-b border-rule-soft py-3 last:border-b-0"
               >
                 <div className="flex min-w-0 items-start gap-3">
-                  {project ? null : <ProjectChip name={e.project} />}
+                  {project ? null : <ProjectChip name={item.project} />}
                   <p className="text-[0.95rem] leading-[1.6rem] text-ink">
-                    {e.description}
+                    {item.description}
                   </p>
                 </div>
                 <p className="shrink-0 font-caption text-[13px] font-semibold tabular-nums text-ink">
-                  ${e.amountUsd.toFixed(2)}
+                  {item.hours.toFixed(1)}&nbsp;h
                 </p>
               </li>
             ))}
-            <li className="flex items-start justify-between gap-6 py-3">
-              <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-                Expenses subtotal
-              </p>
-              <p className="shrink-0 font-caption text-[13px] font-semibold tabular-nums text-ink">
-                ${periodExpenses(period).toFixed(2)}
-              </p>
-            </li>
           </ul>
-        </div>
+
+          {sortedExpenses.length > 0 ? (
+            <div className="flex flex-col gap-2 pt-2">
+              <h4 className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
+                Expenses (billed at cost)
+              </h4>
+              <ul className="flex flex-col">
+                {sortedExpenses.map((e, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start justify-between gap-6 border-b border-rule-soft py-3 last:border-b-0"
+                  >
+                    <div className="flex min-w-0 items-start gap-3">
+                      {project ? null : <ProjectChip name={e.project} />}
+                      <p className="text-[0.95rem] leading-[1.6rem] text-ink">
+                        {e.description}
+                      </p>
+                    </div>
+                    <p className="shrink-0 font-caption text-[13px] font-semibold tabular-nums text-ink">
+                      ${e.amountUsd.toFixed(2)}
+                    </p>
+                  </li>
+                ))}
+                <li className="flex items-start justify-between gap-6 py-3">
+                  <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+                    Expenses subtotal
+                  </p>
+                  <p className="shrink-0 font-caption text-[13px] font-semibold tabular-nums text-ink">
+                    ${periodExpenses(period).toFixed(2)}
+                  </p>
+                </li>
+              </ul>
+            </div>
+          ) : null}
+        </>
       ) : null}
     </article>
   );
