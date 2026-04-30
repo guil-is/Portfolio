@@ -543,6 +543,10 @@ function AmendmentBlock({
         <p className="max-w-[640px] text-[0.95rem] italic leading-[1.7rem] text-muted">
           {doc.preamble}
         </p>
+        <p className="text-[0.85rem] leading-[1.55rem] text-muted">
+          Issued by Guilherme Maueler. This document constitutes the offer;
+          the Client&rsquo;s electronic signature below constitutes acceptance.
+        </p>
       </header>
 
       {doc.tldr && doc.tldr.length > 0 ? (

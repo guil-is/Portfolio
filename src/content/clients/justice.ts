@@ -312,25 +312,21 @@ export const justice: JusticeClient = {
         "This Amendment supplements and modifies the Contractor Services Agreement between the parties dated March 26, 2026. To the extent any terms in this Amendment conflict with the original, this Amendment controls.",
       effectiveDate: "Upon signature by both parties (drafted April 30, 2026)",
       tldr: [
-        "The Manfred work touches third-party IP (Max Headroom imagery, Matt Frewer's voice, Accelerando references). The strategy of using these references — including the public expectation that we might get sued for it — was decided by ClawBank, not by Guil. This amendment makes that reality match the paperwork.",
-        "If anyone sues over the Manfred work, ClawBank pays the lawyers and any judgments — not Guil. That includes copyright, voice cloning, character likeness, and any platform actions (e.g. ElevenLabs, YouTube takedowns).",
-        "Justice personally guarantees this so it holds even if the LLCs run dry.",
-        "Guil owns nothing of the Manfred or Aineko IP after delivery — ClawBank does. ClawBank is the public publisher. Guil's name doesn't go on it as creator/owner.",
-        "Guil can still show the work in his portfolio as contracted production work — just not as 'Guil created Manfred.'",
-        "If Guil ever receives a legal notice, threat, or takedown, he tells Justice within 5 business days and Justice takes over the response.",
-        "These protections last forever — they don't disappear if the agreement ends or the entity is sold.",
-        "This isn't aggressive. It's standard contractor hygiene for any creative work that involves known IP risk. It just spells out what we've all already verbally agreed to.",
+        "The Manfred work uses third-party references (Max Headroom imagery, Matt Frewer's voice, Accelerando) under ClawBank's creative direction. ClawBank assumes the IP and right-of-publicity risk that comes with that direction.",
+        "If a third party sues over the Manfred work, ClawBank covers defence and any judgement — not Guil. Justice personally guarantees this so it holds even if the LLCs run dry.",
+        "ClawBank owns and publishes the Manfred / Aineko IP. Guil keeps the right to show the production work in his portfolio.",
+        "If Guil receives a legal notice or takedown, he flags it within 5 business days and Justice takes over the response.",
       ],
       breakdown: [
         {
           section: "1. Acknowledgment of IP Context",
           summary:
-            "Names exactly what IP is involved (Max Headroom, Frewer's voice, Accelerando) and confirms ClawBank decided to use them knowing the risk.",
+            "Names which third-party references the Work involves (Max Headroom, Frewer's voice, Accelerando) and confirms ClawBank directed their use.",
         },
         {
           section: "2. Indemnification",
           summary:
-            "If a third party sues, ClawBank pays everything — defense, settlement, judgment. Includes the explicit 'willfulness' waiver.",
+            "If a third party sues, ClawBank pays everything — defence, settlement, judgement.",
         },
         {
           section: "3. Limit on Guil's Liability",
