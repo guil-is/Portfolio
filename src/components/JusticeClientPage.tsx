@@ -613,15 +613,31 @@ function AmendmentBlock({
         </section>
       ) : null}
 
-      <section className="flex flex-col gap-4 border-t border-rule-soft pt-8">
+      <section className="flex flex-col gap-6 border-t border-rule-soft pt-8">
         <button
           type="button"
           onClick={() => setLegalOpen((v) => !v)}
           aria-expanded={legalOpen}
-          className="inline-flex items-center gap-2 self-start font-caption text-[12px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink"
+          className="group inline-flex w-full items-center justify-between gap-3 rounded-[12px] border border-rule bg-card/40 px-5 py-4 text-left transition-colors hover:border-ink hover:bg-card md:px-6 md:py-5"
         >
-          {legalOpen ? "Hide" : "Show"} full legal text
-          <span aria-hidden>{legalOpen ? "−" : "+"}</span>
+          <span className="flex flex-col gap-0.5">
+            <span className="font-display text-[1rem] font-bold text-ink md:text-[1.125rem]">
+              {legalOpen ? "Hide full legal text" : "Read the full legal text"}
+            </span>
+            <span className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+              {legalOpen
+                ? `${doc.sections.length} sections — collapse`
+                : `${doc.sections.length} sections — expand to read in full`}
+            </span>
+          </span>
+          <span
+            aria-hidden
+            className={`text-[1.25rem] leading-none text-muted transition-transform duration-200 group-hover:text-ink ${
+              legalOpen ? "rotate-45" : ""
+            }`}
+          >
+            +
+          </span>
         </button>
         {legalOpen ? (
           <div className="flex flex-col gap-12 pt-4">
