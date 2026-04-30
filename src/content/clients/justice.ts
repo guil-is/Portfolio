@@ -122,7 +122,7 @@ export const justice: JusticeClient = {
           hours: 1,
         },
         { project: "Clawbank", description: "CLI teaser video", hours: 3 },
-        { project: "Clawbank", description: "Social assets", hours: 1 },
+        { project: "Clawbank", description: "Social media assets", hours: 1.67 },
         {
           project: "Clawbank",
           description: "Visual assets — Manfred (AI agent)",
