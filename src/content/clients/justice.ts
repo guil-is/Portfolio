@@ -145,6 +145,7 @@ export const justice: JusticeClient = {
           description: "Documentation (IP contract amendment)",
           hours: 0.25,
         },
+        { project: "Clawbank", description: "Research", hours: 0.15 },
       ],
       expenses: [
         {
