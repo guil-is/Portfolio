@@ -167,6 +167,7 @@ export const justice: JusticeClient = {
       invoice: {
         number: "INV-26006",
         issuedAt: "2026-04-30",
+        paidAt: "2026-04-30",
       },
     },
     {
