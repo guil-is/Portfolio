@@ -114,6 +114,27 @@ export const justice: JusticeClient = {
   // Most recent period first. Add new periods at the top.
   hoursLog: [
     {
+      label: "May 11 – 15, 2026",
+      weekStart: "2026-05-11",
+      weeks: 1,
+      lastUpdated: "2026-05-11",
+      items: [
+        { project: "Clawbank", description: "Manfred video", hours: 4 },
+        { project: "Clawbank", description: "Meeting", hours: 0.5 },
+      ],
+    },
+    {
+      label: "May 4 – 8, 2026",
+      weekStart: "2026-05-04",
+      weeks: 1,
+      lastUpdated: "2026-05-08",
+      items: [
+        { project: "Clawbank", description: "Manfred video", hours: 12 },
+        { project: "Clawbank", description: "Website glowup", hours: 6.5 },
+        { project: "Clawbank", description: "Meetings", hours: 1.5 },
+      ],
+    },
+    {
       label: "Apr 20 – May 1, 2026",
       weekStart: "2026-04-20",
       weeks: 2,
