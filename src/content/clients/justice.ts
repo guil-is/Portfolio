@@ -108,18 +108,20 @@ export const justice: JusticeClient = {
     startDate: "March 26, 2026",
     rateUsd: 120,
     weeklyHoursMin: 5,
-    weeklyHoursMax: 10,
+    weeklyHoursMax: 20,
   },
 
   // Most recent period first. Add new periods at the top.
   hoursLog: [
     {
-      label: "May 11 – 15, 2026",
-      weekStart: "2026-05-11",
-      weeks: 1,
+      label: "May 4 – 15, 2026",
+      weekStart: "2026-05-04",
+      weeks: 2,
       lastUpdated: "2026-05-12",
       items: [
-        { project: "Clawbank", description: "Manfred video", hours: 4 },
+        { project: "Clawbank", description: "Manfred video", hours: 16 },
+        { project: "Clawbank", description: "Website glowup", hours: 6.5 },
+        { project: "Clawbank", description: "Meetings", hours: 2 },
         {
           project: "Clawbank",
           description: "Manfred new socials assets (twitter cover)",
@@ -130,23 +132,11 @@ export const justice: JusticeClient = {
           description: "Manfred ep 2 vertical format export",
           hours: 0.5,
         },
-        { project: "Clawbank", description: "Meeting", hours: 0.5 },
         {
           project: "Clawbank",
           description: "Wiretap landing page design",
           hours: 1.5,
         },
-      ],
-    },
-    {
-      label: "May 4 – 8, 2026",
-      weekStart: "2026-05-04",
-      weeks: 1,
-      lastUpdated: "2026-05-08",
-      items: [
-        { project: "Clawbank", description: "Manfred video", hours: 12 },
-        { project: "Clawbank", description: "Website glowup", hours: 6.5 },
-        { project: "Clawbank", description: "Meetings", hours: 1.5 },
       ],
     },
     {
@@ -276,7 +266,7 @@ export const justice: JusticeClient = {
             type: "kv",
             rows: [
               ["Hourly rate", "$120 USD"],
-              ["Weekly allocation", "5–10 hours ($600–1,200 / week cap)"],
+              ["Weekly allocation", "5–20 hours ($600–2,400 / week cap)"],
             ],
           },
           {
