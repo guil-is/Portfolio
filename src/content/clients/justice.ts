@@ -117,9 +117,19 @@ export const justice: JusticeClient = {
       label: "May 11 – 15, 2026",
       weekStart: "2026-05-11",
       weeks: 1,
-      lastUpdated: "2026-05-11",
+      lastUpdated: "2026-05-12",
       items: [
         { project: "Clawbank", description: "Manfred video", hours: 4 },
+        {
+          project: "Clawbank",
+          description: "Manfred new socials assets (twitter cover)",
+          hours: 0.5,
+        },
+        {
+          project: "Clawbank",
+          description: "Manfred ep 2 vertical format export",
+          hours: 0.5,
+        },
         { project: "Clawbank", description: "Meeting", hours: 0.5 },
       ],
     },
