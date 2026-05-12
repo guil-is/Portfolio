@@ -135,7 +135,7 @@ function Tabs({
     <div
       role="tablist"
       aria-label="Client page sections"
-      className="flex border-b border-rule"
+      className="flex overflow-x-auto border-b border-rule [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
     >
       {items.map((item) => {
         const active = tab === item.key;
@@ -147,7 +147,7 @@ function Tabs({
             aria-selected={active}
             onClick={() => setTab(item.key)}
             className={[
-              "relative -mb-px inline-flex items-center gap-2 px-5 py-4 font-caption text-[12px] font-semibold uppercase tracking-[1.5px] transition-colors md:px-6",
+              "relative -mb-px inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-4 py-4 font-caption text-[12px] font-semibold uppercase tracking-[1.5px] transition-colors md:px-6",
               active ? "text-ink" : "text-muted hover:text-ink",
             ].join(" ")}
           >
