@@ -131,6 +131,11 @@ export const justice: JusticeClient = {
           hours: 0.5,
         },
         { project: "Clawbank", description: "Meeting", hours: 0.5 },
+        {
+          project: "Clawbank",
+          description: "Wiretap landing page design",
+          hours: 2.5,
+        },
       ],
     },
     {
