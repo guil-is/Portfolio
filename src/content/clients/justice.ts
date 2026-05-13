@@ -117,7 +117,7 @@ export const justice: JusticeClient = {
       label: "May 4 – 15, 2026",
       weekStart: "2026-05-04",
       weeks: 2,
-      lastUpdated: "2026-05-12",
+      lastUpdated: "2026-05-13",
       items: [
         { project: "Clawbank", description: "Manfred video", hours: 16 },
         { project: "Clawbank", description: "Website glowup", hours: 6.5 },
@@ -135,7 +135,7 @@ export const justice: JusticeClient = {
         {
           project: "Clawbank",
           description: "Wiretap landing page design",
-          hours: 1.5,
+          hours: 5.5,
         },
       ],
     },
