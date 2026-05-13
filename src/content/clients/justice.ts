@@ -138,6 +138,14 @@ export const justice: JusticeClient = {
           hours: 5.5,
         },
       ],
+      expenses: [
+        {
+          project: "Clawbank",
+          description:
+            "LOW RES PRESETS by Editing Visuals — VHS / low-res look for AI-generated Manfred clips",
+          amountUsd: 57,
+        },
+      ],
     },
     {
       label: "Apr 20 – May 1, 2026",
