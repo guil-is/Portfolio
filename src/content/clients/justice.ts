@@ -1,7 +1,7 @@
 /**
  * Data for the private client page at /for/justice.
  *
- * Update `hoursLog` after each bi-weekly invoice cycle:
+ * Update `hoursLog` after each weekly invoice cycle:
  * prepend a new period block at the top of the array so the most
  * recent period renders first on the page.
  */
@@ -33,7 +33,7 @@ export type HoursPeriod = {
   label: string;
   /** ISO date for the Monday of the first week (used for sorting). */
   weekStart: string;
-  /** Number of weeks the period covers. Defaults to 2 (bi-weekly). */
+  /** Number of weeks the period covers. Defaults to 1 (weekly). */
   weeks?: number;
   items: HoursItem[];
   /** Pass-through expenses billed at cost (fonts, plugins, stock, etc.). */
@@ -578,7 +578,7 @@ export const justice: JusticeClient = {
 
 // -------- Derived helpers --------
 
-export const DEFAULT_PERIOD_WEEKS = 2;
+export const DEFAULT_PERIOD_WEEKS = 1;
 
 export function periodWeeks(p: HoursPeriod): number {
   return p.weeks ?? DEFAULT_PERIOD_WEEKS;
