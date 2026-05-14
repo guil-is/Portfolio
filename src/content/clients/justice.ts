@@ -1,7 +1,7 @@
 /**
  * Data for the private client page at /for/justice.
  *
- * Update `hoursLog` after each bi-weekly invoice cycle:
+ * Update `hoursLog` after each weekly invoice cycle:
  * prepend a new period block at the top of the array so the most
  * recent period renders first on the page.
  */
@@ -33,7 +33,7 @@ export type HoursPeriod = {
   label: string;
   /** ISO date for the Monday of the first week (used for sorting). */
   weekStart: string;
-  /** Number of weeks the period covers. Defaults to 2 (bi-weekly). */
+  /** Number of weeks the period covers. Defaults to 1 (weekly). */
   weeks?: number;
   items: HoursItem[];
   /** Pass-through expenses billed at cost (fonts, plugins, stock, etc.). */
@@ -117,11 +117,11 @@ export const justice: JusticeClient = {
       label: "May 4 – 15, 2026",
       weekStart: "2026-05-04",
       weeks: 2,
-      lastUpdated: "2026-05-13",
+      lastUpdated: "2026-05-14",
       items: [
         { project: "Clawbank", description: "Manfred video", hours: 16 },
         { project: "Clawbank", description: "Website glowup", hours: 6.5 },
-        { project: "Clawbank", description: "Meetings", hours: 2 },
+        { project: "Clawbank", description: "Meetings", hours: 2.5 },
         {
           project: "Clawbank",
           description: "Manfred new socials assets (twitter cover)",
@@ -135,7 +135,15 @@ export const justice: JusticeClient = {
         {
           project: "Clawbank",
           description: "Wiretap landing page design",
-          hours: 5.5,
+          hours: 9,
+        },
+      ],
+      expenses: [
+        {
+          project: "Clawbank",
+          description:
+            "LOW RES PRESETS by Editing Visuals — VHS / low-res look for AI-generated Manfred clips",
+          amountUsd: 57,
         },
       ],
     },
@@ -570,7 +578,7 @@ export const justice: JusticeClient = {
 
 // -------- Derived helpers --------
 
-export const DEFAULT_PERIOD_WEEKS = 2;
+export const DEFAULT_PERIOD_WEEKS = 1;
 
 export function periodWeeks(p: HoursPeriod): number {
   return p.weeks ?? DEFAULT_PERIOD_WEEKS;

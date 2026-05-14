@@ -20,9 +20,9 @@
 
 # Hours log updates (Justice)
 
-- Bi-weekly cadence — one period block per invoice cycle.
+- Weekly cadence — one period block per invoice cycle. (Switched from bi-weekly on 2026-05-14 at the client's request; periods through May 4–15 stay bi-weekly.)
 - Prepend a new period to the top of `hoursLog` in `src/content/clients/justice.ts`. Shape:
-  `{ label, weekStart, weeks: 2, lastUpdated, items: [{ project, description, hours }, ...], expenses?, invoice?, note? }`
+  `{ label, weekStart, weeks: 1, lastUpdated, items: [{ project, description, hours }, ...], expenses?, invoice?, note? }`
 - `invoice`: `{ number?, issuedAt, paidAt? }`. Omit while the period is still in progress; add when issued; set `paidAt` when payment lands.
 - `lastUpdated`: ISO date string. **Bump it on every edit** to a period (new items, expense additions, descriptions tweaked, etc.) so the dashboard's "Updated …" line reflects real activity. Used by `lastInvoiceActivity()`.
 - `expenses`: optional `[{ project, description, amountUsd }, ...]` — pass-through costs billed at cost (fonts, plugins, stock).
