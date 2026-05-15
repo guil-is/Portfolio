@@ -117,7 +117,7 @@ export const justice: JusticeClient = {
       label: "May 4 – 15, 2026",
       weekStart: "2026-05-04",
       weeks: 2,
-      lastUpdated: "2026-05-14",
+      lastUpdated: "2026-05-15",
       items: [
         { project: "Clawbank", description: "Manfred video", hours: 16 },
         { project: "Clawbank", description: "Website glowup", hours: 6.5 },
@@ -146,6 +146,10 @@ export const justice: JusticeClient = {
           amountUsd: 57,
         },
       ],
+      invoice: {
+        number: "INV-26007",
+        issuedAt: "2026-05-15",
+      },
     },
     {
       label: "Apr 20 – May 1, 2026",
