@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { site } from "@/content/site";
 import { CtaButton } from "./CtaButton";
 import { SocialIconsRow } from "./SocialIconsRow";
@@ -19,6 +19,7 @@ type HeroProps = {
 };
 
 const SWAP_THRESHOLD_PX = 80;
+const AUTO_SWAP_MS = 4000;
 
 export function Hero({
   headline = site.introHeading,
@@ -30,6 +31,7 @@ export function Hero({
 }: HeroProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const lastSwapPos = useRef<{ x: number; y: number } | null>(null);
+  const autoSwapTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   function pickNextIndex(current: number | null): number {
     if (hoverImages.length <= 1) return 0;
@@ -40,10 +42,27 @@ export function Hero({
     return next;
   }
 
+  function startAutoSwap() {
+    stopAutoSwap();
+    autoSwapTimer.current = setInterval(() => {
+      setActiveIndex((cur) => pickNextIndex(cur));
+    }, AUTO_SWAP_MS);
+  }
+
+  function stopAutoSwap() {
+    if (autoSwapTimer.current) {
+      clearInterval(autoSwapTimer.current);
+      autoSwapTimer.current = null;
+    }
+  }
+
+  useEffect(() => stopAutoSwap, []);
+
   function onPointerEnter(e: React.PointerEvent<HTMLDivElement>) {
     if (e.pointerType !== "mouse" || hoverImages.length === 0) return;
     lastSwapPos.current = { x: e.clientX, y: e.clientY };
     setActiveIndex(pickNextIndex(null));
+    startAutoSwap();
   }
 
   function onPointerMove(e: React.PointerEvent<HTMLDivElement>) {
@@ -59,11 +78,13 @@ export function Hero({
     if (Math.hypot(dx, dy) >= SWAP_THRESHOLD_PX) {
       lastSwapPos.current = { x: e.clientX, y: e.clientY };
       setActiveIndex((cur) => pickNextIndex(cur));
+      startAutoSwap();
     }
   }
 
   function onPointerLeave() {
     lastSwapPos.current = null;
+    stopAutoSwap();
     setActiveIndex(null);
   }
 
