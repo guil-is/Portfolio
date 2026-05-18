@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     siteName: site.name,
     images: [
       {
-        url: "/guil_og_image.jpg",
+        url: "/Portfolio%20OpenGraph.jpg",
         width: 1920,
         height: 1080,
         alt: "Guil Maueler | Fractional Design Partner",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     title: site.metaTitle,
     description: site.description,
     creator: "@guil_is",
-    images: ["/guil_og_image.jpg"],
+    images: ["/Portfolio%20OpenGraph.jpg"],
   },
   // icons left to Next.js auto-detection — it picks up
   // src/app/icon.svg and src/app/apple-icon.png automatically.
