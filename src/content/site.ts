@@ -28,7 +28,7 @@ export const site = {
   title: "Fractional Design Partner",
   description:
     "Brand, product, and everything in between for mission\u2011driven teams building at the edge of what\u2019s possible. Based in Berlin.",
-  metaTitle: "Guil Maueler \u2014 Design partner for early\u2011stage teams",
+  metaTitle: "Guil Maueler \u2014 Design partner for ambitious teams",
 
   introHeading:
     "Design partner for ambitious teams, building at the edge of what\u2019s possible.",
