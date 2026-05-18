@@ -22,7 +22,7 @@ export function ClientLogos() {
         </p>
         <Link
           href={viewAllHref}
-          className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink"
+          className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted transition-colors hover:text-ink"
         >
           {viewAllLabel}
         </Link>
