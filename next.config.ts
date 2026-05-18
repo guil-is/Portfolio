@@ -18,11 +18,6 @@ const nextConfig: NextConfig = {
         destination: "/for/odyssey",
         permanent: true,
       },
-      {
-        source: "/available",
-        destination: "https://cal.com/guil-is",
-        permanent: false,
-      },
     ];
   },
 };
