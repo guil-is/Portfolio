@@ -117,7 +117,7 @@ export const justice: JusticeClient = {
       label: "May 18 – 22, 2026",
       weekStart: "2026-05-18",
       weeks: 1,
-      lastUpdated: "2026-05-15",
+      lastUpdated: "2026-05-18",
       items: [
         {
           project: "Clawbank",
