@@ -31,7 +31,7 @@ export const site = {
   metaTitle: "Guil Maueler \u2014 Design partner for early\u2011stage teams",
 
   introHeading:
-    "Design partner for early\u2011stage teams building at the edge of what\u2019s possible.",
+    "Design partner for ambitious teams, building at the edge of what\u2019s possible.",
 
   hero: {
     portrait: "/guil_prof_2026_3.jpeg",
@@ -93,7 +93,7 @@ export const site = {
   howIWork: {
     heading: "How I work",
     intro:
-      "I work as a design co\u2011founder for your earliest phase: figuring out what the thing is and setting the visual bar, so by the time you bring on your first full\u2011time designer, they inherit a foundation, not a mess.",
+      "I work as an embedded design partner for the 0\u21921 phase: figuring out what the thing is and setting the visual bar, so by the time your team is ready to scale up, they inherit a solid foundation.",
     items: [
       {
         title: "Brand & Identity",
