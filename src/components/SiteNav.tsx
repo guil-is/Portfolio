@@ -19,7 +19,6 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Home", href: "/", match: (p) => p === "/" },
   {
     label: "Work",
     href: "/#work",
