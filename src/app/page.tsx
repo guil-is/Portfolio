@@ -8,6 +8,7 @@ import { CtaFooter } from "@/components/CtaFooter";
 import { PageHeader } from "@/components/PageHeader";
 import {
   flattenTestimonial,
+  getAllProjects,
   getAllTestimonials,
   getSiteSettings,
 } from "@/lib/queries";
@@ -24,6 +25,11 @@ export default async function Home() {
   const testimonials = sanityTestimonials.length
     ? sanityTestimonials.map(flattenTestimonial)
     : siteTestimonials;
+
+  const sanityProjects = await getAllProjects().catch(() => []);
+  const hoverImages = sanityProjects
+    .filter((p) => !!p.gridImage)
+    .map((p) => ({ src: p.gridImage!, alt: p.name }));
 
   // Merge Sanity settings over local defaults
   const headline = settings?.headline || site.introHeading;
@@ -44,6 +50,7 @@ export default async function Home() {
           bioClosing={bioClosing}
           ctaLabel={ctaLabel}
           ctaHref={ctaHref}
+          hoverImages={hoverImages}
         />
         <ClientLogos />
         <ActiveProjects />
