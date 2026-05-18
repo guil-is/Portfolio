@@ -157,7 +157,7 @@ export const site = {
   footerSocials: [
     { label: "Twitter", href: "https://twitter.com/guil_is", icon: "twitter" },
     { label: "Linkedin", href: "https://www.linkedin.com/in/gmaueler/", icon: "linkedin" },
-    { label: "Instagram", href: "https://www.instagram.com/gmaueler/", icon: "instagram" },
+    { label: "Instagram", href: "https://www.instagram.com/gmguil", icon: "instagram" },
   ] satisfies Social[],
 
   about: {
