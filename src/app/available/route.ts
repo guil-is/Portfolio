@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const CAL_URL = "https://cal.com/guil-is";
 const PAGE_URL = "https://guil.is/available";
-const OG_IMAGE = "https://guil.is/available_og.jpg";
+const OG_IMAGE = "https://guil.is/Schedule%20OpenGraph.jpg";
 const TITLE = "Book a call with Guil";
 const DESCRIPTION = "Find a time that works for you.";
 
