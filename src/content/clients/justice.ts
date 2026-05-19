@@ -117,12 +117,22 @@ export const justice: JusticeClient = {
       label: "May 18 – 22, 2026",
       weekStart: "2026-05-18",
       weeks: 1,
-      lastUpdated: "2026-05-18",
+      lastUpdated: "2026-05-19",
       items: [
         {
           project: "Clawbank",
           description: "Google Slides deck template",
           hours: 2.5,
+        },
+        {
+          project: "Clawbank",
+          description: "Pitch deck design",
+          hours: 3,
+        },
+        {
+          project: "Clawbank",
+          description: "Sync call",
+          hours: 0.83,
         },
       ],
     },
