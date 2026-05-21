@@ -121,23 +121,23 @@ export const justice: JusticeClient = {
       items: [
         {
           project: "Clawbank",
-          description: "Google Slides deck template",
-          hours: 2.5,
+          description: "Google Slides template",
+          hours: 2,
         },
         {
           project: "Clawbank",
-          description: "Pitch deck design",
-          hours: 6.5,
-        },
-        {
-          project: "Clawbank",
-          description: "Sync calls",
-          hours: 1.83,
+          description: "Pitch deck design (incl. assets)",
+          hours: 6,
         },
         {
           project: "Clawbank",
           description: "Social media assets",
-          hours: 0.5,
+          hours: 1,
+        },
+        {
+          project: "Clawbank",
+          description: "Syncs / calls",
+          hours: 2,
         },
       ],
     },
