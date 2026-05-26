@@ -130,6 +130,18 @@ export const justice: JusticeClient = {
           hours: 1.3,
         },
       ],
+      expenses: [
+        {
+          project: "Clawbank",
+          description: "LALAL.ai — audio stem separation for Agent Fight Club production",
+          amountUsd: 9,
+        },
+        {
+          project: "Clawbank",
+          description: "Retrodither plugin — Agent Fight Club production",
+          amountUsd: 50,
+        },
+      ],
     },
     {
       label: "May 18 – 22, 2026",
