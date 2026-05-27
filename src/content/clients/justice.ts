@@ -117,7 +117,7 @@ export const justice: JusticeClient = {
       label: "May 25 – 29, 2026",
       weekStart: "2026-05-25",
       weeks: 1,
-      lastUpdated: "2026-05-25",
+      lastUpdated: "2026-05-27",
       items: [
         {
           project: "Clawbank",
@@ -128,6 +128,16 @@ export const justice: JusticeClient = {
           project: "Clawbank",
           description: "Fight Club video (prep)",
           hours: 1.3,
+        },
+        {
+          project: "Clawbank",
+          description: "Agent Fight Club video",
+          hours: 5,
+        },
+        {
+          project: "Clawbank",
+          description: "Syncs / calls",
+          hours: 0.5,
         },
       ],
       expenses: [
