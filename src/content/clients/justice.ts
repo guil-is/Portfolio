@@ -142,7 +142,7 @@ export const justice: JusticeClient = {
         {
           project: "Clawbank",
           description: "Syncs / calls",
-          hours: 0.5,
+          hours: 1.17,
         },
       ],
       expenses: [
