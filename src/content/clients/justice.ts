@@ -126,13 +126,18 @@ export const justice: JusticeClient = {
         },
         {
           project: "Clawbank",
-          description: "Fight Club video (prep)",
-          hours: 1.3,
+          description: "Agent Fight Club video",
+          hours: 6.3,
         },
         {
           project: "Clawbank",
-          description: "Agent Fight Club video",
-          hours: 5,
+          description: "Agent Fight Club website tweaks",
+          hours: 0.5,
+        },
+        {
+          project: "Clawbank",
+          description: "Agent Fight Club video (vertical version)",
+          hours: 0.5,
         },
         {
           project: "Clawbank",
