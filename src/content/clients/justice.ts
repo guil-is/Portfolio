@@ -141,6 +141,21 @@ export const justice: JusticeClient = {
         },
         {
           project: "Clawbank",
+          description: "Custom announcement banner for X article",
+          hours: 1,
+        },
+        {
+          project: "Clawbank",
+          description: "Manfred TV livestream — marketing explorations",
+          hours: 1,
+        },
+        {
+          project: "Clawbank",
+          description: "Research & asset collection (prep)",
+          hours: 0.5,
+        },
+        {
+          project: "Clawbank",
           description: "Syncs / calls",
           hours: 1.17,
         },
