@@ -117,7 +117,7 @@ export const justice: JusticeClient = {
       label: "May 25 – 29, 2026",
       weekStart: "2026-05-25",
       weeks: 1,
-      lastUpdated: "2026-05-27",
+      lastUpdated: "2026-05-30",
       items: [
         {
           project: "Clawbank",
@@ -174,7 +174,7 @@ export const justice: JusticeClient = {
       ],
       invoice: {
         number: "INV-26009",
-        issuedAt: "2026-05-27",
+        issuedAt: "2026-05-30",
       },
     },
     {
@@ -212,7 +212,7 @@ export const justice: JusticeClient = {
       invoice: {
         number: "INV-26008",
         issuedAt: "2026-05-22",
-        paidAt: "2026-05-25",
+        paidAt: "2026-05-30",
       },
     },
     {
