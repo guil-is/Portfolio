@@ -127,7 +127,7 @@ export const justice: JusticeClient = {
         {
           project: "Clawbank",
           description: "Agent Fight Club video",
-          hours: 6.3,
+          hours: 6.63,
         },
         {
           project: "Clawbank",
