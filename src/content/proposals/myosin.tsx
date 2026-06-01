@@ -54,10 +54,12 @@ export const myosin: Proposal = {
           {
             title: "Clawbank",
             url: "https://x.com/i/status/2050255828578394596",
+            videoSrc: "/myosin/references/Clawbank_Formation.mp4",
           },
           {
             title: "Higgsfield MCP",
             url: "https://www.instagram.com/reel/DYsBA_kiP67/",
+            videoSrc: "/myosin/references/Higgsfield_ClaudeCode.mp4",
           },
         ],
       },

@@ -57,9 +57,16 @@ export type LabeledList = {
 export type BriefMediaItem = {
   /** Display title for the reference. */
   title: string;
-  /** Source URL. YouTube/Vimeo embed inline; others render a link card. */
+  /** Canonical source URL (used as platform-of-origin link and for
+   * YouTube/Vimeo lightbox playback when no local file is provided). */
   url: string;
-  /** Optional caption shown under the embed/card. */
+  /** Optional local video file (under /public). When set, the tile
+   * autoplays this file muted and the lightbox plays it full-bleed. */
+  videoSrc?: string;
+  /** Optional poster image. For YouTube refs without one, the
+   * thumbnail is auto-derived from the video ID. */
+  poster?: string;
+  /** Optional caption shown under the tile. */
   caption?: string;
 };
 

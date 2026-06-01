@@ -17,8 +17,8 @@ import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { CtaButton } from "@/components/CtaButton";
 import { CenterFocus } from "@/components/CenterFocus";
+import { BriefMediaRow } from "@/components/BriefMediaRow";
 import { CaseStudyHorizontalScroll } from "@/components/CaseStudyHorizontalScroll";
-import { VideoEmbed } from "@/components/VideoEmbed";
 import { VisitTracker } from "@/components/VisitTracker";
 import { getGalleryImages } from "@/lib/gallery";
 import {
@@ -29,7 +29,6 @@ import type {
   Body,
   Brief,
   BriefBlock,
-  BriefMediaItem,
   CaseStudyData,
   Proposal,
   Quote,
@@ -604,7 +603,7 @@ function BriefBlockView({ block }: { block: BriefBlock }) {
       </p>
       <div className="mt-4">
         {"items" in block ? (
-          <MediaGrid items={block.items} />
+          <BriefMediaRow items={block.items} />
         ) : "list" in block ? (
           <BulletList items={block.list} />
         ) : (
@@ -612,95 +611,6 @@ function BriefBlockView({ block }: { block: BriefBlock }) {
         )}
       </div>
     </div>
-  );
-}
-
-const EMBED_HOSTS = new Set([
-  "youtube.com",
-  "m.youtube.com",
-  "youtu.be",
-  "vimeo.com",
-  "player.vimeo.com",
-]);
-
-function isInlineEmbeddable(url: string): boolean {
-  try {
-    return EMBED_HOSTS.has(new URL(url).hostname.replace(/^www\./, ""));
-  } catch {
-    return false;
-  }
-}
-
-function platformLabel(url: string): string {
-  try {
-    const host = new URL(url).hostname.replace(/^www\./, "");
-    if (host === "x.com" || host === "twitter.com") return "X";
-    if (host === "instagram.com") return "Instagram";
-    if (host.endsWith("youtube.com") || host === "youtu.be") return "YouTube";
-    if (host.endsWith("vimeo.com")) return "Vimeo";
-    return host;
-  } catch {
-    return "Link";
-  }
-}
-
-function MediaGrid({ items }: { items: BriefMediaItem[] }) {
-  return (
-    <div className="flex flex-col gap-6">
-      {items.map((item) => (
-        <MediaReference key={item.url} item={item} />
-      ))}
-    </div>
-  );
-}
-
-function MediaReference({ item }: { item: BriefMediaItem }) {
-  if (isInlineEmbeddable(item.url)) {
-    return (
-      <div>
-        <VideoEmbed url={item.url} title={item.title} />
-        <div className="mt-3 flex flex-wrap items-baseline gap-x-3">
-          <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-ink">
-            {item.title}
-          </p>
-          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-            {platformLabel(item.url)}
-          </p>
-        </div>
-        {item.caption ? (
-          <p className="mt-2 text-[0.9rem] leading-[1.5rem] text-muted">
-            {item.caption}
-          </p>
-        ) : null}
-      </div>
-    );
-  }
-
-  return (
-    <a
-      href={item.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex items-center justify-between gap-4 rounded-[16px] border border-rule bg-transparent p-6 transition-colors hover:border-ink"
-    >
-      <div className="min-w-0 flex-1">
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-          {platformLabel(item.url)}
-        </p>
-        <p className="mt-2 text-[1rem] leading-[1.5rem] text-ink">
-          {item.title}
-        </p>
-        {item.caption ? (
-          <p className="mt-2 text-[0.9rem] leading-[1.5rem] text-muted">
-            {item.caption}
-          </p>
-        ) : null}
-      </div>
-      <ArrowUpRight
-        className="h-5 w-5 shrink-0 text-muted transition-all group-hover:-rotate-45 group-hover:text-ink"
-        strokeWidth={1.75}
-      />
-    </a>
   );
 }
 
