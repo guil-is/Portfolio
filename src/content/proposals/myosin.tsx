@@ -11,16 +11,16 @@ export const myosin: Proposal = {
 
   hero: {
     eyebrow: "",
-    title: "Hive Mind, launch demo video",
+    title: "Hivemind, launch demo video",
     blurb:
-      "A 30-second animated product demo, built to make Hive Mind's strategist output impossible to ignore.",
+      "A 30-second animated product demo, built to make Hivemind's strategist output impossible to ignore.",
   },
 
   brief: {
     blocks: [
       {
         label: "The ask",
-        body: "A short animated social video demoing Hive Mind, your AI marketing strategist. The job: take a text-heavy product conversation and make it paced and engaging, not a flat screen recording. Loopable, built for the Product Hunt launch and paid social on LinkedIn and X.",
+        body: "A short animated social video demoing Hivemind, your AI marketing strategist. The job: take a text-heavy product conversation and make it paced and engaging, not a flat screen recording. Loopable, built for the Product Hunt launch and paid social on LinkedIn and X.",
       },
       {
         label: "Format",
@@ -38,10 +38,10 @@ export const myosin: Proposal = {
         label: "Creative direction",
         list: [
           "Don't ask viewers to read the full conversation. Highlight the phrases that hit and hold them on screen.",
-          "Side-by-side: Hive Mind against a generic chatbot on the same prompt. Visual contrast, not two full demos.",
-          "Real-people avatars feeding into the Hive Mind, showing the human knowledge behind the answers.",
+          "Side-by-side: Hivemind against a generic chatbot on the same prompt. Visual contrast, not two full demos.",
+          "Real-people avatars feeding into the Hivemind, showing the human knowledge behind the answers.",
           "An interplay between the live demo and simple kinetic text stating the value.",
-          "Close on the CTA: Hire Hive Mind.",
+          "Close on the CTA: Hire Hivemind.",
         ],
       },
       {
@@ -75,15 +75,15 @@ export const myosin: Proposal = {
       "The three-phase structure animates as a clean sequence.",
       "Persona shift: a visual transition as the response style changes.",
       "Ghostwriter output generates, key line pulled forward.",
-      "Avatars feed into the Hive Mind: the human-knowledge moat.",
+      "Avatars feed into the Hivemind: the human-knowledge moat.",
       "Side-by-side comparison against a generic chatbot.",
-      "Kinetic value line resolves into the Hire Hive Mind CTA.",
+      "Kinetic value line resolves into the Hire Hivemind CTA.",
     ],
     outro:
       "Heaviest custom builds: the comparison scene and the avatar-moat sequence. The rest leans on brand and UI assets you provide.",
     provides: {
       label: "You provide",
-      body: "Hive Mind product access, the Figma with branding and UI assets, and the existing brand asset pack including the 3D motion elements.",
+      body: "Hivemind product access, the Figma with branding and UI assets, and the existing brand asset pack including the 3D motion elements.",
     },
   },
 
@@ -91,7 +91,7 @@ export const myosin: Proposal = {
     options: [
       {
         label: "",
-        title: "Hive Mind launch video",
+        title: "Hivemind launch video",
         lead: "One 30-second animated demo, fully produced.",
         includes: [
           "Concept, script and storyboard pass",

@@ -109,7 +109,7 @@ export function BriefMediaRow({ items }: { items: BriefMediaItem[] }) {
         index={openAt < 0 ? 0 : openAt}
         controller={{ closeOnBackdropClick: true }}
         animation={{ fade: 150, swipe: 180, navigation: 180 }}
-        carousel={{ finite: true, preload: 1 }}
+        carousel={{ finite: true, preload: 0 }}
         plugins={[Video]}
         render={{
           slide: ({ slide }) => {
@@ -163,26 +163,16 @@ function ReferenceTile({
           loop
           muted
           playsInline
-          className="absolute inset-0 h-full w-full object-cover"
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
         />
       ) : resolved.kind === "youtube" ? (
-        <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={resolved.poster}
-            alt={item.title}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-ink/85 text-bg shadow-[0_0_24px_rgba(0,0,0,0.35)] transition-transform group-hover:scale-105">
-              <Play
-                className="h-6 w-6 translate-x-0.5"
-                strokeWidth={2}
-                aria-hidden
-              />
-            </div>
-          </div>
-        </>
+        <iframe
+          src={`https://www.youtube.com/embed/${resolved.youtubeId}?autoplay=1&mute=1&loop=1&playlist=${resolved.youtubeId}&controls=0&modestbranding=1&playsinline=1&iv_load_policy=3&rel=0`}
+          title={item.title}
+          allow="autoplay; encrypted-media; picture-in-picture"
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{ width: "222.3%", height: "100%" }}
+        />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center bg-card">
           <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
@@ -190,6 +180,17 @@ function ReferenceTile({
           </p>
         </div>
       )}
+      {resolved.kind !== "link" ? (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-ink/85 text-bg shadow-[0_0_24px_rgba(0,0,0,0.35)] transition-transform group-hover:scale-105">
+            <Play
+              className="h-6 w-6 translate-x-0.5"
+              strokeWidth={2}
+              aria-hidden
+            />
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 
