@@ -26,8 +26,14 @@ import {
 } from "@/content/proposals";
 import type {
   Body,
+  Brief,
+  BriefBlock,
   CaseStudyData,
   Proposal,
+  Quote,
+  QuoteOption,
+  Scope,
+  Terms,
   Tier,
 } from "@/content/proposals/types";
 
@@ -87,7 +93,7 @@ export default async function ProposalPage({ params }: RouteProps) {
         <main className="page-fade-in pb-40">
           <Header proposal={proposal} />
 
-          {proposal.caseStudies.map((cs) => (
+          {proposal.caseStudies?.map((cs) => (
             <CaseStudy
               key={cs.title}
               data={cs}
@@ -95,8 +101,17 @@ export default async function ProposalPage({ params }: RouteProps) {
             />
           ))}
 
-          <HowIWork />
-          <Engagement data={proposal.engagement} />
+          {proposal.brief ? <BriefSection data={proposal.brief} /> : null}
+          {proposal.scope ? <ScopeSection data={proposal.scope} /> : null}
+
+          {proposal.showApproach !== false && (proposal.caseStudies?.length ?? 0) > 0 ? (
+            <HowIWork />
+          ) : null}
+
+          {proposal.engagement ? <Engagement data={proposal.engagement} /> : null}
+          {proposal.quote ? <QuoteSection data={proposal.quote} /> : null}
+          {proposal.terms ? <TermsSection data={proposal.terms} /> : null}
+
           <NextStep data={proposal.nextStep} />
         </main>
       </PasswordGate>
@@ -470,7 +485,7 @@ function HowIWork() {
 // ---------------------------------------------------------------------
 // Engagement — proposal-specific tier cards.
 // ---------------------------------------------------------------------
-function Engagement({ data }: { data: Proposal["engagement"] }) {
+function Engagement({ data }: { data: NonNullable<Proposal["engagement"]> }) {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>Engagement</SectionLabel>
@@ -550,6 +565,230 @@ function TierCard({ tier }: { tier: Tier }) {
         {tier.response}
       </p>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------
+// Brief — labeled blocks (paragraph or list per block).
+// ---------------------------------------------------------------------
+function BriefSection({ data }: { data: Brief }) {
+  return (
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+      <SectionLabel>{data.heading ?? "The brief"}</SectionLabel>
+      <div className="mx-auto flex w-full max-w-[960px] flex-col gap-12">
+        {data.blocks.map((block, i) => (
+          <CenterFocus
+            key={i}
+            minOpacity={0.2}
+            falloff={0.55}
+            minScale={0.99}
+            disableBelowMd
+          >
+            <BriefBlockView block={block} />
+          </CenterFocus>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function BriefBlockView({ block }: { block: BriefBlock }) {
+  return (
+    <div>
+      <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+        {block.label}
+      </p>
+      <div className="mt-4">
+        {"list" in block ? (
+          <BulletList items={block.list} />
+        ) : (
+          <Paragraphs body={block.body} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function BulletList({ items }: { items: string[] }) {
+  return (
+    <ul className="flex flex-col gap-3 text-[1rem] leading-[1.7rem] text-ink">
+      {items.map((item, i) => (
+        <li key={i} className="flex gap-3">
+          <span aria-hidden className="select-none text-muted">
+            •
+          </span>
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// ---------------------------------------------------------------------
+// Scope — numbered list with optional intro / outro / "you provide".
+// ---------------------------------------------------------------------
+function ScopeSection({ data }: { data: Scope }) {
+  return (
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+      <SectionLabel>{data.heading ?? "Scope of work"}</SectionLabel>
+      <div className="mx-auto w-full max-w-[960px]">
+        {data.intro ? (
+          <div className="mb-8">
+            <Paragraphs body={data.intro} />
+          </div>
+        ) : null}
+
+        <ol className="flex flex-col gap-3">
+          {data.items.map((item, i) => (
+            <li
+              key={i}
+              className="flex items-baseline gap-4 text-[1rem] leading-[1.7rem] text-ink"
+            >
+              <span className="w-6 shrink-0 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span>{item}</span>
+            </li>
+          ))}
+        </ol>
+
+        {data.outro ? (
+          <div className="mt-8">
+            <Paragraphs body={data.outro} />
+          </div>
+        ) : null}
+
+        {data.provides ? (
+          <div className="mt-10 border-t border-rule-soft pt-6">
+            <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+              {data.provides.label}
+            </p>
+            <div className="mt-3">
+              <Paragraphs body={data.provides.body} />
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------
+// Quote — project-based pricing cards (side-by-side on desktop).
+// ---------------------------------------------------------------------
+function QuoteSection({ data }: { data: Quote }) {
+  return (
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+      <SectionLabel>Quote</SectionLabel>
+      <div className="mx-auto w-full max-w-[960px]">
+        {data.heading ? (
+          <CenterFocus
+            minOpacity={0.15}
+            falloff={0.55}
+            minScale={0.99}
+            disableBelowMd
+          >
+            <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
+              {data.heading}
+            </h2>
+            {data.subheading ? (
+              <p className="mt-5 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
+                {data.subheading}
+              </p>
+            ) : null}
+          </CenterFocus>
+        ) : null}
+
+        <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2">
+          {data.options.map((option) => (
+            <CenterFocus
+              key={option.label}
+              minOpacity={0.15}
+              falloff={0.5}
+              minScale={0.98}
+              disableBelowMd
+            >
+              <QuoteCard option={option} />
+            </CenterFocus>
+          ))}
+        </div>
+
+        {data.footnote ? (
+          <CenterFocus
+            minOpacity={0.15}
+            falloff={0.55}
+            minScale={0.99}
+            disableBelowMd
+          >
+            <p className="mt-10 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
+              {data.footnote}
+            </p>
+          </CenterFocus>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
+function QuoteCard({ option }: { option: QuoteOption }) {
+  return (
+    <div
+      className={`flex h-full flex-col gap-6 rounded-[16px] border bg-transparent p-8 ${
+        option.recommended ? "border-ink" : "border-rule"
+      }`}
+    >
+      <div>
+        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          {option.label}
+          {option.recommended ? " · Recommended" : ""}
+        </p>
+        <h3 className="mt-4 font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.75rem]">
+          {option.title}
+        </h3>
+      </div>
+
+      {option.lead ? <Paragraphs body={option.lead} /> : null}
+
+      <BulletList items={option.includes} />
+
+      <div className="mt-auto flex flex-col gap-3 border-t border-rule-soft pt-6">
+        {option.prices.map((p, i) => (
+          <div key={i} className="flex items-baseline justify-between gap-4">
+            <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+              {p.label}
+            </p>
+            <p className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
+              {p.amount}
+            </p>
+          </div>
+        ))}
+        {option.timeline ? (
+          <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
+            {option.timeline}
+          </p>
+        ) : null}
+      </div>
+
+      {option.closing ? (
+        <div className="border-t border-rule-soft pt-6">
+          <Paragraphs body={option.closing} />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------
+// Terms — simple bulleted list.
+// ---------------------------------------------------------------------
+function TermsSection({ data }: { data: Terms }) {
+  return (
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+      <SectionLabel>{data.heading ?? "Terms"}</SectionLabel>
+      <div className="mx-auto w-full max-w-[960px]">
+        <BulletList items={data.items} />
+      </div>
+    </section>
   );
 }
 

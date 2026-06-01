@@ -1,4 +1,5 @@
 import type { Proposal } from "./types";
+import { myosin } from "./myosin";
 import { odyssey } from "./odyssey";
 
 /**
@@ -9,6 +10,7 @@ import { odyssey } from "./odyssey";
  */
 export const proposals: Record<string, Proposal> = {
   odyssey,
+  myosin,
 };
 
 export function getProposal(slug: string): Proposal | null {

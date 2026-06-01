@@ -7,6 +7,10 @@ import type { ReactNode } from "react";
  * and gets registered in src/content/proposals/index.ts. All copy,
  * pricing, and per-client bits are data-driven; the structural
  * layout lives in src/app/for/[slug]/page.tsx.
+ *
+ * Two proposal shapes are supported, mixable per file:
+ *   1. Retainer pitch (Odyssey-style): caseStudies + engagement.
+ *   2. Project quote (Myosin-style): brief + scope + quote + terms.
  */
 
 export type Body = string | string[];
@@ -40,6 +44,59 @@ export type Tier = {
   response: string;
 };
 
+export type LabeledBody = {
+  label: string;
+  body: Body;
+};
+
+export type LabeledList = {
+  label: string;
+  list: string[];
+};
+
+export type BriefBlock = LabeledBody | LabeledList;
+
+export type Brief = {
+  heading?: string;
+  blocks: BriefBlock[];
+};
+
+export type Scope = {
+  heading?: string;
+  intro?: Body;
+  items: string[];
+  outro?: Body;
+  provides?: LabeledBody;
+};
+
+export type QuotePrice = {
+  label: string;
+  amount: string;
+};
+
+export type QuoteOption = {
+  label: string;
+  title: string;
+  lead?: Body;
+  includes: string[];
+  prices: QuotePrice[];
+  timeline?: string;
+  closing?: Body;
+  recommended?: boolean;
+};
+
+export type Quote = {
+  heading?: string;
+  subheading?: string;
+  options: QuoteOption[];
+  footnote?: string;
+};
+
+export type Terms = {
+  heading?: string;
+  items: string[];
+};
+
 export type Proposal = {
   /** URL slug — /for/<slug>. */
   slug: string;
@@ -60,8 +117,15 @@ export type Proposal = {
     loomUrl?: string;
     loomLabel?: string;
   };
-  caseStudies: CaseStudyData[];
-  engagement: {
+  caseStudies?: CaseStudyData[];
+  /** Project-style sections (omit any not needed). */
+  brief?: Brief;
+  scope?: Scope;
+  quote?: Quote;
+  terms?: Terms;
+  /** Whether to render the static "How I work" section. Defaults to true. */
+  showApproach?: boolean;
+  engagement?: {
     heading: string;
     subheading: string;
     footnote: string;
