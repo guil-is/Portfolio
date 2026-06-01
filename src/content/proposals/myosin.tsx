@@ -87,6 +87,59 @@ export const myosin: Proposal = {
     },
   },
 
+  timeline: {
+    intro:
+      "Two weeks from contract signing to final exports, with two revision rounds built in. Each phase ships, you review, we move forward.",
+    milestones: [
+      {
+        label: "Start",
+        title: "Kickoff",
+        body: "Contract signed. You hand over Hivemind product access, the Figma with branding and UI, and the brand asset pack.",
+        kind: "start",
+      },
+      {
+        label: "Deliverable 1",
+        title: "Script, storyboard, soundtrack options",
+        body: "First pass on narrative direction, a scene-by-scene storyboard, and a shortlist of soundtrack candidates to choose from.",
+        kind: "deliverable",
+      },
+      {
+        label: "Revision round 1",
+        title: "Feedback on script and storyboard",
+        body: "Direction locks. Soundtrack chosen. Animation begins.",
+        kind: "revision",
+      },
+      {
+        label: "Deliverable 2",
+        title: "Video first pass",
+        body: "Fully animated 30-second video in the primary format.",
+        kind: "deliverable",
+      },
+      {
+        label: "Revision round 2",
+        title: "Feedback on the first cut",
+        body: "Final notes before lock.",
+        kind: "revision",
+      },
+      {
+        label: "Deliverable 3",
+        title: "Video second pass",
+        body: "Revisions applied. Main format approved.",
+        kind: "deliverable",
+      },
+      {
+        label: "Deliverable 4",
+        title: "Vertical and square exports",
+        body: "Format adaptations of the locked video for LinkedIn, X, and other channels.",
+        kind: "end",
+      },
+    ],
+    note: {
+      label: "After approval",
+      body: "Edits outside the two included revision rounds are billed at 120 USD per hour.",
+    },
+  },
+
   quote: {
     options: [
       {

@@ -118,6 +118,25 @@ export type Terms = {
   items: string[];
 };
 
+export type TimelineMilestone = {
+  /** Small caption above the title, e.g. "Deliverable 1". */
+  label: string;
+  /** Milestone title, e.g. "Video first pass". */
+  title: string;
+  /** Optional one-line description. */
+  body?: string;
+  /** Visual variant for the marker dot. Defaults to "deliverable". */
+  kind?: "start" | "deliverable" | "revision" | "end";
+};
+
+export type Timeline = {
+  heading?: string;
+  intro?: Body;
+  milestones: TimelineMilestone[];
+  /** Optional post-timeline note (e.g. hourly rate for out-of-scope work). */
+  note?: LabeledBody;
+};
+
 export type Proposal = {
   /** URL slug — /for/<slug>. */
   slug: string;
@@ -142,6 +161,7 @@ export type Proposal = {
   /** Project-style sections (omit any not needed). */
   brief?: Brief;
   scope?: Scope;
+  timeline?: Timeline;
   quote?: Quote;
   terms?: Terms;
   /** Whether to render the static "How I work" section. Defaults to true. */

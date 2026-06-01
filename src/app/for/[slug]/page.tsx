@@ -36,6 +36,7 @@ import type {
   Scope,
   Terms,
   Tier,
+  Timeline,
 } from "@/content/proposals/types";
 
 // ---------------------------------------------------------------------
@@ -110,6 +111,7 @@ export default async function ProposalPage({ params }: RouteProps) {
           ) : null}
 
           {proposal.engagement ? <Engagement data={proposal.engagement} /> : null}
+          {proposal.timeline ? <TimelineSection data={proposal.timeline} /> : null}
           {proposal.quote ? <QuoteSection data={proposal.quote} /> : null}
           {proposal.terms ? <TermsSection data={proposal.terms} /> : null}
 
@@ -670,6 +672,71 @@ function ScopeSection({ data }: { data: Scope }) {
             </p>
             <div className="mt-3">
               <Paragraphs body={data.provides.body} />
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------
+// Timeline — vertical list of milestones connected by a thin rule.
+// Deliverables render as solid ink dots; revisions render as outlined
+// rings to signal "feedback loop" rather than "shipped artifact".
+// ---------------------------------------------------------------------
+function TimelineSection({ data }: { data: Timeline }) {
+  return (
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+      <SectionLabel>{data.heading ?? "Timeline"}</SectionLabel>
+      <div className="mx-auto w-full max-w-[960px]">
+        {data.intro ? (
+          <div className="mb-10">
+            <Paragraphs body={data.intro} />
+          </div>
+        ) : null}
+
+        <ol className="flex flex-col gap-10">
+          {data.milestones.map((m, i) => {
+            const isLast = i === data.milestones.length - 1;
+            const isRevision = m.kind === "revision";
+            return (
+              <li key={i} className="relative pl-9">
+                {!isLast ? (
+                  <span
+                    aria-hidden
+                    className="absolute left-[11px] top-[15px] bottom-[-45px] w-px bg-rule"
+                  />
+                ) : null}
+                <span
+                  aria-hidden
+                  className={`absolute left-[6.5px] top-[5px] block h-[10px] w-[10px] rounded-full ${
+                    isRevision ? "border border-ink bg-bg" : "bg-ink"
+                  }`}
+                />
+                <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                  {m.label}
+                </p>
+                <h3 className="mt-1 font-display text-[1.15rem] font-bold leading-tight text-ink md:text-[1.35rem]">
+                  {m.title}
+                </h3>
+                {m.body ? (
+                  <p className="mt-2 text-[0.95rem] leading-[1.6rem] text-muted">
+                    {m.body}
+                  </p>
+                ) : null}
+              </li>
+            );
+          })}
+        </ol>
+
+        {data.note ? (
+          <div className="mt-12 border-t border-rule-soft pt-6">
+            <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+              {data.note.label}
+            </p>
+            <div className="mt-3">
+              <Paragraphs body={data.note.body} />
             </div>
           </div>
         ) : null}
