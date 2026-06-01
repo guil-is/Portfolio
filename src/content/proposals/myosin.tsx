@@ -92,7 +92,7 @@ export const myosin: Proposal = {
       {
         label: "",
         title: "Hive Mind launch video",
-        lead: "One 30-second animated demo, fully produced. Scoped at three half-days of focused production work.",
+        lead: "One 30-second animated demo, fully produced.",
         includes: [
           "Concept, script and storyboard pass",
           "Full animation and motion design across all eight scenes",
@@ -100,7 +100,7 @@ export const myosin: Proposal = {
           "Final delivery in formats for LinkedIn, X, and web (square and vertical)",
         ],
         prices: [{ label: "Fee", amount: "1,440 USD" }],
-        timeline: "Timeline: 3 weeks, aligned to your Product Hunt launch",
+        timeline: "Timeline: 2 weeks from signing",
       },
     ],
   },
