@@ -18,6 +18,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { CtaButton } from "@/components/CtaButton";
 import { CenterFocus } from "@/components/CenterFocus";
 import { CaseStudyHorizontalScroll } from "@/components/CaseStudyHorizontalScroll";
+import { VideoEmbed } from "@/components/VideoEmbed";
 import { VisitTracker } from "@/components/VisitTracker";
 import { getGalleryImages } from "@/lib/gallery";
 import {
@@ -28,6 +29,7 @@ import type {
   Body,
   Brief,
   BriefBlock,
+  BriefMediaItem,
   CaseStudyData,
   Proposal,
   Quote,
@@ -138,9 +140,11 @@ function Header({ proposal }: { proposal: Proposal }) {
 
       {/* Centered hero content */}
       <div className="mx-auto flex w-full max-w-[960px] flex-1 flex-col justify-center py-16">
-        <p className="mb-4 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted md:mb-6">
-          {eyebrow}
-        </p>
+        {eyebrow ? (
+          <p className="mb-4 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted md:mb-6">
+            {eyebrow}
+          </p>
+        ) : null}
         <h1 className="intro-rise mt-16 font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:mt-24 md:text-[4rem]">
           {proposal.hero.title}
         </h1>
@@ -599,13 +603,104 @@ function BriefBlockView({ block }: { block: BriefBlock }) {
         {block.label}
       </p>
       <div className="mt-4">
-        {"list" in block ? (
+        {"items" in block ? (
+          <MediaGrid items={block.items} />
+        ) : "list" in block ? (
           <BulletList items={block.list} />
         ) : (
           <Paragraphs body={block.body} />
         )}
       </div>
     </div>
+  );
+}
+
+const EMBED_HOSTS = new Set([
+  "youtube.com",
+  "m.youtube.com",
+  "youtu.be",
+  "vimeo.com",
+  "player.vimeo.com",
+]);
+
+function isInlineEmbeddable(url: string): boolean {
+  try {
+    return EMBED_HOSTS.has(new URL(url).hostname.replace(/^www\./, ""));
+  } catch {
+    return false;
+  }
+}
+
+function platformLabel(url: string): string {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    if (host === "x.com" || host === "twitter.com") return "X";
+    if (host === "instagram.com") return "Instagram";
+    if (host.endsWith("youtube.com") || host === "youtu.be") return "YouTube";
+    if (host.endsWith("vimeo.com")) return "Vimeo";
+    return host;
+  } catch {
+    return "Link";
+  }
+}
+
+function MediaGrid({ items }: { items: BriefMediaItem[] }) {
+  return (
+    <div className="flex flex-col gap-6">
+      {items.map((item) => (
+        <MediaReference key={item.url} item={item} />
+      ))}
+    </div>
+  );
+}
+
+function MediaReference({ item }: { item: BriefMediaItem }) {
+  if (isInlineEmbeddable(item.url)) {
+    return (
+      <div>
+        <VideoEmbed url={item.url} title={item.title} />
+        <div className="mt-3 flex flex-wrap items-baseline gap-x-3">
+          <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-ink">
+            {item.title}
+          </p>
+          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+            {platformLabel(item.url)}
+          </p>
+        </div>
+        {item.caption ? (
+          <p className="mt-2 text-[0.9rem] leading-[1.5rem] text-muted">
+            {item.caption}
+          </p>
+        ) : null}
+      </div>
+    );
+  }
+
+  return (
+    <a
+      href={item.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group flex items-center justify-between gap-4 rounded-[16px] border border-rule bg-transparent p-6 transition-colors hover:border-ink"
+    >
+      <div className="min-w-0 flex-1">
+        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          {platformLabel(item.url)}
+        </p>
+        <p className="mt-2 text-[1rem] leading-[1.5rem] text-ink">
+          {item.title}
+        </p>
+        {item.caption ? (
+          <p className="mt-2 text-[0.9rem] leading-[1.5rem] text-muted">
+            {item.caption}
+          </p>
+        ) : null}
+      </div>
+      <ArrowUpRight
+        className="h-5 w-5 shrink-0 text-muted transition-all group-hover:-rotate-45 group-hover:text-ink"
+        strokeWidth={1.75}
+      />
+    </a>
   );
 }
 
@@ -699,10 +794,16 @@ function QuoteSection({ data }: { data: Quote }) {
           </CenterFocus>
         ) : null}
 
-        <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2">
-          {data.options.map((option) => (
+        <div
+          className={
+            data.options.length > 1
+              ? "mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2"
+              : "mt-12 md:mt-16 md:mx-auto md:max-w-[520px]"
+          }
+        >
+          {data.options.map((option, i) => (
             <CenterFocus
-              key={option.label}
+              key={option.label || i}
               minOpacity={0.15}
               falloff={0.5}
               minScale={0.98}
@@ -738,11 +839,14 @@ function QuoteCard({ option }: { option: QuoteOption }) {
       }`}
     >
       <div>
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-          {option.label}
-          {option.recommended ? " · Recommended" : ""}
-        </p>
-        <h3 className="mt-4 font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.75rem]">
+        {option.label || option.recommended ? (
+          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+            {option.label}
+            {option.label && option.recommended ? " · " : ""}
+            {option.recommended ? "Recommended" : ""}
+          </p>
+        ) : null}
+        <h3 className={`font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.75rem] ${option.label || option.recommended ? "mt-4" : ""}`}>
           {option.title}
         </h3>
       </div>

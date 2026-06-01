@@ -10,6 +10,7 @@ export const myosin: Proposal = {
   showApproach: false,
 
   hero: {
+    eyebrow: "",
     title: "Hive Mind, launch demo video",
     blurb:
       "A 30-second animated product demo, built to make Hive Mind's strategist output impossible to ignore.",
@@ -43,6 +44,23 @@ export const myosin: Proposal = {
           "Close on the CTA: Hire Hive Mind.",
         ],
       },
+      {
+        label: "References",
+        items: [
+          {
+            title: "Asana",
+            url: "https://www.youtube.com/watch?v=AW_PDcmjE-o",
+          },
+          {
+            title: "Clawbank",
+            url: "https://x.com/i/status/2050255828578394596",
+          },
+          {
+            title: "Higgsfield MCP",
+            url: "https://www.instagram.com/reel/DYsBA_kiP67/",
+          },
+        ],
+      },
     ],
   },
 
@@ -68,56 +86,35 @@ export const myosin: Proposal = {
   },
 
   quote: {
-    heading: "Two options",
-    subheading:
-      "Pick the lane that matches your runway. Option B is the recommended path if the Quick Hit format is repeating.",
     options: [
       {
-        label: "Option A",
-        title: "Single launch video",
-        lead: "One 30-second animated demo, fully produced.",
+        label: "",
+        title: "Hive Mind launch video",
+        lead: "One 30-second animated demo, fully produced. Scoped at three half-days of focused production work.",
         includes: [
           "Concept, script and storyboard pass",
           "Full animation and motion design across all eight scenes",
           "2 revision rounds",
           "Final delivery in formats for LinkedIn, X, and web (square and vertical)",
         ],
-        prices: [{ label: "Fee", amount: "4,200 USD" }],
+        prices: [{ label: "Fee", amount: "1,440 USD" }],
         timeline: "Timeline: 3 weeks, aligned to your Product Hunt launch",
-      },
-      {
-        label: "Option B",
-        title: "Quick Hit series",
-        recommended: true,
-        lead: "This is Quick Hit #8. The format repeats. Option B builds the launch video and turns it into a repeatable motion system, so every future Quick Hit ships faster and looks consistent.",
-        includes: [
-          "Everything in Option A for the launch video",
-          "A reusable motion template system: scene structures, transitions, type treatment, and a consistent visual language across the Quick Hit series",
-          "Reduced per-video rate on subsequent Quick Hits",
-        ],
-        prices: [
-          { label: "Launch + system", amount: "6,500 USD" },
-          { label: "Each Quick Hit after", amount: "2,600 USD" },
-        ],
-        timeline: "First delivery: 3 weeks",
-        closing:
-          "The system pays for itself by the third video and keeps the series visually coherent across every channel.",
       },
     ],
   },
 
   terms: {
     items: [
-      "2 revision rounds per video. Further rounds quoted separately.",
+      "2 revision rounds. Further rounds quoted separately.",
       "Payment in fiat or stablecoin.",
-      "50% on start, 50% on delivery for the first project. Net-15 on subsequent work.",
+      "50% on start, 50% on delivery.",
       "Timeline assumes assets delivered within the first few days of kickoff.",
     ],
   },
 
   nextStep: {
     heading: "Ready to start",
-    body: "Reply to confirm which option works and I'll send a short agreement and a start date. Once the product access and brand assets land, I begin with the script and storyboard.",
+    body: "Reply to confirm and I'll send a short agreement and a start date. Once the product access and brand assets land, I begin with the script and storyboard.",
     ctaHref: "mailto:guil@guil.is",
     ctaLabel: "Get in touch",
   },

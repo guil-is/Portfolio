@@ -54,7 +54,21 @@ export type LabeledList = {
   list: string[];
 };
 
-export type BriefBlock = LabeledBody | LabeledList;
+export type BriefMediaItem = {
+  /** Display title for the reference. */
+  title: string;
+  /** Source URL. YouTube/Vimeo embed inline; others render a link card. */
+  url: string;
+  /** Optional caption shown under the embed/card. */
+  caption?: string;
+};
+
+export type LabeledMedia = {
+  label: string;
+  items: BriefMediaItem[];
+};
+
+export type BriefBlock = LabeledBody | LabeledList | LabeledMedia;
 
 export type Brief = {
   heading?: string;
