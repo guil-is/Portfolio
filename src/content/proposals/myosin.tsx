@@ -156,7 +156,7 @@ export const myosin: Proposal = {
         ],
         priceNote:
           "First-engagement rate. 15% off my standard, to kick off working together.",
-        timeline: "Timeline: 2 weeks from signing",
+        timeline: "Estimated timeline: 2 weeks from signing",
       },
     ],
   },
