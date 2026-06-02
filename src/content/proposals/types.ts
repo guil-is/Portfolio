@@ -93,6 +93,9 @@ export type Scope = {
 export type QuotePrice = {
   label: string;
   amount: string;
+  /** Optional list/standard rate shown struck through above the
+   * amount. Use for first-engagement or discounted pricing. */
+  previous?: string;
 };
 
 export type QuoteOption = {
@@ -101,6 +104,9 @@ export type QuoteOption = {
   lead?: Body;
   includes: string[];
   prices: QuotePrice[];
+  /** Optional small note rendered right under the price block (above
+   * the timeline). Use to caption a discount or framing. */
+  priceNote?: string;
   timeline?: string;
   closing?: Body;
   recommended?: boolean;
@@ -149,9 +155,12 @@ export type Proposal = {
   /** e.g. "April 2026" */
   date: string;
   hero: {
-    /** Defaults to "A proposal from Guil Maueler". */
+    /** Defaults to "A proposal from Guil Maueler". Pass "" to hide. */
     eyebrow?: string;
     title: string;
+    /** Optional softer continuation line under the title (rendered in
+     * muted weight/color for a two-tier editorial treatment). */
+    titleContinuation?: string;
     blurb: string;
     /** Optional Loom walkthrough link. When set, renders a CTA button. */
     loomUrl?: string;

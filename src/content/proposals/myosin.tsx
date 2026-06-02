@@ -10,8 +10,9 @@ export const myosin: Proposal = {
   showApproach: false,
 
   hero: {
-    eyebrow: "",
-    title: "Hivemind, launch demo video",
+    eyebrow: "Motion proposal",
+    title: "Hivemind",
+    titleContinuation: "launch demo video",
     blurb:
       "A 30-second animated product demo, built to make Hivemind's strategist output impossible to ignore.",
   },
@@ -136,7 +137,15 @@ export const myosin: Proposal = {
           "2 revision rounds",
           "Final delivery in formats for LinkedIn, X, and web (square and vertical)",
         ],
-        prices: [{ label: "Fee", amount: "1,440 USD" }],
+        prices: [
+          {
+            label: "Fee",
+            amount: "1,600 USD",
+            previous: "1,920 USD",
+          },
+        ],
+        priceNote:
+          "First-engagement rate. 15% off my standard, to kick off working together.",
         timeline: "Timeline: 2 weeks from signing",
       },
     ],

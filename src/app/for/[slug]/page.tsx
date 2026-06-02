@@ -123,10 +123,14 @@ export default async function ProposalPage({ params }: RouteProps) {
 }
 
 // ---------------------------------------------------------------------
-// Header — fills 90vh, content vertically centered.
+// Header — fills 90vh, content vertically centered. Editorial cover:
+// thin hairline mark draws in, then kicker → title → blurb stagger in
+// with intro-rise. Title supports a two-tier treatment (ink primary +
+// muted continuation) for typographic rhythm without leaning on size.
 // ---------------------------------------------------------------------
 function Header({ proposal }: { proposal: Proposal }) {
   const eyebrow = proposal.hero.eyebrow ?? "A proposal from Guil Maueler";
+  const { titleContinuation } = proposal.hero;
   return (
     <section className="relative flex min-h-[90vh] flex-col px-6 md:px-10">
       {/* Top meta line */}
@@ -141,21 +145,49 @@ function Header({ proposal }: { proposal: Proposal }) {
 
       {/* Centered hero content */}
       <div className="mx-auto flex w-full max-w-[960px] flex-1 flex-col justify-center py-16">
+        <span
+          aria-hidden
+          className="hero-mark mb-7 block h-px w-12 bg-ink md:mb-9"
+        />
+
         {eyebrow ? (
-          <p className="mb-4 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted md:mb-6">
+          <p
+            className="intro-rise font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted"
+            style={{ animationDelay: "120ms" }}
+          >
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="intro-rise mt-16 font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:mt-24 md:text-[4rem]">
-          {proposal.hero.title}
+
+        <h1 className="mt-5 font-display text-[3rem] font-bold leading-[1] tracking-tight text-ink md:mt-7 md:text-[5rem] lg:text-[5.75rem]">
+          <span
+            className="intro-rise block"
+            style={{ animationDelay: "200ms" }}
+          >
+            {proposal.hero.title}
+          </span>
+          {titleContinuation ? (
+            <span
+              className="intro-rise block font-normal text-muted"
+              style={{ animationDelay: "280ms" }}
+            >
+              {titleContinuation}
+            </span>
+          ) : null}
         </h1>
 
-        <p className="mt-10 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
+        <p
+          className="intro-rise mt-6 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted md:mt-8 md:text-[1rem]"
+          style={{ animationDelay: "380ms" }}
+        >
           {proposal.hero.blurb}
         </p>
 
         {proposal.hero.loomUrl ? (
-          <div className="mt-10">
+          <div
+            className="intro-rise mt-10"
+            style={{ animationDelay: "460ms" }}
+          >
             <CtaButton
               href={proposal.hero.loomUrl}
               label={proposal.hero.loomLabel ?? "Watch the walkthrough"}
@@ -888,13 +920,25 @@ function QuoteCard({ option }: { option: QuoteOption }) {
             <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
               {p.label}
             </p>
-            <p className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
-              {p.amount}
-            </p>
+            <div className="flex flex-col items-end">
+              {p.previous ? (
+                <p className="text-[0.9rem] leading-tight text-muted line-through">
+                  {p.previous}
+                </p>
+              ) : null}
+              <p className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
+                {p.amount}
+              </p>
+            </div>
           </div>
         ))}
+        {option.priceNote ? (
+          <p className="text-[0.85rem] leading-[1.4rem] text-muted">
+            {option.priceNote}
+          </p>
+        ) : null}
         {option.timeline ? (
-          <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
+          <p className="mt-1 text-[0.85rem] leading-[1.4rem] text-muted">
             {option.timeline}
           </p>
         ) : null}
