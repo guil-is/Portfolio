@@ -85,7 +85,11 @@ export type Brief = {
 export type Scope = {
   heading?: string;
   intro?: Body;
-  items: string[];
+  /** Numbered scene-style list (e.g. shot list). */
+  items?: string[];
+  /** Labeled bullet groups under the intro (e.g. "The shape" +
+   * "What's included"). Rendered visually quiet, no numbering. */
+  lists?: LabeledList[];
   outro?: Body;
   provides?: LabeledBody;
 };

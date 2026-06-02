@@ -672,24 +672,41 @@ function ScopeSection({ data }: { data: Scope }) {
       <SectionLabel>{data.heading ?? "Scope of work"}</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
         {data.intro ? (
-          <div className="mb-8">
+          <div className="mb-10">
             <Paragraphs body={data.intro} />
           </div>
         ) : null}
 
-        <ol className="flex flex-col gap-3">
-          {data.items.map((item, i) => (
-            <li
-              key={i}
-              className="flex items-baseline gap-4 text-[1rem] leading-[1.7rem] text-ink"
-            >
-              <span className="w-6 shrink-0 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span>{item}</span>
-            </li>
-          ))}
-        </ol>
+        {data.items ? (
+          <ol className="flex flex-col gap-3">
+            {data.items.map((item, i) => (
+              <li
+                key={i}
+                className="flex items-baseline gap-4 text-[1rem] leading-[1.7rem] text-ink"
+              >
+                <span className="w-6 shrink-0 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ol>
+        ) : null}
+
+        {data.lists && data.lists.length > 0 ? (
+          <div className="flex flex-col gap-10">
+            {data.lists.map((group, i) => (
+              <div key={i}>
+                <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                  {group.label}
+                </p>
+                <div className="mt-4">
+                  <BulletList items={group.list} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
 
         {data.outro ? (
           <div className="mt-8">

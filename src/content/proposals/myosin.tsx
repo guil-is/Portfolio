@@ -69,19 +69,29 @@ export const myosin: Proposal = {
 
   scope: {
     intro:
-      "Eight scene units across 30 seconds, built from the Quick Hit demo script.",
-    items: [
-      "User prompt types into the chat.",
-      "Strategist response forms, with highlight zooms on the sharpest lines.",
-      "The three-phase structure animates as a clean sequence.",
-      "Persona shift: a visual transition as the response style changes.",
-      "Ghostwriter output generates, key line pulled forward.",
-      "Avatars feed into the Hivemind: the human-knowledge moat.",
-      "Side-by-side comparison against a generic chatbot.",
-      "Kinetic value line resolves into the Hire Hivemind CTA.",
+      "A 30-second animated demo, scripted and storyboarded before any animation begins. The structure below is the shape of the piece. The exact scenes get locked together at the storyboard stage.",
+    lists: [
+      {
+        label: "The shape",
+        list: [
+          "A hook that frames the problem fast.",
+          "The live demo, with the sharpest lines pulled forward and held on screen.",
+          "The human knowledge behind the answers, the moat that sets Hivemind apart.",
+          "A clear contrast against a generic chatbot on the same prompt.",
+          "A close on the CTA: Hire Hivemind.",
+        ],
+      },
+      {
+        label: "What's included",
+        list: [
+          "Narrative script and scene-by-scene storyboard.",
+          "Soundtrack selection from a curated shortlist.",
+          "Full animation and motion design for the 30-second piece.",
+          "2 revision rounds, gated at storyboard and at first cut.",
+          "Final delivery in vertical and square formats for LinkedIn, X, and web.",
+        ],
+      },
     ],
-    outro:
-      "Heaviest custom builds: the comparison scene and the avatar-moat sequence. The rest leans on brand and UI assets you provide.",
     provides: {
       label: "You provide",
       body: "Hivemind product access, the Figma with branding and UI assets, and the existing brand asset pack including the 3D motion elements.",
