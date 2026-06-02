@@ -90,36 +90,36 @@ export const myosin: Proposal = {
 
   timeline: {
     intro:
-      "Two weeks from contract signing to final exports. Each milestone ships, you review, we move forward. Hover any step for detail.",
+      "Two weeks from contract signing to final exports. Each milestone ships, you review, we move forward.",
     milestones: [
       {
-        label: "Start",
+        label: "Kickoff",
         title: "Kickoff",
-        body: "Contract signed. You hand over Hivemind product access, the Figma with branding and UI, and the brand asset pack.",
+        body: "You hand over product access, Figma, and brand assets.",
         kind: "start",
       },
       {
-        label: "Deliverable 1",
+        label: "Direction",
         title: "Script, storyboard, soundtrack",
-        body: "Narrative direction, scene-by-scene storyboard, and a shortlist of soundtrack candidates. Revision round 1 happens here: you choose the soundtrack and lock the direction before animation begins.",
+        body: "Revision round 1. Lock direction before animation.",
         kind: "deliverable",
       },
       {
-        label: "Deliverable 2",
+        label: "Production",
         title: "Video first pass",
-        body: "Fully animated 30-second video in the primary format. Revision round 2 happens here: you give notes on the cut.",
+        body: "Full 30-second animation in the primary format.",
         kind: "deliverable",
       },
       {
-        label: "Deliverable 3",
+        label: "Polish",
         title: "Video second pass",
-        body: "Revisions applied. Main format approved.",
+        body: "Revision round 2. Notes applied, main format approved.",
         kind: "deliverable",
       },
       {
-        label: "Deliverable 4",
+        label: "Delivery",
         title: "Format exports",
-        body: "Vertical and square adaptations of the locked video for LinkedIn, X, and other channels.",
+        body: "Vertical and square cuts for LinkedIn, X, and web.",
         kind: "end",
       },
     ],

@@ -784,7 +784,7 @@ function TimelineSection({ data }: { data: Timeline }) {
               return (
                 <li
                   key={i}
-                  className="group relative flex flex-col items-center px-3 text-center"
+                  className="relative flex flex-col items-center px-3 text-center"
                 >
                   <span
                     aria-hidden
@@ -799,12 +799,9 @@ function TimelineSection({ data }: { data: Timeline }) {
                     {m.title}
                   </p>
                   {m.body ? (
-                    <div
-                      role="tooltip"
-                      className="pointer-events-none absolute left-1/2 top-full z-20 mt-4 w-60 -translate-x-1/2 rounded-[12px] border border-rule bg-bg p-4 text-left text-[0.85rem] leading-[1.4rem] text-muted opacity-0 shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-opacity duration-150 group-hover:opacity-100 dark:bg-card"
-                    >
+                    <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
                       {m.body}
-                    </div>
+                    </p>
                   ) : null}
                 </li>
               );
