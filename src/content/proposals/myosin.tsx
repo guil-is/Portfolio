@@ -173,7 +173,7 @@ export const myosin: Proposal = {
   nextStep: {
     heading: "Ready to start",
     body: "Reply to confirm and I'll send a short agreement and a start date. Once the product access and brand assets land, I begin with the script and storyboard.",
-    ctaHref: "mailto:guil@guil.is",
+    ctaHref: "https://t.me/+z41r7ZWqeU82Zjgx",
     ctaLabel: "Get in touch",
   },
 
