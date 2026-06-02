@@ -89,7 +89,7 @@ export const myosin: Proposal = {
 
   timeline: {
     intro:
-      "Two weeks from contract signing to final exports, with two revision rounds built in. Each phase ships, you review, we move forward.",
+      "Two weeks from contract signing to final exports. Each milestone ships, you review, we move forward. Hover any step for detail.",
     milestones: [
       {
         label: "Start",
@@ -99,27 +99,15 @@ export const myosin: Proposal = {
       },
       {
         label: "Deliverable 1",
-        title: "Script, storyboard, soundtrack options",
-        body: "First pass on narrative direction, a scene-by-scene storyboard, and a shortlist of soundtrack candidates to choose from.",
+        title: "Script, storyboard, soundtrack",
+        body: "Narrative direction, scene-by-scene storyboard, and a shortlist of soundtrack candidates. Revision round 1 happens here: you choose the soundtrack and lock the direction before animation begins.",
         kind: "deliverable",
-      },
-      {
-        label: "Revision round 1",
-        title: "Feedback on script and storyboard",
-        body: "Direction locks. Soundtrack chosen. Animation begins.",
-        kind: "revision",
       },
       {
         label: "Deliverable 2",
         title: "Video first pass",
-        body: "Fully animated 30-second video in the primary format.",
+        body: "Fully animated 30-second video in the primary format. Revision round 2 happens here: you give notes on the cut.",
         kind: "deliverable",
-      },
-      {
-        label: "Revision round 2",
-        title: "Feedback on the first cut",
-        body: "Final notes before lock.",
-        kind: "revision",
       },
       {
         label: "Deliverable 3",
@@ -129,15 +117,11 @@ export const myosin: Proposal = {
       },
       {
         label: "Deliverable 4",
-        title: "Vertical and square exports",
-        body: "Format adaptations of the locked video for LinkedIn, X, and other channels.",
+        title: "Format exports",
+        body: "Vertical and square adaptations of the locked video for LinkedIn, X, and other channels.",
         kind: "end",
       },
     ],
-    note: {
-      label: "After approval",
-      body: "Edits outside the two included revision rounds are billed at 120 USD per hour.",
-    },
   },
 
   quote: {
@@ -160,7 +144,7 @@ export const myosin: Proposal = {
 
   terms: {
     items: [
-      "2 revision rounds. Further rounds quoted separately.",
+      "2 revision rounds included. Edits outside these are billed at 120 USD per hour.",
       "Payment in fiat or stablecoin.",
       "50% on start, 50% on delivery.",
       "Timeline assumes assets delivered within the first few days of kickoff.",

@@ -681,22 +681,26 @@ function ScopeSection({ data }: { data: Scope }) {
 }
 
 // ---------------------------------------------------------------------
-// Timeline — vertical list of milestones connected by a thin rule.
-// Deliverables render as solid ink dots; revisions render as outlined
-// rings to signal "feedback loop" rather than "shipped artifact".
+// Timeline — horizontal milestone strip on desktop (single connecting
+// rule; descriptions reveal on hover), vertical stack on mobile.
+// Solid ink dot = deliverable / start / end. Outlined ring = revision
+// round (kept for proposals that want explicit feedback-loop steps).
 // ---------------------------------------------------------------------
 function TimelineSection({ data }: { data: Timeline }) {
+  const lineEdge = `${50 / Math.max(data.milestones.length, 1)}%`;
+
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>{data.heading ?? "Timeline"}</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
         {data.intro ? (
-          <div className="mb-10">
+          <div className="mb-12">
             <Paragraphs body={data.intro} />
           </div>
         ) : null}
 
-        <ol className="flex flex-col gap-10">
+        {/* Mobile: vertical stack with always-visible descriptions */}
+        <ol className="flex flex-col gap-10 md:hidden">
           {data.milestones.map((m, i) => {
             const isLast = i === data.milestones.length - 1;
             const isRevision = m.kind === "revision";
@@ -717,7 +721,7 @@ function TimelineSection({ data }: { data: Timeline }) {
                 <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
                   {m.label}
                 </p>
-                <h3 className="mt-1 font-display text-[1.15rem] font-bold leading-tight text-ink md:text-[1.35rem]">
+                <h3 className="mt-1 font-display text-[1.15rem] font-bold leading-tight text-ink">
                   {m.title}
                 </h3>
                 {m.body ? (
@@ -729,6 +733,52 @@ function TimelineSection({ data }: { data: Timeline }) {
             );
           })}
         </ol>
+
+        {/* Desktop: horizontal strip with hover-revealed descriptions */}
+        <div className="relative hidden md:block">
+          <div
+            aria-hidden
+            className="absolute top-[4.5px] h-px bg-rule"
+            style={{ left: lineEdge, right: lineEdge }}
+          />
+          <ol
+            className="grid"
+            style={{
+              gridTemplateColumns: `repeat(${data.milestones.length}, 1fr)`,
+            }}
+          >
+            {data.milestones.map((m, i) => {
+              const isRevision = m.kind === "revision";
+              return (
+                <li
+                  key={i}
+                  className="group relative flex flex-col items-center px-3 text-center"
+                >
+                  <span
+                    aria-hidden
+                    className={`relative z-10 block h-[10px] w-[10px] rounded-full ${
+                      isRevision ? "border border-ink bg-bg" : "bg-ink"
+                    }`}
+                  />
+                  <p className="mt-5 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                    {m.label}
+                  </p>
+                  <p className="mt-2 font-display text-[0.95rem] font-bold leading-snug text-ink lg:text-[1rem]">
+                    {m.title}
+                  </p>
+                  {m.body ? (
+                    <div
+                      role="tooltip"
+                      className="pointer-events-none absolute left-1/2 top-full z-20 mt-4 w-60 -translate-x-1/2 rounded-[12px] border border-rule bg-bg p-4 text-left text-[0.85rem] leading-[1.4rem] text-muted opacity-0 shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-opacity duration-150 group-hover:opacity-100 dark:bg-card"
+                    >
+                      {m.body}
+                    </div>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ol>
+        </div>
 
         {data.note ? (
           <div className="mt-12 border-t border-rule-soft pt-6">
