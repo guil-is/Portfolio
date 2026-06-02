@@ -949,13 +949,13 @@ function QuoteCard({ option }: { option: QuoteOption }) {
             <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
               {p.label}
             </p>
-            <div className="flex flex-col items-end gap-1">
+            <div className="flex items-baseline gap-3">
               {p.previous ? (
-                <p className="text-[0.85rem] leading-none text-muted line-through">
+                <p className="font-display text-[1.75rem] font-normal leading-none text-muted line-through md:text-[2rem]">
                   {p.previous}
                 </p>
               ) : null}
-              <p className="font-display text-[2rem] font-bold leading-[1] text-ink md:text-[2.25rem]">
+              <p className="font-display text-[1.75rem] font-bold leading-none text-ink md:text-[2rem]">
                 {p.amount}
               </p>
             </div>
