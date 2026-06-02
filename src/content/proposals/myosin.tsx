@@ -143,7 +143,7 @@ export const myosin: Proposal = {
         lead: "One 30-second animated demo, fully produced.",
         includes: [
           "Concept, script and storyboard pass",
-          "Full animation and motion design for the 30-second piece.",
+          "Full animation and motion design",
           "2 revision rounds",
           "Final delivery in formats for LinkedIn, X, and web (square and vertical)",
         ],
