@@ -104,7 +104,7 @@ export const myosin: Proposal = {
     milestones: [
       {
         label: "Kickoff",
-        title: "Kickoff",
+        title: "SOW + Assets",
         body: "You hand over product access, Figma, and brand assets.",
         kind: "start",
       },
@@ -117,13 +117,13 @@ export const myosin: Proposal = {
       {
         label: "Production",
         title: "Video first pass",
-        body: "Full 30-second animation in the primary format.",
+        body: "Full 30-second animation, primary format.",
         kind: "deliverable",
       },
       {
         label: "Polish",
         title: "Video second pass",
-        body: "Revision round 2. Notes applied, main format approved.",
+        body: "Revision round 2. Notes applied, format approved.",
         kind: "deliverable",
       },
       {

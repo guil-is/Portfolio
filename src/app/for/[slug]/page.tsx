@@ -741,40 +741,91 @@ function TimelineSection({ data }: { data: Timeline }) {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>{data.heading ?? "Timeline"}</SectionLabel>
-      <div className="mx-auto w-full max-w-[960px]">
-        {data.intro ? (
-          <div className="mb-12">
-            <Paragraphs body={data.intro} />
-          </div>
-        ) : null}
 
-        {/* Mobile: vertical stack with always-visible descriptions */}
-        <ol className="flex flex-col gap-10 md:hidden">
-          {data.milestones.map((m, i) => {
-            const isLast = i === data.milestones.length - 1;
-            const isRevision = m.kind === "revision";
-            return (
-              <li key={i} className="relative pl-9">
-                {!isLast ? (
-                  <span
-                    aria-hidden
-                    className="absolute left-[11px] top-[15px] bottom-[-45px] w-px bg-rule"
-                  />
-                ) : null}
+      {data.intro ? (
+        <div className="mx-auto mb-12 w-full max-w-[960px]">
+          <Paragraphs body={data.intro} />
+        </div>
+      ) : null}
+
+      {/* Mobile: vertical stack with always-visible descriptions */}
+      <ol className="mx-auto flex w-full max-w-[960px] flex-col gap-10 md:hidden">
+        {data.milestones.map((m, i) => {
+          const isLast = i === data.milestones.length - 1;
+          const isRevision = m.kind === "revision";
+          return (
+            <li key={i} className="relative pl-9">
+              {!isLast ? (
                 <span
                   aria-hidden
-                  className={`absolute left-[6.5px] top-[5px] block h-[10px] w-[10px] rounded-full ${
+                  className="absolute left-[11px] top-[15px] bottom-[-45px] w-px bg-rule"
+                />
+              ) : null}
+              <span
+                aria-hidden
+                className={`absolute left-[6.5px] top-[5px] block h-[10px] w-[10px] rounded-full ${
+                  isRevision ? "border border-ink bg-bg" : "bg-ink"
+                }`}
+              />
+              <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                {m.label}
+              </p>
+              <h3 className="mt-1 font-display text-[1.15rem] font-bold leading-tight text-ink">
+                {m.title}
+              </h3>
+              {m.body ? (
+                <p className="mt-2 text-[0.95rem] leading-[1.6rem] text-muted">
+                  {m.body}
+                </p>
+              ) : null}
+            </li>
+          );
+        })}
+      </ol>
+
+      {/* Desktop: full-width horizontal strip, line edge to edge in
+       *  the section's padded content area. */}
+      <div className="relative hidden md:block">
+        <div
+          aria-hidden
+          className="absolute top-[4.5px] h-px bg-rule"
+          style={{ left: lineEdge, right: lineEdge }}
+        />
+        <ol
+          className="grid"
+          style={{
+            gridTemplateColumns: `repeat(${data.milestones.length}, 1fr)`,
+          }}
+        >
+          {data.milestones.map((m, i) => {
+            const isRevision = m.kind === "revision";
+            return (
+              <li
+                key={i}
+                className="relative flex flex-col items-center px-3 text-center"
+              >
+                <span
+                  aria-hidden
+                  className={`relative z-10 block h-[10px] w-[10px] rounded-full ${
                     isRevision ? "border border-ink bg-bg" : "bg-ink"
                   }`}
                 />
-                <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                <p className="mt-5 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
                   {m.label}
                 </p>
-                <h3 className="mt-1 font-display text-[1.15rem] font-bold leading-tight text-ink">
+                <p className="mt-2 font-display text-[0.95rem] font-bold leading-snug text-ink lg:text-[1rem]">
                   {m.title}
-                </h3>
+                </p>
                 {m.body ? (
-                  <p className="mt-2 text-[0.95rem] leading-[1.6rem] text-muted">
+                  <p
+                    className="mt-2 line-clamp-2 min-h-[2.8rem] text-[0.85rem] leading-[1.4rem] text-muted"
+                    style={{
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 2,
+                      overflow: "hidden",
+                    }}
+                  >
                     {m.body}
                   </p>
                 ) : null}
@@ -782,61 +833,18 @@ function TimelineSection({ data }: { data: Timeline }) {
             );
           })}
         </ol>
-
-        {/* Desktop: horizontal strip with hover-revealed descriptions */}
-        <div className="relative hidden md:block">
-          <div
-            aria-hidden
-            className="absolute top-[4.5px] h-px bg-rule"
-            style={{ left: lineEdge, right: lineEdge }}
-          />
-          <ol
-            className="grid"
-            style={{
-              gridTemplateColumns: `repeat(${data.milestones.length}, 1fr)`,
-            }}
-          >
-            {data.milestones.map((m, i) => {
-              const isRevision = m.kind === "revision";
-              return (
-                <li
-                  key={i}
-                  className="relative flex flex-col items-center px-3 text-center"
-                >
-                  <span
-                    aria-hidden
-                    className={`relative z-10 block h-[10px] w-[10px] rounded-full ${
-                      isRevision ? "border border-ink bg-bg" : "bg-ink"
-                    }`}
-                  />
-                  <p className="mt-5 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                    {m.label}
-                  </p>
-                  <p className="mt-2 font-display text-[0.95rem] font-bold leading-snug text-ink lg:text-[1rem]">
-                    {m.title}
-                  </p>
-                  {m.body ? (
-                    <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
-                      {m.body}
-                    </p>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ol>
-        </div>
-
-        {data.note ? (
-          <div className="mt-12 border-t border-rule-soft pt-6">
-            <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-              {data.note.label}
-            </p>
-            <div className="mt-3">
-              <Paragraphs body={data.note.body} />
-            </div>
-          </div>
-        ) : null}
       </div>
+
+      {data.note ? (
+        <div className="mx-auto mt-12 w-full max-w-[960px] border-t border-rule-soft pt-6">
+          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+            {data.note.label}
+          </p>
+          <div className="mt-3">
+            <Paragraphs body={data.note.body} />
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
