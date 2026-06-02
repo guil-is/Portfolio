@@ -879,7 +879,7 @@ function QuoteSection({ data }: { data: Quote }) {
           className={
             data.options.length > 1
               ? "mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2"
-              : "mt-12 md:mx-auto md:mt-16 md:max-w-[800px]"
+              : "mt-12 md:mx-auto md:mt-16 md:max-w-[600px]"
           }
         >
           {data.options.map((option, i) => (
@@ -915,44 +915,41 @@ function QuoteSection({ data }: { data: Quote }) {
 function QuoteCard({ option }: { option: QuoteOption }) {
   return (
     <div
-      className={`flex h-full flex-col gap-6 rounded-[16px] border bg-transparent px-8 py-7 ${
+      className={`flex flex-col gap-5 rounded-[16px] border bg-transparent px-8 py-7 ${
         option.recommended ? "border-ink" : "border-rule"
       }`}
     >
-      {/* Two-column main: content left, fee right; stacks on mobile */}
-      <div className="flex flex-col gap-7 md:grid md:grid-cols-[3fr_2fr] md:items-center md:gap-10">
-        <div className="flex flex-col gap-5">
-          <div>
-            {option.label || option.recommended ? (
-              <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                {option.label}
-                {option.label && option.recommended ? " · " : ""}
-                {option.recommended ? "Recommended" : ""}
-              </p>
-            ) : null}
-            <h3
-              className={`font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.75rem] ${
-                option.label || option.recommended ? "mt-4" : ""
-              }`}
-            >
-              {option.title}
-            </h3>
-          </div>
+      <div>
+        {option.label || option.recommended ? (
+          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+            {option.label}
+            {option.label && option.recommended ? " · " : ""}
+            {option.recommended ? "Recommended" : ""}
+          </p>
+        ) : null}
+        <h3
+          className={`font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.75rem] ${
+            option.label || option.recommended ? "mt-4" : ""
+          }`}
+        >
+          {option.title}
+        </h3>
+      </div>
 
-          {option.lead ? <Paragraphs body={option.lead} /> : null}
+      {option.lead ? <Paragraphs body={option.lead} /> : null}
 
-          <BulletList items={option.includes} />
-        </div>
+      <BulletList items={option.includes} />
 
-        <div className="flex flex-col items-start gap-1 md:items-end">
-          {option.prices.map((p, i) => (
-            <div
-              key={i}
-              className="flex flex-col items-start gap-1 md:items-end"
-            >
-              <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                {p.label}
-              </p>
+      <div className="border-t border-rule-soft pt-5">
+        {option.prices.map((p, i) => (
+          <div
+            key={i}
+            className="flex items-baseline justify-between gap-4"
+          >
+            <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+              {p.label}
+            </p>
+            <div className="flex flex-col items-end gap-1">
               {p.previous ? (
                 <p className="text-[0.85rem] leading-none text-muted line-through">
                   {p.previous}
@@ -962,28 +959,19 @@ function QuoteCard({ option }: { option: QuoteOption }) {
                 {p.amount}
               </p>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+        {option.priceNote ? (
+          <p className="mt-5 text-[0.9rem] leading-[1.5rem] text-ink">
+            {option.priceNote}
+          </p>
+        ) : null}
+        {option.timeline ? (
+          <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
+            {option.timeline}
+          </p>
+        ) : null}
       </div>
-
-      {option.priceNote || option.timeline ? (
-        <div className="border-t border-rule-soft pt-5">
-          {option.priceNote ? (
-            <p className="text-[0.9rem] leading-[1.5rem] text-ink">
-              {option.priceNote}
-            </p>
-          ) : null}
-          {option.timeline ? (
-            <p
-              className={`text-[0.85rem] leading-[1.4rem] text-muted ${
-                option.priceNote ? "mt-2" : ""
-              }`}
-            >
-              {option.timeline}
-            </p>
-          ) : null}
-        </div>
-      ) : null}
 
       {option.closing ? (
         <div className="border-t border-rule-soft pt-6">
