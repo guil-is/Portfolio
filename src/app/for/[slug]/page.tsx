@@ -879,7 +879,7 @@ function QuoteSection({ data }: { data: Quote }) {
           className={
             data.options.length > 1
               ? "mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2"
-              : "mt-12 md:mt-16 md:mx-auto md:max-w-[520px]"
+              : "mt-12 md:mt-16"
           }
         >
           {data.options.map((option, i) => (
@@ -915,7 +915,7 @@ function QuoteSection({ data }: { data: Quote }) {
 function QuoteCard({ option }: { option: QuoteOption }) {
   return (
     <div
-      className={`flex h-full flex-col gap-6 rounded-[16px] border bg-transparent p-8 ${
+      className={`flex h-full flex-col gap-5 rounded-[16px] border bg-transparent px-8 py-7 ${
         option.recommended ? "border-ink" : "border-rule"
       }`}
     >
@@ -936,31 +936,29 @@ function QuoteCard({ option }: { option: QuoteOption }) {
 
       <BulletList items={option.includes} />
 
-      <div className="mt-auto flex flex-col gap-3 border-t border-rule-soft pt-6">
+      <div className="mt-auto border-t border-rule-soft pt-6">
         {option.prices.map((p, i) => (
-          <div key={i} className="flex items-baseline justify-between gap-4">
+          <div key={i} className="flex flex-col items-end gap-1">
             <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
               {p.label}
             </p>
-            <div className="flex flex-col items-end">
-              {p.previous ? (
-                <p className="text-[0.9rem] leading-tight text-muted line-through">
-                  {p.previous}
-                </p>
-              ) : null}
-              <p className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
-                {p.amount}
+            {p.previous ? (
+              <p className="text-[0.85rem] leading-none text-muted line-through">
+                {p.previous}
               </p>
-            </div>
+            ) : null}
+            <p className="font-display text-[2.5rem] font-bold leading-[0.95] text-ink md:text-[3rem]">
+              {p.amount}
+            </p>
           </div>
         ))}
         {option.priceNote ? (
-          <p className="text-[0.85rem] leading-[1.4rem] text-muted">
+          <p className="mt-5 text-[0.9rem] leading-[1.5rem] text-ink">
             {option.priceNote}
           </p>
         ) : null}
         {option.timeline ? (
-          <p className="mt-1 text-[0.85rem] leading-[1.4rem] text-muted">
+          <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
             {option.timeline}
           </p>
         ) : null}

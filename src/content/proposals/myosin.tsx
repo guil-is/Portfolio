@@ -111,7 +111,7 @@ export const myosin: Proposal = {
       {
         label: "Direction",
         title: "Script, storyboard, soundtrack",
-        body: "Revision round 1. Lock direction before animation.",
+        body: "Lock direction before animation.",
         kind: "deliverable",
       },
       {
@@ -123,7 +123,7 @@ export const myosin: Proposal = {
       {
         label: "Polish",
         title: "Video second pass",
-        body: "Revision round 2. Notes applied, format approved.",
+        body: "Notes applied, format approved.",
         kind: "deliverable",
       },
       {
@@ -143,7 +143,7 @@ export const myosin: Proposal = {
         lead: "One 30-second animated demo, fully produced.",
         includes: [
           "Concept, script and storyboard pass",
-          "Full animation and motion design across all eight scenes",
+          "Full animation and motion design for the 30-second piece.",
           "2 revision rounds",
           "Final delivery in formats for LinkedIn, X, and web (square and vertical)",
         ],
@@ -163,10 +163,10 @@ export const myosin: Proposal = {
 
   terms: {
     items: [
-      "2 revision rounds included. Edits outside these are billed at 120 USD per hour.",
       "Payment in fiat or stablecoin.",
       "50% on start, 50% on delivery.",
       "Timeline assumes assets delivered within the first few days of kickoff.",
+      "Edits outside revision rounds are billed at 120 USD per hour.",
     ],
   },
 
