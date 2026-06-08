@@ -163,7 +163,7 @@ function SignatureForm({
           value={name}
           onChange={setName}
           autoComplete="name"
-          placeholder="Justice Conder"
+          placeholder="Your full name"
         />
         <Field
           label="Email"
