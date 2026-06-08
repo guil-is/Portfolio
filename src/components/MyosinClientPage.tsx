@@ -104,7 +104,7 @@ function Header() {
         Myosin × Guil
       </h1>
       <p className="max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
-        A shared workspace for the Hivemind launch video — the agreement to
+        A shared workspace for the Hivemind launch video: the agreement to
         sign, the proposal it is built on, and a live view of where the project
         stands.
       </p>
