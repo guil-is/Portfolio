@@ -1,22 +1,21 @@
 import { NextResponse } from "next/server";
 import { sanityClient } from "@/lib/sanity";
 import { justice } from "@/content/clients/justice";
+import { myosin } from "@/content/clients/myosin";
 import { renderAgreementPdf } from "@/lib/agreement-pdf";
+import type { SignableClient } from "@/content/clients/types";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 
 export const runtime = "nodejs";
 
-const clients = { justice } as const;
+const clients = { justice, myosin } as const;
 type ClientSlug = keyof typeof clients;
 
 function isClientSlug(value: string): value is ClientSlug {
   return Object.prototype.hasOwnProperty.call(clients, value);
 }
 
-function resolveDoc(
-  client: (typeof clients)[ClientSlug],
-  documentKey: string,
-) {
+function resolveDoc(client: SignableClient, documentKey: string) {
   if (documentKey === "sow") return client.sow;
   return client.amendments?.[documentKey] ?? null;
 }

@@ -7,10 +7,10 @@ import {
   renderToBuffer,
 } from "@react-pdf/renderer";
 import type {
-  JusticeClient,
+  SignableClient,
   SignableDocument,
   SowSection,
-} from "@/content/clients/justice";
+} from "@/content/clients/types";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 
 /**
@@ -233,7 +233,7 @@ export function AgreementPdf({
   document: doc,
   signature,
 }: {
-  client: JusticeClient;
+  client: SignableClient;
   document: SignableDocument;
   signature: SignedAgreement;
 }) {
@@ -263,7 +263,7 @@ export function AgreementPdf({
 
         <Text style={styles.preamble}>{doc.preamble}</Text>
 
-        {isSow ? (
+        {isSow && engagement ? (
           <View style={styles.metaRow}>
             <View style={styles.metaCell}>
               <Text style={styles.metaLabel}>Rate</Text>
@@ -374,7 +374,7 @@ export function AgreementPdf({
 }
 
 export async function renderAgreementPdf(
-  client: JusticeClient,
+  client: SignableClient,
   document: SignableDocument,
   signature: SignedAgreement,
 ): Promise<Buffer> {

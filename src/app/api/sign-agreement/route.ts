@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getSanityWriteClient } from "@/lib/sanity-write";
-import {
-  justice,
-  type JusticeClient,
-  type SignableDocument,
-} from "@/content/clients/justice";
+import { justice } from "@/content/clients/justice";
+import { myosin } from "@/content/clients/myosin";
+import type { SignableClient, SignableDocument } from "@/content/clients/types";
 import { hashDocument } from "@/lib/sow-hash";
 import { getLatestSignature, type SignedAgreement } from "@/lib/signed-agreement";
 import { renderAgreementPdf } from "@/lib/agreement-pdf";
@@ -14,7 +12,7 @@ export const runtime = "nodejs";
 
 // Map of client slug → source of truth for that client.
 // Add new clients here as they come online.
-const clients = { justice } as const;
+const clients = { justice, myosin } as const;
 type ClientSlug = keyof typeof clients;
 
 function isClientSlug(value: string): value is ClientSlug {
@@ -23,7 +21,7 @@ function isClientSlug(value: string): value is ClientSlug {
 
 /** Resolve which signable document on the client a request targets. */
 function resolveDocument(
-  client: JusticeClient,
+  client: SignableClient,
   documentKey: string,
 ): SignableDocument | null {
   if (documentKey === "sow") return client.sow;

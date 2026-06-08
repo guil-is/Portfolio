@@ -6,6 +6,12 @@
  * recent period renders first on the page.
  */
 
+import type { SignableDocument } from "./types";
+
+// Re-export so existing importers (`@/content/clients/justice`) keep
+// resolving these shared types from here.
+export type { SignableDocument, SowSection } from "./types";
+
 export type HoursItem = {
   project: string;
   description: string;
@@ -45,43 +51,6 @@ export type HoursPeriod = {
   note?: string;
   /** Invoice metadata. Omit while a period is still in progress. */
   invoice?: Invoice;
-};
-
-export type SowSection = {
-  heading: string;
-  /** Paragraphs and/or bullet lists, rendered in order. */
-  blocks: Array<
-    | { type: "p"; text: string }
-    | { type: "ul"; items: string[] }
-    | { type: "kv"; rows: Array<[string, string]> }
-  >;
-};
-
-/**
- * Generic shape for a signable document — used by both the SOW and the
- * Manfred Amendment. Keeps the signature flow / hash / PDF generic so
- * adding a new amendment is data-only.
- */
-export type SignableDocument = {
-  /** Display title shown above the doc. Defaults to "Statement of Work". */
-  title?: string;
-  /** Bump this when the doc content changes substantively. Previous
-   * signatures remain valid records of what was signed then, but the
-   * new version requires a fresh signature. */
-  version: string;
-  preamble: string;
-  effectiveDate: string;
-  sections: SowSection[];
-  signatories: Array<[string, string]>;
-  /** Wording of each checkbox the signer must tick. These exact
-   * strings are stored on the signature record. */
-  acknowledgments: string[];
-  /** Optional plain-English summary card shown above the legal text. */
-  tldr?: string[];
-  /** Optional plain-English breakdown table — section name → one-line summary. */
-  breakdown?: Array<{ section: string; summary: string }>;
-  /** Optional footer note (e.g. "no attorney reviewed this"). */
-  noteOnApproach?: string;
 };
 
 export type JusticeClient = {

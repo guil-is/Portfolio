@@ -1,8 +1,8 @@
 import { createHash } from "node:crypto";
 import type {
-  JusticeClient,
+  SignableClient,
   SignableDocument,
-} from "@/content/clients/justice";
+} from "@/content/clients/types";
 
 /**
  * Produce a deterministic plain-text rendering of a signable document
@@ -13,7 +13,7 @@ import type {
  * Server-only: pulls in node:crypto.
  */
 export function serializeDocument(
-  client: JusticeClient,
+  client: SignableClient,
   doc: SignableDocument,
 ): string {
   const { engagement } = client;
@@ -23,9 +23,14 @@ export function serializeDocument(
   lines.push(`DOC: ${doc.title ?? "Statement of Work"}`);
   lines.push(`VERSION: ${doc.version}`);
   lines.push(`EFFECTIVE: ${doc.effectiveDate}`);
-  lines.push(`RATE: $${engagement.rateUsd}/hr`);
-  lines.push(`WEEKLY: ${engagement.weeklyHoursMin}-${engagement.weeklyHoursMax}h`);
-  lines.push(`START: ${engagement.startDate}`);
+  // Retainer engagement metadata only — present on Justice, absent on
+  // one-off project agreements. Guarded so a client without engagement
+  // serializes (and hashes) cleanly without affecting clients that have it.
+  if (engagement) {
+    lines.push(`RATE: $${engagement.rateUsd}/hr`);
+    lines.push(`WEEKLY: ${engagement.weeklyHoursMin}-${engagement.weeklyHoursMax}h`);
+    lines.push(`START: ${engagement.startDate}`);
+  }
   lines.push("");
   lines.push(`PREAMBLE: ${doc.preamble}`);
   lines.push("");
@@ -68,16 +73,16 @@ export function serializeDocument(
 }
 
 export function hashDocument(
-  client: JusticeClient,
+  client: SignableClient,
   doc: SignableDocument,
 ): string {
   return createHash("sha256").update(serializeDocument(client, doc)).digest("hex");
 }
 
 /** Backwards-compatible alias for SOW callers. */
-export function serializeSow(client: JusticeClient): string {
+export function serializeSow(client: SignableClient): string {
   return serializeDocument(client, client.sow);
 }
-export function hashSow(client: JusticeClient): string {
+export function hashSow(client: SignableClient): string {
   return hashDocument(client, client.sow);
 }
