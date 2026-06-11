@@ -114,7 +114,7 @@ export const myosin: MyosinClient = {
       label: "Deposit",
       description: "50% before work begins",
       amountUsd: 800,
-      status: "due",
+      status: "invoiced",
     },
     {
       label: "Balance",
