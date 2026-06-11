@@ -79,13 +79,14 @@ export const myosin: MyosinClient = {
       title: "Agreement + assets",
       description:
         "Sign the agreement and hand over product access, the Figma, and the brand pack.",
-      status: "in_progress",
+      status: "approved",
+      date: "2026-06-11",
     },
     {
       label: "Direction",
       title: "Script, storyboard, soundtrack",
       description: "Lock the direction before animation. Review point one.",
-      status: "upcoming",
+      status: "in_progress",
     },
     {
       label: "Production",
