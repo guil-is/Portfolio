@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Building2, Check, Pencil } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
 import type { SignedAgreement } from "@/lib/signed-agreement";
@@ -112,6 +112,7 @@ function EntityPopup({
   onClose: () => void;
 }) {
   const [value, setValue] = useState(initial);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -121,6 +122,11 @@ function EntityPopup({
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  // Focus the field without scrolling the page underneath toward it.
+  useEffect(() => {
+    inputRef.current?.focus({ preventScroll: true });
+  }, []);
+
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const v = value.trim();
@@ -129,7 +135,7 @@ function EntityPopup({
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center p-6"
+      className="fixed inset-0 z-[60] flex items-start justify-center p-6 pt-[10vh] md:pt-[12vh]"
       role="dialog"
       aria-modal="true"
       aria-label="Enter your legal entity name"
@@ -139,7 +145,7 @@ function EntityPopup({
         aria-hidden
         tabIndex={-1}
         onClick={onClose}
-        className="absolute inset-0 bg-bg/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-bg/75 backdrop-blur-xl"
       />
       <form
         onSubmit={handleSubmit}
@@ -168,9 +174,9 @@ function EntityPopup({
           </label>
           <input
             id="entity-name"
+            ref={inputRef}
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            autoFocus
             placeholder="e.g. Example Media GmbH"
             className="w-full border-b border-rule bg-transparent pb-2 text-[1rem] leading-[1.6] text-ink transition-colors placeholder:text-faint focus:border-ink focus:outline-none"
           />
