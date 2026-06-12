@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Building2, Check, Pencil } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
+import { CtaButton } from "@/components/CtaButton";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import {
   tedxberlin,
@@ -145,7 +146,7 @@ function EntityPopup({
         aria-hidden
         tabIndex={-1}
         onClick={onClose}
-        className="absolute inset-0 bg-bg/75 backdrop-blur-xl"
+        className="absolute inset-0 bg-bg/90 backdrop-blur-lg"
       />
       <form
         onSubmit={handleSubmit}
@@ -182,20 +183,13 @@ function EntityPopup({
           />
         </div>
 
-        <div className="mt-8 flex items-center gap-4">
-          <button
+        <div className="mt-8 flex items-center gap-5">
+          <CtaButton
             type="submit"
+            label="Save"
+            icon={Check}
             disabled={!value.trim()}
-            aria-label="Save"
-            className="cta-pill group inline-flex h-12 items-center disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <span className="flex h-12 w-12 items-center justify-center text-bg">
-              <Check className="h-4 w-4" strokeWidth={2.5} />
-            </span>
-            <span className="max-w-0 overflow-hidden whitespace-nowrap font-caption text-[12px] font-bold uppercase tracking-[1px] opacity-0 transition-all duration-200 group-hover:max-w-[100px] group-hover:pl-1 group-hover:pr-5 group-hover:opacity-100">
-              Save
-            </span>
-          </button>
+          />
           <button
             type="button"
             onClick={onClose}
