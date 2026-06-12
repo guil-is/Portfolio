@@ -186,12 +186,13 @@ function EntityPopup({
           <button
             type="submit"
             disabled={!value.trim()}
-            className="cta-pill group inline-flex h-12 items-center gap-3 pr-5 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Save"
+            className="cta-pill group inline-flex h-12 items-center disabled:cursor-not-allowed disabled:opacity-50"
           >
             <span className="flex h-12 w-12 items-center justify-center text-bg">
               <Check className="h-4 w-4" strokeWidth={2.5} />
             </span>
-            <span className="font-caption text-[12px] font-bold uppercase tracking-[1px]">
+            <span className="max-w-0 overflow-hidden whitespace-nowrap font-caption text-[12px] font-bold uppercase tracking-[1px] opacity-0 transition-all duration-200 group-hover:max-w-[100px] group-hover:pl-1 group-hover:pr-5 group-hover:opacity-100">
               Save
             </span>
           </button>
@@ -200,7 +201,7 @@ function EntityPopup({
             onClick={onClose}
             className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink"
           >
-            I&rsquo;ll add it below
+            I&rsquo;ll add it later
           </button>
         </div>
       </form>
