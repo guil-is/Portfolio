@@ -317,6 +317,12 @@ export function AgreementPdf({
             <Text style={styles.certLabel}>Signed by</Text>
             <Text style={styles.certValue}>{signature.signerName}</Text>
           </View>
+          {signature.clientEntity ? (
+            <View style={styles.certRow}>
+              <Text style={styles.certLabel}>On behalf of</Text>
+              <Text style={styles.certValue}>{signature.clientEntity}</Text>
+            </View>
+          ) : null}
           <View style={styles.certRow}>
             <Text style={styles.certLabel}>Email</Text>
             <Text style={styles.certValue}>{signature.signerEmail}</Text>

@@ -11,6 +11,11 @@ type Props = {
   acknowledgments: string[];
   documentVersion: string;
   initialSignature: SignedAgreement | null;
+  /** Legal entity the signer represents, when the page collects it.
+   * Submitted with the signature and shown on the certificate. */
+  clientEntity?: string;
+  /** When true, signing is blocked until `clientEntity` is provided. */
+  requireEntity?: boolean;
 };
 
 export function AgreementSignature({
@@ -19,6 +24,8 @@ export function AgreementSignature({
   acknowledgments,
   documentVersion,
   initialSignature,
+  clientEntity,
+  requireEntity = false,
 }: Props) {
   const [signature, setSignature] = useState<SignedAgreement | null>(
     initialSignature,
@@ -34,6 +41,8 @@ export function AgreementSignature({
       documentKey={documentKey}
       acknowledgments={acknowledgments}
       documentVersion={documentVersion}
+      clientEntity={clientEntity}
+      requireEntity={requireEntity}
       onSigned={setSignature}
     />
   );
@@ -80,12 +89,16 @@ function SignatureForm({
   clientSlug,
   documentKey,
   acknowledgments,
+  clientEntity,
+  requireEntity,
   onSigned,
 }: {
   clientSlug: string;
   documentKey: string;
   acknowledgments: string[];
   documentVersion: string;
+  clientEntity?: string;
+  requireEntity?: boolean;
   onSigned: (s: SignedAgreement) => void;
 }) {
   const [name, setName] = useState("");
@@ -96,8 +109,10 @@ function SignatureForm({
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const entityOk = !requireEntity || !!clientEntity?.trim();
   const allChecked = checked.every(Boolean);
-  const canSubmit = !!name.trim() && !!email.trim() && allChecked && !submitting;
+  const canSubmit =
+    !!name.trim() && !!email.trim() && allChecked && entityOk && !submitting;
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -113,6 +128,7 @@ function SignatureForm({
           name: name.trim(),
           email: email.trim(),
           acknowledgments,
+          ...(clientEntity?.trim() ? { clientEntity: clientEntity.trim() } : {}),
         }),
       });
       const data = (await res.json()) as
@@ -205,6 +221,12 @@ function SignatureForm({
 
       {error ? (
         <p className="text-[0.9rem] text-[#d14343]">{error}</p>
+      ) : null}
+
+      {requireEntity && !clientEntity?.trim() ? (
+        <p className="text-[0.9rem] text-muted">
+          Add your legal entity name above to enable signing.
+        </p>
       ) : null}
 
       <button
@@ -321,6 +343,9 @@ function SignedCertificate({ signature }: { signature: SignedAgreement }) {
         <div className="flex flex-col gap-6 border-t border-rule-soft pt-6">
           <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-[0.9rem] md:gap-x-8">
             <CertRow label="Signed by" value={signature.signerName} />
+            {signature.clientEntity ? (
+              <CertRow label="On behalf of" value={signature.clientEntity} />
+            ) : null}
             <CertRow label="Email" value={signature.signerEmail} />
             <CertRow label="Signed at" value={formattedDate} />
             <CertRow

@@ -6,15 +6,21 @@
  * backend as the other /for/ pages: this `sow` is a SignableDocument and
  * the client is registered in the sign-agreement API as a SignableClient.
  *
- * NOTE — unresolved placeholders before this can go live:
- *   • TODO_CLIENT_ENTITY  — the Client's legal entity name (Parties + signatories).
- *   • TODO_VAT            — VAT treatment of the EUR 1,000 fee
- *                           ("net, plus statutory VAT" or "including VAT").
- *   (Contractor USt-IdNr DE308488034 supplied; note this is a VAT ID, not
- *    a Steuernummer — confirm if a Steuernummer is also required.)
+ * The Client's legal entity name is not hardcoded: the signer enters it in
+ * a popup on the page, and it is recorded with the signature (shown on the
+ * certificate, PDF, and confirmation email). The static document keeps a
+ * stable placeholder so the document hash is deterministic.
+ *
+ * Contractor USt-IdNr DE308488034 supplied (note: a VAT ID, not a
+ * Steuernummer). Fee is net plus 19% statutory VAT.
  */
 
 import type { SignableDocument } from "./types";
+
+/** Stable text used in the static document wherever the Client's legal
+ * entity will go. The signer's entered entity is captured separately on
+ * the signature record (`clientEntity`) and surfaced on the page/PDF. */
+export const CLIENT_ENTITY_PLACEHOLDER = "Entered by the Client at signing";
 
 export type TedxBerlinClient = {
   clientName: string;
@@ -50,7 +56,7 @@ export const tedxberlin: TedxBerlinClient = {
                 "Contractor",
                 "Guilherme Maueler, Berlin, Germany. USt-IdNr: DE308488034",
               ],
-              ["Client", "TODO_CLIENT_ENTITY"],
+              ["Client", CLIENT_ENTITY_PLACEHOLDER],
             ],
           },
         ],
@@ -91,7 +97,7 @@ export const tedxberlin: TedxBerlinClient = {
         blocks: [
           {
             type: "p",
-            text: "The total fee is EUR 1,000 TODO_VAT. Payment is due within 14 days of invoice date. The invoice is issued upon delivery of the final approved version.",
+            text: "The total fee is EUR 1,000 net, plus 19% statutory VAT (EUR 190), for a gross total of EUR 1,190. Payment is due within 14 days of invoice date. The invoice is issued upon delivery of the final approved version.",
           },
         ],
       },
@@ -151,7 +157,7 @@ export const tedxberlin: TedxBerlinClient = {
     ],
     signatories: [
       ["Contractor", "Guilherme Maueler"],
-      ["Client", "TODO_CLIENT_ENTITY"],
+      ["Client", CLIENT_ENTITY_PLACEHOLDER],
       ["Place", "Berlin"],
       ["Date", "Auto-filled on signing"],
     ],

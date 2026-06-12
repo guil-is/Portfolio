@@ -51,6 +51,7 @@ function formatConfirmationEmail(params: {
   documentHash: string;
   acknowledgments: string[];
   pdfAttached: boolean;
+  clientEntity?: string;
 }): { subject: string; html: string; text: string } {
   const {
     clientName,
@@ -64,6 +65,7 @@ function formatConfirmationEmail(params: {
     documentHash,
     acknowledgments,
     pdfAttached,
+    clientEntity,
   } = params;
 
   const subject = `Signed: ${clientName} × Guil Maueler — ${documentTitle}`;
@@ -73,6 +75,7 @@ function formatConfirmationEmail(params: {
   const text = [
     `This confirms that ${signerName} (${signerEmail}) has electronically signed the ${documentTitle} between Guilherme Maueler and ${clientName}.`,
     "",
+    ...(clientEntity ? [`Signing on behalf of: ${clientEntity}`] : []),
     `Signed at: ${signedAt}`,
     `Document version: ${documentVersion}`,
     `Document hash (SHA-256): ${documentHash}`,
@@ -95,6 +98,7 @@ function formatConfirmationEmail(params: {
 <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:#0a0a0a;line-height:1.6;max-width:560px;margin:0 auto;padding:24px;">
   <p style="margin:0 0 16px;">This confirms that <strong>${escapeHtml(signerName)}</strong> (${escapeHtml(signerEmail)}) has electronically signed the ${escapeHtml(documentTitle)} between Guilherme Maueler and <strong>${escapeHtml(clientName)}</strong>.</p>
   <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;">
+    ${clientEntity ? `<tr><td style="color:#7e7e7e;padding:6px 12px 6px 0;width:40%;">Signing on behalf of</td><td style="padding:6px 0;">${escapeHtml(clientEntity)}</td></tr>` : ""}
     <tr><td style="color:#7e7e7e;padding:6px 12px 6px 0;width:40%;">Signed at</td><td style="padding:6px 0;">${escapeHtml(signedAt)}</td></tr>
     <tr><td style="color:#7e7e7e;padding:6px 12px 6px 0;">Document version</td><td style="padding:6px 0;">${escapeHtml(documentVersion)}</td></tr>
     <tr><td style="color:#7e7e7e;padding:6px 12px 6px 0;">Document hash</td><td style="padding:6px 0;font-family:ui-monospace,monospace;font-size:12px;word-break:break-all;">${escapeHtml(documentHash)}</td></tr>
@@ -124,6 +128,8 @@ type Payload = {
   name: string;
   email: string;
   acknowledgments: string[];
+  /** Optional: legal entity the signer represents (collected on some pages). */
+  clientEntity?: string;
 };
 
 export async function POST(req: Request) {
@@ -138,6 +144,7 @@ export async function POST(req: Request) {
   const documentKey = String(body.documentKey ?? "sow").trim() || "sow";
   const name = String(body.name ?? "").trim();
   const email = String(body.email ?? "").trim();
+  const clientEntity = String(body.clientEntity ?? "").trim();
   const ackChecked = Array.isArray(body.acknowledgments)
     ? body.acknowledgments.map((s) => String(s).trim())
     : [];
@@ -198,6 +205,7 @@ export async function POST(req: Request) {
       documentVersion: doc.version,
       documentHash,
       acknowledgments: requiredAcks,
+      ...(clientEntity ? { clientEntity } : {}),
     });
   } catch (err) {
     console.error("[sign-agreement] Sanity write failed", err);
@@ -219,6 +227,7 @@ export async function POST(req: Request) {
     documentVersion: doc.version,
     documentHash,
     acknowledgments: requiredAcks,
+    ...(clientEntity ? { clientEntity } : {}),
   };
 
   // Render a PDF of the signed agreement — best-effort. If it fails we
@@ -257,6 +266,7 @@ export async function POST(req: Request) {
         documentHash,
         acknowledgments: requiredAcks,
         pdfAttached: !!pdfBuffer,
+        clientEntity: clientEntity || undefined,
       });
       await resend.emails.send({
         from: `Guil Maueler <${fromAddress}>`,

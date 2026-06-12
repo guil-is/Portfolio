@@ -76,6 +76,13 @@ export const signedAgreement = defineType({
       of: [{ type: "string" }],
       description: "Exact wording of each checkbox the signer confirmed.",
     }),
+    defineField({
+      name: "clientEntity",
+      title: "Client legal entity",
+      type: "string",
+      description:
+        "Legal entity the signer signed on behalf of, when the page collected it (e.g. /for/tedxberlin).",
+    }),
   ],
   orderings: [
     {

@@ -14,6 +14,9 @@ export type SignedAgreement = {
   documentVersion: string;
   documentHash: string;
   acknowledgments?: string[];
+  /** Legal entity the signer is signing on behalf of, when the page
+   * collects it (e.g. /for/tedxberlin). Optional for backwards compat. */
+  clientEntity?: string;
 };
 
 /**
