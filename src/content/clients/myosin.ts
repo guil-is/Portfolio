@@ -86,26 +86,27 @@ export const myosin: MyosinClient = {
       label: "Direction",
       title: "Script, storyboard, soundtrack",
       description: "Lock the direction before animation. Review point one.",
-      status: "in_progress",
+      status: "approved",
     },
     {
       label: "Production",
       title: "Launch-ready cut",
       description:
         "Full 30-second animation, primary format. Review point two.",
-      status: "upcoming",
+      status: "approved",
     },
     {
       label: "Polish",
       title: "Notes applied",
-      description: "Second revision round, format approved.",
-      status: "upcoming",
+      description: "Revision round applied; primary format delivered for launch.",
+      status: "approved",
+      date: "2026-06-18",
     },
     {
       label: "Delivery",
       title: "Final exports",
       description: "Square and vertical cuts for LinkedIn, X, and web.",
-      status: "upcoming",
+      status: "in_progress",
     },
   ],
 
@@ -120,7 +121,7 @@ export const myosin: MyosinClient = {
       label: "Balance",
       description: "50% on the launch-ready cut",
       amountUsd: 800,
-      status: "due",
+      status: "invoiced",
     },
   ],
 
