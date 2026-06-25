@@ -17,7 +17,7 @@ export function HuitAgreement({
 }: {
   initialSignature: SignedAgreement | null;
 }) {
-  const { sow, subtitle } = huit;
+  const { sow, subtitle, heading } = huit;
   return (
     <main className="print-document page-fade-in mx-auto w-full max-w-[760px] px-6 pt-10 pb-40 md:px-10 md:pt-16">
       <article className="flex flex-col gap-14">
@@ -36,7 +36,7 @@ export function HuitAgreement({
             </button>
           </div>
           <h1 className="intro-rise font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:text-[3.5rem]">
-            {sow.title ?? "Service Agreement"}
+            {heading}
           </h1>
           <p className="max-w-[640px] text-[1.05rem] leading-[1.6rem] text-muted">
             {subtitle}

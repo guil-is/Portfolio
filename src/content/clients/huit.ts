@@ -16,6 +16,9 @@ import type { SignableDocument } from "./types";
 export type HuitClient = {
   clientName: string;
   password: string;
+  /** Big page headline (the project). The document type stays in the
+   * eyebrow and in sow.title. */
+  heading: string;
   /** Sub-line under the title. */
   subtitle: string;
   sow: SignableDocument;
@@ -24,7 +27,8 @@ export type HuitClient = {
 export const huit: HuitClient = {
   clientName: "Studio Huit",
   password: "studiohuit",
-  subtitle: "Motion design collaboration: Safe Workspace video",
+  heading: "Safe Workspace video",
+  subtitle: "Motion design collaboration with Studio Huit",
 
   sow: {
     title: "Service Agreement",
