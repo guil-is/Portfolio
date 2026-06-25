@@ -158,7 +158,10 @@ function SignatureForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-8 rounded-[16px] border border-rule bg-card/50 p-7 md:p-9"
+    >
       <div>
         <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
           Sign the agreement
