@@ -28,7 +28,7 @@ export const huit: HuitClient = {
 
   sow: {
     title: "Service Agreement",
-    version: "v1-2026-06-24",
+    version: "v2-2026-06-24",
     preamble:
       "Guilherme Maueler provides motion design to Studio Huit for the Safe Workspace launch video. This agreement sits under Studio Huit's contract with the end client, Safe Labs GmbH.",
     effectiveDate: "June 2026",
@@ -64,7 +64,7 @@ export const huit: HuitClient = {
             items: [
               "I provide animation and production support under Studio Huit's creative direction.",
               "Studio Huit leads storyboard, creative direction, client coordination, and final delivery.",
-              "We agree specific scene allocation as the storyboard develops.",
+              "We agree specific scene allocation as the storyboard develops, aiming for balanced effort rather than scene count alone.",
               "I deliver final exports and project files to Studio Huit.",
             ],
           },
@@ -77,7 +77,8 @@ export const huit: HuitClient = {
             type: "ul",
             items: [
               "2950 EUR net for motion design services.",
-              "Plus 19% VAT. I invoice Studio Huit.",
+              "Plus 19% VAT (560.50 EUR). Total 3510.50 EUR.",
+              "I invoice Studio Huit.",
             ],
           },
         ],
@@ -85,6 +86,10 @@ export const huit: HuitClient = {
       {
         heading: "Payment terms",
         blocks: [
+          {
+            type: "p",
+            text: "Payment is tied to my final delivery to Studio Huit, not to the end client's payment schedule.",
+          },
           {
             type: "p",
             text: "Full amount due within 14 days of final handoff.",
@@ -132,8 +137,26 @@ export const huit: HuitClient = {
             type: "ul",
             items: [
               "Rights to final approved deliverables transfer on full payment.",
-              "Editable source files and project files stay with me and Studio Huit.",
+              "I share editable source and project files with Studio Huit to support collaboration.",
             ],
+          },
+        ],
+      },
+      {
+        heading: "Governing law",
+        blocks: [
+          {
+            type: "p",
+            text: "This agreement is governed by the laws of the Federal Republic of Germany.",
+          },
+        ],
+      },
+      {
+        heading: "Acceptance",
+        blocks: [
+          {
+            type: "p",
+            text: "Guilherme Maueler issues this agreement, and issuing it is his acceptance of these terms. Studio Huit accepts by signing below. Both parties are then bound, with no second signature block needed.",
           },
         ],
       },

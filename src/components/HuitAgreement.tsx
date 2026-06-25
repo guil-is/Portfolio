@@ -86,7 +86,7 @@ function SignaturesBlock() {
         ))}
       </dl>
       <p className="text-[0.9rem] leading-[1.6rem] text-muted">
-        Studio Huit signs below. Guilherme Maueler issues this agreement.
+        Studio Huit signs below.
       </p>
     </section>
   );
