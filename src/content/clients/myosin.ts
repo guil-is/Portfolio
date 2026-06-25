@@ -106,7 +106,8 @@ export const myosin: MyosinClient = {
       label: "Delivery",
       title: "Final exports",
       description: "Square and vertical cuts for LinkedIn, X, and web.",
-      status: "in_progress",
+      status: "approved",
+      date: "2026-06-24",
     },
   ],
 
