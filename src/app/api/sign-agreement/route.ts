@@ -4,6 +4,7 @@ import { getSanityWriteClient } from "@/lib/sanity-write";
 import { justice } from "@/content/clients/justice";
 import { myosin } from "@/content/clients/myosin";
 import { tedxberlin } from "@/content/clients/tedxberlin";
+import { huit } from "@/content/clients/huit";
 import type { SignableClient, SignableDocument } from "@/content/clients/types";
 import { hashDocument } from "@/lib/sow-hash";
 import { getLatestSignature, type SignedAgreement } from "@/lib/signed-agreement";
@@ -13,7 +14,7 @@ export const runtime = "nodejs";
 
 // Map of client slug → source of truth for that client.
 // Add new clients here as they come online.
-const clients = { justice, myosin, tedxberlin } as const;
+const clients = { justice, myosin, tedxberlin, huit } as const;
 type ClientSlug = keyof typeof clients;
 
 function isClientSlug(value: string): value is ClientSlug {
