@@ -28,7 +28,7 @@ export const huit: HuitClient = {
 
   sow: {
     title: "Service Agreement",
-    version: "v3-2026-06-25",
+    version: "v4-2026-06-25",
     preamble:
       "Guilherme Maueler provides motion design to Studio Huit for the Safe Workspace launch video. This agreement sits under Studio Huit's contract with the end client, Safe Labs GmbH.",
     effectiveDate: "June 2026",
@@ -118,8 +118,8 @@ export const huit: HuitClient = {
           {
             type: "ul",
             items: [
-              "My animation work depends on a locked storyboard by Friday evening.",
-              "Delays to the storyboard, source materials, or client feedback shift my delivery timeline.",
+              "Animation work depends on a locked storyboard by Friday evening.",
+              "Delays to the storyboard, source materials, or client feedback may shift the delivery timeline.",
             ],
           },
         ],
@@ -165,8 +165,8 @@ export const huit: HuitClient = {
       },
     ],
     signatories: [
-      ["Motion design", "Guilherme Maueler"],
-      ["Studio Huit", "Noa (legal name Lea Filipowicz)"],
+      ["Motion designer", "Guilherme Maueler"],
+      ["Client", "Studio Huit, Lea Filipowicz (Noa)"],
       ["Date", "Auto-filled on signing"],
     ],
   },
