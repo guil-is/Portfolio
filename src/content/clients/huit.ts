@@ -28,7 +28,7 @@ export const huit: HuitClient = {
 
   sow: {
     title: "Service Agreement",
-    version: "v2-2026-06-24",
+    version: "v3-2026-06-25",
     preamble:
       "Guilherme Maueler provides motion design to Studio Huit for the Safe Workspace launch video. This agreement sits under Studio Huit's contract with the end client, Safe Labs GmbH.",
     effectiveDate: "June 2026",
@@ -42,12 +42,15 @@ export const huit: HuitClient = {
           {
             type: "kv",
             rows: [
-              ["Motion design", "Guilherme Maueler. Müggelstraße 15, 10247 Berlin."],
               [
-                "Studio Huit",
-                "Represented by Noa (legal name Lea Filipowicz). Reichenberger Str. 60, 10999 Berlin.",
+                "Motion designer",
+                "Guilherme Maueler, Müggelstraße 15, 10247 Berlin.",
               ],
-              ["Dated", "June 2026"],
+              [
+                "Client",
+                "Studio Huit, represented by Lea Filipowicz (Noa), Reichenberger Str. 60, 10999 Berlin.",
+              ],
+              ["Dated", "25 June 2026"],
             ],
           },
         ],
