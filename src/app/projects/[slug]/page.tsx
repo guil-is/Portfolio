@@ -93,8 +93,9 @@ export default async function ProjectDetailPage({
 
   if (!sanityProject && !localProject) notFound();
 
-  // Merge: Sanity for editable fields, local TS for rich content
-  // (projectDetails HTML, stillFrames, features) that aren't in Sanity yet
+  // Sanity is the source of truth. New projects are fully in Sanity
+  // (fields, images, Portable Text body, stills). The legacy local TS file
+  // only fills gaps for older projects not yet migrated to the CMS.
   const project = {
     ...localProject,
     name: sanityProject?.name ?? localProject?.name ?? "",

@@ -10,6 +10,12 @@
 - Commit messages: lowercase, terse scope prefix (e.g. `for/justice: ...`, `lightbox: ...`, `schema: ...`).
 - Prefer editing existing components over adding new ones. The design system lives in `globals.css` + a handful of primitives under `src/components/`.
 
+# Portfolio projects
+
+- Projects (homepage "Past work" grid + `/projects/<slug>` case studies) live in **Sanity** (the `project` doc type), managed at `/studio`. Add a new project there, not in code.
+- `src/content/projects.ts` is legacy: it only backfills images/bodies for older pre-CMS projects. Don't add new projects to it.
+- Full workflow + field reference: `docs/adding-a-project.md`.
+
 # Private client pages
 
 - Live at `/for/<slug>`. Two shapes exist today:

@@ -17,10 +17,10 @@ async function getProjects(): Promise<PastProject[]> {
   try {
     const sanity = await getAllProjects();
     if (sanity && sanity.length > 0) {
-      // Merge Sanity metadata with local TS data for images
-      // (Sanity doesn't have image URLs yet — they're still local).
-      // Skip projects that are currently featured in 'Recent / Active'
-      // so they don't appear twice on the homepage.
+      // Sanity is the source of truth for projects. New projects carry
+      // their own images in Sanity; for older (pre-CMS) projects the grid
+      // image still comes from the legacy local TS file, matched by slug.
+      // Skip 'Recent / Active' projects so they don't appear twice here.
       const localBySlug = new Map(pastProjects.map((p) => [p.slug, p]));
       return sanity
         .filter((p) => !p.isActiveProject)
