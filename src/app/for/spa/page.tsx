@@ -325,38 +325,50 @@ function HowIWork() {
 }
 
 // ---------------------------------------------------------------------
-// Process and timeline — merged. At-a-glance milestone strip on top,
-// then the four phases in detail. Anchored to the invite deadline and
-// the October 29 summit.
+// Process and timeline — compact, built to fit one desktop viewport.
+// A horizontal milestone strip on top, then a tight 4-up row of phase
+// cards. No tall headings, no dividers between phases.
 // ---------------------------------------------------------------------
 const milestones = [
   { label: "Phase 1", title: "Discovery" },
   { label: "Phase 2", title: "Visual identity" },
-  { label: "Phase 3", title: "Website and assets" },
-  { label: "Phase 4", title: "Final deliverables" },
-  { label: "October 29", title: "Summit" },
+  { label: "Phase 3", title: "Website" },
+  { label: "Phase 4", title: "Deliverables" },
+  { label: "Oct 29", title: "Summit" },
 ];
 
 const phases = [
   {
     label: "Phase 1",
     title: "Discovery",
-    body: "You fill a short questionnaire and share the mood board and any references. I use it to align on direction, audience, and tone before any design starts. No guessing at a concept upfront.",
+    date: "[WEEK OF JULY X]",
+    line: "Align on direction, audience, and tone before any design starts. No guessing at a concept upfront.",
+    items: ["Discovery questionnaire", "Aligned creative brief"],
   },
   {
     label: "Phase 2",
     title: "Visual identity",
-    body: "I consolidate the inputs and develop the identity. A few distinct directions first, then we lock one and build it out: core marks, colour, type, usage, and the logo. The invitation and save-the-date come out of this phase, out the door before the summer break in mid-July, while the room is still at their desks.",
+    date: "[MID-JULY]",
+    line: "Distinct directions with trade-offs, then we lock one and build it out. Invitation ships before the break.",
+    items: ["Logo, colour, type, core usage", "Invitation and save-the-date templates"],
   },
   {
     label: "Phase 3",
     title: "Website and assets",
-    body: "A landing page with all the event information, linking out to Ticket Tailor for reservations. Plus the key applications the event needs.",
+    date: "[LATE JULY TO SEPT]",
+    line: "Landing page with all event info, linking to Ticket Tailor.",
+    items: ["Landing page, designed and built", "Key event applications"],
   },
   {
     label: "Phase 4",
     title: "Final deliverables",
-    body: "Brand guidelines, motion, and merch, plus anything else in scope. Added as funding lands and the event gets closer.",
+    date: "[SEPT TO OCT 29]",
+    line: "Added as funding lands and the event gets closer.",
+    items: [
+      "Light brand guidelines",
+      "Motion: logo loop, intro and outro",
+      "Merch starter set",
+    ],
   },
 ];
 
@@ -364,47 +376,23 @@ function ProcessTimeline() {
   const lineEdge = `${50 / Math.max(milestones.length, 1)}%`;
 
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
-      <SectionLabel>Process and timeline</SectionLabel>
-
-      <div className="mx-auto mb-14 w-full max-w-[960px]">
-        <Paragraphs
-          body={[
-            "Phased delivery. Each phase ends in something concrete to sign off on.",
-            "The work is anchored to two dates: the invitation out before the summer break in mid-July, and the summit on October 29. I can start next week.",
-          ]}
-        />
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
+      {/* Compact section label — tighter than the shared SectionLabel. */}
+      <div className="mb-7 w-full border-t border-rule-soft pt-5">
+        <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+          Process and timeline
+        </p>
       </div>
 
-      {/* At-a-glance strip — mobile vertical */}
-      <ol className="mx-auto mb-16 flex w-full max-w-[960px] flex-col gap-8 md:hidden">
-        {milestones.map((m, i) => {
-          const isLast = i === milestones.length - 1;
-          return (
-            <li key={i} className="relative pl-9">
-              {!isLast ? (
-                <span
-                  aria-hidden
-                  className="absolute left-[11px] top-[15px] bottom-[-37px] w-px bg-rule"
-                />
-              ) : null}
-              <span
-                aria-hidden
-                className="absolute left-[6.5px] top-[5px] block h-[10px] w-[10px] rounded-full bg-ink"
-              />
-              <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                {m.label}
-              </p>
-              <h3 className="mt-1 font-display text-[1.15rem] font-bold leading-tight text-ink">
-                {m.title}
-              </h3>
-            </li>
-          );
-        })}
-      </ol>
+      {/* One-line intro */}
+      <p className="mb-10 max-w-[860px] text-[0.95rem] leading-[1.6rem] text-muted">
+        Phased delivery, each phase ends in something concrete to sign off on.
+        Anchored to two dates: invitation out mid-July, summit October 29. I can
+        start next week.
+      </p>
 
-      {/* At-a-glance strip — desktop horizontal */}
-      <div className="relative mb-20 hidden md:block">
+      {/* Milestone strip — desktop horizontal */}
+      <div className="relative mb-10 hidden md:block">
         <div
           aria-hidden
           className="absolute top-[4.5px] h-px bg-rule"
@@ -421,12 +409,12 @@ function ProcessTimeline() {
             >
               <span
                 aria-hidden
-                className="relative z-10 block h-[10px] w-[10px] rounded-full bg-ink"
+                className="relative z-10 block h-[9px] w-[9px] rounded-full bg-ink"
               />
-              <p className="mt-5 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+              <p className="mt-4 font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
                 {m.label}
               </p>
-              <p className="mt-2 font-display text-[0.95rem] font-bold leading-snug text-ink lg:text-[1rem]">
+              <p className="mt-1 font-display text-[0.9rem] font-bold leading-snug text-ink">
                 {m.title}
               </p>
             </li>
@@ -434,28 +422,53 @@ function ProcessTimeline() {
         </ol>
       </div>
 
-      {/* The phases in detail */}
-      <div className="mx-auto flex w-full max-w-[960px] flex-col gap-10">
-        {phases.map((phase) => (
-          <CenterFocus
-            key={phase.label}
-            minOpacity={0.2}
-            falloff={0.55}
-            minScale={0.99}
-            disableBelowMd
+      {/* Milestone strip — mobile horizontal scroll, kept short */}
+      <ol className="mb-8 flex gap-3 overflow-x-auto pb-1 md:hidden">
+        {milestones.map((m, i) => (
+          <li
+            key={i}
+            className="flex min-w-[6.5rem] shrink-0 flex-col gap-1 border-t border-rule pt-2"
           >
-            <div className="border-t border-rule-soft pt-6">
-              <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                {phase.label}
-              </p>
-              <h3 className="mt-3 font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.75rem]">
-                {phase.title}
-              </h3>
-              <p className="mt-3 text-[1rem] leading-[1.7rem] text-ink">
-                {phase.body}
-              </p>
-            </div>
-          </CenterFocus>
+            <p className="font-caption text-[10px] font-medium uppercase tracking-[1px] text-muted">
+              {m.label}
+            </p>
+            <p className="font-display text-[0.85rem] font-bold leading-snug text-ink">
+              {m.title}
+            </p>
+          </li>
+        ))}
+      </ol>
+
+      {/* Phase cards — tight 4-up row (2x2 below lg, stacked on mobile) */}
+      <div className="grid grid-cols-1 gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-4">
+        {phases.map((phase) => (
+          <div key={phase.label} className="flex flex-col gap-1.5">
+            <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+              {phase.label}
+            </p>
+            <h3 className="font-display text-[1.05rem] font-bold leading-tight text-ink">
+              {phase.title}
+            </h3>
+            <p className="font-caption text-[10px] font-medium uppercase tracking-[1px] text-muted">
+              {phase.date}
+            </p>
+            <p className="mt-1 text-[0.85rem] leading-[1.4rem] text-muted">
+              {phase.line}
+            </p>
+            <ul className="mt-1 flex flex-col gap-1.5">
+              {phase.items.map((item, i) => (
+                <li
+                  key={i}
+                  className="flex gap-2 text-[0.85rem] leading-[1.35rem] text-ink"
+                >
+                  <span aria-hidden className="select-none text-muted">
+                    •
+                  </span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
       </div>
     </section>
@@ -617,18 +630,26 @@ function Terms() {
 }
 
 // ---------------------------------------------------------------------
-// Relevant work — two short references, links out.
+// Relevant work — mirrors the Odyssey proposal's case-study layout:
+// meta label, title with outbound link, a short description, and a
+// "Why it matters for WinWin" block. Galleries omitted (no assets).
 // ---------------------------------------------------------------------
 const relevantWork = [
   {
+    meta: "Event identity · Cross-movement community",
     title: "Regens Unite",
     href: "https://regensunite.earth",
-    body: "Cross-movement community and event identity. The closest match to WinWin: bridging tech, institutions, and the people who move between them, then building the identity and the programming around it.",
+    body: "Cross-movement community and event identity. Bridging tech, institutions, and the people who move between them, then building the identity and the programming around it.",
+    relevance:
+      "The closest match to WinWin. A credible identity for a room that does not start out aligned, built to carry both the event and the community behind it.",
   },
   {
+    meta: "Event identity · Full scope",
     title: "The DAOist",
     href: "https://thedaoist2.webflow.io/",
-    body: "Event identity with full scope: video, merch, swag, and a high-contrast direction. The reference point for tier three.",
+    body: "Event identity with full scope: video, merch, swag, and a high-contrast direction that held up across every surface.",
+    relevance:
+      "The reference point for the Full tier. Identity that extends into motion and merch without losing its edge.",
   },
 ];
 
@@ -636,33 +657,57 @@ function RelevantWork() {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>Relevant work</SectionLabel>
-      <div className="mx-auto flex w-full max-w-[960px] flex-col gap-10">
-        {relevantWork.map((work) => (
-          <CenterFocus
-            key={work.title}
-            minOpacity={0.2}
-            falloff={0.55}
-            minScale={0.99}
-            disableBelowMd
-          >
-            <div className="border-t border-rule-soft pt-6">
-              <h3 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.75rem]">
-                <a
-                  href={work.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-3 transition-colors hover:text-muted"
-                >
-                  {work.title}
-                  <ArrowUpRight className="h-5 w-5 md:h-6 md:w-6" strokeWidth={2} />
-                </a>
-              </h3>
-              <p className="mt-3 max-w-[680px] text-[1rem] leading-[1.7rem] text-ink">
-                {work.body}
-              </p>
-            </div>
-          </CenterFocus>
-        ))}
+      <div className="mx-auto w-full max-w-[960px]">
+        <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
+          <p className="max-w-[680px] text-[1rem] leading-[1.7rem] text-ink">
+            I have built brand and digital work for 14+ years, much of it for
+            events and communities that had to land with a serious room. Two that
+            map directly onto WinWin:
+          </p>
+        </CenterFocus>
+
+        <div className="mt-14 flex flex-col gap-14">
+          {relevantWork.map((work) => (
+            <CenterFocus
+              key={work.title}
+              minOpacity={0.2}
+              falloff={0.55}
+              minScale={0.99}
+              disableBelowMd
+            >
+              <div className="flex flex-col gap-6">
+                <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                  {work.meta}
+                </p>
+                <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
+                  <a
+                    href={work.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-3 transition-colors hover:text-muted"
+                  >
+                    {work.title}
+                    <ArrowUpRight
+                      className="h-6 w-6 md:h-7 md:w-7"
+                      strokeWidth={2}
+                    />
+                  </a>
+                </h2>
+                <p className="text-[1rem] leading-[1.7rem] text-ink">
+                  {work.body}
+                </p>
+                <div className="mt-2 border-t border-rule-soft pt-6">
+                  <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                    Why it matters for WinWin
+                  </p>
+                  <p className="mt-3 text-[1rem] leading-[1.7rem] text-ink">
+                    {work.relevance}
+                  </p>
+                </div>
+              </div>
+            </CenterFocus>
+          ))}
+        </div>
       </div>
     </section>
   );
