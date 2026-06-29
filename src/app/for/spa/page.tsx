@@ -202,7 +202,7 @@ function Intro() {
             <div className="mt-4">
               <Paragraphs
                 body={[
-                  "Three pieces, delivered in order. A visual identity and logo first. An invitation second, out before the holidays. A website third.",
+                  "Three pieces, delivered in order. A visual identity and logo first. An invitation second, out before the summer break in mid-July. A website third.",
                   "The studio behind this brings 14+ years of brand and digital work, much of it for events and communities that had to land with a serious room. WinWin is exactly that.",
                 ]}
               />
@@ -355,7 +355,7 @@ const phases = [
   {
     label: "Phase 2",
     title: "Visual identity",
-    body: "I consolidate the inputs and develop the identity. A few distinct directions first, then we lock one and build it out: core marks, colour, type, usage, and the logo. The invitation and save-the-date come out of this phase, built to ship before the holidays.",
+    body: "I consolidate the inputs and develop the identity. A few distinct directions first, then we lock one and build it out: core marks, colour, type, usage, and the logo. The invitation and save-the-date come out of this phase, out the door before the summer break in mid-July, while the room is still at their desks.",
   },
   {
     label: "Phase 3",
@@ -380,7 +380,7 @@ function ProcessTimeline() {
         <Paragraphs
           body={[
             "Phased delivery. Each phase ends in something concrete to sign off on.",
-            "The work is anchored to two dates: the invitation out before the holidays, and the summit on October 29. I can start next week.",
+            "The work is anchored to two dates: the invitation out before the summer break in mid-July, and the summit on October 29. I can start next week.",
           ]}
         />
       </div>
@@ -495,7 +495,7 @@ const tiers: TierData[] = [
       "Logo for WinWin 2026",
       "Invitation design",
       "Save-the-date template",
-      "Built to ship before the holidays",
+      "Built to ship before the summer break in mid-July",
     ],
     price: "[TIER 1 PRICE]",
     priceNote: "Clearly under 10,000 EUR.",
