@@ -204,7 +204,6 @@ function Intro() {
               <Paragraphs
                 body={[
                   "Three pieces, delivered in order. A visual identity and logo first. An invitation second, out before the summer break in mid-July. A website third.",
-                  "The studio behind this brings 14+ years of brand and digital work, much of it for events and communities that had to land with a serious room. WinWin is exactly that.",
                 ]}
               />
             </div>
