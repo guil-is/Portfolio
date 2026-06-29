@@ -57,9 +57,8 @@ export default function SpaPage() {
           <Header />
           <Intro />
           <HowIWork />
-          <Process />
+          <ProcessTimeline />
           <Tiers />
-          <TimelineSection />
           <Terms />
           <RelevantWork />
           <NextStep />
@@ -172,33 +171,55 @@ function Header() {
 }
 
 // ---------------------------------------------------------------------
-// Intro — speaking to Lara directly. The brief as I heard it.
+// Intro — a formal summary of the brief, written to be forwarded to the
+// team. Labeled blocks keep it skimmable.
 // ---------------------------------------------------------------------
 function Intro() {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
-      <SectionLabel>The brief, as I heard it</SectionLabel>
+      <SectionLabel>The brief</SectionLabel>
       <div className="mx-auto flex w-full max-w-[960px] flex-col gap-12">
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
-          <Paragraphs
-            body={[
-              "Lara, good to talk on the call. Here is the brief as I heard it, and how I would build it.",
-              "I have built brand and digital work for 14+ years, a lot of it for events and communities that needed to land with a serious room. WinWin is exactly that.",
-              "Identity and logo first. The invitation comes next, designed to go out before the holidays. The website follows. That order drives everything below.",
-            ]}
-          />
+          <div>
+            <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+              The event
+            </p>
+            <div className="mt-4">
+              <Paragraphs
+                body={[
+                  "WinWin 2026 is a high-level summit in Brussels on October 29. It brings 350 to 400 CEOs, founders, funders, and EU policymakers into one room. The argument is direct: sustainability is competitiveness. The audience is corporates who still need convincing, not the crowd that is already sold.",
+                ]}
+              />
+            </div>
+          </div>
         </CenterFocus>
 
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
           <div>
             <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-              The creative tension I am designing around
+              The work
+            </p>
+            <div className="mt-4">
+              <Paragraphs
+                body={[
+                  "Three pieces, delivered in order. A visual identity and logo first. An invitation second, out before the holidays. A website third.",
+                  "The studio behind this brings 14+ years of brand and digital work, much of it for events and communities that had to land with a serious room. WinWin is exactly that.",
+                ]}
+              />
+            </div>
+          </div>
+        </CenterFocus>
+
+        <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
+          <div>
+            <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+              The creative tension
             </p>
             <div className="mt-4">
               <Paragraphs
                 body={[
                   "Natural, modern, futuristic. Not too green. Not cheesy. Not dark. The abstract power of nature in close-up. Energy as the thread that connects nature and industry.",
-                  "This is built to convince corporates, not to preach to the already-convinced green crowd. The visual language has to feel like power and progress, not a cause.",
+                  "This identity is built to convince corporates, not to preach to the already-convinced green crowd. The visual language has to read as power and progress, not as a cause.",
                 ]}
               />
             </div>
@@ -213,7 +234,7 @@ function Intro() {
             <div className="mt-4">
               <Paragraphs
                 body={[
-                  "This identity also carries visibility for Sustainable Public Affairs. So I build it as a system, not a one-off. It holds up when WinWin returns next year, and when SPA puts the look to work beyond the summit.",
+                  "The identity also carries visibility for Sustainable Public Affairs. So it is built as a system, not a one-off. It holds up when WinWin returns next year, and when SPA puts the look to work beyond the summit.",
                 ]}
               />
             </div>
@@ -313,63 +334,138 @@ function HowIWork() {
 }
 
 // ---------------------------------------------------------------------
-// Process — phased delivery, discovery-led, invite deadline first.
+// Process and timeline — merged. At-a-glance milestone strip on top,
+// then the four phases in detail. Anchored to the invite deadline and
+// the October 29 summit.
 // ---------------------------------------------------------------------
-const processPhases = [
+const milestones = [
+  { label: "Phase 1", title: "Discovery" },
+  { label: "Phase 2", title: "Visual identity" },
+  { label: "Phase 3", title: "Website and assets" },
+  { label: "Phase 4", title: "Final deliverables" },
+  { label: "October 29", title: "Summit" },
+];
+
+const phases = [
   {
     label: "Phase 1",
-    title: "Discovery and identity",
-    body: "I sit with your mood board and develop a few distinct directions to explore together, rather than guessing at one final concept upfront. We pick a direction, then I build the core identity, the logo, and the invitation. This phase is built around one date: invites out before the holidays.",
+    title: "Discovery",
+    body: "You fill a short questionnaire and share the mood board and any references. I use it to align on direction, audience, and tone before any design starts. No guessing at a concept upfront.",
   },
   {
     label: "Phase 2",
-    title: "Website",
-    body: "A landing page with all the event information, linking out to Ticket Tailor for reservations. Designed and built on the identity from phase one.",
+    title: "Visual identity",
+    body: "I consolidate the inputs and develop the identity. A few distinct directions first, then we lock one and build it out: core marks, colour, type, usage, and the logo. The invitation and save-the-date come out of this phase, built to ship before the holidays.",
   },
   {
     label: "Phase 3",
-    title: "Extras",
-    body: "Motion, light brand guidelines, and merch, added as funding lands. Scoped in the tiers below.",
+    title: "Website and assets",
+    body: "A landing page with all the event information, linking out to Ticket Tailor for reservations. Plus the key applications the event needs.",
+  },
+  {
+    label: "Phase 4",
+    title: "Final deliverables",
+    body: "Brand guidelines, motion, and merch, plus anything else in scope. Added as funding lands and the event gets closer.",
   },
 ];
 
-function Process() {
+function ProcessTimeline() {
+  const lineEdge = `${50 / Math.max(milestones.length, 1)}%`;
+
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
-      <SectionLabel>Process</SectionLabel>
-      <div className="mx-auto w-full max-w-[960px]">
-        <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
-          <Paragraphs
-            body={[
-              "Phased delivery. Each phase ends in something real you can sign off on.",
-              "It starts with discovery. I would rather show you a few real directions than commit to one concept before we have looked at options side by side. Phase one is shaped by the invite deadline, so the work in it serves that date first.",
-            ]}
-          />
-        </CenterFocus>
+      <SectionLabel>Process and timeline</SectionLabel>
 
-        <div className="mt-12 flex flex-col gap-10">
-          {processPhases.map((phase) => (
-            <CenterFocus
-              key={phase.label}
-              minOpacity={0.2}
-              falloff={0.55}
-              minScale={0.99}
-              disableBelowMd
+      <div className="mx-auto mb-14 w-full max-w-[960px]">
+        <Paragraphs
+          body={[
+            "Phased delivery. Each phase ends in something concrete to sign off on.",
+            "The work is anchored to two dates: the invitation out before the holidays, and the summit on October 29. I can start next week.",
+          ]}
+        />
+      </div>
+
+      {/* At-a-glance strip — mobile vertical */}
+      <ol className="mx-auto mb-16 flex w-full max-w-[960px] flex-col gap-8 md:hidden">
+        {milestones.map((m, i) => {
+          const isLast = i === milestones.length - 1;
+          return (
+            <li key={i} className="relative pl-9">
+              {!isLast ? (
+                <span
+                  aria-hidden
+                  className="absolute left-[11px] top-[15px] bottom-[-37px] w-px bg-rule"
+                />
+              ) : null}
+              <span
+                aria-hidden
+                className="absolute left-[6.5px] top-[5px] block h-[10px] w-[10px] rounded-full bg-ink"
+              />
+              <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                {m.label}
+              </p>
+              <h3 className="mt-1 font-display text-[1.15rem] font-bold leading-tight text-ink">
+                {m.title}
+              </h3>
+            </li>
+          );
+        })}
+      </ol>
+
+      {/* At-a-glance strip — desktop horizontal */}
+      <div className="relative mb-20 hidden md:block">
+        <div
+          aria-hidden
+          className="absolute top-[4.5px] h-px bg-rule"
+          style={{ left: lineEdge, right: lineEdge }}
+        />
+        <ol
+          className="grid"
+          style={{ gridTemplateColumns: `repeat(${milestones.length}, 1fr)` }}
+        >
+          {milestones.map((m, i) => (
+            <li
+              key={i}
+              className="relative flex flex-col items-center px-3 text-center"
             >
-              <div className="border-t border-rule-soft pt-6">
-                <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                  {phase.label}
-                </p>
-                <h3 className="mt-3 font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.75rem]">
-                  {phase.title}
-                </h3>
-                <p className="mt-3 text-[1rem] leading-[1.7rem] text-ink">
-                  {phase.body}
-                </p>
-              </div>
-            </CenterFocus>
+              <span
+                aria-hidden
+                className="relative z-10 block h-[10px] w-[10px] rounded-full bg-ink"
+              />
+              <p className="mt-5 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                {m.label}
+              </p>
+              <p className="mt-2 font-display text-[0.95rem] font-bold leading-snug text-ink lg:text-[1rem]">
+                {m.title}
+              </p>
+            </li>
           ))}
-        </div>
+        </ol>
+      </div>
+
+      {/* The phases in detail */}
+      <div className="mx-auto flex w-full max-w-[960px] flex-col gap-10">
+        {phases.map((phase) => (
+          <CenterFocus
+            key={phase.label}
+            minOpacity={0.2}
+            falloff={0.55}
+            minScale={0.99}
+            disableBelowMd
+          >
+            <div className="border-t border-rule-soft pt-6">
+              <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                {phase.label}
+              </p>
+              <h3 className="mt-3 font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.75rem]">
+                {phase.title}
+              </h3>
+              <p className="mt-3 text-[1rem] leading-[1.7rem] text-ink">
+                {phase.body}
+              </p>
+            </div>
+          </CenterFocus>
+        ))}
       </div>
     </section>
   );
@@ -502,127 +598,6 @@ function Tiers() {
             </CenterFocus>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-// ---------------------------------------------------------------------
-// Timeline — phased, anchored to the invite deadline and October 29.
-// ---------------------------------------------------------------------
-const milestones = [
-  {
-    label: "Next week",
-    title: "Kickoff and discovery",
-    body: "Mood board review and first directions.",
-  },
-  {
-    label: "Phase 1",
-    title: "Identity and invite",
-    body: "Logo, core identity, invitation. Ships before the holidays.",
-  },
-  {
-    label: "Phase 2",
-    title: "Website",
-    body: "Landing page live, linked to Ticket Tailor.",
-  },
-  {
-    label: "Phase 3",
-    title: "Extras",
-    body: "Motion, guidelines, merch, as funding lands.",
-  },
-  {
-    label: "October 29",
-    title: "WinWin 2026",
-    body: "Summit day in Brussels.",
-  },
-];
-
-function TimelineSection() {
-  const lineEdge = `${50 / Math.max(milestones.length, 1)}%`;
-
-  return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
-      <SectionLabel>Timeline</SectionLabel>
-
-      <div className="mx-auto mb-12 w-full max-w-[960px]">
-        <Paragraphs
-          body={[
-            "Anchored to two dates: invites out before the holidays, and the summit on October 29. I can start next week.",
-          ]}
-        />
-      </div>
-
-      {/* Mobile: vertical stack */}
-      <ol className="mx-auto flex w-full max-w-[960px] flex-col gap-10 md:hidden">
-        {milestones.map((m, i) => {
-          const isLast = i === milestones.length - 1;
-          return (
-            <li key={i} className="relative pl-9">
-              {!isLast ? (
-                <span
-                  aria-hidden
-                  className="absolute left-[11px] top-[15px] bottom-[-45px] w-px bg-rule"
-                />
-              ) : null}
-              <span
-                aria-hidden
-                className="absolute left-[6.5px] top-[5px] block h-[10px] w-[10px] rounded-full bg-ink"
-              />
-              <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                {m.label}
-              </p>
-              <h3 className="mt-1 font-display text-[1.15rem] font-bold leading-tight text-ink">
-                {m.title}
-              </h3>
-              <p className="mt-2 text-[0.95rem] leading-[1.6rem] text-muted">
-                {m.body}
-              </p>
-            </li>
-          );
-        })}
-      </ol>
-
-      {/* Desktop: horizontal strip */}
-      <div className="relative hidden md:block">
-        <div
-          aria-hidden
-          className="absolute top-[4.5px] h-px bg-rule"
-          style={{ left: lineEdge, right: lineEdge }}
-        />
-        <ol
-          className="grid"
-          style={{ gridTemplateColumns: `repeat(${milestones.length}, 1fr)` }}
-        >
-          {milestones.map((m, i) => (
-            <li
-              key={i}
-              className="relative flex flex-col items-center px-3 text-center"
-            >
-              <span
-                aria-hidden
-                className="relative z-10 block h-[10px] w-[10px] rounded-full bg-ink"
-              />
-              <p className="mt-5 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                {m.label}
-              </p>
-              <p className="mt-2 font-display text-[0.95rem] font-bold leading-snug text-ink lg:text-[1rem]">
-                {m.title}
-              </p>
-              <p
-                className="mt-2 min-h-[2.8rem] text-[0.85rem] leading-[1.4rem] text-muted"
-                style={{
-                  display: "-webkit-box",
-                  WebkitBoxOrient: "vertical",
-                  WebkitLineClamp: 2,
-                  overflow: "hidden",
-                }}
-              >
-                {m.body}
-              </p>
-            </li>
-          ))}
-        </ol>
       </div>
     </section>
   );
