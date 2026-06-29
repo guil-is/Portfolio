@@ -6,6 +6,7 @@ import {
   Hammer,
   LayoutGrid,
   Compass,
+  Sparkles,
   ChevronDown,
   ArrowUpRight,
   type LucideIcon,
@@ -255,13 +256,14 @@ const iconMap: Record<string, LucideIcon> = {
   hammer: Hammer,
   grid: LayoutGrid,
   compass: Compass,
+  sparkles: Sparkles,
 };
 
 const howItems = [
   {
-    icon: "users",
-    title: "Shared ownership",
-    body: "Whether I run this independently or inside your team, everyone comes along.",
+    icon: "sparkles",
+    title: "AI Augmented",
+    body: "An AI-augmented workflow lets me move fast and build the website myself, not just design it.",
   },
   {
     icon: "zap",
@@ -319,16 +321,6 @@ function HowIWork() {
         })}
       </div>
 
-      <div className="mx-auto mt-6 w-full max-w-[960px] border-t border-rule-soft pt-8">
-        <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
-          <Paragraphs
-            body={[
-              "I run an AI-augmented workflow. It lets me move fast and build the website myself, not just design it.",
-              "I can plug into your team or run this independently, whichever keeps it moving.",
-            ]}
-          />
-        </CenterFocus>
-      </div>
     </section>
   );
 }
