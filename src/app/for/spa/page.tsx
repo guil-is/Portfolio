@@ -151,7 +151,9 @@ function Header() {
             className="intro-rise block font-normal text-muted"
             style={{ animationDelay: "280ms" }}
           >
-            visual identity &amp; website
+            visual identity
+            <br aria-hidden />
+            &amp;&nbsp;website
           </span>
         </h1>
 
@@ -161,7 +163,10 @@ function Header() {
         >
           A half-day summit in Brussels that puts 350-400 CEOs, founders,
           funders, and EU policymakers in one room. The identity embodies the
-          concept of sustainability = competitiveness.
+          concept of{" "}
+          <span className="whitespace-nowrap">
+            sustainability = competitiveness.
+          </span>
         </p>
 
         <div
