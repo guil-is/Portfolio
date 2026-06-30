@@ -195,29 +195,6 @@ function Header() {
   );
 }
 
-// "The work" disclosures — each high-level item opens to its granular
-// deliverables. Native <details>, no client JS.
-const work = [
-  {
-    title: "Full visual identity",
-    items: [
-      "Logo and variations",
-      "Core brand assets: color palette, typography, imagery",
-      "Social assets",
-      "Mini brand guidelines",
-    ],
-  },
-  {
-    title: "Event website and printed material",
-    items: [
-      "Landing page with all event info",
-      "RSVP flow linking to Ticket Tailor",
-      "Printed collateral (rollups, signage)",
-      "Event templates and applications",
-    ],
-  },
-];
-
 // ---------------------------------------------------------------------
 // Intro — a formal summary of the brief, written to be forwarded to the
 // team. Labeled blocks keep it skimmable.
@@ -248,36 +225,31 @@ function Intro() {
             <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
               The work
             </p>
-            <div className="mt-3 flex flex-col">
-              {work.map((w) => (
-                <details
-                  key={w.title}
-                  className="group border-b border-rule-soft last:border-b-0"
+            <div className="mt-4 flex flex-col gap-2.5">
+              {[
+                "Full visual identity, logo, and guidelines",
+                "Event website, plus on-site and printed material",
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="flex gap-3 text-[1rem] leading-[1.6rem] text-ink"
                 >
-                  <summary className="flex cursor-pointer list-none items-center gap-3 py-3 text-[1rem] leading-[1.6rem] text-ink [&::-webkit-details-marker]:hidden">
-                    <ChevronRight
-                      className="h-4 w-4 shrink-0 text-muted transition-transform duration-200 group-open:rotate-90"
-                      strokeWidth={2}
-                      aria-hidden
-                    />
-                    <span>{w.title}</span>
-                  </summary>
-                  <ul className="flex flex-col gap-2 pb-4 pl-7">
-                    {w.items.map((item, i) => (
-                      <li
-                        key={i}
-                        className="flex gap-3 text-[0.9rem] leading-[1.5rem] text-muted"
-                      >
-                        <span aria-hidden className="select-none">
-                          –
-                        </span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </details>
+                  <Check
+                    className="mt-[3px] h-3.5 w-3.5 shrink-0 text-ink"
+                    strokeWidth={2.5}
+                    aria-hidden
+                  />
+                  <span>{item}</span>
+                </div>
               ))}
             </div>
+            <a
+              href="#scope"
+              className="mt-5 inline-flex items-center gap-1.5 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted"
+            >
+              See the full scope
+              <ChevronRight className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+            </a>
           </div>
         </CenterFocus>
 
@@ -430,7 +402,7 @@ const phases = [
     title: "All deliverables",
     line: "Everything else, digital and printed, wrapped for production window.",
     items: [
-      "Extended brand guidelines",
+      "Extended brand assets",
       "Printed collateral (rollups, etc)",
       "Merch",
     ],
@@ -588,34 +560,25 @@ function Investment() {
 }
 
 // ---------------------------------------------------------------------
-// Full scope — the complete deliverable menu, grouped by discipline and
-// tagged core vs later. Collapsed by default (native <details>) so the
-// depth is available without bloating the page.
+// Full scope — the complete deliverable menu, grouped by discipline.
+// Collapsed by default (native <details>) so the depth is available
+// without bloating the page. Phasing lives in the timeline, not here.
 // ---------------------------------------------------------------------
 const fullScope = [
   {
     title: "Visual identity",
-    tag: "Core",
     items: [
       "Logo system: primary, horizontal, stacked, icon-only",
       "Color and mono variants, clear-space and minimum-size rules",
       "WinWin 2026 year lockup and a recurring-edition lockup",
       "Color palette for screen and print, full typography system",
-      "Core graphic device: the converging-energies motif, reusable",
+      "Core graphic device: reusable motif",
       "Imagery direction for the abstract-nature close-ups, plus a texture set",
-    ],
-  },
-  {
-    title: "Brand guidelines",
-    tag: "Core + Phase 4",
-    items: [
-      "Mini guidelines for the event, core usage",
-      "Extended guidelines for recurring annual use, Phase 4",
+      "Mini brand guidelines for the event",
     ],
   },
   {
     title: "Event website",
-    tag: "Core",
     items: [
       "Sitemap and wireframe",
       "Save-the-date holding page, live first for early registration",
@@ -627,7 +590,6 @@ const fullScope = [
   },
   {
     title: "Invitation and save-the-date",
-    tag: "Core",
     items: [
       "Save-the-date template, digital, ships first",
       "Formal invitation, email-platform-ready (Mailchimp or La Posta)",
@@ -636,7 +598,6 @@ const fullScope = [
   },
   {
     title: "Event and on-site collateral",
-    tag: "Core system",
     items: [
       "Main-stage backdrop and stage visual",
       "Step-and-repeat photo wall for the group photo",
@@ -648,7 +609,6 @@ const fullScope = [
   },
   {
     title: "Stage and screen graphics",
-    tag: "Core",
     items: [
       "Presentation template with the ten priorities on screen",
       "Lower thirds and speaker name graphics",
@@ -659,7 +619,6 @@ const fullScope = [
   },
   {
     title: "Motion",
-    tag: "Phase 4",
     items: [
       "Logo sting: intro and outro",
       "Animated stage opener",
@@ -670,7 +629,6 @@ const fullScope = [
   },
   {
     title: "Social and co-branding",
-    tag: "Core",
     items: [
       "Post templates: announcement, speaker reveal, countdown, quote card",
       "Story, vertical, and LinkedIn formats",
@@ -680,7 +638,6 @@ const fullScope = [
   },
   {
     title: "Merch",
-    tag: "Funding-dependent",
     items: [
       "Tote or gift bag, notebook, pins and stickers",
       "Cap or tee, plus a VIP gift item",
@@ -688,7 +645,6 @@ const fullScope = [
   },
   {
     title: "Files and handoff",
-    tag: "Core",
     items: [
       "Organized asset library and export pack for your team",
       "Source files: Figma and vector",
@@ -704,10 +660,10 @@ function FullScope() {
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
           <p className="max-w-[680px] text-[1rem] leading-[1.7rem] text-ink">
-            The full deliverable set, by discipline. Core items ship across
-            phases 1 to 3. Anything marked Phase 4 or funding-dependent lands
-            later. For high-volume on-site pieces I build the system and the hero
-            items, and your team produces the rest from the templates.
+            The full deliverable set, by discipline. The timeline shows what
+            lands in which phase. For high-volume on-site pieces I build the
+            system and the hero items, and your team produces the rest from the
+            templates.
           </p>
         </CenterFocus>
 
@@ -725,9 +681,6 @@ function FullScope() {
                 />
                 <span className="text-[1rem] leading-[1.5rem] text-ink">
                   {group.title}
-                </span>
-                <span className="ml-auto shrink-0 pl-3 font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
-                  {group.tag}
                 </span>
               </summary>
               <ul className="flex flex-col gap-2 pb-4 pl-7">
