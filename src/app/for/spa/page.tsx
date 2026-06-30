@@ -21,6 +21,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { CtaButton } from "@/components/CtaButton";
 import { CenterFocus } from "@/components/CenterFocus";
 import { pastProjects } from "@/content/projects";
+import { SectionNav } from "./SectionNav";
 
 // ---------------------------------------------------------------------
 // /for/spa — bespoke proposal for Lara Sibbing (Sustainable Public
@@ -63,6 +64,7 @@ export default function SpaPage() {
       </div>
 
       <PasswordGate password={PASSWORD} storageKey="for-spa-unlocked">
+        <SectionNav />
         <main className="page-fade-in pb-40">
           <Header />
           <Intro />
@@ -221,7 +223,7 @@ const work = [
 // ---------------------------------------------------------------------
 function Intro() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
+    <section id="brief" className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       <SectionLabel>The brief</SectionLabel>
       <div className="mx-auto flex w-full max-w-[960px] flex-col gap-12">
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
@@ -362,7 +364,7 @@ const howItems = [
 
 function HowIWork() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
+    <section id="approach" className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       <SectionLabel>How I work</SectionLabel>
 
       <div className="grid grid-cols-1 gap-x-12 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
@@ -435,7 +437,7 @@ const phases = [
 
 function ProcessTimeline() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
+    <section id="timeline" className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       {/* Compact section label — tighter than the shared SectionLabel. */}
       <div className="mb-12 w-full border-t border-rule-soft pt-5">
         <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
@@ -518,7 +520,7 @@ const investment = [
 
 function Investment() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
+    <section id="investment" className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       <SectionLabel>Investment</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
@@ -532,7 +534,7 @@ function Investment() {
         </CenterFocus>
 
         <CenterFocus minOpacity={0.15} falloff={0.5} minScale={0.98} disableBelowMd>
-          <div className="mt-12 rounded-[16px] border border-rule px-8 py-3">
+          <div className="mt-12 max-w-[640px] rounded-[16px] border border-rule px-8 py-3">
             {investment.map((row) => (
               <div key={row.phase} className="border-b border-rule-soft py-5">
                 <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px]">
@@ -567,12 +569,12 @@ function Investment() {
         </CenterFocus>
 
         <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
-          <p className="mt-10 text-[0.9rem] leading-[1.5rem] text-muted">
+          <p className="mt-10 max-w-[640px] text-[0.9rem] leading-[1.5rem] text-muted">
             All four phases: the full identity, the website, and the deliverables
             the summit needs. Billing by phase keeps it flexible. You sign off and
             pay as each block ships.
           </p>
-          <p className="mt-4 text-[0.9rem] leading-[1.5rem] text-muted">
+          <p className="mt-4 max-w-[640px] text-[0.9rem] leading-[1.5rem] text-muted">
             A 30% deposit on signing, 1,560 EUR, credited to the first invoice.
             Each phase is invoiced at the end of its block, bi-weekly. All
             amounts plus 19% German VAT.
@@ -588,7 +590,7 @@ function Investment() {
 // ---------------------------------------------------------------------
 function Terms() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
+    <section id="terms" className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       <SectionLabel>Terms</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
         <BulletList
@@ -624,7 +626,7 @@ const relevantWork = [
 
 function RelevantWork() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
+    <section id="work" className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       <SectionLabel>Relevant work</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
@@ -687,7 +689,7 @@ function RelevantWork() {
 // ---------------------------------------------------------------------
 function NextStep() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
+    <section id="next" className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       <SectionLabel>Next step</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99}>
