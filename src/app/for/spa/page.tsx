@@ -10,6 +10,7 @@ import {
   Check,
   ChevronDown,
   ArrowUpRight,
+  Play,
   type LucideIcon,
 } from "lucide-react";
 import { PasswordGate } from "@/components/PasswordGate";
@@ -46,6 +47,9 @@ export const metadata = {
 };
 
 const PASSWORD = "winwin";
+
+// Loom walkthrough link for the hero CTA. Swap in the recorded share URL.
+const LOOM_URL = "#";
 
 export default function SpaPage() {
   return (
@@ -159,6 +163,13 @@ function Header() {
           funders, and EU policymakers in one room. The identity embodies the
           concept of sustainability = competitiveness.
         </p>
+
+        <div
+          className="intro-rise mt-10"
+          style={{ animationDelay: "460ms" }}
+        >
+          <CtaButton href={LOOM_URL} label="Watch the walkthrough" icon={Play} />
+        </div>
       </div>
 
       <div className="flex justify-center pb-10 text-muted">
@@ -688,22 +699,13 @@ function NextStep() {
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99}>
           <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-            Let me walk you through it.
+            Ready to move?
           </h2>
           <p className="mt-6 max-w-[620px] text-[1rem] leading-[1.7rem] text-ink">
-            I recorded a short Loom that talks through this proposal end to end.
-            Watch it, pick a tier, and I can start next week. Tell me where you
-            want to begin and I will send a short agreement and a start date.
+            Next step is a quick call. We answer questions on both sides and talk
+            through scope and terms. From there we agree on a starting point and
+            I can start the work next week.
           </p>
-        </CenterFocus>
-
-        {/* Loom embed placeholder — swap in the share URL / iframe. */}
-        <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99}>
-          <div className="mt-10 flex aspect-video w-full items-center justify-center rounded-[16px] border border-dashed border-rule bg-card/30">
-            <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-              Loom walkthrough
-            </p>
-          </div>
         </CenterFocus>
 
         <CenterFocus minOpacity={0.15} falloff={0.5} minScale={0.98}>
