@@ -459,20 +459,12 @@ function ProcessTimeline() {
 
 // ---------------------------------------------------------------------
 // Investment — fixed price, billed by phase. Same phase spine as the
-// timeline, so the money maps onto the work one to one. Phase 4 is the
-// growth layer that takes the total past the reserved budget once
-// funding lands.
+// timeline, so the money maps onto the work one to one.
 // ---------------------------------------------------------------------
 const investment = [
   { phase: "Phase 1-2", title: "Identity + invite", weeks: "Weeks 1-2", amount: "5,200 EUR" },
-  { phase: "Phase 3", title: "Full website", weeks: "Weeks 3-4", amount: "3,400 EUR" },
-  {
-    phase: "Phase 4",
-    title: "All deliverables",
-    weeks: "Weeks 5-6",
-    amount: "2,600 EUR",
-    tag: "Growth layer",
-  },
+  { phase: "Phase 3", title: "Full website", weeks: "Weeks 3-4", amount: "3,800 EUR" },
+  { phase: "Phase 4", title: "All deliverables", weeks: "Weeks 5-6", amount: "2,800 EUR" },
 ];
 
 function Investment() {
@@ -491,28 +483,20 @@ function Investment() {
         </CenterFocus>
 
         <CenterFocus minOpacity={0.15} falloff={0.5} minScale={0.98} disableBelowMd>
-          <div className="mt-12 rounded-[16px] border border-rule px-8 py-4">
+          <div className="mt-12 rounded-[16px] border border-rule px-8 py-3">
             {investment.map((row) => (
-              <div
-                key={row.phase}
-                className="flex items-baseline justify-between gap-4 border-b border-rule-soft py-5"
-              >
-                <div>
-                  <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
-                    {row.phase} · {row.weeks}
-                  </p>
-                  <p className="mt-1.5 flex items-baseline gap-3 font-display text-[1.1rem] font-bold leading-tight text-ink">
+              <div key={row.phase} className="border-b border-rule-soft py-5">
+                <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
+                  {row.phase} · {row.weeks}
+                </p>
+                <div className="mt-2 flex items-baseline justify-between gap-4">
+                  <p className="font-display text-[1.1rem] font-bold leading-tight text-ink">
                     {row.title}
-                    {row.tag ? (
-                      <span className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
-                        {row.tag}
-                      </span>
-                    ) : null}
+                  </p>
+                  <p className="shrink-0 font-display text-[1.3rem] font-bold leading-none text-ink md:text-[1.45rem]">
+                    {row.amount}
                   </p>
                 </div>
-                <p className="shrink-0 font-display text-[1.25rem] font-bold leading-none text-ink md:text-[1.4rem]">
-                  {row.amount}
-                </p>
               </div>
             ))}
 
@@ -521,7 +505,7 @@ function Investment() {
                 Total
               </p>
               <p className="font-display text-[1.5rem] font-bold leading-none text-ink md:text-[1.75rem]">
-                11,200 EUR
+                11,800 EUR
                 <span className="ml-2 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
                   + 19% VAT
                 </span>
@@ -532,10 +516,9 @@ function Investment() {
 
         <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
           <p className="mt-10 text-[0.9rem] leading-[1.5rem] text-muted">
-            Phases 1 to 3 deliver the full functional brief, identity, invite,
-            and website, and land under the 10,000 EUR reserved. Phase 4 is the
-            growth layer: guidelines, motion, merch, and print, added as funding
-            lands.
+            All four phases: the full identity, the website, and the deliverables
+            the summit needs. Billing by phase keeps it flexible. You sign off and
+            pay as each block ships.
           </p>
           <p className="mt-4 text-[0.9rem] leading-[1.5rem] text-muted">
             A 30% deposit on signing, 1,560 EUR, credited to the first invoice.
