@@ -583,8 +583,8 @@ const fullScope: { title: string; optional?: boolean; items: string[] }[] = [
   {
     title: "Invitation and save-the-date",
     items: [
-      "Save-the-date template, digital, ships first",
-      "Formal invitation, email-platform-ready (Mailchimp or La Posta)",
+      "Save-the-date: digital, ships first, links to the early RSVP page",
+      "Formal invitation: email-ready (Mailchimp or La Posta), once the program is locked",
       "Optional printed invitation for VIPs",
     ],
   },
@@ -592,7 +592,7 @@ const fullScope: { title: string; optional?: boolean; items: string[] }[] = [
     title: "Event website",
     items: [
       "Sitemap and wireframe",
-      "Save-the-date holding page, live first for early registration",
+      "Early RSVP page, live first, linked from the save-the-date",
       "Landing page, desktop and mobile: hero, program, speakers, venue, partners, RSVP",
       "RSVP flow linking to Ticket Tailor",
       "Build, deploy, responsive behavior and light motion",
