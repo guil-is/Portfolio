@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import {
   Users,
   Zap,
@@ -17,6 +19,7 @@ import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { CtaButton } from "@/components/CtaButton";
 import { CenterFocus } from "@/components/CenterFocus";
+import { pastProjects } from "@/content/projects";
 
 // ---------------------------------------------------------------------
 // /for/spa — bespoke proposal for Lara Sibbing (Sustainable Public
@@ -553,26 +556,20 @@ function Terms() {
 }
 
 // ---------------------------------------------------------------------
-// Relevant work — mirrors the Odyssey proposal's case-study layout:
-// meta label, title with outbound link, a short description, and a
-// "Why it matters for WinWin" block. Galleries omitted (no assets).
+// Relevant work — same card treatment as the homepage "Past work" grid
+// (thumbnail, title, client caption), pulling two projects by slug from
+// the shared project data, with a short description added under each.
 // ---------------------------------------------------------------------
 const relevantWork = [
   {
-    meta: "Event identity · Cross-movement community",
-    title: "Regens Unite",
-    href: "https://regensunite.earth",
-    body: "Cross-movement community and event identity. Bridging tech, institutions, and the people who move between them, then building the identity and the programming around it.",
-    relevance:
-      "The closest match to WinWin. A credible identity for a room that does not start out aligned, built to carry both the event and the community behind it.",
+    slug: "chinwags",
+    description:
+      "Brand, landing page, and event materials for a web3 governance retreat, built to bring a mixed room together in nature.",
   },
   {
-    meta: "Event identity · Full scope",
-    title: "The DAOist",
-    href: "https://thedaoist2.webflow.io/",
-    body: "Event identity with full scope: video, merch, swag, and a high-contrast direction that held up across every surface.",
-    relevance:
-      "The reference point for the Full tier. Identity that extends into motion and merch without losing its edge.",
+    slug: "the-daoist",
+    description:
+      "Event identity at full scope: brand, website, motion, merch, and swag, held together across five cities.",
   },
 ];
 
@@ -580,57 +577,55 @@ function RelevantWork() {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>Relevant work</SectionLabel>
-      <div className="mx-auto w-full max-w-[960px]">
+      <div className="mx-auto w-full max-w-[800px]">
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
           <p className="max-w-[680px] text-[1rem] leading-[1.7rem] text-ink">
             I have built brand and digital work for 14+ years, much of it for
             events and communities that had to land with a serious room. Two that
-            map directly onto WinWin:
+            map onto WinWin:
           </p>
         </CenterFocus>
 
-        <div className="mt-14 flex flex-col gap-14">
-          {relevantWork.map((work) => (
-            <CenterFocus
-              key={work.title}
-              minOpacity={0.2}
-              falloff={0.55}
-              minScale={0.99}
-              disableBelowMd
-            >
-              <div className="flex flex-col gap-6">
-                <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                  {work.meta}
-                </p>
-                <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-                  <a
-                    href={work.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-3 transition-colors hover:text-muted"
+        <CenterFocus minOpacity={0.25} falloff={0.55} minScale={0.97}>
+          <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2">
+            {relevantWork.map((work) => {
+              const project = pastProjects.find((p) => p.slug === work.slug);
+              if (!project) return null;
+              return (
+                <div key={work.slug} className="flex flex-col gap-3">
+                  <Link
+                    href={`/projects/${project.slug}`}
+                    className="group flex flex-col gap-3"
                   >
-                    {work.title}
-                    <ArrowUpRight
-                      className="h-6 w-6 md:h-7 md:w-7"
-                      strokeWidth={2}
-                    />
-                  </a>
-                </h2>
-                <p className="text-[1rem] leading-[1.7rem] text-ink">
-                  {work.body}
-                </p>
-                <div className="mt-2 border-t border-rule-soft pt-6">
-                  <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-                    Why it matters for WinWin
-                  </p>
-                  <p className="mt-3 text-[1rem] leading-[1.7rem] text-ink">
-                    {work.relevance}
+                    <div className="relative aspect-[16/9] overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
+                      {project.gridImage ? (
+                        <Image
+                          src={project.gridImage}
+                          alt={project.name}
+                          fill
+                          sizes="(min-width: 768px) 380px, 100vw"
+                          unoptimized
+                          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                        />
+                      ) : null}
+                    </div>
+                    <div className="flex flex-col gap-1 pt-1">
+                      <h5 className="font-display text-xl leading-tight text-ink">
+                        {project.name}
+                      </h5>
+                      <div className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted">
+                        {project.client}
+                      </div>
+                    </div>
+                  </Link>
+                  <p className="text-[0.9rem] leading-[1.5rem] text-muted">
+                    {work.description}
                   </p>
                 </div>
-              </div>
-            </CenterFocus>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        </CenterFocus>
       </div>
     </section>
   );
