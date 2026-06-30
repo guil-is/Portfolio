@@ -829,8 +829,8 @@ function NextStep() {
           </h2>
           <p className="mt-6 max-w-[620px] text-[1rem] leading-[1.7rem] text-ink">
             Next step is a quick call. We answer questions on both sides and talk
-            through scope and terms. From there we agree on a starting point and
-            I can start the work next week.
+            through scope and SOW terms (sent before the call). From there, we
+            agree on a starting point. Earliest start date from Tuesday, July 7.
           </p>
         </CenterFocus>
 
