@@ -11,6 +11,7 @@ import {
   Sparkles,
   Check,
   ChevronDown,
+  ChevronRight,
   ArrowUpRight,
   Play,
   type LucideIcon,
@@ -191,6 +192,29 @@ function Header() {
   );
 }
 
+// "The work" disclosures — each high-level item opens to its granular
+// deliverables. Native <details>, no client JS.
+const work = [
+  {
+    title: "Full visual identity",
+    items: [
+      "Logo and variations",
+      "Core brand assets: color palette, typography, imagery",
+      "Social assets",
+      "Mini brand guidelines",
+    ],
+  },
+  {
+    title: "Event website and printed material",
+    items: [
+      "Landing page with all event info",
+      "RSVP flow linking to Ticket Tailor",
+      "Printed collateral (rollups, signage)",
+      "Event templates and applications",
+    ],
+  },
+];
+
 // ---------------------------------------------------------------------
 // Intro — a formal summary of the brief, written to be forwarded to the
 // team. Labeled blocks keep it skimmable.
@@ -220,13 +244,35 @@ function Intro() {
             <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
               The work
             </p>
-            <div className="mt-4">
-              <BulletList
-                items={[
-                  "Full visual identity with guidelines (incl. logo design)",
-                  "Event website and printed material",
-                ]}
-              />
+            <div className="mt-3 flex flex-col">
+              {work.map((w) => (
+                <details
+                  key={w.title}
+                  className="group border-b border-rule-soft last:border-b-0"
+                >
+                  <summary className="flex cursor-pointer list-none items-center gap-3 py-3 text-[1rem] leading-[1.6rem] text-ink [&::-webkit-details-marker]:hidden">
+                    <ChevronRight
+                      className="h-4 w-4 shrink-0 text-muted transition-transform duration-200 group-open:rotate-90"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                    <span>{w.title}</span>
+                  </summary>
+                  <ul className="flex flex-col gap-2 pb-4 pl-7">
+                    {w.items.map((item, i) => (
+                      <li
+                        key={i}
+                        className="flex gap-3 text-[0.9rem] leading-[1.5rem] text-muted"
+                      >
+                        <span aria-hidden className="select-none">
+                          –
+                        </span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              ))}
             </div>
           </div>
         </CenterFocus>
@@ -477,7 +523,7 @@ function Investment() {
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
           <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-            Fixed price, billed by phase.
+            One price, paid by phase.
           </h2>
           <p className="mt-5 text-[0.9rem] leading-[1.5rem] text-muted">
             You commit as the work ships and as funding lands. Each phase stands
@@ -598,6 +644,8 @@ function RelevantWork() {
                 <div key={work.slug} className="flex flex-col gap-3">
                   <Link
                     href={`/projects/${project.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="group flex flex-col gap-3"
                   >
                     <div className="relative aspect-[16/9] overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
