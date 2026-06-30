@@ -22,6 +22,7 @@ import { CtaButton } from "@/components/CtaButton";
 import { CenterFocus } from "@/components/CenterFocus";
 import { pastProjects } from "@/content/projects";
 import { SectionNav } from "./SectionNav";
+import { ExpandAllToggle } from "./ExpandAllToggle";
 
 // ---------------------------------------------------------------------
 // /for/spa — bespoke proposal for Lara Sibbing (Sustainable Public
@@ -581,6 +582,14 @@ const fullScope: { title: string; optional?: boolean; items: string[] }[] = [
     ],
   },
   {
+    title: "Invitation and save-the-date",
+    items: [
+      "Save-the-date template, digital, ships first",
+      "Formal invitation, email-platform-ready (Mailchimp or La Posta)",
+      "Optional printed invitation for VIPs",
+    ],
+  },
+  {
     title: "Event website",
     items: [
       "Sitemap and wireframe",
@@ -589,14 +598,6 @@ const fullScope: { title: string; optional?: boolean; items: string[] }[] = [
       "RSVP flow linking to Ticket Tailor",
       "Build, deploy, responsive behavior and light motion",
       "Favicon, social share image, meta, basic accessibility pass",
-    ],
-  },
-  {
-    title: "Invitation and save-the-date",
-    items: [
-      "Save-the-date template, digital, ships first",
-      "Formal invitation, email-platform-ready (Mailchimp or La Posta)",
-      "Optional printed invitation for VIPs",
     ],
   },
   {
@@ -621,6 +622,23 @@ const fullScope: { title: string; optional?: boolean; items: string[] }[] = [
     ],
   },
   {
+    title: "Social and co-branding",
+    items: [
+      "Post templates: announcement, speaker reveal, countdown, quote card",
+      "Story, vertical, and LinkedIn formats",
+      "Partner and funder co-branding lockups",
+      "Profile assets if WinWin runs its own channels",
+    ],
+  },
+  {
+    title: "Files and handoff",
+    items: [
+      "Organized asset library and export pack for your team",
+      "Source files: Figma and vector",
+      "Print-ready files with correct bleeds and specs",
+    ],
+  },
+  {
     title: "Motion",
     optional: true,
     items: [
@@ -632,28 +650,11 @@ const fullScope: { title: string; optional?: boolean; items: string[] }[] = [
     ],
   },
   {
-    title: "Social and co-branding",
-    items: [
-      "Post templates: announcement, speaker reveal, countdown, quote card",
-      "Story, vertical, and LinkedIn formats",
-      "Partner and funder co-branding lockups",
-      "Profile assets if WinWin runs its own channels",
-    ],
-  },
-  {
     title: "Merch",
     optional: true,
     items: [
       "Tote or gift bag, notebook, pins and stickers",
       "Cap or tee, plus a VIP gift item",
-    ],
-  },
-  {
-    title: "Files and handoff",
-    items: [
-      "Organized asset library and export pack for your team",
-      "Source files: Figma and vector",
-      "Print-ready files with correct bleeds and specs",
     ],
   },
 ];
@@ -670,7 +671,10 @@ function FullScope() {
           </p>
         </CenterFocus>
 
-        <div className="mt-10 flex flex-col">
+        <div className="mt-8 flex justify-end">
+          <ExpandAllToggle />
+        </div>
+        <div className="mt-2 flex flex-col">
           {fullScope.map((group) => (
             <details
               key={group.title}
