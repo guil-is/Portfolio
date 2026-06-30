@@ -392,13 +392,13 @@ const phases = [
     ],
   },
   {
-    week: "Week 3-4",
+    week: "Weeks 3-4",
     title: "Full website + assets",
     line: "The complete site with all event info, linking to the RSVP link.",
     items: ["Website designed + deployed", "Additional brand assets"],
   },
   {
-    week: "Week 5-6",
+    week: "Weeks 5-6",
     title: "All deliverables",
     line: "Everything else, digital and printed, wrapped for production window.",
     items: [
@@ -421,38 +421,39 @@ function ProcessTimeline() {
 
       {/* Merged timeline: each phase is a node on the axis (lg) and carries
           its own date, description, and deliverables. */}
-      <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
         {phases.map((phase, idx) => {
           const isLast = idx === phases.length - 1;
           return (
-            <div key={phase.title} className="relative lg:pt-7">
+            <div key={phase.title} className="relative lg:pt-9">
               {/* Connecting axis segment to the next node (desktop only) */}
               {!isLast ? (
                 <span
                   aria-hidden
-                  className="absolute left-0 top-[4px] hidden h-px w-[calc(100%+2rem)] bg-rule lg:block"
+                  className="absolute left-0 top-[5px] hidden h-px w-[calc(100%+2.5rem)] bg-rule lg:block"
                 />
               ) : null}
               {/* Node dot, masked from the line by a bg ring */}
               <span
                 aria-hidden
-                className="absolute left-0 top-0 hidden h-[9px] w-[9px] rounded-full bg-ink ring-4 ring-bg lg:block"
+                className="absolute left-0 top-0 hidden h-[10px] w-[10px] rounded-full bg-ink ring-4 ring-bg lg:block"
               />
 
-              <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
-                {phase.week}
+              <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px]">
+                <span className="text-ink">Phase {idx + 1}</span>
+                <span className="text-muted"> · {phase.week}</span>
               </p>
-              <h3 className="mt-2 font-display text-[1.15rem] font-bold leading-tight text-ink">
+              <h3 className="mt-3 font-display text-[1.15rem] font-bold leading-tight text-ink">
                 {phase.title}
               </h3>
-              <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
+              <p className="mt-3 text-[0.85rem] leading-[1.5rem] text-muted">
                 {phase.line}
               </p>
-              <ul className="mt-4 flex flex-col gap-2">
+              <ul className="mt-5 flex flex-col gap-3">
                 {phase.items.map((item, i) => (
                   <li
                     key={i}
-                    className="flex gap-2 text-[0.85rem] leading-[1.35rem] text-ink"
+                    className="flex gap-2.5 text-[0.85rem] leading-[1.4rem] text-ink"
                   >
                     <Check
                       className="mt-[2px] h-3.5 w-3.5 shrink-0 text-ink"
@@ -469,13 +470,15 @@ function ProcessTimeline() {
       </div>
 
       {/* Closing note: total span + optional retainer */}
-      <div className="mt-12 max-w-[860px] border-t border-rule-soft pt-6">
+      <div className="mt-14 max-w-[860px] border-t border-rule-soft pt-7">
         <p className="text-[0.95rem] font-bold leading-[1.5rem] text-ink">
-          6-7 weeks total
+          6 to 7 weeks, start to finish
         </p>
-        <p className="mt-2 text-[0.9rem] leading-[1.5rem] text-muted">
-          If useful, I can stay on a monthly hour-capped retainer through
-          September and October to maintain the website and cover small requests.
+        <p className="mt-2.5 text-[0.9rem] leading-[1.6rem] text-muted">
+          The build wraps by late August, leaving two clear months before the
+          summit. If it helps, I can stay on through September and October on a
+          light monthly retainer to keep the site current and handle small
+          requests.
         </p>
       </div>
     </section>
