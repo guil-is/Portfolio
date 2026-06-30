@@ -214,7 +214,7 @@ function Intro() {
               <Paragraphs
                 body={[
                   "WinWin 2026 is a high-level summit in Brussels on October 29. It brings 350 to 400 CEOs, founders, funders, and EU policymakers into one room. The argument is direct: sustainability is competitiveness. The audience is corporates who still need convincing, not the crowd that is already sold.",
-                  "The program is dense: von der Leyen on the main stage, ten founder pitches against ten priorities, themed roundtables, and the Founders' Letter for the Future handed over live.",
+                  "The program is dense: a top-level European Commission keynote, ten founder pitches against ten priorities, themed roundtables, and the Founders' Letter for the Future handed over live.",
                 ]}
               />
             </div>
