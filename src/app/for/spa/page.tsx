@@ -342,31 +342,35 @@ function HowIWork() {
 // ---------------------------------------------------------------------
 // Process and timeline — one compact, single-viewport block. The
 // timeline axis and the phase detail are merged: each phase is a node
-// on the line and carries its week and its deliverables. Six to seven
-// weeks end to end.
+// on the line and carries its week, a one-line summary, and its
+// deliverables. Six to seven weeks end to end.
 // ---------------------------------------------------------------------
 const phases = [
   {
     week: "Week 1",
     title: "Discovery + explorations",
+    line: "Align on creative brief and explore distinct directions with trade-offs.",
     items: ["Discovery workshop", "Brand direction explorations"],
   },
   {
     week: "Week 2",
-    title: "Final identity + invite",
+    title: "Core identity + invite",
+    line: "Consolidate final direction + create invitation landing page.",
     items: [
-      "Core brand assets (logo, colour, typography, main applications)",
+      "Core brand assets (logo, color, typography, main applications)",
       "Invite landing page with RSVP",
     ],
   },
   {
     week: "Week 3-4",
-    title: "Full website",
-    items: ["Website, designed and built", "Key event applications"],
+    title: "Full website + assets",
+    line: "The complete site with all event info, linking to the RSVP link.",
+    items: ["Website designed + deployed", "Additional brand assets"],
   },
   {
     week: "Week 5-6",
     title: "All deliverables",
+    line: "Everything else, digital and printed, wrapped for production window.",
     items: [
       "Extended brand guidelines",
       "Printed collateral (rollups, etc)",
@@ -379,17 +383,11 @@ function ProcessTimeline() {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       {/* Compact section label — tighter than the shared SectionLabel. */}
-      <div className="mb-7 w-full border-t border-rule-soft pt-5">
+      <div className="mb-12 w-full border-t border-rule-soft pt-5">
         <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
           Process and timeline
         </p>
       </div>
-
-      {/* One-line intro */}
-      <p className="mb-12 max-w-[860px] text-[0.95rem] leading-[1.6rem] text-muted">
-        Phased delivery. Each phase ships something concrete to sign off on. I
-        can start next week.
-      </p>
 
       {/* Merged timeline: each phase is a node on the axis (lg) and carries
           its own date, description, and deliverables. */}
@@ -417,6 +415,9 @@ function ProcessTimeline() {
               <h3 className="mt-2 font-display text-[1.15rem] font-bold leading-tight text-ink">
                 {phase.title}
               </h3>
+              <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
+                {phase.line}
+              </p>
               <ul className="mt-4 flex flex-col gap-2">
                 {phase.items.map((item, i) => (
                   <li
