@@ -476,10 +476,9 @@ function ProcessTimeline() {
           6 to 7 weeks, start to finish
         </p>
         <p className="mt-2.5 text-[0.9rem] leading-[1.6rem] text-muted">
-          The build wraps by late August, leaving two clear months before the
-          summit. If it helps, I can stay on through September and October on a
-          light monthly retainer to keep the site current and handle small
-          requests.
+          The work wraps by late August, leaving two full months before the
+          summit. If helpful, I can stay on for Sept + Oct on a small retainer
+          (5h/week) to maintain and update the website and cover design needs.
         </p>
       </div>
     </section>
