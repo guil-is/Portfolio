@@ -64,7 +64,7 @@ export default function SpaPage() {
           <Intro />
           <ProcessTimeline />
           <HowIWork />
-          <Tiers />
+          <Investment />
           <Terms />
           <RelevantWork />
           <NextStep />
@@ -452,152 +452,110 @@ function ProcessTimeline() {
 }
 
 // ---------------------------------------------------------------------
-// Tiers — three options. Tier 2 recommended. EUR figures left as
-// placeholders for Guil to fill in.
+// Investment — fixed price, billed by phase. Same phase spine as the
+// timeline, so the money maps onto the work one to one. Phase 4 is the
+// growth layer that takes the total past the reserved budget once
+// funding lands.
 // ---------------------------------------------------------------------
-type TierData = {
-  label: string;
-  title: string;
-  lead: string;
-  includes: string[];
-  price: string;
-  priceNote: string;
-  recommended?: boolean;
-};
-
-const tiers: TierData[] = [
+const investment = [
+  { phase: "Phase 1-2", title: "Identity + invite", weeks: "Weeks 1-2", amount: "5,200 EUR" },
+  { phase: "Phase 3", title: "Full website", weeks: "Weeks 3-4", amount: "3,400 EUR" },
   {
-    label: "Tier 1 · Essential",
-    title: "Identity and invite",
-    lead: "The minimum to get invites out strong.",
-    includes: [
-      "Visual identity: core marks, colour, type, core usage",
-      "Logo for WinWin 2026",
-      "Invitation design",
-      "Save-the-date template",
-      "Built to ship before the summer break in mid-July",
-    ],
-    price: "[TIER 1 PRICE]",
-    priceNote: "Clearly under 10,000 EUR.",
-  },
-  {
-    label: "Tier 2 · Recommended",
-    title: "The full brief",
-    lead: "Everything in Essential, plus the website and a few key applications. This is the brief as briefed.",
-    includes: [
-      "Everything in Essential",
-      "Website design and build: landing page with all event info, linking out to Ticket Tailor for reservations",
-      "A small set of key applications",
-    ],
-    price: "[TIER 2 PRICE]",
-    priceNote: "Around the 10,000 EUR mark.",
-    recommended: true,
-  },
-  {
-    label: "Tier 3 · Full",
-    title: "Identity that compounds",
-    lead: "Everything in Recommended, plus the pieces that turn one summit into a recurring brand.",
-    includes: [
-      "Everything in Recommended",
-      "Motion design: logo loop, intro and outro animations for presentations and recorded content",
-      "Light brand guidelines for WinWin as a recurring annual event",
-      "Merch starter set",
-    ],
-    price: "[TIER 3 PRICE]",
-    priceNote:
-      "Above 10,000 EUR. The version to grow into when the next funding tranche lands, or once the invites land well with funders.",
+    phase: "Phase 4",
+    title: "All deliverables",
+    weeks: "Weeks 5-6",
+    amount: "2,600 EUR",
+    tag: "Growth layer",
   },
 ];
 
-function TierCard({ tier }: { tier: TierData }) {
-  return (
-    <div
-      className={`flex h-full flex-col gap-5 rounded-[16px] border bg-transparent px-8 py-7 ${
-        tier.recommended ? "border-ink" : "border-rule"
-      }`}
-    >
-      <div>
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-          {tier.label}
-        </p>
-        <h3 className="mt-4 font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.75rem]">
-          {tier.title}
-        </h3>
-      </div>
-
-      <p className="text-[0.95rem] leading-[1.6rem] text-ink">{tier.lead}</p>
-
-      <BulletList items={tier.includes} />
-
-      <div className="mt-auto border-t border-rule-soft pt-5">
-        <div className="flex items-baseline justify-between gap-4">
-          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-            Fee
-          </p>
-          <p className="font-display text-[1.5rem] font-bold leading-none text-ink md:text-[1.75rem]">
-            {tier.price}
-          </p>
-        </div>
-        <p className="mt-4 text-[0.9rem] leading-[1.5rem] text-ink">
-          {tier.priceNote}
-        </p>
-        <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
-          Two revision rounds per deliverable. Extra rounds billed hourly.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function Tiers() {
+function Investment() {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
-      <SectionLabel>Scope and tiers</SectionLabel>
-      <div className="mx-auto w-full max-w-[960px]">
+      <SectionLabel>Investment</SectionLabel>
+      <div className="mx-auto w-full max-w-[720px]">
         <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
           <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-            Start safe, add as funding lands.
+            Fixed price, billed by phase.
           </h2>
-          <p className="mt-5 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
-            Three tiers. Each one builds on the one before it. Funding is still
-            coming in, so you can lock the essentials now and grow the scope as
-            the budget firms up.
+          <p className="mt-5 text-[0.9rem] leading-[1.5rem] text-muted">
+            You commit as the work ships and as funding lands. Each phase stands
+            on its own, no long lock-in.
           </p>
         </CenterFocus>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 lg:grid-cols-3">
-          {tiers.map((tier) => (
-            <CenterFocus
-              key={tier.label}
-              minOpacity={0.15}
-              falloff={0.5}
-              minScale={0.98}
-              disableBelowMd
-            >
-              <TierCard tier={tier} />
-            </CenterFocus>
-          ))}
-        </div>
+        <CenterFocus minOpacity={0.15} falloff={0.5} minScale={0.98} disableBelowMd>
+          <div className="mt-12 rounded-[16px] border border-rule px-8 py-4">
+            {investment.map((row) => (
+              <div
+                key={row.phase}
+                className="flex items-baseline justify-between gap-4 border-b border-rule-soft py-5"
+              >
+                <div>
+                  <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
+                    {row.phase} · {row.weeks}
+                  </p>
+                  <p className="mt-1.5 flex items-baseline gap-3 font-display text-[1.1rem] font-bold leading-tight text-ink">
+                    {row.title}
+                    {row.tag ? (
+                      <span className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
+                        {row.tag}
+                      </span>
+                    ) : null}
+                  </p>
+                </div>
+                <p className="shrink-0 font-display text-[1.25rem] font-bold leading-none text-ink md:text-[1.4rem]">
+                  {row.amount}
+                </p>
+              </div>
+            ))}
+
+            <div className="flex items-baseline justify-between gap-4 pt-5">
+              <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+                Total
+              </p>
+              <p className="font-display text-[1.5rem] font-bold leading-none text-ink md:text-[1.75rem]">
+                11,200 EUR
+                <span className="ml-2 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+                  + 19% VAT
+                </span>
+              </p>
+            </div>
+          </div>
+        </CenterFocus>
+
+        <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
+          <p className="mt-10 text-[0.9rem] leading-[1.5rem] text-muted">
+            Phases 1 to 3 deliver the full functional brief, identity, invite,
+            and website, and land under the 10,000 EUR reserved. Phase 4 is the
+            growth layer: guidelines, motion, merch, and print, added as funding
+            lands.
+          </p>
+          <p className="mt-4 text-[0.9rem] leading-[1.5rem] text-muted">
+            A 30% deposit on signing, 1,560 EUR, credited to the first invoice.
+            Each phase is invoiced at the end of its block, bi-weekly. All
+            amounts plus 19% German VAT.
+          </p>
+        </CenterFocus>
       </div>
     </section>
   );
 }
 
 // ---------------------------------------------------------------------
-// Terms — payment and terms.
+// Terms — the contractual bits not covered in Investment.
 // ---------------------------------------------------------------------
 function Terms() {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
-      <SectionLabel>Payment and terms</SectionLabel>
+      <SectionLabel>Terms</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
         <BulletList
           items={[
-            "Phased payment, tied to phase delivery.",
-            "Invoice to Sustainable Public Affairs.",
-            "Standard 19 percent German VAT applies.",
-            "Two revision rounds per deliverable. Extra rounds billed hourly.",
-            "Funding is still coming in, so you can start at Essential and add scope as it lands.",
+            "Invoiced to Sustainable Public Affairs, plus 19% German VAT.",
+            "30% deposit on signing, the balance billed per phase, bi-weekly.",
+            "Two revision rounds per deliverable. Extra rounds and out-of-scope work billed hourly.",
+            "Optional hour-capped retainer through September and October to maintain the site and cover small requests.",
           ]}
         />
       </div>
