@@ -328,36 +328,35 @@ function HowIWork() {
 // ---------------------------------------------------------------------
 // Process and timeline — one compact, single-viewport block. The
 // timeline axis and the phase detail are merged: each phase is a node
-// on the line and carries its own dates, description, and deliverables.
-// Six to seven weeks end to end.
+// on the line and carries its week and its deliverables. Six to seven
+// weeks end to end.
 // ---------------------------------------------------------------------
 const phases = [
   {
-    date: "Next week",
-    title: "Discovery and explorations",
-    line: "Align on direction, audience, and tone, then explore distinct directions with trade-offs.",
-    items: ["Discovery questionnaire", "Direction explorations"],
+    week: "Week 1",
+    title: "Discovery + explorations",
+    items: ["Discovery workshop", "Brand direction explorations"],
   },
   {
-    date: "Following week",
-    title: "Identity and invite",
-    line: "Consolidate one direction. The invite goes out as a simple landing page with an RSVP button, ready to send by July 16.",
-    items: ["Visual identity: logo, colour, type, core usage", "Invite landing page with RSVP"],
+    week: "Week 2",
+    title: "Final identity + invite",
+    items: [
+      "Core brand assets (logo, colour, typography, main applications)",
+      "Invite landing page with RSVP",
+    ],
   },
   {
-    date: "By July 31",
+    week: "Week 3-4",
     title: "Full website",
-    line: "The complete site with all event info, linking to Ticket Tailor for reservations.",
     items: ["Website, designed and built", "Key event applications"],
   },
   {
-    date: "By August 21",
+    week: "Week 5-6",
     title: "All deliverables",
-    line: "Everything else, digital and printed, wrapped before the production window.",
     items: [
-      "Light brand guidelines",
-      "Motion: logo loop, intro and outro",
-      "Merch and printed collateral",
+      "Extended brand guidelines",
+      "Printed collateral (rollups, etc)",
+      "Merch",
     ],
   },
 ];
@@ -399,15 +398,12 @@ function ProcessTimeline() {
               />
 
               <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
-                {phase.date}
+                {phase.week}
               </p>
-              <h3 className="mt-1.5 font-display text-[1.05rem] font-bold leading-tight text-ink">
+              <h3 className="mt-2 font-display text-[1.15rem] font-bold leading-tight text-ink">
                 {phase.title}
               </h3>
-              <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
-                {phase.line}
-              </p>
-              <ul className="mt-3 flex flex-col gap-2">
+              <ul className="mt-4 flex flex-col gap-2">
                 {phase.items.map((item, i) => (
                   <li
                     key={i}
