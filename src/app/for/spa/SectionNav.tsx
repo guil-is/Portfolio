@@ -46,7 +46,7 @@ export function SectionNav() {
   return (
     <nav
       aria-label="Sections"
-      className="no-print group fixed left-5 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-3.5 lg:flex xl:left-8"
+      className="no-print group fixed left-4 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-3.5 min-[1440px]:flex"
     >
       {sections.map((s) => {
         const isActive = active === s.id;
@@ -55,18 +55,18 @@ export function SectionNav() {
             key={s.id}
             href={`#${s.id}`}
             onClick={(e) => handleClick(e, s.id)}
-            className="flex items-center gap-3 py-0.5"
+            className="group/item flex items-center gap-3 py-0.5"
           >
             <span
               className={`h-px shrink-0 transition-all duration-300 ${
                 isActive
                   ? "w-7 bg-ink"
-                  : "w-4 bg-rule group-hover:bg-muted"
+                  : "w-4 bg-rule group-hover/item:bg-muted"
               }`}
             />
             <span
-              className={`max-w-0 overflow-hidden whitespace-nowrap font-caption text-[10px] font-medium uppercase tracking-[1.5px] opacity-0 transition-all duration-300 group-hover:max-w-[12rem] group-hover:opacity-100 ${
-                isActive ? "text-ink" : "text-muted"
+              className={`whitespace-nowrap font-caption text-[10px] font-medium uppercase tracking-[1.5px] transition-colors duration-300 ${
+                isActive ? "text-ink" : "text-muted group-hover/item:text-ink"
               }`}
             >
               {s.label}
