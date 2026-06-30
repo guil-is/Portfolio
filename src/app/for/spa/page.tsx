@@ -147,7 +147,7 @@ function Header() {
             className="intro-rise block font-normal text-muted"
             style={{ animationDelay: "280ms" }}
           >
-            identity, invite, website
+            visual identity &amp; website
           </span>
         </h1>
 
@@ -155,9 +155,9 @@ function Header() {
           className="intro-rise mt-6 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted md:mt-8 md:text-[1rem]"
           style={{ animationDelay: "380ms" }}
         >
-          A summit in Brussels on October 29 that puts 350 to 400 CEOs, founders,
-          funders, and EU policymakers in one room. The identity has to argue
-          that sustainability is competitiveness, to people who need convincing.
+          A half-day summit in Brussels that puts 350-400 CEOs, founders,
+          funders, and EU policymakers in one room. The identity embodies the
+          concept of sustainability = competitiveness.
         </p>
       </div>
 
@@ -202,9 +202,10 @@ function Intro() {
               The work
             </p>
             <div className="mt-4">
-              <Paragraphs
-                body={[
-                  "Three pieces, delivered in order. A visual identity and logo first. An invitation second, out before the summer break in mid-July. A website third.",
+              <BulletList
+                items={[
+                  "Full visual identity with guidelines (incl. logo design)",
+                  "Event website and printed material",
                 ]}
               />
             </div>
@@ -214,7 +215,7 @@ function Intro() {
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
           <div>
             <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-              The creative tension
+              Creative direction
             </p>
             <div className="mt-4">
               <Paragraphs
@@ -230,12 +231,14 @@ function Intro() {
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
           <div>
             <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-              Built to extend
+              Project goals
             </p>
             <div className="mt-4">
-              <Paragraphs
-                body={[
-                  "The identity also carries visibility for Sustainable Public Affairs. So it is built as a system, not a one-off. It holds up when WinWin returns next year, and when SPA puts the look to work beyond the summit.",
+              <BulletList
+                items={[
+                  "Inspire event participants and the larger audience",
+                  "Carry visibility and legitimacy for Sustainable Public Affairs",
+                  "Be replicable for future events beyond the summit",
                 ]}
               />
             </div>
@@ -423,13 +426,16 @@ function ProcessTimeline() {
         })}
       </div>
 
-      {/* Closing note: total span, lead time, optional retainer */}
-      <p className="mt-12 max-w-[860px] border-t border-rule-soft pt-6 text-[0.9rem] leading-[1.5rem] text-muted">
-        Six to seven weeks end to end. That leaves two clear months before
-        October 29 to focus on production and the finer details. If useful, I can
-        stay on a [X-HOUR] monthly retainer through September and October to
-        maintain the site and handle small requests.
-      </p>
+      {/* Closing note: total span + optional retainer */}
+      <div className="mt-12 max-w-[860px] border-t border-rule-soft pt-6">
+        <p className="text-[0.95rem] font-bold leading-[1.5rem] text-ink">
+          6-7 weeks total
+        </p>
+        <p className="mt-2 text-[0.9rem] leading-[1.5rem] text-muted">
+          If useful, I can stay on a monthly hour-capped retainer through
+          September and October to maintain the website and cover small requests.
+        </p>
+      </div>
     </section>
   );
 }
