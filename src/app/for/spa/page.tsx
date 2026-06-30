@@ -221,7 +221,7 @@ const work = [
 // ---------------------------------------------------------------------
 function Intro() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       <SectionLabel>The brief</SectionLabel>
       <div className="mx-auto flex w-full max-w-[960px] flex-col gap-12">
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
@@ -362,7 +362,7 @@ const howItems = [
 
 function HowIWork() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       <SectionLabel>How I work</SectionLabel>
 
       <div className="grid grid-cols-1 gap-x-12 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
@@ -518,16 +518,16 @@ const investment = [
 
 function Investment() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       <SectionLabel>Investment</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
           <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-            One price, paid by phase.
+            Pay as it ships.
           </h2>
           <p className="mt-5 text-[0.9rem] leading-[1.5rem] text-muted">
-            You commit as the work ships and as funding lands. Each phase stands
-            on its own, no long lock-in.
+            You commit phase by phase, as the work lands. Each phase stands on
+            its own, no long lock-in.
           </p>
         </CenterFocus>
 
@@ -588,7 +588,7 @@ function Investment() {
 // ---------------------------------------------------------------------
 function Terms() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       <SectionLabel>Terms</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
         <BulletList
@@ -624,7 +624,7 @@ const relevantWork = [
 
 function RelevantWork() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       <SectionLabel>Relevant work</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
@@ -687,7 +687,7 @@ function RelevantWork() {
 // ---------------------------------------------------------------------
 function NextStep() {
   return (
-    <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+    <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       <SectionLabel>Next step</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99}>
