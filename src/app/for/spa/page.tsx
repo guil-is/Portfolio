@@ -489,11 +489,12 @@ function Investment() {
           <div className="mt-12 rounded-[16px] border border-rule px-8 py-3">
             {investment.map((row) => (
               <div key={row.phase} className="border-b border-rule-soft py-5">
-                <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
-                  {row.phase} · {row.weeks}
+                <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px]">
+                  <span className="text-ink">{row.phase}</span>
+                  <span className="text-muted"> · {row.weeks}</span>
                 </p>
                 <div className="mt-2 flex items-baseline justify-between gap-4">
-                  <p className="font-display text-[1.1rem] font-bold leading-tight text-ink">
+                  <p className="font-display text-[1.3rem] font-bold leading-tight text-ink md:text-[1.45rem]">
                     {row.title}
                   </p>
                   <p className="shrink-0 font-display text-[1.3rem] font-bold leading-none text-ink md:text-[1.45rem]">
@@ -507,12 +508,14 @@ function Investment() {
               <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
                 Total
               </p>
-              <p className="font-display text-[1.5rem] font-bold leading-none text-ink md:text-[1.75rem]">
-                11,800 EUR
-                <span className="ml-2 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+              <div className="text-right">
+                <p className="font-display text-[1.5rem] font-bold leading-none text-ink md:text-[1.75rem]">
+                  11,800 EUR
+                </p>
+                <p className="mt-1.5 font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
                   + 19% VAT
-                </span>
-              </p>
+                </p>
+              </div>
             </div>
           </div>
         </CenterFocus>
