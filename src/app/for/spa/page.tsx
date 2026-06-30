@@ -245,10 +245,10 @@ function Intro() {
             </div>
             <a
               href="#scope"
-              className="mt-5 inline-flex items-center gap-1.5 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted"
+              className="mt-5 inline-flex items-center gap-1 self-start text-[0.9rem] font-medium text-ink underline decoration-rule underline-offset-4 transition-colors hover:decoration-ink"
             >
               See the full scope
-              <ChevronRight className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+              <ChevronRight className="h-4 w-4" strokeWidth={2} aria-hidden />
             </a>
           </div>
         </CenterFocus>
@@ -564,7 +564,7 @@ function Investment() {
 // Collapsed by default (native <details>) so the depth is available
 // without bloating the page. Phasing lives in the timeline, not here.
 // ---------------------------------------------------------------------
-const fullScope = [
+const fullScope: { title: string; optional?: boolean; items: string[] }[] = [
   {
     title: "Visual identity",
     items: [
@@ -619,6 +619,7 @@ const fullScope = [
   },
   {
     title: "Motion",
+    optional: true,
     items: [
       "Logo sting: intro and outro",
       "Animated stage opener",
@@ -638,6 +639,7 @@ const fullScope = [
   },
   {
     title: "Merch",
+    optional: true,
     items: [
       "Tote or gift bag, notebook, pins and stickers",
       "Cap or tee, plus a VIP gift item",
@@ -660,10 +662,8 @@ function FullScope() {
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
           <p className="max-w-[680px] text-[1rem] leading-[1.7rem] text-ink">
-            The full deliverable set, by discipline. The timeline shows what
-            lands in which phase. For high-volume on-site pieces I build the
-            system and the hero items, and your team produces the rest from the
-            templates.
+            The full deliverable set, by category. Items marked optional are the
+            flex. The final list is confirmed at kickoff.
           </p>
         </CenterFocus>
 
@@ -682,6 +682,11 @@ function FullScope() {
                 <span className="text-[1rem] leading-[1.5rem] text-ink">
                   {group.title}
                 </span>
+                {group.optional ? (
+                  <span className="ml-auto shrink-0 pl-3 font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-faint">
+                    Optional
+                  </span>
+                ) : null}
               </summary>
               <ul className="flex flex-col gap-2 pb-4 pl-7">
                 {group.items.map((item, i) => (
