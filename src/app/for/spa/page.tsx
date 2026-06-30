@@ -474,7 +474,7 @@ function Investment() {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>Investment</SectionLabel>
-      <div className="mx-auto w-full max-w-[720px]">
+      <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.15} falloff={0.55} minScale={0.99} disableBelowMd>
           <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
             Fixed price, billed by phase.
@@ -580,7 +580,7 @@ function RelevantWork() {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>Relevant work</SectionLabel>
-      <div className="mx-auto w-full max-w-[800px]">
+      <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
           <p className="max-w-[680px] text-[1rem] leading-[1.7rem] text-ink">
             I have built brand and digital work for 14+ years, much of it for
