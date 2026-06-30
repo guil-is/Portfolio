@@ -7,6 +7,7 @@ import {
   LayoutGrid,
   Compass,
   Sparkles,
+  Check,
   ChevronDown,
   ArrowUpRight,
   type LucideIcon,
@@ -325,56 +326,43 @@ function HowIWork() {
 }
 
 // ---------------------------------------------------------------------
-// Process and timeline — compact, built to fit one desktop viewport.
-// A horizontal milestone strip on top, then a tight 4-up row of phase
-// cards. No tall headings, no dividers between phases.
+// Process and timeline — one compact, single-viewport block. The
+// timeline axis and the phase detail are merged: each phase is a node
+// on the line and carries its own dates, description, and deliverables.
+// Six to seven weeks end to end.
 // ---------------------------------------------------------------------
-const milestones = [
-  { label: "Phase 1", title: "Discovery" },
-  { label: "Phase 2", title: "Visual identity" },
-  { label: "Phase 3", title: "Website" },
-  { label: "Phase 4", title: "Deliverables" },
-  { label: "Oct 29", title: "Summit" },
-];
-
 const phases = [
   {
-    label: "Phase 1",
-    title: "Discovery",
-    date: "[WEEK OF JULY X]",
-    line: "Align on direction, audience, and tone before any design starts. No guessing at a concept upfront.",
-    items: ["Discovery questionnaire", "Aligned creative brief"],
+    date: "Next week",
+    title: "Discovery and explorations",
+    line: "Align on direction, audience, and tone, then explore distinct directions with trade-offs.",
+    items: ["Discovery questionnaire", "Direction explorations"],
   },
   {
-    label: "Phase 2",
-    title: "Visual identity",
-    date: "[MID-JULY]",
-    line: "Distinct directions with trade-offs, then we lock one and build it out. Invitation ships before the break.",
-    items: ["Logo, colour, type, core usage", "Invitation and save-the-date templates"],
+    date: "Following week",
+    title: "Identity and invite",
+    line: "Consolidate one direction. The invite goes out as a simple landing page with an RSVP button, ready to send by July 16.",
+    items: ["Visual identity: logo, colour, type, core usage", "Invite landing page with RSVP"],
   },
   {
-    label: "Phase 3",
-    title: "Website and assets",
-    date: "[LATE JULY TO SEPT]",
-    line: "Landing page with all event info, linking to Ticket Tailor.",
-    items: ["Landing page, designed and built", "Key event applications"],
+    date: "By July 31",
+    title: "Full website",
+    line: "The complete site with all event info, linking to Ticket Tailor for reservations.",
+    items: ["Website, designed and built", "Key event applications"],
   },
   {
-    label: "Phase 4",
-    title: "Final deliverables",
-    date: "[SEPT TO OCT 29]",
-    line: "Added as funding lands and the event gets closer.",
+    date: "By August 21",
+    title: "All deliverables",
+    line: "Everything else, digital and printed, wrapped before the production window.",
     items: [
       "Light brand guidelines",
       "Motion: logo loop, intro and outro",
-      "Merch starter set",
+      "Merch and printed collateral",
     ],
   },
 ];
 
 function ProcessTimeline() {
-  const lineEdge = `${50 / Math.max(milestones.length, 1)}%`;
-
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
       {/* Compact section label — tighter than the shared SectionLabel. */}
@@ -385,92 +373,67 @@ function ProcessTimeline() {
       </div>
 
       {/* One-line intro */}
-      <p className="mb-10 max-w-[860px] text-[0.95rem] leading-[1.6rem] text-muted">
-        Phased delivery, each phase ends in something concrete to sign off on.
-        Anchored to two dates: invitation out mid-July, summit October 29. I can
-        start next week.
+      <p className="mb-12 max-w-[860px] text-[0.95rem] leading-[1.6rem] text-muted">
+        Phased delivery. Each phase ships something concrete to sign off on. I
+        can start next week.
       </p>
 
-      {/* Milestone strip — desktop horizontal */}
-      <div className="relative mb-10 hidden md:block">
-        <div
-          aria-hidden
-          className="absolute top-[4.5px] h-px bg-rule"
-          style={{ left: lineEdge, right: lineEdge }}
-        />
-        <ol
-          className="grid"
-          style={{ gridTemplateColumns: `repeat(${milestones.length}, 1fr)` }}
-        >
-          {milestones.map((m, i) => (
-            <li
-              key={i}
-              className="relative flex flex-col items-center px-3 text-center"
-            >
+      {/* Merged timeline: each phase is a node on the axis (lg) and carries
+          its own date, description, and deliverables. */}
+      <div className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        {phases.map((phase, idx) => {
+          const isLast = idx === phases.length - 1;
+          return (
+            <div key={phase.title} className="relative lg:pt-7">
+              {/* Connecting axis segment to the next node (desktop only) */}
+              {!isLast ? (
+                <span
+                  aria-hidden
+                  className="absolute left-0 top-[4px] hidden h-px w-[calc(100%+2rem)] bg-rule lg:block"
+                />
+              ) : null}
+              {/* Node dot, masked from the line by a bg ring */}
               <span
                 aria-hidden
-                className="relative z-10 block h-[9px] w-[9px] rounded-full bg-ink"
+                className="absolute left-0 top-0 hidden h-[9px] w-[9px] rounded-full bg-ink ring-4 ring-bg lg:block"
               />
-              <p className="mt-4 font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
-                {m.label}
+
+              <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
+                {phase.date}
               </p>
-              <p className="mt-1 font-display text-[0.9rem] font-bold leading-snug text-ink">
-                {m.title}
+              <h3 className="mt-1.5 font-display text-[1.05rem] font-bold leading-tight text-ink">
+                {phase.title}
+              </h3>
+              <p className="mt-2 text-[0.85rem] leading-[1.4rem] text-muted">
+                {phase.line}
               </p>
-            </li>
-          ))}
-        </ol>
+              <ul className="mt-3 flex flex-col gap-2">
+                {phase.items.map((item, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-2 text-[0.85rem] leading-[1.35rem] text-ink"
+                  >
+                    <Check
+                      className="mt-[2px] h-3.5 w-3.5 shrink-0 text-ink"
+                      strokeWidth={2.5}
+                      aria-hidden
+                    />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Milestone strip — mobile horizontal scroll, kept short */}
-      <ol className="mb-8 flex gap-3 overflow-x-auto pb-1 md:hidden">
-        {milestones.map((m, i) => (
-          <li
-            key={i}
-            className="flex min-w-[6.5rem] shrink-0 flex-col gap-1 border-t border-rule pt-2"
-          >
-            <p className="font-caption text-[10px] font-medium uppercase tracking-[1px] text-muted">
-              {m.label}
-            </p>
-            <p className="font-display text-[0.85rem] font-bold leading-snug text-ink">
-              {m.title}
-            </p>
-          </li>
-        ))}
-      </ol>
-
-      {/* Phase cards — tight 4-up row (2x2 below lg, stacked on mobile) */}
-      <div className="grid grid-cols-1 gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-4">
-        {phases.map((phase) => (
-          <div key={phase.label} className="flex flex-col gap-1.5">
-            <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-              {phase.label}
-            </p>
-            <h3 className="font-display text-[1.05rem] font-bold leading-tight text-ink">
-              {phase.title}
-            </h3>
-            <p className="font-caption text-[10px] font-medium uppercase tracking-[1px] text-muted">
-              {phase.date}
-            </p>
-            <p className="mt-1 text-[0.85rem] leading-[1.4rem] text-muted">
-              {phase.line}
-            </p>
-            <ul className="mt-1 flex flex-col gap-1.5">
-              {phase.items.map((item, i) => (
-                <li
-                  key={i}
-                  className="flex gap-2 text-[0.85rem] leading-[1.35rem] text-ink"
-                >
-                  <span aria-hidden className="select-none text-muted">
-                    •
-                  </span>
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+      {/* Closing note: total span, lead time, optional retainer */}
+      <p className="mt-12 max-w-[860px] border-t border-rule-soft pt-6 text-[0.9rem] leading-[1.5rem] text-muted">
+        Six to seven weeks end to end. That leaves two clear months before
+        October 29 to focus on production and the finer details. If useful, I can
+        stay on a [X-HOUR] monthly retainer through September and October to
+        maintain the site and handle small requests.
+      </p>
     </section>
   );
 }
