@@ -66,10 +66,10 @@ export default function SpaPage() {
           <Header />
           <Intro />
           <ProcessTimeline />
-          <HowIWork />
           <Investment />
           <Terms />
           <RelevantWork />
+          <HowIWork />
           <NextStep />
         </main>
       </PasswordGate>
@@ -465,8 +465,8 @@ function ProcessTimeline() {
 // timeline, so the money maps onto the work one to one.
 // ---------------------------------------------------------------------
 const investment = [
-  { phase: "Phase 1-2", title: "Identity + invite", weeks: "Weeks 1-2", amount: "5,200 EUR" },
-  { phase: "Phase 3", title: "Full website", weeks: "Weeks 3-4", amount: "3,800 EUR" },
+  { phase: "Phase 1-2", title: "Core identity + invite", weeks: "Weeks 1-2", amount: "5,200 EUR" },
+  { phase: "Phase 3", title: "Full website + assets", weeks: "Weeks 3-4", amount: "3,800 EUR" },
   { phase: "Phase 4", title: "All deliverables", weeks: "Weeks 5-6", amount: "2,800 EUR" },
 ];
 
