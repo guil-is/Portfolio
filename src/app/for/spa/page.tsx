@@ -70,6 +70,7 @@ export default function SpaPage() {
           <Intro />
           <ProcessTimeline />
           <Investment />
+          <FullScope />
           <Terms />
           <RelevantWork />
           <HowIWork />
@@ -235,6 +236,7 @@ function Intro() {
               <Paragraphs
                 body={[
                   "WinWin 2026 is a high-level summit in Brussels on October 29. It brings 350 to 400 CEOs, founders, funders, and EU policymakers into one room. The argument is direct: sustainability is competitiveness. The audience is corporates who still need convincing, not the crowd that is already sold.",
+                  "The program is dense: von der Leyen on the main stage, ten founder pitches against ten priorities, themed roundtables, and the Founders' Letter for the Future handed over live.",
                 ]}
               />
             </div>
@@ -586,6 +588,170 @@ function Investment() {
 }
 
 // ---------------------------------------------------------------------
+// Full scope — the complete deliverable menu, grouped by discipline and
+// tagged core vs later. Collapsed by default (native <details>) so the
+// depth is available without bloating the page.
+// ---------------------------------------------------------------------
+const fullScope = [
+  {
+    title: "Visual identity",
+    tag: "Core",
+    items: [
+      "Logo system: primary, horizontal, stacked, icon-only",
+      "Color and mono variants, clear-space and minimum-size rules",
+      "WinWin 2026 year lockup and a recurring-edition lockup",
+      "Color palette for screen and print, full typography system",
+      "Core graphic device: the converging-energies motif, reusable",
+      "Imagery direction for the abstract-nature close-ups, plus a texture set",
+    ],
+  },
+  {
+    title: "Brand guidelines",
+    tag: "Core + Phase 4",
+    items: [
+      "Mini guidelines for the event, core usage",
+      "Extended guidelines for recurring annual use, Phase 4",
+    ],
+  },
+  {
+    title: "Event website",
+    tag: "Core",
+    items: [
+      "Sitemap and wireframe",
+      "Save-the-date holding page, live first for early registration",
+      "Landing page, desktop and mobile: hero, program, speakers, venue, partners, RSVP",
+      "RSVP flow linking to Ticket Tailor",
+      "Build, deploy, responsive behavior and light motion",
+      "Favicon, social share image, meta, basic accessibility pass",
+    ],
+  },
+  {
+    title: "Invitation and save-the-date",
+    tag: "Core",
+    items: [
+      "Save-the-date template, digital, ships first",
+      "Formal invitation, email-platform-ready (Mailchimp or La Posta)",
+      "Optional printed invitation for VIPs",
+    ],
+  },
+  {
+    title: "Event and on-site collateral",
+    tag: "Core system",
+    items: [
+      "Main-stage backdrop and stage visual",
+      "Step-and-repeat photo wall for the group photo",
+      "Signage system: wayfinding, registration, roundtable signs",
+      "Name badges and lanyards",
+      "Printed program and agenda",
+      "Founders' Letter for the Future: document design",
+    ],
+  },
+  {
+    title: "Stage and screen graphics",
+    tag: "Core",
+    items: [
+      "Presentation template with the ten priorities on screen",
+      "Lower thirds and speaker name graphics",
+      "Interstitials, holding and transition screens",
+      "Roundtable title cards, one per theme",
+      "Looping break visual for the stage screens",
+    ],
+  },
+  {
+    title: "Motion",
+    tag: "Phase 4",
+    items: [
+      "Logo sting: intro and outro",
+      "Animated stage opener",
+      "Transitions and interstitials",
+      "Social teaser animations",
+      "After-movie template: titles, lower thirds, end card",
+    ],
+  },
+  {
+    title: "Social and co-branding",
+    tag: "Core",
+    items: [
+      "Post templates: announcement, speaker reveal, countdown, quote card",
+      "Story, vertical, and LinkedIn formats",
+      "Partner and funder co-branding lockups",
+      "Profile assets if WinWin runs its own channels",
+    ],
+  },
+  {
+    title: "Merch",
+    tag: "Funding-dependent",
+    items: [
+      "Tote or gift bag, notebook, pins and stickers",
+      "Cap or tee, plus a VIP gift item",
+    ],
+  },
+  {
+    title: "Files and handoff",
+    tag: "Core",
+    items: [
+      "Organized asset library and export pack for your team",
+      "Source files: Figma and vector",
+      "Print-ready files with correct bleeds and specs",
+    ],
+  },
+];
+
+function FullScope() {
+  return (
+    <section id="scope" className="mx-auto w-full max-w-[1200px] px-6 py-14 md:px-10 md:py-16">
+      <SectionLabel>Full scope</SectionLabel>
+      <div className="mx-auto w-full max-w-[960px]">
+        <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
+          <p className="max-w-[680px] text-[1rem] leading-[1.7rem] text-ink">
+            The full deliverable set, by discipline. Core items ship across
+            phases 1 to 3. Anything marked Phase 4 or funding-dependent lands
+            later. For high-volume on-site pieces I build the system and the hero
+            items, and your team produces the rest from the templates.
+          </p>
+        </CenterFocus>
+
+        <div className="mt-10 flex flex-col">
+          {fullScope.map((group) => (
+            <details
+              key={group.title}
+              className="group border-b border-rule-soft last:border-b-0"
+            >
+              <summary className="flex cursor-pointer list-none items-center gap-3 py-3.5 [&::-webkit-details-marker]:hidden">
+                <ChevronRight
+                  className="h-4 w-4 shrink-0 text-muted transition-transform duration-200 group-open:rotate-90"
+                  strokeWidth={2}
+                  aria-hidden
+                />
+                <span className="text-[1rem] leading-[1.5rem] text-ink">
+                  {group.title}
+                </span>
+                <span className="ml-auto shrink-0 pl-3 font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
+                  {group.tag}
+                </span>
+              </summary>
+              <ul className="flex flex-col gap-2 pb-4 pl-7">
+                {group.items.map((item, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-3 text-[0.9rem] leading-[1.5rem] text-muted"
+                  >
+                    <span aria-hidden className="select-none">
+                      –
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------------------------------------------------------------------
 // Terms — the contractual bits not covered in Investment.
 // ---------------------------------------------------------------------
 function Terms() {
@@ -598,6 +764,7 @@ function Terms() {
             "Invoiced to Sustainable Public Affairs, plus 19% German VAT.",
             "30% deposit on signing, the balance billed per phase, bi-weekly.",
             "Two revision rounds per deliverable. Extra rounds and out-of-scope work billed hourly.",
+            "High-volume on-site collateral is produced by your team from the templates I provide. I design the system and the hero pieces.",
             "Optional hour-capped retainer through September and October to maintain the site and cover small requests.",
           ]}
         />

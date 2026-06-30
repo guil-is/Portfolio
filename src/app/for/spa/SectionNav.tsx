@@ -9,6 +9,7 @@ const sections = [
   { id: "brief", label: "Brief" },
   { id: "timeline", label: "Process" },
   { id: "investment", label: "Investment" },
+  { id: "scope", label: "Full scope" },
   { id: "terms", label: "Terms" },
   { id: "work", label: "Relevant work" },
   { id: "approach", label: "How I work" },
