@@ -58,8 +58,8 @@ export default function SpaPage() {
         <main className="page-fade-in pb-40">
           <Header />
           <Intro />
-          <HowIWork />
           <ProcessTimeline />
+          <HowIWork />
           <Tiers />
           <Terms />
           <RelevantWork />
