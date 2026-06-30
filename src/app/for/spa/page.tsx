@@ -45,7 +45,7 @@ export const metadata = {
   },
 };
 
-const PASSWORD = "competitiveness";
+const PASSWORD = "winwin";
 
 export default function SpaPage() {
   return (
