@@ -36,13 +36,13 @@ clean months before the big day.
 
 **[Scroll to: Investment]**
 
-Okay, the money. It's eleven-eight plus VAT, billed by phase, to SPA. That's
-about eighteen hundred over the ten you'd set aside, and I'll tell you exactly
-where that gap lives. It's all phase four, the motion and the extras. Everything
-before it, the identity, the invite, the full website, fits inside your ten. So
-it's not an over-or-under call. It's how much of phase four you want, and you get
-to decide that later, once the funding's clearer. If you're asking what I'd do?
-The whole thing. It's the version that really lands in that room.
+Okay, the money. Eleven-eight is my number, plus VAT, billed by phase, to SPA.
+It sits a bit above the ten you mentioned, and I'll tell you exactly where the
+difference is: it's phase four, the extras. The core, the identity, the invite,
+the full website, all fits inside your ten. So if no extra funding lands, nothing
+gets compromised. We just dial phase four to what you've got and work it out from
+there. My honest take is the full thing's worth it, but you're never stuck with
+the number.
 
 **[Scroll to: Full scope]**
 
