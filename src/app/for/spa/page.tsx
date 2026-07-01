@@ -531,7 +531,7 @@ function Investment() {
                   <p className="shrink-0 font-display text-[1.3rem] font-bold leading-none text-ink md:text-[1.45rem]">
                     {row.amount}
                     {row.estimate ? (
-                      <span className="align-super text-[0.6em] font-normal text-muted">
+                      <span className="align-super text-[0.85em] font-bold text-ink">
                         *
                       </span>
                     ) : null}
