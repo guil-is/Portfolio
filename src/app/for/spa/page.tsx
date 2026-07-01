@@ -489,10 +489,16 @@ function ProcessTimeline() {
 // Investment — fixed price, billed by phase. Same phase spine as the
 // timeline, so the money maps onto the work one to one.
 // ---------------------------------------------------------------------
-const investment = [
+const investment: {
+  phase: string;
+  title: string;
+  weeks: string;
+  amount: string;
+  estimate?: boolean;
+}[] = [
   { phase: "Phase 1-2", title: "Core identity + invite", weeks: "Weeks 1-2", amount: "5,200 EUR" },
   { phase: "Phase 3", title: "Full website + assets", weeks: "Weeks 3-4", amount: "3,800 EUR" },
-  { phase: "Phase 4", title: "All deliverables", weeks: "Weeks 5-6", amount: "2,800 EUR" },
+  { phase: "Phase 4", title: "All deliverables", weeks: "Weeks 5-6", amount: "2,800 EUR", estimate: true },
 ];
 
 function Investment() {
@@ -524,6 +530,11 @@ function Investment() {
                   </p>
                   <p className="shrink-0 font-display text-[1.3rem] font-bold leading-none text-ink md:text-[1.45rem]">
                     {row.amount}
+                    {row.estimate ? (
+                      <span className="align-super text-[0.6em] font-normal text-muted">
+                        *
+                      </span>
+                    ) : null}
                   </p>
                 </div>
               </div>
@@ -555,6 +566,11 @@ function Investment() {
             A 30% deposit on signing, 1,560 EUR, credited to the first invoice.
             Each phase is invoiced at the end of its block, bi-weekly. All
             amounts plus 19% German VAT.
+          </p>
+          <p className="mt-5 max-w-[640px] text-[0.8rem] leading-[1.5rem] text-faint">
+            * Phase 4 is a working estimate. As we scope the real needs and
+            budget together during the project, it can move up or down, and the
+            total moves with it.
           </p>
         </CenterFocus>
       </div>
