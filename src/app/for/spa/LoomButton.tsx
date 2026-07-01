@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Play, X } from "lucide-react";
 import { CtaButton } from "@/components/CtaButton";
 
-// "Watch the walkthrough" CTA that plays the Loom in a lightbox overlay,
-// so the viewer never leaves the proposal page. The iframe only mounts
-// while the modal is open (so it autoplays on open, and stops on close).
+// "Watch the walkthrough" CTA that plays the Loom in a full-screen lightbox,
+// so the viewer never leaves the proposal. Rendered through a portal to
+// document.body so `position: fixed` is relative to the viewport (the hero's
+// intro-rise transform would otherwise trap it in a small containing block).
 const LOOM_EMBED =
   "https://www.loom.com/embed/791dee9f58cf41b8aafa9d3e1056166b?autoplay=1";
 
@@ -19,10 +21,11 @@ export function LoomButton() {
       if (e.key === "Escape") setOpen(false);
     };
     document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
+      document.body.style.overflow = prev;
     };
   }, [open]);
 
@@ -35,39 +38,43 @@ export function LoomButton() {
         icon={Play}
       />
 
-      {open ? (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Proposal walkthrough"
-          onClick={() => setOpen(false)}
-          className="no-print fixed inset-0 z-[100] flex items-center justify-center bg-black/75 p-5 backdrop-blur-sm md:p-8"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-[960px]"
-          >
-            <button
-              type="button"
+      {open
+        ? createPortal(
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label="Proposal walkthrough"
               onClick={() => setOpen(false)}
-              aria-label="Close"
-              className="absolute -top-9 right-0 inline-flex items-center gap-1.5 text-[13px] font-medium text-white/70 transition-colors hover:text-white"
+              className="no-print fixed inset-0 z-[100] overflow-y-auto bg-black/80 backdrop-blur-sm"
             >
-              Close
-              <X className="h-4 w-4" strokeWidth={2} aria-hidden />
-            </button>
-            <div className="relative aspect-video w-full overflow-hidden rounded-[12px] bg-black shadow-[0_20px_80px_rgba(0,0,0,0.5)]">
-              <iframe
-                src={LOOM_EMBED}
-                title="WinWin 2026 proposal walkthrough"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-                className="absolute inset-0 h-full w-full"
-              />
-            </div>
-          </div>
-        </div>
-      ) : null}
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close"
+                className="fixed right-5 top-5 z-10 inline-flex items-center gap-1.5 text-[13px] font-medium uppercase tracking-[1px] text-white/70 transition-colors hover:text-white"
+              >
+                Close
+                <X className="h-4 w-4" strokeWidth={2} aria-hidden />
+              </button>
+
+              <div className="flex min-h-full items-center justify-center p-4 md:p-10">
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative aspect-video w-full max-w-[1200px] overflow-hidden rounded-[12px] bg-black shadow-[0_24px_90px_rgba(0,0,0,0.55)]"
+                >
+                  <iframe
+                    src={LOOM_EMBED}
+                    title="WinWin 2026 proposal walkthrough"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 h-full w-full"
+                  />
+                </div>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </>
   );
 }
