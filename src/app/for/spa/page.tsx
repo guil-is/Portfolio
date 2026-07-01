@@ -13,7 +13,6 @@ import {
   ChevronDown,
   ChevronRight,
   ArrowUpRight,
-  Play,
   type LucideIcon,
 } from "lucide-react";
 import { PasswordGate } from "@/components/PasswordGate";
@@ -23,6 +22,7 @@ import { CenterFocus } from "@/components/CenterFocus";
 import { pastProjects } from "@/content/projects";
 import { SectionNav } from "./SectionNav";
 import { ExpandAllToggle } from "./ExpandAllToggle";
+import { LoomButton } from "./LoomButton";
 
 // ---------------------------------------------------------------------
 // /for/spa — bespoke proposal for Lara Sibbing (Sustainable Public
@@ -53,9 +53,6 @@ export const metadata = {
 };
 
 const PASSWORD = "winwin";
-
-// Loom walkthrough link for the hero CTA. Swap in the recorded share URL.
-const LOOM_URL = "#";
 
 export default function SpaPage() {
   return (
@@ -181,7 +178,7 @@ function Header() {
           className="intro-rise mt-10"
           style={{ animationDelay: "460ms" }}
         >
-          <CtaButton href={LOOM_URL} label="Watch the walkthrough" icon={Play} />
+          <LoomButton />
         </div>
       </div>
 
