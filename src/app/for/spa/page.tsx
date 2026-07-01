@@ -724,7 +724,7 @@ function Terms() {
           items={[
             "Invoiced to Sustainable Public Affairs, plus 19% German VAT.",
             "30% deposit on signing, the balance billed per phase, bi-weekly.",
-            "Two revision rounds per deliverable. Extra rounds and out-of-scope work billed hourly.",
+            "Two revision rounds per phase. Extra rounds and out-of-scope work billed hourly.",
             "High-volume on-site collateral is produced by your team from the templates I provide. I design the system and the hero pieces.",
             "Optional hour-capped retainer through September and October to maintain the site and cover small requests.",
           ]}
