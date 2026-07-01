@@ -614,10 +614,9 @@ const fullScope: { title: string; optional?: boolean; items: string[] }[] = [
     title: "Stage and screen graphics",
     items: [
       "Presentation template with the ten priorities on screen",
-      "Lower thirds and speaker name graphics",
-      "Interstitials, holding and transition screens",
+      "Speaker name graphics template",
+      "Interstitial screens (holding / schedule)",
       "Roundtable title cards, one per theme",
-      "Looping break visual for the stage screens",
     ],
   },
   {
@@ -641,19 +640,18 @@ const fullScope: { title: string; optional?: boolean; items: string[] }[] = [
     title: "Motion",
     optional: true,
     items: [
-      "Logo sting: intro and outro",
-      "Animated stage opener",
-      "Transitions and interstitials",
+      "Logo animation",
+      "Animated screen loops",
       "Social teaser animations",
-      "After-movie template: titles, lower thirds, end card",
     ],
   },
   {
     title: "Merch",
     optional: true,
     items: [
-      "Tote or gift bag, notebook, pins and stickers",
-      "Cap or tee, plus a VIP gift item",
+      "Tote or gift bag, notebook, pins, stickers",
+      "Cap or T-shirt",
+      "VIP gift items",
     ],
   },
 ];
@@ -665,8 +663,7 @@ function FullScope() {
       <div className="mx-auto w-full max-w-[960px]">
         <CenterFocus minOpacity={0.2} falloff={0.55} minScale={0.99} disableBelowMd>
           <p className="max-w-[680px] text-[1rem] leading-[1.7rem] text-ink">
-            The full deliverable set, by category. Items marked optional are the
-            flex. The final list is confirmed at kickoff.
+            The full deliverable set, by category. Final list to be confirmed.
           </p>
         </CenterFocus>
 

@@ -17,7 +17,9 @@ const sections = [
 ];
 
 export function SectionNav() {
-  const [active, setActive] = useState(sections[0].id);
+  // Empty until a section reaches the viewport's middle band, so nothing is
+  // highlighted while the cover (hero) is in view.
+  const [active, setActive] = useState("");
 
   useEffect(() => {
     const observer = new IntersectionObserver(
