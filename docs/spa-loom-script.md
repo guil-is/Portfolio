@@ -1,95 +1,78 @@
-# WinWin 2026 — proposal walkthrough (Loom script)
+# WinWin 2026 — proposal walkthrough (talking points)
 
-For Guil's screen-share walkthrough of guil.is/for/spa. Candid, friendly,
-no fluff. Runs ~4 minutes, ~4.5 with the experiments at the end.
-
-**Delivery:** talk to Lara, not the camera. Warm and unhurried, use
-contractions, slow down on the numbers. The calm is what sells it.
+Reminders to riff from, not a script to read. Talk to Lara, not the camera.
+Warm, unhurried, slow down on the numbers. ~4 min, ~4.5 with the experiments.
 
 ---
 
-**[0:00 — webcam, or the hero of the page]**
+**[Open — webcam, or the hero]**
+- Great to meet on the call, enjoyed it
+- Built the whole thing into a page, walking you through it, ~5 min
+- Forward to Willem or whoever signs off
 
-Hey Lara, Guil here. I really enjoyed our call. This is exactly the kind of
-project I get excited about, so I went ahead and built the whole thing out.
-Rather than make you read it, let me walk you through it. Five minutes, tops.
-And please, forward this to Willem or anyone else who needs a look.
+**[The brief]**
+- Here's what I took from the brief
+- The room is serious: the Commission President on stage, Europe's hottest
+  founders (ASML, fusion, defence AI), 400 policy and industry leaders. Not a
+  green crowd
+- So it can't look like another sustainability event. Has to hold a stage with
+  the President and still feel sharp to a frontier founder
+- And win over the corporates who still think green means cost
+- Direction: nature up close and powerful, modern, a little futuristic. Energy
+  as the thread between nature and industry
+- Not too green, not cheesy, not dark
+- Built as a system from day one, so it outlives the event and works for SPA too
 
-**[Scroll to: The brief]**
+**[Process and timeline]**
+- How I actually work: it starts with discovery, the part I care about most
+- Understand the room, what has to land, what "energy between nature and
+  industry" really means, before I open a file
+- Not shooting in the dark, not cool for cool's sake, every direction has a
+  reason
+- So together we pick which idea is right, not just which one looks nice
+- Then four phases, six to seven weeks:
+  - Wk 1: discovery + first directions
+  - Wk 2: lock the identity, save-the-date out (beat the summer calendar rush)
+  - Wk 3-4: the website
+  - Wk 5-6: everything else
+- Wrapped by late August, two clean months before the event
 
-So here's what I took from our chat. WinWin is a room full of people who mostly
-still need convincing, and honestly, that's the fun part. It means the identity
-can't look like every other sustainability thing out there. What I keep coming
-back to is nature, but up close and powerful. Modern, a little futuristic.
-Energy as the thread between nature and industry. Not too green, not cheesy, and
-definitely not dark. And I'm building it as a system from day one, so it keeps
-working long after the event, for you and for SPA.
+**[Investment]** — say it plainly, then move on
+- "Eleven-eight is my number." Plus VAT, billed by phase, to SPA
+- A bit over the ten you mentioned, and the difference is all phase four (the
+  extras)
+- The core, identity, invite, full website, fits inside your ten
+- If no extra funding lands, nothing gets compromised, we just dial phase four
+- My honest take: the full thing's worth it. But you're never stuck with the
+  number
 
-**[Scroll to: Process and timeline]**
+**[Full scope]**
+- It's all here if you want detail, have a poke around
+- Motion + merch marked optional = your flex
+- Big on-site stuff (signage, badges): I build the system + hero pieces, your
+  team runs the rest off the templates. Lean, keeps you in control
 
-Quick word on how I actually work, because this is the bit that matters. It
-starts with discovery, and honestly it's the part I care about most. Before I
-open a single file, I want to properly get who's in that room, what has to land,
-and what "energy between nature and industry" really means for this. I'm not here
-to shoot in the dark or make something cool for cool's sake. Every direction I
-bring you has a reason behind it, tied to the audience and the goal. So when we
-look at options together, we're deciding which idea is right, not just which one
-looks nice.
+**[Relevant work]**
+- Done this before: Chinwags and The DAOist
+- Brand, site, and the on-the-ground pieces
+- Same job at heart: different crowds into one room, made to feel like it belongs
 
-From there, four phases over six to seven weeks. Week one, discovery and first
-directions. Week two, we lock the look and get your save-the-date out, because
-let's be honest, the real race is landing in calendars before everyone vanishes
-for summer. Then the website, then everything else. All wrapped by late August,
-which hands you two clean months before the big day.
+**[Next step]**
+- Just a call. I'll send scope + terms first, so we actually talk, not read
+- Can start as early as Tuesday July 7
 
-**[Scroll to: Investment]**
-
-Okay, the money. Eleven-eight is my number, plus VAT, billed by phase, to SPA.
-It sits a bit above the ten you mentioned, and I'll tell you exactly where the
-difference is: it's phase four, the extras. The core, the identity, the invite,
-the full website, all fits inside your ten. So if no extra funding lands, nothing
-gets compromised. We just dial phase four to what you've got and work it out from
-there. My honest take is the full thing's worth it, but you're never stuck with
-the number.
-
-**[Scroll to: Full scope]**
-
-If you like detail, it's all here, every deliverable laid out. Have a poke
-around. A couple of things, motion and merch, are marked optional, those are your
-flex. And for the big on-site stuff, signage, badges, all of it, I build the
-system and the hero pieces, and your team runs the rest off the templates. Lean,
-and it keeps you in control.
-
-**[Scroll to: Relevant work]**
-
-And if you're wondering whether I've done this before, I have. Chinwags and The
-DAOist, both linked here. Event identities where I handled the brand, the site,
-and all the on-the-ground pieces. Same job at heart, getting very different
-people into one room and making it feel like it belongs together.
-
-**[Scroll to: Next step]**
-
-That's the whole thing. Next step is just a call. I'll send the scope and terms
-over first, so we can skip the dry stuff and actually talk. I could start as
-early as Tuesday the 7th.
-
-**[Optional: show your early visual experiments]**
-
-Oh, and I couldn't help myself, I've already started sketching a couple of
-directions. Let me show you, just don't hold me to them yet.
+**[Optional: show your early experiments]**
+- Couldn't help myself, already sketched a couple of directions
+- Quick look, don't hold me to them yet
 
 **[Close]**
-
-Anyway, have a look, pass it around, and tell me if you're in. I really want to
-make this one. Talk soon.
+- Have a look, pass it around, tell me if you're in
+- I really want to make this one
 
 ---
 
-**Notes**
-
-- The Investment beat is the one to nail. Say it plainly, no apology, then move
-  on. Don't linger.
-- ~4 min without the experiments. If you're tight, trim the asides, never the
-  money beat.
-- If SPA reclaims VAT (likely), you can add one line after the number: "and the
-  VAT you claim back, so eleven-eight is the real cost." Only if you're sure.
+**Reminders**
+- Nail the money beat: plain, no apology, move on. Don't linger.
+- ~4 min. If tight, trim the asides, never the money beat.
+- Optional, only if sure: "and the VAT you claim back, so eleven-eight's the
+  real cost."
