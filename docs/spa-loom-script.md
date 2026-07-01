@@ -27,12 +27,20 @@ working long after the event, for you and for SPA.
 
 **[Scroll to: Process and timeline]**
 
-On timing, I know this is the part you care about. Four phases, six to seven
-weeks. First week, we explore directions together. Second week, we lock the look
-and get your save-the-date out, because let's be honest, the real race is
-landing in people's calendars before everyone vanishes for summer. Then the
-website, then everything else. All wrapped by late August, which hands you two
-clean months before the big day.
+Quick word on how I actually work, because this is the bit that matters. It
+starts with discovery, and honestly it's the part I care about most. Before I
+open a single file, I want to properly get who's in that room, what has to land,
+and what "energy between nature and industry" really means for this. I'm not here
+to shoot in the dark or make something cool for cool's sake. Every direction I
+bring you has a reason behind it, tied to the audience and the goal. So when we
+look at options together, we're deciding which idea is right, not just which one
+looks nice.
+
+From there, four phases over six to seven weeks. Week one, discovery and first
+directions. Week two, we lock the look and get your save-the-date out, because
+let's be honest, the real race is landing in calendars before everyone vanishes
+for summer. Then the website, then everything else. All wrapped by late August,
+which hands you two clean months before the big day.
 
 **[Scroll to: Investment]**
 
