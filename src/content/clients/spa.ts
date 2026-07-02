@@ -56,7 +56,10 @@ export type ClientAction = {
   text: string;
   /** Optional human-readable deadline, e.g. "By Friday, July 4". */
   due?: string;
-  /** Optional link (in-page hash like "#agreement" or a full URL). */
+  /** Optional link. `label` must be a phrase that appears inside `text`:
+   * that phrase renders underlined and linked to `href` (in-page hash like
+   * "#agreement" or a full URL). If the phrase isn't found, the text
+   * renders plain. */
   link?: { label: string; href: string };
 };
 
@@ -90,7 +93,7 @@ export const spa: SpaClient = {
     {
       text: "Review and sign the Service Agreement.",
       due: "Before July 7",
-      link: { label: "Open the agreement", href: "#agreement" },
+      link: { label: "Service Agreement", href: "#agreement" },
     },
     {
       text: "Settle the deposit invoice, 1,560 EUR.",

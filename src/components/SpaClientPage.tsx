@@ -346,47 +346,30 @@ function PendingItem({ item }: { item: ClientAction }) {
 
   return (
     <li className="flex items-start justify-between gap-6 rounded-[14px] border border-rule bg-card/40 px-5 py-4 md:px-6">
-      <div className="flex min-w-0 flex-col gap-1.5">
+      <div className="flex min-w-0 items-start gap-3">
         <button
           type="button"
           role="checkbox"
           aria-checked={isChecked}
+          aria-label={`Mark done: ${item.text}`}
           onClick={toggle}
-          className="group flex cursor-pointer items-start gap-3 text-left"
+          className={[
+            "mt-[3px] inline-flex h-[16px] w-[16px] shrink-0 cursor-pointer items-center justify-center rounded-[4px] border transition-colors",
+            isChecked
+              ? "border-ink bg-ink text-bg"
+              : "border-rule text-transparent hover:border-ink",
+          ].join(" ")}
         >
-          <span
-            aria-hidden
-            className={[
-              "mt-[3px] inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-[4px] border transition-colors",
-              isChecked
-                ? "border-ink bg-ink text-bg"
-                : "border-rule text-transparent group-hover:border-ink",
-            ].join(" ")}
-          >
-            <Check className="h-3 w-3" strokeWidth={3} />
-          </span>
-          <span
-            className={[
-              "text-[0.95rem] leading-[1.5rem] transition-colors",
-              isChecked ? "text-muted line-through" : "text-ink",
-            ].join(" ")}
-          >
-            {item.text}
-          </span>
+          <Check className="h-3 w-3" strokeWidth={3} aria-hidden />
         </button>
-        {item.link && !isChecked ? (
-          <a
-            href={item.link.href}
-            className="group inline-flex items-center gap-1.5 self-start pl-7 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted"
-          >
-            {item.link.label}
-            <ArrowUpRight
-              className="h-3 w-3 transition-transform group-hover:-rotate-45"
-              strokeWidth={2}
-              aria-hidden
-            />
-          </a>
-        ) : null}
+        <p
+          className={[
+            "text-[0.95rem] leading-[1.5rem] transition-colors",
+            isChecked ? "text-muted line-through" : "text-ink",
+          ].join(" ")}
+        >
+          <ActionText item={item} />
+        </p>
       </div>
       {item.due ? (
         <p className="shrink-0 pt-[3px] font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
@@ -394,6 +377,26 @@ function PendingItem({ item }: { item: ClientAction }) {
         </p>
       ) : null}
     </li>
+  );
+}
+
+// Renders the action text with the link phrase (if any) underlined and
+// linked in place, instead of a separate button below.
+function ActionText({ item }: { item: ClientAction }) {
+  if (!item.link) return item.text;
+  const idx = item.text.indexOf(item.link.label);
+  if (idx === -1) return item.text;
+  return (
+    <>
+      {item.text.slice(0, idx)}
+      <a
+        href={item.link.href}
+        className="underline decoration-rule underline-offset-4 transition-colors hover:decoration-ink"
+      >
+        {item.link.label}
+      </a>
+      {item.text.slice(idx + item.link.label.length)}
+    </>
   );
 }
 
