@@ -92,12 +92,12 @@ export const spa: SpaClient = {
   pendingActions: [
     {
       text: "Review and sign the Service Agreement.",
-      due: "Before July 7",
+      due: "By July 7",
       link: { label: "Service Agreement", href: "#agreement" },
     },
     {
       text: "Settle the deposit invoice, 1,560 EUR.",
-      due: "On signing",
+      due: "By July 7",
     },
   ],
 

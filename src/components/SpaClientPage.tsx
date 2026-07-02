@@ -345,8 +345,8 @@ function PendingItem({ item }: { item: ClientAction }) {
   }
 
   return (
-    <li className="flex items-start justify-between gap-6 rounded-[14px] border border-rule bg-card/40 px-5 py-4 md:px-6">
-      <div className="flex min-w-0 items-start gap-3">
+    <li className="flex items-center justify-between gap-6 rounded-[14px] border border-rule bg-card/40 px-5 py-4 md:px-6">
+      <div className="flex min-w-0 items-center gap-3">
         <button
           type="button"
           role="checkbox"
@@ -354,7 +354,7 @@ function PendingItem({ item }: { item: ClientAction }) {
           aria-label={`Mark done: ${item.text}`}
           onClick={toggle}
           className={[
-            "mt-[3px] inline-flex h-[16px] w-[16px] shrink-0 cursor-pointer items-center justify-center rounded-[4px] border transition-colors",
+            "inline-flex h-[16px] w-[16px] shrink-0 cursor-pointer items-center justify-center rounded-[4px] border transition-colors",
             isChecked
               ? "border-ink bg-ink text-bg"
               : "border-rule text-transparent hover:border-ink",
@@ -372,7 +372,7 @@ function PendingItem({ item }: { item: ClientAction }) {
         </p>
       </div>
       {item.due ? (
-        <p className="shrink-0 pt-[3px] font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
+        <p className="shrink-0 font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
           {item.due}
         </p>
       ) : null}
