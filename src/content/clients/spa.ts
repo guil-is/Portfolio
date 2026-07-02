@@ -152,7 +152,7 @@ export const spa: SpaClient = {
               ],
               [
                 "Client",
-                "Sustainable Public Affairs (SPA), represented by Lara Sibbing.",
+                "Sustainable Public Affairs (B Corp), c/o Norrsken House Brussels, Rue du Commerce 72, Brussels, Belgium, represented by Lara Sibbing.",
               ],
               ["Project", "WinWin 2026, Brussels, 29 October 2026."],
               ["Dated", "Auto-filled on signing"],
@@ -269,16 +269,7 @@ export const spa: SpaClient = {
         ],
       },
       {
-        heading: "8. Optional retainer",
-        blocks: [
-          {
-            type: "p",
-            text: "After delivery, the Client may keep the Provider on an optional retainer through September and October (around 5 hours per week) to maintain the website and cover small design requests. Billed monthly at a rate agreed separately.",
-          },
-        ],
-      },
-      {
-        heading: "9. Ownership",
+        heading: "8. Ownership",
         blocks: [
           {
             type: "ul",
@@ -291,7 +282,7 @@ export const spa: SpaClient = {
         ],
       },
       {
-        heading: "10. Confidentiality",
+        heading: "9. Confidentiality",
         blocks: [
           {
             type: "p",
@@ -300,7 +291,7 @@ export const spa: SpaClient = {
         ],
       },
       {
-        heading: "11. Liability",
+        heading: "10. Liability",
         blocks: [
           {
             type: "p",
@@ -309,7 +300,7 @@ export const spa: SpaClient = {
         ],
       },
       {
-        heading: "12. Cancellation",
+        heading: "11. Cancellation",
         blocks: [
           {
             type: "ul",
@@ -321,7 +312,7 @@ export const spa: SpaClient = {
         ],
       },
       {
-        heading: "13. Independent contractor and governing law",
+        heading: "12. Independent contractor and governing law",
         blocks: [
           {
             type: "p",
