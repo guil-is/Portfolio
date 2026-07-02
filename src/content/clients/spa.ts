@@ -108,7 +108,7 @@ export const spa: SpaClient = {
       label: "Deposit",
       description: "30% on signing, credited to the first invoice",
       amountEur: 1560,
-      status: "due",
+      status: "invoiced",
     },
     {
       label: "Phase 1-2",

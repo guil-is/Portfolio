@@ -24,6 +24,22 @@ export type LedgerEntry = {
 
 export const invoiceLedger: LedgerEntry[] = [
   {
+    number: "INV-26015",
+    client: "Sustainable Public Affairs (WinWin 2026)",
+    issuedAt: "2026-07-02",
+    total: 1560,
+    currency: "EUR",
+    note: "30% deposit, credited to the Phase 1–2 invoice (reverse charge)",
+  },
+  {
+    number: "INV-26014",
+    client: "Studio Huit",
+    issuedAt: "2026-07-02",
+    total: 3510.5,
+    currency: "EUR",
+    note: "Safe Workspace launch video, motion design (€2,950 + 19% MwSt)",
+  },
+  {
     number: "INV-26013",
     client: "Myosin",
     issuedAt: "2026-06-23",
