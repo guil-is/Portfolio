@@ -269,10 +269,12 @@ function Field({
   const inputBase =
     "w-full border-b border-rule bg-transparent text-ink transition-colors placeholder:text-faint focus:border-ink focus:outline-none";
   // Both variants share a bottom edge so the two signature lines align,
-  // even though the script field is taller.
+  // even though the script field is taller. The signature field keeps its
+  // placeholder in the normal typeface and only renders typed input as
+  // script, so the empty state reads clearly.
   const inputVariant =
     variant === "signature"
-      ? "font-signature pb-1 text-[1.9rem] font-bold leading-[1.35]"
+      ? "font-signature pt-2 pb-0.5 text-[1.9rem] font-bold leading-[1.2] placeholder:font-sans placeholder:text-[1rem] placeholder:font-normal"
       : "pt-3 pb-2 text-[1rem] leading-[1.6]";
   return (
     <div className="flex flex-col gap-2">
