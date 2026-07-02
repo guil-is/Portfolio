@@ -35,6 +35,10 @@ export type PaymentProfile = {
   heading: string;
   subheading?: string;
   rows: [label: string, value: string][];
+  /** "card" (default) renders a column under "Ways to pay"; "note"
+   * renders as a bold one-liner under the amount-due headline (how the
+   * Wise invoice shows the crypto option). */
+  placement?: "card" | "note";
 };
 
 export type InvoiceSpec = {
@@ -83,24 +87,25 @@ export function taxNote(mode: TaxMode): string | null {
   }
 }
 
+/** Wise-style amount: "800.00 USD", "1,190.00 EUR". */
 export function formatMoney(amount: number, currency: Currency): string {
-  const formatted = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    currencyDisplay: "symbol",
+  const num = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(amount);
-  return formatted;
+  return `${num} ${currency}`;
 }
 
-/** EUR invoices use German date format; USD invoices use long en-US. */
-export function formatDate(iso: string, currency: Currency): string {
+/** Like formatMoney but drops a ".00" — for the headline and unit prices
+ * ("800 USD due by …"), matching Wise. */
+export function formatMoneyCompact(amount: number, currency: Currency): string {
+  return formatMoney(amount, currency).replace(/\.00 /, " ");
+}
+
+/** Wise-style long date: "June 23, 2026". */
+export function formatDate(iso: string): string {
   const date = new Date(`${iso}T00:00:00Z`);
   if (Number.isNaN(date.getTime())) return iso;
-  if (currency === "EUR") {
-    const dd = String(date.getUTCDate()).padStart(2, "0");
-    const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
-    return `${dd}.${mm}.${date.getUTCFullYear()}`;
-  }
   return date.toLocaleDateString("en-US", {
     dateStyle: "long",
     timeZone: "UTC",

@@ -16,9 +16,11 @@ import type { BillTo, PaymentProfile } from "../../lib/invoice";
 export const issuer = {
   name: "Guilherme Maueler",
   email: "guil@maueler.com",
-  addressLines: ["Müggelstr. 15", "10247 Berlin - Germany"],
+  addressLines: ["Müggelstraße 15", "10247 Berlin", "Germany"],
   phone: "+49 176 76241374",
   vatId: "USt-IdNr DE308488034",
+  /** Header avatar, relative to the repo root. Unset to omit. */
+  logoPath: "public/guil_prof_2026_3.jpeg",
 };
 
 /**
@@ -36,37 +38,39 @@ export const paymentProfiles: Record<string, PaymentProfile> = {
     ],
   },
   "wise-usd-local": {
-    heading: "Local bank details (USD)",
-    subheading: "Use these details to pay USD from bank accounts inside the US.",
+    heading: "Local bank details",
+    subheading:
+      "Use these details to pay USD from bank accounts inside the US",
     rows: [
       ["Account holder", "Guilherme Maueler"],
-      ["ACH / wire routing", "026073008"],
+      ["ACH and Wire routing number", "026073008"],
       ["Account number", "8310780394"],
       ["Account type", "Checking"],
       [
-        "Bank",
-        "Community Federal Savings Bank, 89-16 Jamaica Ave, Woodhaven NY 11421, United States",
+        "Bank name and address",
+        "Community Federal Savings Bank\n89-16 Jamaica Ave\nWoodhaven NY 11421\nUnited States",
       ],
     ],
   },
   "wise-usd-intl": {
-    heading: "International bank details (USD)",
+    heading: "International bank details",
     subheading:
-      "Use these details to pay USD from bank accounts outside the US.",
+      "Use these details to pay USD from bank accounts outside the US",
     rows: [
       ["Account holder", "Guilherme Maueler"],
       ["Routing number", "026073150"],
-      ["Swift / BIC", "CMFGUS33"],
+      ["Swift/BIC", "CMFGUS33"],
       ["Account number", "8310780394"],
       [
-        "Bank",
-        "Community Federal Savings Bank, 89-16 Jamaica Ave, Woodhaven NY 11421, United States",
+        "Bank name and address",
+        "Community Federal Savings Bank\n89-16 Jamaica Ave\nWoodhaven NY 11421\nUnited States",
       ],
     ],
   },
   "crypto-usdc": {
     heading: "Pay with crypto",
-    subheading: "USDC on Ethereum Mainnet.",
+    subheading: "USDC on Ethereum Mainnet",
+    placement: "note",
     rows: [
       // TODO: verify — transcribed from INV-26013's PDF, confirm against
       // your wallet before including on a live invoice.

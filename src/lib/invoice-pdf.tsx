@@ -1,11 +1,14 @@
 import {
   Document,
+  Image,
   Page,
   Text,
   View,
   StyleSheet,
   renderToBuffer,
 } from "@react-pdf/renderer";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   type InvoiceSpec,
   type PaymentProfile,
@@ -15,202 +18,203 @@ import {
   grandTotal,
   taxNote,
   formatMoney,
+  formatMoneyCompact,
   formatDate,
 } from "./invoice";
 import { issuer } from "@/content/invoices/config";
 
 /**
+ * Layout modeled on a Wise-generated invoice (INV-26013): logo + "Invoice"
+ * wordmark, number/date top right, Billed to / Issued by columns, a bold
+ * "<amount> due by <date>" headline, bold VAT/crypto notes, the
+ * quantity/unit-price/tax table, Amount Due, and a "Ways to pay" section
+ * with side-by-side bank-detail columns.
+ *
  * Built-in fonts only (see agreement-pdf.tsx): remote font fetches
  * silently fail on cold starts and tank the render.
  */
 const SANS = "Helvetica";
 
-const INK = "#0a0a0a";
-const MUTED = "#6b6b6b";
-const HAIR = "#d9d9d9";
-const PANEL = "#f4f4f4";
+const INK = "#111111";
+const MUTED = "#6f6f6f";
+const HAIR = "#e3e3e3";
+const RULE = "#111111";
 
 const styles = StyleSheet.create({
   page: {
-    paddingTop: 52,
-    paddingBottom: 64,
-    paddingHorizontal: 56,
+    paddingTop: 48,
+    paddingBottom: 56,
+    paddingHorizontal: 52,
     fontFamily: SANS,
-    fontSize: 9.5,
-    lineHeight: 1.5,
+    fontSize: 9,
+    lineHeight: 1.45,
     color: INK,
   },
-  title: {
-    fontSize: 28,
-    letterSpacing: 3,
-    fontWeight: 600,
-  },
-  titleRule: {
-    borderBottomWidth: 1,
-    borderBottomColor: INK,
-    marginTop: 10,
-    marginBottom: 24,
-  },
-  topRow: {
+  headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 28,
+    alignItems: "center",
+    marginBottom: 30,
   },
-  issuerBlock: {
-    alignItems: "flex-end",
-    maxWidth: "48%",
-  },
-  issuerName: {
-    fontSize: 12,
-    fontWeight: 700,
-    marginBottom: 2,
-  },
-  issuerLine: {
-    fontSize: 9,
-    color: MUTED,
-    textAlign: "right",
-  },
-  billToLabel: {
-    fontSize: 8,
-    letterSpacing: 1.5,
-    textTransform: "uppercase",
-    color: MUTED,
-    marginBottom: 6,
-  },
-  billToName: {
-    fontSize: 12,
-    fontWeight: 700,
-    marginBottom: 2,
-  },
-  billToLine: {
-    fontSize: 9,
-    color: MUTED,
-  },
-  metaBlock: {
-    alignSelf: "flex-end",
-    width: 220,
-    marginBottom: 22,
-  },
-  metaRow: {
+  brandRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  logo: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginRight: 10,
+  },
+  wordmark: {
+    fontSize: 24,
+    fontWeight: 700,
+  },
+  headerMeta: {
+    flexDirection: "row",
+    gap: 28,
+  },
+  headerMetaLabel: {
+    fontSize: 8.5,
+    color: MUTED,
     marginBottom: 3,
   },
-  metaLabel: {
-    fontWeight: 700,
+  headerMetaValue: {
+    fontSize: 9,
   },
-  tableHeader: {
+  partiesRow: {
     flexDirection: "row",
-    backgroundColor: PANEL,
-    paddingVertical: 6,
-    paddingHorizontal: 8,
+    borderTopWidth: 0.75,
+    borderTopColor: HAIR,
+    paddingTop: 14,
+    marginBottom: 30,
+  },
+  party: {
+    width: "50%",
+    paddingRight: 24,
+  },
+  partyLabel: {
+    fontSize: 9,
+    fontWeight: 700,
+    marginBottom: 5,
+  },
+  partyLine: {
+    fontSize: 9,
+    color: "#3d3d3d",
+  },
+  dueHeadline: {
+    fontSize: 19,
+    fontWeight: 700,
+    marginBottom: 12,
+  },
+  boldNote: {
+    fontSize: 8.5,
+    fontWeight: 700,
+    marginBottom: 4,
+    maxWidth: 420,
+  },
+  plainNote: {
+    fontSize: 8.5,
+    color: "#3d3d3d",
+    marginTop: 4,
+    maxWidth: 420,
+  },
+  table: {
+    marginTop: 26,
+  },
+  tableHead: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: RULE,
+    paddingBottom: 6,
   },
   th: {
-    fontSize: 7.5,
-    letterSpacing: 1,
-    textTransform: "uppercase",
+    fontSize: 9,
     fontWeight: 700,
-    color: MUTED,
   },
   tr: {
     flexDirection: "row",
-    paddingVertical: 7,
-    paddingHorizontal: 8,
-    borderBottomWidth: 0.5,
+    paddingVertical: 9,
+    borderBottomWidth: 0.75,
     borderBottomColor: HAIR,
   },
-  colDesc: { flex: 1, paddingRight: 8 },
-  colQty: { width: 50, textAlign: "right" },
-  colUnit: { width: 80, textAlign: "right" },
-  colTotal: { width: 90, textAlign: "right" },
-  totals: {
+  colDesc: { flex: 1, paddingRight: 10 },
+  colQty: { width: 58 },
+  colUnit: { width: 78 },
+  colTax: { width: 52 },
+  colTotal: { width: 88, textAlign: "right" },
+  totalsBlock: {
     alignSelf: "flex-end",
-    width: 240,
+    width: 250,
     marginTop: 12,
   },
-  totalRow: {
+  totalsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 3,
+    paddingVertical: 2.5,
   },
-  grandRow: {
+  totalsLabel: {
+    fontSize: 9,
+    color: "#3d3d3d",
+  },
+  amountDueRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     borderTopWidth: 1,
-    borderTopColor: INK,
-    marginTop: 4,
-    paddingTop: 6,
+    borderTopColor: RULE,
+    marginTop: 6,
+    paddingTop: 8,
   },
-  grandText: {
-    fontSize: 12,
+  amountDueText: {
+    fontSize: 11.5,
     fontWeight: 700,
   },
-  taxNote: {
-    marginTop: 16,
-    fontSize: 8.5,
-    color: MUTED,
-  },
-  note: {
-    marginTop: 10,
-    fontSize: 9.5,
-  },
-  payHeading: {
-    fontSize: 8,
-    letterSpacing: 1.5,
-    textTransform: "uppercase",
-    color: MUTED,
-    marginTop: 26,
-    marginBottom: 8,
-  },
-  payGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-  payCard: {
-    flexGrow: 1,
-    flexBasis: "46%",
-    borderWidth: 0.5,
-    borderColor: HAIR,
-    borderRadius: 4,
-    padding: 10,
-  },
-  payTitle: {
-    fontSize: 10,
+  waysHeading: {
+    fontSize: 10.5,
     fontWeight: 700,
-    marginBottom: 2,
+    marginTop: 34,
+    paddingBottom: 7,
+    borderBottomWidth: 0.75,
+    borderBottomColor: HAIR,
+    marginBottom: 12,
   },
-  paySub: {
-    fontSize: 8,
-    color: MUTED,
-    marginBottom: 6,
-  },
-  payRow: {
+  waysRow: {
     flexDirection: "row",
-    marginBottom: 2,
+    gap: 24,
   },
-  payLabel: {
-    width: 108,
+  waysCol: {
+    flex: 1,
+  },
+  waysTitle: {
+    fontSize: 9,
+    fontWeight: 700,
+    marginBottom: 3,
+  },
+  waysSub: {
     fontSize: 8,
     color: MUTED,
-    paddingTop: 0.5,
-    paddingRight: 6,
+    marginBottom: 9,
   },
-  payValue: {
+  waysItemRow: {
+    flexDirection: "row",
+    marginBottom: 5,
+  },
+  waysLabel: {
+    width: 92,
+    fontSize: 8,
+    color: MUTED,
+    paddingRight: 8,
+  },
+  waysValue: {
     flex: 1,
     fontSize: 8.5,
   },
-  footer: {
-    position: "absolute",
-    bottom: 28,
-    left: 56,
-    right: 56,
-    fontSize: 7.5,
-    color: MUTED,
-    textAlign: "center",
-    letterSpacing: 0.5,
-  },
 });
+
+function noteLine(p: PaymentProfile): string {
+  const values = p.rows.map(([, v]) => v).join(", ");
+  return `${p.heading}${p.subheading ? ` - ${p.subheading}` : ""}: ${values}`;
+}
 
 export function InvoicePdf({
   spec,
@@ -220,8 +224,13 @@ export function InvoicePdf({
   profiles: PaymentProfile[];
 }) {
   const cur = spec.currency;
-  const hasQty = spec.lines.some((l) => l.qty != null);
-  const note = taxNote(spec.taxMode);
+  const cards = profiles.filter((p) => (p.placement ?? "card") === "card");
+  const notes = profiles.filter((p) => p.placement === "note");
+  const vatNote = taxNote(spec.taxMode);
+  const logoAbs = issuer.logoPath
+    ? resolve(process.cwd(), issuer.logoPath)
+    : null;
+  const logo = logoAbs && existsSync(logoAbs) ? logoAbs : null;
 
   return (
     <Document
@@ -230,122 +239,138 @@ export function InvoicePdf({
       subject={`Invoice ${spec.number}`}
     >
       <Page size="A4" style={styles.page}>
-        <Text style={styles.title}>INVOICE</Text>
-        <View style={styles.titleRule} />
-
-        <View style={styles.topRow}>
-          <View style={{ maxWidth: "48%" }}>
-            <Text style={styles.billToLabel}>Bill to</Text>
-            <Text style={styles.billToName}>{spec.billTo.name}</Text>
-            {(spec.billTo.lines ?? []).map((l, i) => (
-              <Text key={i} style={styles.billToLine}>
-                {l}
-              </Text>
-            ))}
+        <View style={styles.headerRow}>
+          <View style={styles.brandRow}>
+            {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt prop */}
+            {logo ? <Image src={logo} style={styles.logo} /> : null}
+            <Text style={styles.wordmark}>Invoice</Text>
           </View>
-          <View style={styles.issuerBlock}>
-            <Text style={styles.issuerName}>{issuer.name}</Text>
-            <Text style={styles.issuerLine}>{issuer.email}</Text>
-            {issuer.addressLines.map((l, i) => (
-              <Text key={i} style={styles.issuerLine}>
-                {l}
-              </Text>
-            ))}
-            <Text style={styles.issuerLine}>{issuer.phone}</Text>
-            <Text style={[styles.issuerLine, { color: INK, fontWeight: 700 }]}>
-              {issuer.vatId}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.metaBlock}>
-          <View style={styles.metaRow}>
-            <Text style={styles.metaLabel}>Invoice No.</Text>
-            <Text>{spec.number}</Text>
-          </View>
-          <View style={styles.metaRow}>
-            <Text style={styles.metaLabel}>Invoice Date</Text>
-            <Text>{formatDate(spec.issuedAt, cur)}</Text>
-          </View>
-          {spec.serviceDate ? (
-            <View style={styles.metaRow}>
-              <Text style={styles.metaLabel}>Service Date</Text>
-              <Text>{formatDate(spec.serviceDate, cur)}</Text>
+          <View style={styles.headerMeta}>
+            <View>
+              <Text style={styles.headerMetaLabel}>Invoice number</Text>
+              <Text style={styles.headerMetaValue}>{spec.number}</Text>
             </View>
-          ) : null}
-          <View style={styles.metaRow}>
-            <Text style={styles.metaLabel}>Due Date</Text>
-            <Text style={{ fontWeight: 700 }}>
-              {formatDate(spec.dueAt, cur)}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.tableHeader}>
-          <Text style={[styles.th, styles.colDesc]}>Description of work</Text>
-          {hasQty ? (
-            <>
-              <Text style={[styles.th, styles.colQty]}>Qty</Text>
-              <Text style={[styles.th, styles.colUnit]}>Unit price</Text>
-            </>
-          ) : null}
-          <Text style={[styles.th, styles.colTotal]}>Total</Text>
-        </View>
-        {spec.lines.map((line, i) => (
-          <View key={i} style={styles.tr} wrap={false}>
-            <Text style={styles.colDesc}>{line.description}</Text>
-            {hasQty ? (
-              <>
-                <Text style={styles.colQty}>{line.qty ?? ""}</Text>
-                <Text style={styles.colUnit}>
-                  {line.unitPrice != null
-                    ? formatMoney(line.unitPrice, cur)
-                    : ""}
+            <View>
+              <Text style={styles.headerMetaLabel}>Issue date</Text>
+              <Text style={styles.headerMetaValue}>
+                {formatDate(spec.issuedAt)}
+              </Text>
+            </View>
+            {spec.serviceDate ? (
+              <View>
+                <Text style={styles.headerMetaLabel}>Service date</Text>
+                <Text style={styles.headerMetaValue}>
+                  {formatDate(spec.serviceDate)}
                 </Text>
-              </>
+              </View>
             ) : null}
-            <Text style={styles.colTotal}>
-              {formatMoney(lineAmount(line), cur)}
-            </Text>
           </View>
-        ))}
+        </View>
 
-        <View style={styles.totals}>
-          <View style={styles.totalRow}>
-            <Text style={{ fontWeight: 700 }}>Subtotal</Text>
+        <View style={styles.partiesRow}>
+          <View style={styles.party}>
+            <Text style={styles.partyLabel}>Billed to</Text>
+            <Text style={styles.partyLine}>{spec.billTo.name}</Text>
+            {(spec.billTo.lines ?? []).map((l, i) => (
+              <Text key={i} style={styles.partyLine}>
+                {l}
+              </Text>
+            ))}
+          </View>
+          <View style={styles.party}>
+            <Text style={styles.partyLabel}>Issued by</Text>
+            <Text style={styles.partyLine}>{issuer.name}</Text>
+            {issuer.addressLines.map((l, i) => (
+              <Text key={i} style={styles.partyLine}>
+                {l}
+              </Text>
+            ))}
+            <Text style={styles.partyLine}>{issuer.email}</Text>
+            <Text style={styles.partyLine}>{issuer.phone}</Text>
+          </View>
+        </View>
+
+        <Text style={styles.dueHeadline}>
+          {formatMoneyCompact(grandTotal(spec), cur)} due by{" "}
+          {formatDate(spec.dueAt)}
+        </Text>
+
+        <Text style={styles.boldNote}>
+          {issuer.vatId}
+          {vatNote ? ` *${vatNote}` : ""}
+        </Text>
+        {notes.map((p, i) => (
+          <Text key={i} style={styles.boldNote}>
+            {noteLine(p)}
+          </Text>
+        ))}
+        {spec.note ? <Text style={styles.plainNote}>{spec.note}</Text> : null}
+
+        <View style={styles.table}>
+          <View style={styles.tableHead}>
+            <Text style={[styles.th, styles.colDesc]}>Product or service</Text>
+            <Text style={[styles.th, styles.colQty]}>Quantity</Text>
+            <Text style={[styles.th, styles.colUnit]}>Unit price</Text>
+            <Text style={[styles.th, styles.colTax]}>Tax</Text>
+            <Text style={[styles.th, styles.colTotal]}>Total</Text>
+          </View>
+          {spec.lines.map((line, i) => (
+            <View key={i} style={styles.tr} wrap={false}>
+              <Text style={styles.colDesc}>{line.description}</Text>
+              <Text style={styles.colQty}>{line.qty ?? 1}</Text>
+              <Text style={styles.colUnit}>
+                {formatMoneyCompact(
+                  line.unitPrice ?? lineAmount(line) / (line.qty ?? 1),
+                  cur,
+                )}
+              </Text>
+              <Text style={styles.colTax}>
+                {spec.taxMode === "de-19" ? "19%" : ""}
+              </Text>
+              <Text style={styles.colTotal}>
+                {formatMoney(lineAmount(line), cur)}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        <View style={styles.totalsBlock}>
+          <View style={styles.totalsRow}>
+            <Text style={styles.totalsLabel}>Total excluding tax</Text>
             <Text>{formatMoney(subtotal(spec), cur)}</Text>
           </View>
-          {spec.taxMode === "de-19" ? (
-            <View style={styles.totalRow}>
-              <Text style={{ fontWeight: 700 }}>MwSt. (19%)</Text>
-              <Text>{formatMoney(taxAmount(spec), cur)}</Text>
-            </View>
-          ) : null}
-          <View style={styles.grandRow}>
-            <Text style={styles.grandText}>Grand Total</Text>
-            <Text style={styles.grandText}>
+          <View style={styles.totalsRow}>
+            <Text style={styles.totalsLabel}>
+              {spec.taxMode === "de-19" ? "Total tax (19% MwSt.)" : "Total tax"}
+            </Text>
+            <Text>{formatMoney(taxAmount(spec), cur)}</Text>
+          </View>
+          <View style={styles.amountDueRow}>
+            <Text style={styles.amountDueText}>Amount Due</Text>
+            <Text style={styles.amountDueText}>
               {formatMoney(grandTotal(spec), cur)}
             </Text>
           </View>
         </View>
 
-        {note ? <Text style={styles.taxNote}>{note}</Text> : null}
-        {spec.note ? <Text style={styles.note}>{spec.note}</Text> : null}
-
-        {profiles.length > 0 ? (
+        {cards.length > 0 ? (
           <View wrap={false}>
-            <Text style={styles.payHeading}>Payment details</Text>
-            <View style={styles.payGrid}>
-              {profiles.map((p, i) => (
-                <View key={i} style={styles.payCard}>
-                  <Text style={styles.payTitle}>{p.heading}</Text>
+            <Text style={styles.waysHeading}>Ways to pay</Text>
+            <View style={styles.waysRow}>
+              {cards.map((p, i) => (
+                <View key={i} style={styles.waysCol}>
+                  <Text style={styles.waysTitle}>{p.heading}</Text>
                   {p.subheading ? (
-                    <Text style={styles.paySub}>{p.subheading}</Text>
+                    <Text style={styles.waysSub}>{p.subheading}</Text>
                   ) : null}
+                  <View style={styles.waysItemRow}>
+                    <Text style={styles.waysLabel}>Reference</Text>
+                    <Text style={styles.waysValue}>{spec.number}</Text>
+                  </View>
                   {p.rows.map(([label, value], j) => (
-                    <View key={j} style={styles.payRow}>
-                      <Text style={styles.payLabel}>{label}</Text>
-                      <Text style={styles.payValue}>{value}</Text>
+                    <View key={j} style={styles.waysItemRow}>
+                      <Text style={styles.waysLabel}>{label}</Text>
+                      <Text style={styles.waysValue}>{value}</Text>
                     </View>
                   ))}
                 </View>
@@ -353,14 +378,6 @@ export function InvoicePdf({
             </View>
           </View>
         ) : null}
-
-        <Text
-          style={styles.footer}
-          render={({ pageNumber, totalPages }) =>
-            `${spec.number} · ${issuer.name} · Page ${pageNumber} of ${totalPages}`
-          }
-          fixed
-        />
       </Page>
     </Document>
   );
