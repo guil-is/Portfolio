@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -10,6 +10,7 @@ import {
   FileText,
   ListChecks,
   Loader,
+  TriangleAlert,
 } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
 import type { SignedAgreement } from "@/lib/signed-agreement";
@@ -167,13 +168,10 @@ function ProgressView() {
 
   return (
     <div className="flex flex-col gap-14">
-      {/* Status cluster: open items pending on the client (if any), then
-          the at-a-glance summary. Each tile answers one question: where
+      {/* Status cluster: the at-a-glance summary, then any open items
+          pending on the client. Each tile answers one question: where
           the project is, when it lands, what's owed next. */}
-      <div className="flex flex-col gap-5">
-        {spa.pendingActions?.length ? (
-          <PendingList items={spa.pendingActions} />
-        ) : null}
+      <div className="flex flex-col gap-8">
         <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-3">
           <Stat
             label="Current phase"
@@ -195,6 +193,9 @@ function ProgressView() {
             }
           />
         </div>
+        {spa.pendingActions?.length ? (
+          <PendingList items={spa.pendingActions} />
+        ) : null}
       </div>
 
       <section className="flex flex-col gap-6">
@@ -263,56 +264,136 @@ function ProgressView() {
   );
 }
 
-// Open items pending on the client: a plain checklist with optional due
-// dates and links. Remove items from the data as they're resolved.
+// Open items pending on the client, each in its own card. Checking one
+// strikes it through (persisted in this browser via localStorage) and
+// emails Guil a heads-up so he can verify it's done and remove it from
+// the data. The data file stays the source of truth for what appears.
+//
+// Same-tab pub-sub + useSyncExternalStore, mirroring PasswordGate, so the
+// stored state hydrates safely without effects.
+const pendingKey = (text: string) => `for-spa-pending:${text}`;
+const pendingListeners = new Set<() => void>();
+function subscribePending(cb: () => void) {
+  pendingListeners.add(cb);
+  return () => {
+    pendingListeners.delete(cb);
+  };
+}
+function notifyPending() {
+  for (const cb of pendingListeners) cb();
+}
+
 function PendingList({ items }: { items: ClientAction[] }) {
   return (
-    <section
-      aria-label="Pending on your side"
-      className="flex flex-col gap-3 rounded-[14px] border border-rule bg-card/40 px-5 py-5 md:px-6 md:py-6"
-    >
-      <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
-        Pending on your side
-      </p>
-      <ul className="flex flex-col">
-        {items.map((item, i) => (
-          <li
-            key={i}
-            className="flex items-start justify-between gap-6 border-b border-rule-soft py-3.5 last:border-b-0 last:pb-0"
-          >
-            <div className="flex items-start gap-3">
-              <span
-                aria-hidden
-                className="mt-[4px] inline-flex h-[15px] w-[15px] shrink-0 rounded-[4px] border border-rule"
-              />
-              <div className="flex flex-col gap-1">
-                <p className="text-[0.95rem] leading-[1.5rem] text-ink">
-                  {item.text}
-                </p>
-                {item.link ? (
-                  <a
-                    href={item.link.href}
-                    className="group inline-flex items-center gap-1.5 self-start font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted"
-                  >
-                    {item.link.label}
-                    <ArrowUpRight
-                      className="h-3 w-3 transition-transform group-hover:-rotate-45"
-                      strokeWidth={2}
-                      aria-hidden
-                    />
-                  </a>
-                ) : null}
-              </div>
-            </div>
-            {item.due ? (
-              <p className="shrink-0 pt-[4px] font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
-                {item.due}
-              </p>
-            ) : null}
-          </li>
+    <section aria-label="Pending from you" className="flex flex-col gap-3">
+      <div className="flex items-center gap-2">
+        <TriangleAlert
+          className="h-4 w-4 text-[#f59e0b]"
+          strokeWidth={2}
+          aria-hidden
+        />
+        <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
+          Pending from you
+        </p>
+      </div>
+      <ul className="flex flex-col gap-3">
+        {items.map((item) => (
+          <PendingItem key={item.text} item={item} />
         ))}
       </ul>
     </section>
+  );
+}
+
+function PendingItem({ item }: { item: ClientAction }) {
+  const isChecked = useSyncExternalStore(
+    subscribePending,
+    () => {
+      try {
+        return window.localStorage.getItem(pendingKey(item.text)) === "1";
+      } catch {
+        return false;
+      }
+    },
+    () => false,
+  );
+
+  function toggle() {
+    const nowChecked = !isChecked;
+    try {
+      if (nowChecked) {
+        window.localStorage.setItem(pendingKey(item.text), "1");
+      } else {
+        window.localStorage.removeItem(pendingKey(item.text));
+      }
+    } catch {
+      // localStorage unavailable — the check just won't stick.
+    }
+    notifyPending();
+    // Notify Guil only on check, not uncheck — fire-and-forget.
+    if (nowChecked) {
+      void fetch("/api/pending-action", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          clientSlug: "spa",
+          text: item.text,
+          due: item.due ?? null,
+        }),
+      }).catch(() => {});
+    }
+  }
+
+  return (
+    <li className="flex items-start justify-between gap-6 rounded-[14px] border border-rule bg-card/40 px-5 py-4 md:px-6">
+      <div className="flex min-w-0 flex-col gap-1.5">
+        <button
+          type="button"
+          role="checkbox"
+          aria-checked={isChecked}
+          onClick={toggle}
+          className="group flex cursor-pointer items-start gap-3 text-left"
+        >
+          <span
+            aria-hidden
+            className={[
+              "mt-[3px] inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-[4px] border transition-colors",
+              isChecked
+                ? "border-ink bg-ink text-bg"
+                : "border-rule text-transparent group-hover:border-ink",
+            ].join(" ")}
+          >
+            <Check className="h-3 w-3" strokeWidth={3} />
+          </span>
+          <span
+            className={[
+              "text-[0.95rem] leading-[1.5rem] transition-colors",
+              isChecked ? "text-muted line-through" : "text-ink",
+            ].join(" ")}
+          >
+            {item.text}
+          </span>
+        </button>
+        {item.link && !isChecked ? (
+          <a
+            href={item.link.href}
+            className="group inline-flex items-center gap-1.5 self-start pl-7 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted"
+          >
+            {item.link.label}
+            <ArrowUpRight
+              className="h-3 w-3 transition-transform group-hover:-rotate-45"
+              strokeWidth={2}
+              aria-hidden
+            />
+          </a>
+        ) : null}
+      </div>
+      {item.due ? (
+        <p className="shrink-0 pt-[3px] font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
+          {item.due}
+        </p>
+      ) : null}
+    </li>
   );
 }
 
