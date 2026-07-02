@@ -185,8 +185,8 @@ export const spa: SpaClient = {
             items: [
               "Visual identity and logo system, with mini brand guidelines for the event.",
               "Save-the-date and formal invitation, plus an early RSVP page.",
-              "Event website, designed and built, linking to Ticket Tailor.",
-              "Extended brand assets, printed collateral, and a merch starter set.",
+              "Event website, designed and built, with an RSVP flow.",
+              "Brand assets and printed collateral.",
               "Two revision rounds per phase.",
             ],
           },
@@ -231,12 +231,24 @@ export const spa: SpaClient = {
         heading: "5. Fee",
         blocks: [
           {
+            type: "p",
+            text: "Fixed fee of 11,800 EUR net, plus 19% German VAT, billed by phase:",
+          },
+          {
+            type: "kv",
+            rows: [
+              ["Phase 1-2 · Core identity + invite", "5,200 EUR"],
+              ["Phase 3 · Full website + assets", "3,800 EUR"],
+              ["Phase 4 · All deliverables (estimate)", "2,800 EUR"],
+              ["Total (net)", "11,800 EUR"],
+            ],
+          },
+          {
             type: "ul",
             items: [
-              "Total fee: 11,800 EUR net, plus 19% German VAT.",
               "Phase 4 (2,800 EUR) is a working estimate. Its scope and amount are confirmed together before that phase begins, and the total moves with it.",
               "The fee covers design and build only. Third-party and production costs are separate: fonts, stock, plugins, print, and similar are billed at cost, quoted and approved before purchase.",
-              "The website runs on the Client's own accounts for hosting, domain, and third-party services (for example Ticket Tailor and the email platform). Those subscriptions are the Client's cost.",
+              "The website runs on the Client's own accounts for hosting, domain, and any third-party services (ticketing, email, and similar). Those subscriptions are the Client's cost.",
               "Invoiced to Sustainable Public Affairs.",
             ],
           },
