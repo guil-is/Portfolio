@@ -33,7 +33,7 @@ export type ProjectMilestone = {
   date?: string;
 };
 
-export type PaymentStatus = "due" | "invoiced" | "paid";
+export type PaymentStatus = "due" | "invoiced" | "paid" | "overdue";
 
 export type PaymentMilestone = {
   label: string;
@@ -368,4 +368,18 @@ export function milestonesComplete(c: SpaClient): number {
   return c.milestones.filter(
     (m) => m.status === "delivered" || m.status === "approved",
   ).length;
+}
+
+/** The phase currently in flight, or the next one up. Null when all done. */
+export function currentMilestone(c: SpaClient): ProjectMilestone | null {
+  return (
+    c.milestones.find((m) => m.status === "in_progress") ??
+    c.milestones.find((m) => m.status === "upcoming") ??
+    null
+  );
+}
+
+/** First unsettled payment, drives the "next up" line in the summary. */
+export function nextPayment(c: SpaClient): PaymentMilestone | null {
+  return c.payments.find((p) => p.status !== "paid") ?? null;
 }

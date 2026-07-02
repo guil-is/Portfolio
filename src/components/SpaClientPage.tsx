@@ -15,7 +15,8 @@ import { AgreementSignature } from "@/components/AgreementSignature";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import {
   spa,
-  milestonesComplete,
+  currentMilestone,
+  nextPayment,
   totalOutstanding,
   totalPaid,
   type MilestoneStatus,
@@ -157,30 +158,36 @@ function ProgressView() {
   const { project, milestones, payments } = spa;
   const paid = totalPaid(spa);
   const outstanding = totalOutstanding(spa);
-  const done = milestonesComplete(spa);
+  const current = currentMilestone(spa);
+  const next = nextPayment(spa);
+  const currentIndex = current
+    ? milestones.indexOf(current) + 1
+    : milestones.length;
 
   return (
     <div className="flex flex-col gap-14">
-      <div className="flex flex-col gap-3">
-        <p className="self-end font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
-          {done} of {milestones.length} phases complete
-        </p>
-        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-3">
-          <Stat
-            label="Project fee"
-            value={formatEur(project.feeEur)}
-            sub={`${project.name} · net`}
-          />
-          <Stat
-            label="Paid"
-            value={formatEur(paid)}
-            sub={`Target delivery ${project.targetDelivery}`}
-          />
-          <Stat
-            label={outstanding <= 0 ? "Status" : "Outstanding"}
-            value={outstanding <= 0 ? "Paid in full" : formatEur(outstanding)}
-          />
-        </div>
+      {/* At-a-glance summary: where the project is, when it lands, and
+          what's owed next. Each tile answers one client question. */}
+      <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-3">
+        <Stat
+          label="Current phase"
+          value={`${currentIndex} of ${milestones.length}`}
+          sub={current ? current.title : "All phases complete"}
+        />
+        <Stat
+          label="Target delivery"
+          value={project.targetDelivery}
+          sub={`Kickoff ${project.startDate}`}
+        />
+        <Stat
+          label={outstanding <= 0 ? "Payments" : "Outstanding"}
+          value={outstanding <= 0 ? "Paid in full" : formatEur(outstanding)}
+          sub={
+            next
+              ? `Next: ${next.label} · ${formatEur(next.amountEur)}`
+              : `${formatEur(paid)} paid in total`
+          }
+        />
       </div>
 
       <section className="flex flex-col gap-6">
@@ -221,10 +228,23 @@ function ProgressView() {
                   {formatEur(p.amountEur)}
                 </p>
                 <PaymentPill status={p.status} />
+                {p.date ? (
+                  <p className="font-caption text-[10px] font-medium uppercase tracking-[1px] text-muted">
+                    {formatLongDate(p.date)}
+                  </p>
+                ) : null}
               </div>
             </li>
           ))}
         </ul>
+        <div className="flex items-baseline justify-between gap-6 border-t border-rule pt-4">
+          <p className="font-caption text-[11px] font-semibold uppercase tracking-[1px] text-muted">
+            Total · net
+          </p>
+          <p className="font-display text-[1.25rem] font-bold tabular-nums leading-none text-ink">
+            {formatEur(project.feeEur)}
+          </p>
+        </div>
         <p className="text-[0.85rem] leading-[1.5rem] text-muted">
           All amounts net. VAT reverse charge applies for EU business clients.
           Phase 4 is a working estimate, confirmed before that phase begins.
@@ -248,7 +268,7 @@ function Stat({
       <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
         {label}
       </p>
-      <p className="mt-2 font-display text-[1.35rem] font-bold leading-none text-ink md:text-[1.75rem]">
+      <p className="mt-2 font-display text-[1.35rem] font-bold leading-[1.15] text-ink md:text-[1.75rem]">
         {value}
       </p>
       <p className="mt-2 font-caption text-[11px] leading-[1.4] text-muted">
@@ -263,8 +283,8 @@ const MILESTONE_META: Record<
   { label: string; tone: PillTone }
 > = {
   upcoming: { label: "Upcoming", tone: "muted" },
-  in_progress: { label: "In progress", tone: "active" },
-  delivered: { label: "Delivered", tone: "neutral" },
+  in_progress: { label: "In progress", tone: "info" },
+  delivered: { label: "Delivered", tone: "positive" },
   approved: { label: "Approved", tone: "positive" },
 };
 
@@ -295,14 +315,17 @@ function MilestoneRow({
           done
             ? "border-ink bg-ink text-bg"
             : active
-              ? "border-ink bg-bg text-ink"
+              ? "border-[#3b82f6]/50 bg-bg text-[#3b82f6]"
               : "border-rule bg-bg text-muted",
         ].join(" ")}
       >
         {done ? (
           <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
         ) : active ? (
-          <Loader className="h-3.5 w-3.5" strokeWidth={2} />
+          <Loader
+            className="h-3.5 w-3.5 motion-safe:animate-[spin_3s_linear_infinite]"
+            strokeWidth={2}
+          />
         ) : (
           <CircleDashed className="h-3.5 w-3.5" strokeWidth={1.75} />
         )}
@@ -332,14 +355,16 @@ function MilestoneRow({
   );
 }
 
-type PillTone = "muted" | "active" | "neutral" | "positive";
+// Status color language: grey = not yet, blue = in motion, green = done,
+// red = needs attention. Green rides the theme accent so it adapts to dark.
+type PillTone = "muted" | "info" | "positive" | "danger";
 
 function StatusPill({ label, tone }: { label: string; tone: PillTone }) {
   const toneClass = {
     muted: "border-rule-soft bg-card/50 text-muted",
-    neutral: "border-rule bg-card/60 text-ink",
-    active: "border-ink/40 bg-ink/5 text-ink",
-    positive: "border-[#16a34a]/40 bg-[#16a34a]/10 text-[#16a34a]",
+    info: "border-[#3b82f6]/40 bg-[#3b82f6]/10 text-[#3b82f6]",
+    positive: "border-accent/40 bg-accent/10 text-accent",
+    danger: "border-[#d14343]/40 bg-[#d14343]/10 text-[#d14343]",
   }[tone];
   return (
     <span
@@ -355,8 +380,8 @@ function StatusPill({ label, tone }: { label: string; tone: PillTone }) {
 
 function PaymentPill({ status }: { status: PaymentStatus }) {
   if (status === "paid") return <StatusPill label="Paid" tone="positive" />;
-  if (status === "invoiced")
-    return <StatusPill label="Invoiced" tone="active" />;
+  if (status === "invoiced") return <StatusPill label="Invoiced" tone="info" />;
+  if (status === "overdue") return <StatusPill label="Overdue" tone="danger" />;
   return <StatusPill label="Due" tone="muted" />;
 }
 
