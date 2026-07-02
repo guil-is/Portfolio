@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Check, ChevronDown, Download, ShieldCheck } from "lucide-react";
+import { Check, ChevronDown, Download, Feather, ShieldCheck } from "lucide-react";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 
 type Props = {
@@ -163,15 +163,12 @@ function SignatureForm({
       className="flex flex-col gap-8 rounded-[16px] border border-rule bg-card/50 p-7 md:p-9"
     >
       <div>
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-          Sign the agreement
-        </p>
-        <h3 className="mt-3 font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.875rem]">
-          Confirm and sign electronically
+        <h3 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.875rem]">
+          Sign electronically
         </h3>
         <p className="mt-3 max-w-[560px] text-[0.95rem] leading-[1.65rem] text-muted">
-          Your name, email, and checked boxes together form your legal signature. A
-          timestamped copy of this confirmation will be emailed to you immediately.
+          Your name, email, and the box below form your legal signature. A
+          timestamped copy lands in your inbox right away.
         </p>
       </div>
 
@@ -183,6 +180,7 @@ function SignatureForm({
           onChange={setName}
           autoComplete="name"
           placeholder="Your full name"
+          variant="signature"
         />
         <Field
           label="Email"
@@ -238,7 +236,7 @@ function SignatureForm({
         className="cta-pill group inline-flex h-14 items-center gap-4 self-start pr-6 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <span className="flex h-14 w-14 items-center justify-center text-bg">
-          <Check className="h-5 w-5" strokeWidth={2.5} />
+          <Feather className="h-5 w-5" strokeWidth={2} />
         </span>
         <span className="font-caption text-[13px] font-bold uppercase tracking-[1px]">
           {submitting ? "Signing…" : "Sign agreement"}
@@ -256,6 +254,7 @@ function Field({
   type = "text",
   placeholder,
   autoComplete,
+  variant = "default",
 }: {
   label: string;
   id: string;
@@ -264,7 +263,17 @@ function Field({
   type?: string;
   placeholder?: string;
   autoComplete?: string;
+  /** "signature" renders the input in a calligraphic script, larger. */
+  variant?: "default" | "signature";
 }) {
+  const inputBase =
+    "w-full border-b border-rule bg-transparent text-ink transition-colors placeholder:text-faint focus:border-ink focus:outline-none";
+  // Both variants share a bottom edge so the two signature lines align,
+  // even though the script field is taller.
+  const inputVariant =
+    variant === "signature"
+      ? "font-signature pb-1 text-[1.9rem] font-bold leading-[1.35]"
+      : "pt-3 pb-2 text-[1rem] leading-[1.6]";
   return (
     <div className="flex flex-col gap-2">
       <label
@@ -281,7 +290,7 @@ function Field({
         placeholder={placeholder}
         autoComplete={autoComplete}
         required
-        className="w-full border-b border-rule bg-transparent pb-2 text-[1rem] leading-[1.6] text-ink transition-colors placeholder:text-faint focus:border-ink focus:outline-none"
+        className={`${inputBase} ${inputVariant}`}
       />
     </div>
   );

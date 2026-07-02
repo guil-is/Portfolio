@@ -10,7 +10,8 @@ import { site } from "@/content/site";
 // locally from /public/fonts/ via @font-face in globals.css.
 const googleFontsHref =
   "https://fonts.googleapis.com/css2" +
-  "?family=Inter:wght@300;400;500;600;700" +
+  "?family=Corinthia:wght@400;700" +
+  "&family=Inter:wght@300;400;500;600;700" +
   "&family=Public+Sans:wght@400;500;600;700" +
   "&display=swap";
 
