@@ -24,6 +24,12 @@
 - All pages are gated by `<PasswordGate>` and must pass a unique `storageKey` (e.g. `for-justice-unlocked`) so unlocking one doesn't unlock another.
 - All pages must return `robots: { index: false, follow: false }` in `generateMetadata`.
 
+# Invoices
+
+- To make an invoice from a prompt: `npm run invoice` — full workflow in `docs/making-an-invoice.md`.
+- Static data (issuer, bank/crypto details, client addresses): `src/content/invoices/config.ts`. Rule of thumb: German client → EUR + 19% MwSt + N26 IBAN; outside the EU → USD + §3a UStG exemption + Wise details.
+- **After issuing**: append to `src/content/invoices/ledger.ts` (drives auto-numbering). Justice invoices also go into the `hoursLog` (below).
+
 # Hours log updates (Justice)
 
 - Weekly cadence — one period block per invoice cycle. (Switched from bi-weekly on 2026-05-14 at the client's request; periods through May 4–15 stay bi-weekly.)
