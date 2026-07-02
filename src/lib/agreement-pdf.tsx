@@ -4,6 +4,7 @@ import {
   Text,
   View,
   StyleSheet,
+  Font,
   renderToBuffer,
 } from "@react-pdf/renderer";
 import type {
@@ -12,23 +13,41 @@ import type {
   SowSection,
 } from "@/content/clients/types";
 import type { SignedAgreement } from "@/lib/signed-agreement";
+import { NEUEAUGENBLICK_BOLD_DATA_URI } from "@/lib/pdf-fonts";
 
 /**
- * Uses only @react-pdf/renderer's built-in fonts (Helvetica, Times-Roman,
- * Courier) so the renderer never has to fetch anything at runtime —
- * remote font fetches silently fail on Vercel cold starts and tank the
- * entire render.
+ * Body and labels use @react-pdf/renderer's built-in Helvetica (the closest
+ * built-in to the site's Inter) and Courier, so the renderer never fetches
+ * anything at runtime — remote font fetches silently fail on Vercel cold
+ * starts and tank the render.
+ *
+ * Headings use the real site display face, Neueaugenblick, embedded as an
+ * inline base64 data URI (see pdf-fonts.ts). A data URI is just bundled
+ * bytes — no file or network I/O — so it matches the page without the
+ * cold-start fragility of a served font.
  */
-const SERIF = "Times-Roman";
+const DISPLAY = "Neueaugenblick";
+const BODY = "Helvetica";
 const SANS = "Helvetica";
 const MONO = "Courier";
+
+// One Bold TTF, registered for the weights the heading styles request so
+// @react-pdf always resolves a match (headings on the site are all bold).
+Font.register({
+  family: DISPLAY,
+  fonts: [
+    { src: NEUEAUGENBLICK_BOLD_DATA_URI, fontWeight: 400 },
+    { src: NEUEAUGENBLICK_BOLD_DATA_URI, fontWeight: 600 },
+    { src: NEUEAUGENBLICK_BOLD_DATA_URI, fontWeight: 700 },
+  ],
+});
 
 const styles = StyleSheet.create({
   page: {
     paddingTop: 56,
     paddingBottom: 72,
     paddingHorizontal: 64,
-    fontFamily: SERIF,
+    fontFamily: BODY,
     fontSize: 11,
     lineHeight: 1.55,
     color: "#0a0a0a",
@@ -45,7 +64,8 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginTop: 12,
     marginBottom: 8,
-    fontWeight: 600,
+    fontFamily: DISPLAY,
+    fontWeight: 700,
   },
   subtle: {
     color: "#555",
@@ -86,10 +106,10 @@ const styles = StyleSheet.create({
   },
   sectionHeading: {
     fontSize: 13,
-    fontWeight: 600,
+    fontWeight: 700,
     marginTop: 16,
     marginBottom: 8,
-    fontFamily: SANS,
+    fontFamily: DISPLAY,
   },
   paragraph: {
     marginBottom: 8,
@@ -119,9 +139,9 @@ const styles = StyleSheet.create({
   },
   certTitle: {
     fontSize: 16,
-    fontWeight: 600,
+    fontWeight: 700,
     marginBottom: 4,
-    fontFamily: SANS,
+    fontFamily: DISPLAY,
   },
   certBody: {
     marginTop: 14,
