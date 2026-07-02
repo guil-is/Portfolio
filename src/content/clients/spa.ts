@@ -161,7 +161,20 @@ export const spa: SpaClient = {
         ],
       },
       {
-        heading: "1. The work",
+        heading: "1. The agreement",
+        blocks: [
+          {
+            type: "p",
+            text: "This agreement, together with the proposal at guil.is/for/spa, sets out the whole arrangement between the Provider and the Client for WinWin 2026. It replaces any earlier notes or discussions on the same work.",
+          },
+          {
+            type: "p",
+            text: "Any change to the scope, fee, or timeline is agreed in writing by both parties before that work proceeds. Email counts as writing.",
+          },
+        ],
+      },
+      {
+        heading: "2. The work",
         blocks: [
           {
             type: "p",
@@ -179,12 +192,16 @@ export const spa: SpaClient = {
           },
           {
             type: "p",
-            text: "For high-volume on-site collateral (signage, badges, and similar), I design the system and the hero pieces, and the Client's team produces the rest from the templates I provide.",
+            text: "For high-volume on-site collateral (signage, badges, and similar), the Provider designs the system and the hero pieces, and the Client's team produces the rest from the templates the Provider supplies.",
+          },
+          {
+            type: "p",
+            text: "Not included unless agreed in writing: copywriting and translation, commissioned photography or illustration, third-party licences (fonts, stock, plugins, music), print production and shipping, website hosting and maintenance after handover, and any deliverables beyond the four phases above.",
           },
         ],
       },
       {
-        heading: "2. Timeline",
+        heading: "3. Timeline",
         blocks: [
           {
             type: "ul",
@@ -197,20 +214,36 @@ export const spa: SpaClient = {
         ],
       },
       {
-        heading: "3. Fee",
+        heading: "4. Working together",
+        blocks: [
+          {
+            type: "ul",
+            items: [
+              "The Client supplies the content and assets each phase needs on time: copy, logos, speaker and partner details, product information, and any brand material to work from.",
+              "The Client returns consolidated feedback within the agreed review window for each phase, usually two to three business days.",
+              "The parties agree the main channel at kickoff (email or a shared workspace). During active production, the Provider replies within one business day.",
+              "Each phase is reviewed and signed off before the next begins. If the Client sends no feedback within five business days of a delivery, that phase counts as approved and the next one proceeds.",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "5. Fee",
         blocks: [
           {
             type: "ul",
             items: [
               "Total fee: 11,800 EUR net, plus 19% German VAT.",
               "Phase 4 (2,800 EUR) is a working estimate. Its scope and amount are confirmed together before that phase begins, and the total moves with it.",
+              "The fee covers design and build only. Third-party and production costs are separate: fonts, stock, plugins, print, and similar are billed at cost, quoted and approved before purchase.",
+              "The website runs on the Client's own accounts for hosting, domain, and third-party services (for example Ticket Tailor and the email platform). Those subscriptions are the Client's cost.",
               "Invoiced to Sustainable Public Affairs.",
             ],
           },
         ],
       },
       {
-        heading: "4. Payment",
+        heading: "6. Payment",
         blocks: [
           {
             type: "ul",
@@ -218,12 +251,13 @@ export const spa: SpaClient = {
               "30% deposit (1,560 EUR) due on signing, credited to the first invoice.",
               "Each phase is invoiced at the end of its block, on a roughly bi-weekly cadence.",
               "Invoices payable within 14 days.",
+              "Invoices unpaid after 14 days accrue statutory default interest under German law, and the Provider may pause work until the account is current.",
             ],
           },
         ],
       },
       {
-        heading: "5. Revisions",
+        heading: "7. Revisions",
         blocks: [
           {
             type: "ul",
@@ -235,7 +269,7 @@ export const spa: SpaClient = {
         ],
       },
       {
-        heading: "6. Optional retainer",
+        heading: "8. Optional retainer",
         blocks: [
           {
             type: "p",
@@ -244,7 +278,7 @@ export const spa: SpaClient = {
         ],
       },
       {
-        heading: "7. Ownership",
+        heading: "9. Ownership",
         blocks: [
           {
             type: "ul",
@@ -257,7 +291,25 @@ export const spa: SpaClient = {
         ],
       },
       {
-        heading: "8. Cancellation",
+        heading: "10. Confidentiality",
+        blocks: [
+          {
+            type: "p",
+            text: "The Provider keeps unreleased WinWin materials and Client information confidential until the Client's public launch. This does not apply to information that is already public or was lawfully known to the Provider before disclosure.",
+          },
+        ],
+      },
+      {
+        heading: "11. Liability",
+        blocks: [
+          {
+            type: "p",
+            text: "The Provider is liable without limit for intent and gross negligence, and for injury to life, body, or health. For ordinary negligence, liability is limited to foreseeable damage typical for this kind of work, and in total to the fees paid under this agreement. The Provider is not liable for indirect or consequential loss, or for delays caused by late Client materials, feedback, or approvals.",
+          },
+        ],
+      },
+      {
+        heading: "12. Cancellation",
         blocks: [
           {
             type: "ul",
@@ -269,16 +321,7 @@ export const spa: SpaClient = {
         ],
       },
       {
-        heading: "9. Confidentiality",
-        blocks: [
-          {
-            type: "p",
-            text: "The Provider keeps unreleased WinWin materials and Client information confidential until the Client's public launch.",
-          },
-        ],
-      },
-      {
-        heading: "10. Independent contractor and governing law",
+        heading: "13. Independent contractor and governing law",
         blocks: [
           {
             type: "p",
