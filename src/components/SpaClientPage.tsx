@@ -19,6 +19,7 @@ import {
   nextPayment,
   totalOutstanding,
   totalPaid,
+  type ClientAction,
   type MilestoneStatus,
   type PaymentStatus,
   type ProjectMilestone,
@@ -166,28 +167,32 @@ function ProgressView() {
 
   return (
     <div className="flex flex-col gap-14">
-      {/* At-a-glance summary: where the project is, when it lands, and
-          what's owed next. Each tile answers one client question. */}
-      <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-3">
-        <Stat
-          label="Current phase"
-          value={`${currentIndex} of ${milestones.length}`}
-          sub={current ? current.title : "All phases complete"}
-        />
-        <Stat
-          label="Target delivery"
-          value={project.targetDelivery}
-          sub={`Kickoff ${project.startDate}`}
-        />
-        <Stat
-          label={outstanding <= 0 ? "Payments" : "Outstanding"}
-          value={outstanding <= 0 ? "Paid in full" : formatEur(outstanding)}
-          sub={
-            next
-              ? `Next: ${next.label} · ${formatEur(next.amountEur)}`
-              : `${formatEur(paid)} paid in total`
-          }
-        />
+      {/* Status cluster: the one thing we need from the client (if any),
+          then the at-a-glance summary. Each tile answers one question:
+          where the project is, when it lands, what's owed next. */}
+      <div className="flex flex-col gap-5">
+        {spa.actionNeeded ? <ActionBanner action={spa.actionNeeded} /> : null}
+        <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-3">
+          <Stat
+            label="Current phase"
+            value={`${currentIndex} of ${milestones.length}`}
+            sub={current ? current.title : "All phases complete"}
+          />
+          <Stat
+            label="Target delivery"
+            value={project.targetDelivery}
+            sub={`Kickoff ${project.startDate}`}
+          />
+          <Stat
+            label={outstanding <= 0 ? "Payments" : "Outstanding"}
+            value={outstanding <= 0 ? "Paid in full" : formatEur(outstanding)}
+            sub={
+              next
+                ? `Next: ${next.label} · ${formatEur(next.amountEur)}`
+                : `${formatEur(paid)} paid in total`
+            }
+          />
+        </div>
       </div>
 
       <section className="flex flex-col gap-6">
@@ -254,6 +259,42 @@ function ProgressView() {
   );
 }
 
+// "Your turn" banner — the one thing the client should do right now.
+// Blue = in motion, matching the status color language.
+function ActionBanner({ action }: { action: ClientAction }) {
+  return (
+    <section
+      aria-label="Action needed"
+      className="flex flex-col gap-3 rounded-[14px] border border-[#3b82f6]/35 bg-[#3b82f6]/[0.06] px-5 py-5 md:px-6 md:py-6"
+    >
+      <div className="flex flex-wrap items-center gap-3">
+        <StatusPill label="Your turn" tone="info" />
+        {action.due ? (
+          <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
+            {action.due}
+          </p>
+        ) : null}
+      </div>
+      <p className="max-w-[560px] text-[0.95rem] leading-[1.6rem] text-ink">
+        {action.text}
+      </p>
+      {action.link ? (
+        <a
+          href={action.link.href}
+          className="group inline-flex items-center gap-1.5 self-start font-caption text-[12px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted"
+        >
+          {action.link.label}
+          <ArrowUpRight
+            className="h-3.5 w-3.5 transition-transform group-hover:-rotate-45"
+            strokeWidth={2}
+            aria-hidden
+          />
+        </a>
+      ) : null}
+    </section>
+  );
+}
+
 function Stat({
   label,
   value,
@@ -268,10 +309,11 @@ function Stat({
       <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
         {label}
       </p>
-      <p className="mt-2 font-display text-[1.35rem] font-bold leading-[1.15] text-ink md:text-[1.75rem]">
+      {/* One line, always: long values truncate rather than wrap. */}
+      <p className="mt-2 truncate font-display text-[1.35rem] font-bold leading-[1.15] text-ink md:text-[1.75rem]">
         {value}
       </p>
-      <p className="mt-2 font-caption text-[11px] leading-[1.4] text-muted">
+      <p className="mt-2 truncate font-caption text-[11px] leading-[1.4] text-muted">
         {sub ?? " "}
       </p>
     </div>

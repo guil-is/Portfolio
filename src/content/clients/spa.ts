@@ -51,12 +51,25 @@ export type SpaProject = {
   targetDelivery: string;
 };
 
+export type ClientAction = {
+  /** What the client needs to do right now, phrased to them ("Fill in..."). */
+  text: string;
+  /** Optional human-readable deadline, e.g. "By Friday, July 4". */
+  due?: string;
+  /** Optional link (in-page hash like "#agreement" or a full URL). */
+  link?: { label: string; href: string };
+};
+
 export type SpaClient = {
   clientName: string;
   password: string;
   project: SpaProject;
   milestones: ProjectMilestone[];
   payments: PaymentMilestone[];
+  /** The one thing the Client should do right now, shown as a banner at the
+   * top of the Progress tab. Set to a new action as the project moves, or
+   * remove the field entirely when nothing is needed from them. */
+  actionNeeded?: ClientAction;
   sow: SignableDocument;
 };
 
@@ -69,7 +82,14 @@ export const spa: SpaClient = {
     name: "Identity, invitation, and website",
     feeEur: 11800,
     startDate: "July 7, 2026",
-    targetDelivery: "Late August 2026",
+    // Keep this short: it renders as a large one-line stat value.
+    targetDelivery: "Late August",
+  },
+
+  actionNeeded: {
+    text: "Review and sign the Service Agreement. The deposit invoice follows right after, and work kicks off Tuesday, July 7.",
+    due: "Before July 7",
+    link: { label: "Open the agreement", href: "#agreement" },
   },
 
   milestones: [
