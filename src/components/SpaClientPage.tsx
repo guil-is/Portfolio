@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
+  ArrowUpRight,
   Check,
   CircleDashed,
   FileSignature,
+  FileText,
   ListChecks,
   Loader,
 } from "lucide-react";
@@ -96,36 +99,53 @@ function Tabs({ tab, setTab }: { tab: TabKey; setTab: (t: TabKey) => void }) {
       { key: "agreement", label: "Agreement", Icon: FileSignature },
     ];
   return (
-    <div
-      role="tablist"
-      aria-label="Client page sections"
-      className="flex overflow-x-auto border-b border-rule [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-    >
-      {items.map((item) => {
-        const active = tab === item.key;
-        const { Icon } = item;
-        return (
-          <button
-            key={item.key}
-            role="tab"
-            aria-selected={active}
-            onClick={() => setTab(item.key)}
-            className={[
-              "relative -mb-px inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-4 py-4 font-caption text-[12px] font-semibold uppercase tracking-[1.5px] transition-colors md:px-6",
-              active ? "text-ink" : "text-muted hover:text-ink",
-            ].join(" ")}
-          >
-            <Icon className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
-            {item.label}
-            <span
+    <div className="flex items-stretch border-b border-rule">
+      <div
+        role="tablist"
+        aria-label="Client page sections"
+        className="flex overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {items.map((item) => {
+          const active = tab === item.key;
+          const { Icon } = item;
+          return (
+            <button
+              key={item.key}
+              role="tab"
+              aria-selected={active}
+              onClick={() => setTab(item.key)}
               className={[
-                "pointer-events-none absolute inset-x-0 bottom-0 h-[2px] transition-opacity",
-                active ? "bg-ink opacity-100" : "opacity-0",
+                "relative -mb-px inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-4 py-4 font-caption text-[12px] font-semibold uppercase tracking-[1.5px] transition-colors md:px-6",
+                active ? "text-ink" : "text-muted hover:text-ink",
               ].join(" ")}
-            />
-          </button>
-        );
-      })}
+            >
+              <Icon className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
+              {item.label}
+              <span
+                className={[
+                  "pointer-events-none absolute inset-x-0 bottom-0 h-[2px] transition-opacity",
+                  active ? "bg-ink opacity-100" : "opacity-0",
+                ].join(" ")}
+              />
+            </button>
+          );
+        })}
+      </div>
+
+      {/* The proposal is a separate frozen document, so it opens on its own
+          page rather than swapping tab content. Same password gate. */}
+      <Link
+        href="/for/spa/proposal"
+        className="group ml-auto inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-4 py-4 font-caption text-[12px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink md:px-6"
+      >
+        <FileText className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
+        Proposal
+        <ArrowUpRight
+          className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+          strokeWidth={1.75}
+          aria-hidden
+        />
+      </Link>
     </div>
   );
 }

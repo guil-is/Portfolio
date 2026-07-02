@@ -165,7 +165,7 @@ export const spa: SpaClient = {
         blocks: [
           {
             type: "p",
-            text: "This agreement, together with the proposal at guil.is/for/spa, sets out the whole arrangement between the Provider and the Client for WinWin 2026. It replaces any earlier notes or discussions on the same work.",
+            text: "This agreement, together with the proposal at guil.is/for/spa/proposal, sets out the whole arrangement between the Provider and the Client for WinWin 2026. It replaces any earlier notes or discussions on the same work.",
           },
           {
             type: "p",
@@ -178,7 +178,7 @@ export const spa: SpaClient = {
         blocks: [
           {
             type: "p",
-            text: "Visual identity, invitation, and event website for WinWin 2026, delivered in four phases. Full scope as agreed in the proposal at guil.is/for/spa:",
+            text: "Visual identity, invitation, and event website for WinWin 2026, delivered in four phases. Full scope as agreed in the proposal at guil.is/for/spa/proposal:",
           },
           {
             type: "ul",
