@@ -19,8 +19,10 @@ export const issuer = {
   addressLines: ["Müggelstraße 15", "10247 Berlin", "Germany"],
   phone: "+49 176 76241374",
   vatId: "USt-IdNr DE308488034",
-  /** Header avatar, relative to the repo root. Unset to omit. */
-  logoPath: "public/guil_prof_2026_3.jpeg",
+  /** Header avatar, relative to the repo root. Unset to omit.
+   * Halftone version generated from guil_prof_2026_3.jpeg — replace the
+   * file to change the invoice avatar. */
+  logoPath: "public/invoice-avatar.png",
 };
 
 /**
@@ -69,12 +71,11 @@ export const paymentProfiles: Record<string, PaymentProfile> = {
   },
   "crypto-usdc": {
     heading: "Pay with crypto",
-    subheading: "USDC on Ethereum Mainnet",
-    placement: "note",
+    includeReference: false,
     rows: [
       // TODO: verify — transcribed from INV-26013's PDF, confirm against
       // your wallet before including on a live invoice.
-      ["Address", "0x06B759c70c2136224D4cFA6C79de0a3c1F4D7131"],
+      ["USDC on Ethereum Mainnet", "0x06B759c70c2136224D4cFA6C79de0a3c1F4D7131"],
     ],
   },
 };

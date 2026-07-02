@@ -102,12 +102,14 @@ function specFromJustice(args: Args): InvoiceSpec {
         unitPrice: rate,
       })),
       ...(period.expenses ?? []).map((e) => ({
-        description: `Expense (at cost) — ${e.description}`,
+        description: `Expense — ${e.description}`,
         amount: e.amountUsd,
       })),
     ],
     paymentProfiles: ["wise-usd-local", "wise-usd-intl", "crypto-usdc"],
-    note: `Design retainer, ${period.label} (${periodTotal(period)}h at $${rate}/h).`,
+    note:
+      `Design retainer, ${period.label} (${periodTotal(period)}h at $${rate}/h).` +
+      ((period.expenses ?? []).length > 0 ? " Expenses billed at cost." : ""),
   };
 }
 
@@ -167,6 +169,9 @@ async function main() {
   );
 
   const pdf = await renderInvoicePdf(spec, profiles);
+  const pages = (
+    pdf.toString("latin1").match(/\/Type\s*\/Page[^s]/g) ?? []
+  ).length;
   const slug = spec.billTo.name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
@@ -178,6 +183,12 @@ async function main() {
   writeFileSync(outPath, pdf);
 
   console.log(`✓ ${spec.number} → ${outPath}`);
+  if (pages > 1) {
+    console.warn(
+      `⚠ Invoice spilled to ${pages} pages — invoices should be ONE page.` +
+        ` Shorten descriptions or merge related line items, then regenerate.`,
+    );
+  }
   console.log(
     `  ${spec.billTo.name} · ${formatMoney(grandTotal(spec), spec.currency)} · due ${spec.dueAt}`,
   );

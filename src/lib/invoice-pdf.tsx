@@ -26,9 +26,11 @@ import { issuer } from "@/content/invoices/config";
 /**
  * Layout modeled on a Wise-generated invoice (INV-26013): logo + "Invoice"
  * wordmark, number/date top right, Billed to / Issued by columns, a bold
- * "<amount> due by <date>" headline, bold VAT/crypto notes, the
- * quantity/unit-price/tax table, Amount Due, and a "Ways to pay" section
- * with side-by-side bank-detail columns.
+ * "<amount> due by <date>" headline, the quantity/unit-price/tax table,
+ * Amount Due, and a "Ways to pay" section with side-by-side columns.
+ *
+ * Invoices are kept to ONE page: with many line items the table and
+ * section spacing condense automatically (see `density` below).
  *
  * Built-in fonts only (see agreement-pdf.tsx): remote font fetches
  * silently fail on cold starts and tank the render.
@@ -42,8 +44,8 @@ const RULE = "#111111";
 
 const styles = StyleSheet.create({
   page: {
-    paddingTop: 48,
-    paddingBottom: 56,
+    paddingTop: 44,
+    paddingBottom: 46,
     paddingHorizontal: 52,
     fontFamily: SANS,
     fontSize: 9,
@@ -54,21 +56,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 30,
+    marginBottom: 26,
   },
   brandRow: {
     flexDirection: "row",
     alignItems: "center",
   },
   logo: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    marginRight: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 12,
   },
   wordmark: {
     fontSize: 24,
     fontWeight: 700,
+    lineHeight: 1,
   },
   headerMeta: {
     flexDirection: "row",
@@ -87,7 +90,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 0.75,
     borderTopColor: HAIR,
     paddingTop: 14,
-    marginBottom: 30,
   },
   party: {
     width: "50%",
@@ -105,7 +107,8 @@ const styles = StyleSheet.create({
   dueHeadline: {
     fontSize: 19,
     fontWeight: 700,
-    marginBottom: 12,
+    lineHeight: 1.15,
+    marginBottom: 8,
   },
   boldNote: {
     fontSize: 8.5,
@@ -116,11 +119,8 @@ const styles = StyleSheet.create({
   plainNote: {
     fontSize: 8.5,
     color: "#3d3d3d",
-    marginTop: 4,
+    marginTop: 2,
     maxWidth: 420,
-  },
-  table: {
-    marginTop: 26,
   },
   tableHead: {
     flexDirection: "row",
@@ -134,19 +134,17 @@ const styles = StyleSheet.create({
   },
   tr: {
     flexDirection: "row",
-    paddingVertical: 9,
     borderBottomWidth: 0.75,
     borderBottomColor: HAIR,
   },
   colDesc: { flex: 1, paddingRight: 10 },
-  colQty: { width: 58 },
-  colUnit: { width: 78 },
-  colTax: { width: 52 },
-  colTotal: { width: 88, textAlign: "right" },
+  colQty: { width: 50 },
+  colUnit: { width: 70 },
+  colTax: { width: 44 },
+  colTotal: { width: 84, textAlign: "right" },
   totalsBlock: {
     alignSelf: "flex-end",
     width: 250,
-    marginTop: 12,
   },
   totalsRow: {
     flexDirection: "row",
@@ -162,8 +160,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     borderTopWidth: 1,
     borderTopColor: RULE,
-    marginTop: 6,
-    paddingTop: 8,
+    marginTop: 5,
+    paddingTop: 7,
   },
   amountDueText: {
     fontSize: 11.5,
@@ -172,49 +170,58 @@ const styles = StyleSheet.create({
   waysHeading: {
     fontSize: 10.5,
     fontWeight: 700,
-    marginTop: 34,
-    paddingBottom: 7,
+    paddingBottom: 6,
     borderBottomWidth: 0.75,
     borderBottomColor: HAIR,
-    marginBottom: 12,
+    marginBottom: 10,
   },
   waysRow: {
     flexDirection: "row",
-    gap: 24,
+    flexWrap: "wrap",
+    columnGap: 24,
+    rowGap: 12,
   },
   waysCol: {
-    flex: 1,
+    flexGrow: 1,
+    flexBasis: "44%",
   },
   waysTitle: {
     fontSize: 9,
     fontWeight: 700,
-    marginBottom: 3,
+    marginBottom: 2,
   },
   waysSub: {
     fontSize: 8,
     color: MUTED,
-    marginBottom: 9,
+    marginBottom: 7,
   },
   waysItemRow: {
     flexDirection: "row",
-    marginBottom: 5,
+    marginBottom: 4,
   },
   waysLabel: {
     width: 92,
     fontSize: 8,
+    lineHeight: 1.3,
     color: MUTED,
     paddingRight: 8,
   },
   waysValue: {
     flex: 1,
     fontSize: 8.5,
+    lineHeight: 1.3,
+  },
+  footer: {
+    position: "absolute",
+    bottom: 22,
+    left: 52,
+    right: 52,
+    fontSize: 7.5,
+    color: MUTED,
+    textAlign: "center",
+    letterSpacing: 0.3,
   },
 });
-
-function noteLine(p: PaymentProfile): string {
-  const values = p.rows.map(([, v]) => v).join(", ");
-  return `${p.heading}${p.subheading ? ` - ${p.subheading}` : ""}: ${values}`;
-}
 
 export function InvoicePdf({
   spec,
@@ -224,13 +231,25 @@ export function InvoicePdf({
   profiles: PaymentProfile[];
 }) {
   const cur = spec.currency;
-  const cards = profiles.filter((p) => (p.placement ?? "card") === "card");
-  const notes = profiles.filter((p) => p.placement === "note");
   const vatNote = taxNote(spec.taxMode);
   const logoAbs = issuer.logoPath
     ? resolve(process.cwd(), issuer.logoPath)
     : null;
   const logo = logoAbs && existsSync(logoAbs) ? logoAbs : null;
+
+  // One-page guarantee: condense the table, section spacing, and the
+  // ways-to-pay cards as the line count grows. ~6 items fit at full
+  // comfort; ~10 compact; beyond that everything goes dense.
+  const n = spec.lines.length;
+  const density = n <= 6 ? "roomy" : n <= 9 ? "compact" : "dense";
+  // The Tax column only earns its width when tax applies; hiding it
+  // gives long descriptions room and avoids wrapped rows.
+  const showTax = spec.taxMode === "de-19";
+  const rowPad = { roomy: 9, compact: 4, dense: 3 }[density];
+  const rowFont = { roomy: 9, compact: 8.5, dense: 8 }[density];
+  const gap = { roomy: 26, compact: 14, dense: 10 }[density];
+  const headerGap = { roomy: 26, compact: 18, dense: 12 }[density];
+  const wayPad = { roomy: 4, compact: 3, dense: 2 }[density];
 
   return (
     <Document
@@ -239,7 +258,7 @@ export function InvoicePdf({
       subject={`Invoice ${spec.number}`}
     >
       <Page size="A4" style={styles.page}>
-        <View style={styles.headerRow}>
+        <View style={[styles.headerRow, { marginBottom: headerGap }]}>
           <View style={styles.brandRow}>
             {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt prop */}
             {logo ? <Image src={logo} style={styles.logo} /> : null}
@@ -267,7 +286,7 @@ export function InvoicePdf({
           </View>
         </View>
 
-        <View style={styles.partiesRow}>
+        <View style={[styles.partiesRow, { marginBottom: gap }]}>
           <View style={styles.party}>
             <Text style={styles.partyLabel}>Billed to</Text>
             <Text style={styles.partyLine}>{spec.billTo.name}</Text>
@@ -285,8 +304,10 @@ export function InvoicePdf({
                 {l}
               </Text>
             ))}
-            <Text style={styles.partyLine}>{issuer.email}</Text>
-            <Text style={styles.partyLine}>{issuer.phone}</Text>
+            <Text style={styles.partyLine}>
+              {issuer.email} · {issuer.phone}
+            </Text>
+            <Text style={styles.partyLine}>{issuer.vatId}</Text>
           </View>
         </View>
 
@@ -295,27 +316,26 @@ export function InvoicePdf({
           {formatDate(spec.dueAt)}
         </Text>
 
-        <Text style={styles.boldNote}>
-          {issuer.vatId}
-          {vatNote ? ` *${vatNote}` : ""}
-        </Text>
-        {notes.map((p, i) => (
-          <Text key={i} style={styles.boldNote}>
-            {noteLine(p)}
-          </Text>
-        ))}
+        {vatNote ? <Text style={styles.boldNote}>{vatNote}</Text> : null}
         {spec.note ? <Text style={styles.plainNote}>{spec.note}</Text> : null}
 
-        <View style={styles.table}>
+        <View style={{ marginTop: gap }}>
           <View style={styles.tableHead}>
             <Text style={[styles.th, styles.colDesc]}>Product or service</Text>
             <Text style={[styles.th, styles.colQty]}>Quantity</Text>
             <Text style={[styles.th, styles.colUnit]}>Unit price</Text>
-            <Text style={[styles.th, styles.colTax]}>Tax</Text>
+            {showTax ? <Text style={[styles.th, styles.colTax]}>Tax</Text> : null}
             <Text style={[styles.th, styles.colTotal]}>Total</Text>
           </View>
           {spec.lines.map((line, i) => (
-            <View key={i} style={styles.tr} wrap={false}>
+            <View
+              key={i}
+              style={[
+                styles.tr,
+                { paddingVertical: rowPad, fontSize: rowFont },
+              ]}
+              wrap={false}
+            >
               <Text style={styles.colDesc}>{line.description}</Text>
               <Text style={styles.colQty}>{line.qty ?? 1}</Text>
               <Text style={styles.colUnit}>
@@ -324,9 +344,7 @@ export function InvoicePdf({
                   cur,
                 )}
               </Text>
-              <Text style={styles.colTax}>
-                {spec.taxMode === "de-19" ? "19%" : ""}
-              </Text>
+              {showTax ? <Text style={styles.colTax}>19%</Text> : null}
               <Text style={styles.colTotal}>
                 {formatMoney(lineAmount(line), cur)}
               </Text>
@@ -334,7 +352,7 @@ export function InvoicePdf({
           ))}
         </View>
 
-        <View style={styles.totalsBlock}>
+        <View style={[styles.totalsBlock, { marginTop: gap / 2 }]}>
           <View style={styles.totalsRow}>
             <Text style={styles.totalsLabel}>Total excluding tax</Text>
             <Text>{formatMoney(subtotal(spec), cur)}</Text>
@@ -353,24 +371,33 @@ export function InvoicePdf({
           </View>
         </View>
 
-        {cards.length > 0 ? (
-          <View wrap={false}>
+        {profiles.length > 0 ? (
+          <View wrap={false} style={{ marginTop: gap }}>
             <Text style={styles.waysHeading}>Ways to pay</Text>
             <View style={styles.waysRow}>
-              {cards.map((p, i) => (
+              {profiles.map((p, i) => (
                 <View key={i} style={styles.waysCol}>
                   <Text style={styles.waysTitle}>{p.heading}</Text>
-                  {p.subheading ? (
+                  {density === "roomy" && p.subheading ? (
                     <Text style={styles.waysSub}>{p.subheading}</Text>
                   ) : null}
-                  <View style={styles.waysItemRow}>
-                    <Text style={styles.waysLabel}>Reference</Text>
-                    <Text style={styles.waysValue}>{spec.number}</Text>
-                  </View>
+                  {p.includeReference !== false ? (
+                    <View
+                      style={[styles.waysItemRow, { marginBottom: wayPad }]}
+                    >
+                      <Text style={styles.waysLabel}>Reference</Text>
+                      <Text style={styles.waysValue}>{spec.number}</Text>
+                    </View>
+                  ) : null}
                   {p.rows.map(([label, value], j) => (
-                    <View key={j} style={styles.waysItemRow}>
+                    <View
+                      key={j}
+                      style={[styles.waysItemRow, { marginBottom: wayPad }]}
+                    >
                       <Text style={styles.waysLabel}>{label}</Text>
-                      <Text style={styles.waysValue}>{value}</Text>
+                      <Text style={styles.waysValue}>
+                        {density === "roomy" ? value : value.replace(/\n/g, ", ")}
+                      </Text>
                     </View>
                   ))}
                 </View>
@@ -378,6 +405,10 @@ export function InvoicePdf({
             </View>
           </View>
         ) : null}
+
+        <Text style={styles.footer} fixed>
+          {spec.number} · {issuer.name} · {issuer.email}
+        </Text>
       </Page>
     </Document>
   );

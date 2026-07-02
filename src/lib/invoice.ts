@@ -35,10 +35,8 @@ export type PaymentProfile = {
   heading: string;
   subheading?: string;
   rows: [label: string, value: string][];
-  /** "card" (default) renders a column under "Ways to pay"; "note"
-   * renders as a bold one-liner under the amount-due headline (how the
-   * Wise invoice shows the crypto option). */
-  placement?: "card" | "note";
+  /** Set false for rails that can't carry a payment reference (crypto). */
+  includeReference?: boolean;
 };
 
 export type InvoiceSpec = {

@@ -39,6 +39,12 @@ npm run invoice -- --next-number
 PDFs land in `invoices/` (gitignored). Invoice number defaults to the
 next in the ledger sequence; due date defaults to issue date + 7 days.
 
+**Invoices must fit one page.** The layout condenses automatically as
+line items grow, but if the CLI still warns about a spill, shorten
+descriptions or merge related line items and regenerate. The header
+avatar is `public/invoice-avatar.png` (referenced by `logoPath` in
+`config.ts`) — overwrite that file to change it.
+
 ## Spec JSON
 
 Matches `InvoiceSpec` in `src/lib/invoice.ts`. `billTo` may be a preset
