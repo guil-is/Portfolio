@@ -52,7 +52,7 @@ export type SpaProject = {
 };
 
 export type ClientAction = {
-  /** What the client needs to do right now, phrased to them ("Fill in..."). */
+  /** What the client needs to do, phrased to them ("Fill in..."). */
   text: string;
   /** Optional human-readable deadline, e.g. "By Friday, July 4". */
   due?: string;
@@ -66,10 +66,10 @@ export type SpaClient = {
   project: SpaProject;
   milestones: ProjectMilestone[];
   payments: PaymentMilestone[];
-  /** The one thing the Client should do right now, shown as a banner at the
-   * top of the Progress tab. Set to a new action as the project moves, or
-   * remove the field entirely when nothing is needed from them. */
-  actionNeeded?: ClientAction;
+  /** Open items the Client needs to act on, shown as a pending checklist
+   * at the top of the Progress tab. Remove items as they're resolved;
+   * remove the field (or empty the array) to hide the block. */
+  pendingActions?: ClientAction[];
   sow: SignableDocument;
 };
 
@@ -86,11 +86,17 @@ export const spa: SpaClient = {
     targetDelivery: "Late August",
   },
 
-  actionNeeded: {
-    text: "Review and sign the Service Agreement. The deposit invoice follows right after, and work kicks off Tuesday, July 7.",
-    due: "Before July 7",
-    link: { label: "Open the agreement", href: "#agreement" },
-  },
+  pendingActions: [
+    {
+      text: "Review and sign the Service Agreement.",
+      due: "Before July 7",
+      link: { label: "Open the agreement", href: "#agreement" },
+    },
+    {
+      text: "Settle the deposit invoice, 1,560 EUR.",
+      due: "On signing",
+    },
+  ],
 
   milestones: [
     {

@@ -167,11 +167,13 @@ function ProgressView() {
 
   return (
     <div className="flex flex-col gap-14">
-      {/* Status cluster: the one thing we need from the client (if any),
-          then the at-a-glance summary. Each tile answers one question:
-          where the project is, when it lands, what's owed next. */}
+      {/* Status cluster: open items pending on the client (if any), then
+          the at-a-glance summary. Each tile answers one question: where
+          the project is, when it lands, what's owed next. */}
       <div className="flex flex-col gap-5">
-        {spa.actionNeeded ? <ActionBanner action={spa.actionNeeded} /> : null}
+        {spa.pendingActions?.length ? (
+          <PendingList items={spa.pendingActions} />
+        ) : null}
         <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-3">
           <Stat
             label="Current phase"
@@ -228,11 +230,13 @@ function ProgressView() {
                   {p.description}
                 </p>
               </div>
-              <div className="flex shrink-0 flex-col items-end gap-2">
-                <p className="font-display text-[1.125rem] font-bold tabular-nums leading-none text-ink">
-                  {formatEur(p.amountEur)}
-                </p>
-                <PaymentPill status={p.status} />
+              <div className="flex shrink-0 flex-col items-end gap-1.5">
+                <div className="flex items-center gap-3">
+                  <PaymentPill status={p.status} />
+                  <p className="font-display text-[1.125rem] font-bold tabular-nums leading-none text-ink">
+                    {formatEur(p.amountEur)}
+                  </p>
+                </div>
                 {p.date ? (
                   <p className="font-caption text-[10px] font-medium uppercase tracking-[1px] text-muted">
                     {formatLongDate(p.date)}
@@ -259,38 +263,55 @@ function ProgressView() {
   );
 }
 
-// "Your turn" banner — the one thing the client should do right now.
-// Blue = in motion, matching the status color language.
-function ActionBanner({ action }: { action: ClientAction }) {
+// Open items pending on the client: a plain checklist with optional due
+// dates and links. Remove items from the data as they're resolved.
+function PendingList({ items }: { items: ClientAction[] }) {
   return (
     <section
-      aria-label="Action needed"
-      className="flex flex-col gap-3 rounded-[14px] border border-[#3b82f6]/35 bg-[#3b82f6]/[0.06] px-5 py-5 md:px-6 md:py-6"
+      aria-label="Pending on your side"
+      className="flex flex-col gap-3 rounded-[14px] border border-rule bg-card/40 px-5 py-5 md:px-6 md:py-6"
     >
-      <div className="flex flex-wrap items-center gap-3">
-        <StatusPill label="Your turn" tone="info" />
-        {action.due ? (
-          <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
-            {action.due}
-          </p>
-        ) : null}
-      </div>
-      <p className="max-w-[560px] text-[0.95rem] leading-[1.6rem] text-ink">
-        {action.text}
+      <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
+        Pending on your side
       </p>
-      {action.link ? (
-        <a
-          href={action.link.href}
-          className="group inline-flex items-center gap-1.5 self-start font-caption text-[12px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted"
-        >
-          {action.link.label}
-          <ArrowUpRight
-            className="h-3.5 w-3.5 transition-transform group-hover:-rotate-45"
-            strokeWidth={2}
-            aria-hidden
-          />
-        </a>
-      ) : null}
+      <ul className="flex flex-col">
+        {items.map((item, i) => (
+          <li
+            key={i}
+            className="flex items-start justify-between gap-6 border-b border-rule-soft py-3.5 last:border-b-0 last:pb-0"
+          >
+            <div className="flex items-start gap-3">
+              <span
+                aria-hidden
+                className="mt-[4px] inline-flex h-[15px] w-[15px] shrink-0 rounded-[4px] border border-rule"
+              />
+              <div className="flex flex-col gap-1">
+                <p className="text-[0.95rem] leading-[1.5rem] text-ink">
+                  {item.text}
+                </p>
+                {item.link ? (
+                  <a
+                    href={item.link.href}
+                    className="group inline-flex items-center gap-1.5 self-start font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted"
+                  >
+                    {item.link.label}
+                    <ArrowUpRight
+                      className="h-3 w-3 transition-transform group-hover:-rotate-45"
+                      strokeWidth={2}
+                      aria-hidden
+                    />
+                  </a>
+                ) : null}
+              </div>
+            </div>
+            {item.due ? (
+              <p className="shrink-0 pt-[4px] font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
+                {item.due}
+              </p>
+            ) : null}
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
