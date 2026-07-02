@@ -149,7 +149,7 @@ function ProgressView() {
           <Stat
             label="Project fee"
             value={formatEur(project.feeEur)}
-            sub={`${project.name} · plus VAT`}
+            sub={`${project.name} · net`}
           />
           <Stat
             label="Paid"
@@ -206,8 +206,8 @@ function ProgressView() {
           ))}
         </ul>
         <p className="text-[0.85rem] leading-[1.5rem] text-muted">
-          All amounts plus 19% German VAT. Phase 4 is a working estimate,
-          confirmed before that phase begins.
+          All amounts net. VAT reverse charge applies for EU business clients.
+          Phase 4 is a working estimate, confirmed before that phase begins.
         </p>
       </section>
     </div>
