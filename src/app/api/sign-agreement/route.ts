@@ -1,25 +1,16 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getSanityWriteClient } from "@/lib/sanity-write";
-import { justice } from "@/content/clients/justice";
-import { myosin } from "@/content/clients/myosin";
-import { tedxberlin } from "@/content/clients/tedxberlin";
-import { huit } from "@/content/clients/huit";
+import {
+  signableClients,
+  isSignableClientSlug,
+} from "@/content/clients/signable";
 import type { SignableClient, SignableDocument } from "@/content/clients/types";
 import { hashDocument } from "@/lib/sow-hash";
 import { getLatestSignature, type SignedAgreement } from "@/lib/signed-agreement";
 import { renderAgreementPdf } from "@/lib/agreement-pdf";
 
 export const runtime = "nodejs";
-
-// Map of client slug → source of truth for that client.
-// Add new clients here as they come online.
-const clients = { justice, myosin, tedxberlin, huit } as const;
-type ClientSlug = keyof typeof clients;
-
-function isClientSlug(value: string): value is ClientSlug {
-  return Object.prototype.hasOwnProperty.call(clients, value);
-}
 
 /** Resolve which signable document on the client a request targets. */
 function resolveDocument(
@@ -150,7 +141,7 @@ export async function POST(req: Request) {
     ? body.acknowledgments.map((s) => String(s).trim())
     : [];
 
-  if (!clientSlug || !isClientSlug(clientSlug)) {
+  if (!clientSlug || !isSignableClientSlug(clientSlug)) {
     return NextResponse.json({ error: "Unknown client." }, { status: 400 });
   }
   if (!name || name.length < 2) {
@@ -160,7 +151,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Please enter a valid email." }, { status: 400 });
   }
 
-  const client = clients[clientSlug];
+  const client = signableClients[clientSlug];
   const doc = resolveDocument(client, documentKey);
   if (!doc) {
     return NextResponse.json(

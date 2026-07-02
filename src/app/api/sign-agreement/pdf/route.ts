@@ -1,21 +1,14 @@
 import { NextResponse } from "next/server";
 import { sanityClient } from "@/lib/sanity";
-import { justice } from "@/content/clients/justice";
-import { myosin } from "@/content/clients/myosin";
-import { tedxberlin } from "@/content/clients/tedxberlin";
-import { huit } from "@/content/clients/huit";
+import {
+  signableClients,
+  isSignableClientSlug,
+} from "@/content/clients/signable";
 import { renderAgreementPdf } from "@/lib/agreement-pdf";
 import type { SignableClient } from "@/content/clients/types";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 
 export const runtime = "nodejs";
-
-const clients = { justice, myosin, tedxberlin, huit } as const;
-type ClientSlug = keyof typeof clients;
-
-function isClientSlug(value: string): value is ClientSlug {
-  return Object.prototype.hasOwnProperty.call(clients, value);
-}
 
 function resolveDoc(client: SignableClient, documentKey: string) {
   if (documentKey === "sow") return client.sow;
@@ -47,11 +40,11 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Not found." }, { status: 404 });
   }
 
-  if (!isClientSlug(signature.clientSlug)) {
+  if (!isSignableClientSlug(signature.clientSlug)) {
     return NextResponse.json({ error: "Unknown client." }, { status: 400 });
   }
 
-  const client = clients[signature.clientSlug];
+  const client = signableClients[signature.clientSlug];
   const documentKey = signature.documentKey ?? "sow";
   const doc = resolveDoc(client, documentKey);
   if (!doc) {

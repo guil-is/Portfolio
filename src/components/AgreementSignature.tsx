@@ -3,9 +3,12 @@
 import { useState, type FormEvent } from "react";
 import { Check, ChevronDown, Download, Feather, ShieldCheck } from "lucide-react";
 import type { SignedAgreement } from "@/lib/signed-agreement";
+import type { SignableClientSlug } from "@/content/clients/signable";
 
 type Props = {
-  clientSlug: string;
+  /** Typed to the registered signable clients: a page passing a slug not in
+   * the signing registry fails `tsc`, so an agreement can't ship unsignable. */
+  clientSlug: SignableClientSlug;
   /** Which document on the client this form signs. Defaults to "sow". */
   documentKey?: string;
   acknowledgments: string[];
