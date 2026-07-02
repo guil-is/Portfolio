@@ -87,9 +87,16 @@ function ClientCard({ client }: { client: ClientEntry }) {
       className="group flex h-full min-h-[132px] flex-col justify-between gap-6 bg-bg px-5 py-5 transition-colors hover:bg-card md:px-6 md:py-6"
     >
       <div className="flex items-start justify-between gap-4">
-        <h3 className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.4rem]">
-          {client.name}
-        </h3>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+          <h3 className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.4rem]">
+            {client.name}
+          </h3>
+          {client.status === "paused" ? (
+            <span className="inline-flex items-center rounded-[6px] border border-rule-soft bg-card/50 px-2 py-[2px] font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
+              Paused
+            </span>
+          ) : null}
+        </div>
         <span
           aria-hidden
           className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-rule text-muted transition-colors group-hover:border-ink group-hover:text-ink"

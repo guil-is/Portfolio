@@ -12,7 +12,7 @@
  * dashboard sets to "1" to skip the password on that page.
  */
 
-export type ClientStatus = "current" | "past";
+export type ClientStatus = "current" | "paused" | "past";
 
 export type ClientEntry = {
   slug: string;
@@ -53,8 +53,8 @@ export const clientRegistry: ClientEntry[] = [
   entry(
     "justice",
     "Justice Conder",
-    "Ongoing design retainer: scope of work and hours log.",
-    "current",
+    "Design retainer: scope of work and hours log. On pause.",
+    "paused",
   ),
   entry(
     "myosin",
@@ -78,7 +78,9 @@ export const clientRegistry: ClientEntry[] = [
 ];
 
 export function currentClients(): ClientEntry[] {
-  return clientRegistry.filter((c) => c.status === "current");
+  return clientRegistry.filter(
+    (c) => c.status === "current" || c.status === "paused",
+  );
 }
 
 export function pastClients(): ClientEntry[] {
