@@ -81,22 +81,18 @@ export const invoiceLedger: LedgerEntry[] = [
     currency: "USD",
     note: "Retainer May 25–29 (12h + $59 expenses, §3a exempt)",
   },
-  // ⚠ VERIFY: this entry's data (Justice May 25–29, $1,499, issued 05-30)
-  // is identical to the *real* INV-26010 PDF above — it looks mis-numbered,
-  // and the true INV-26009 invoice is unread. Zeroed so it can't
-  // double-count income. Read INV-26009.pdf in Drive (or check records) and
-  // replace with the real client/amount, or delete if it never existed.
   {
     number: "INV-26009",
-    client: "(VERIFY — unread, possibly mis-numbered duplicate of INV-26010)",
-    issuedAt: "2026-05-30",
-    total: 0,
+    client: "Regens Unite Association (Baar, Switzerland)",
+    issuedAt: "2026-05-27",
+    total: 1534,
     currency: "USD",
+    note: "Event coordination reimbursements, Devconnect ARG (§3a exempt)",
   },
   {
     number: "INV-26008",
     client: "Justice Conder",
-    issuedAt: "2026-05-22",
+    issuedAt: "2026-05-23",
     total: 2280,
     currency: "USD",
     note: "Retainer May 18–22 (19h)",
@@ -113,9 +109,9 @@ export const invoiceLedger: LedgerEntry[] = [
     number: "INV-26006",
     client: "Justice Conder",
     issuedAt: "2026-04-30",
-    total: 3216.99,
+    total: 3205,
     currency: "USD",
-    note: "Retainer Apr 20 – May 1 (26.1h + $84.99 expenses)",
+    note: "Retainer (26h + $85 expenses) — invoiced amount, per archived PDF",
   },
   {
     number: "INV-26005",
