@@ -110,24 +110,30 @@ CLI just prints a hint.
 When issuing from a Claude session (not your Mac), Claude uploads the PDF
 to the same Drive folder via the Drive connector instead.
 
-## Pre-reform invoices (Steuerberater review)
+## Pre-reform invoices to review
 
-Three 2026 invoices predate the `INV-260XX` scheme and are recorded in the
-ledger under their original date-based numbers (ThriveCoin: 260131,
-260309, 260309). Keep the original PDFs in the Drive archive **unaltered** —
-a validly issued invoice stays valid regardless of format, and editing an
-issued tax document is worse than leaving a known quirk. Flag these two
-points for the accountant (only they can resolve them):
+Three 2026 invoices predate the `INV-260XX` scheme (ThriveCoin — Daniel
+Jacobs, daniel@thrivecoin.com). They're recorded in the ledger under their
+original date-based numbers and the PDFs live in the Drive archive. Keep
+those PDFs **unaltered** — a validly issued invoice stays valid regardless
+of format, and editing an issued tax document is worse than leaving a known
+quirk. All three are §3a place-of-supply (US client, no German VAT).
 
-1. **Duplicate number 260309** — the Feb (issued Mar 9) and March (issued
-   Mar 30) ThriveCoin invoices share invoice number 260309. §14 UStG
-   requires unique, sequential numbers; the accountant may want a
-   documented correction.
-2. **Inconsistent VAT basis across the year** — the January invoice cites
-   §3a Abs. 2 (non-EU business, no German VAT), the March invoice cites
-   §19 (Kleinunternehmer). Those regimes are mutually exclusive for a tax
-   year. Which one applied to 2026 needs confirming, since it also governs
-   how the later §3a invoices (Justice, Myosin, Regens Unite) are treated.
+**Checklist to work through at the office:**
+
+- [ ] **Duplicate invoice number 260309.** Two ThriveCoin invoices carry it:
+  Feb 1–7 ($1,750, issued 09.03.2026) and March ($945, issued 30.03.2026).
+  §14 UStG requires unique sequential numbers. Decide with the accountant
+  whether to issue a documented correction / corrected copy for records.
+- [ ] **March invoice's VAT note is wrong.** The PDF prints "§19 UStG" — a
+  mistake; it should be §3a like every other 2026 invoice. Confirm whether a
+  corrected copy is needed for your records.
+
+| # | Number | Client | Date | Amount | Note on PDF |
+| --- | --- | --- | --- | --- | --- |
+| Jan | 260131 | ThriveCoin | 31.01.2026 | $7,000 | §3a Abs. 2 ✓ |
+| Feb | 260309 | ThriveCoin | 09.03.2026 | $1,750 | (no VAT note) |
+| Mar | 260309 | ThriveCoin | 30.03.2026 | $945 | §19 ✗ (should be §3a) |
 
 ## After issuing — bookkeeping (Claude: do this in the same session)
 
