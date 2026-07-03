@@ -64,17 +64,34 @@ export const invoiceLedger: LedgerEntry[] = [
     currency: "EUR",
     note: "TEDxBerlin aftermovie (€1,000 + 19% MwSt)",
   },
-  // TODO: INV-26010 and INV-26011 were issued outside this repo — backfill
-  // client/amount when convenient. They still count for numbering.
-  { number: "INV-26011", client: "(backfill)", issuedAt: "2026-06-01", total: 0, currency: "USD" },
-  { number: "INV-26010", client: "(backfill)", issuedAt: "2026-06-01", total: 0, currency: "USD" },
+  // Backfilled 2026-07-03 by reading the archived PDFs in Drive.
   {
-    number: "INV-26009",
-    client: "Justice Conder",
+    number: "INV-26011",
+    client: "Myosin",
+    issuedAt: "2026-06-08",
+    total: 800,
+    currency: "USD",
+    note: "Hivemind launch video, pt. 1 (§3a exempt, issued via Wise)",
+  },
+  {
+    number: "INV-26010",
+    client: "Justice Conder (Fraction Software LLC)",
     issuedAt: "2026-05-30",
     total: 1499,
     currency: "USD",
-    note: "Retainer May 25–29 (12h + $59 expenses)",
+    note: "Retainer May 25–29 (12h + $59 expenses, §3a exempt)",
+  },
+  // ⚠ VERIFY: this entry's data (Justice May 25–29, $1,499, issued 05-30)
+  // is identical to the *real* INV-26010 PDF above — it looks mis-numbered,
+  // and the true INV-26009 invoice is unread. Zeroed so it can't
+  // double-count income. Read INV-26009.pdf in Drive (or check records) and
+  // replace with the real client/amount, or delete if it never existed.
+  {
+    number: "INV-26009",
+    client: "(VERIFY — unread, possibly mis-numbered duplicate of INV-26010)",
+    issuedAt: "2026-05-30",
+    total: 0,
+    currency: "USD",
   },
   {
     number: "INV-26008",
