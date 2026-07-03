@@ -110,6 +110,25 @@ CLI just prints a hint.
 When issuing from a Claude session (not your Mac), Claude uploads the PDF
 to the same Drive folder via the Drive connector instead.
 
+## Pre-reform invoices (Steuerberater review)
+
+Three 2026 invoices predate the `INV-260XX` scheme and are recorded in the
+ledger under their original date-based numbers (ThriveCoin: 260131,
+260309, 260309). Keep the original PDFs in the Drive archive **unaltered** —
+a validly issued invoice stays valid regardless of format, and editing an
+issued tax document is worse than leaving a known quirk. Flag these two
+points for the accountant (only they can resolve them):
+
+1. **Duplicate number 260309** — the Feb (issued Mar 9) and March (issued
+   Mar 30) ThriveCoin invoices share invoice number 260309. §14 UStG
+   requires unique, sequential numbers; the accountant may want a
+   documented correction.
+2. **Inconsistent VAT basis across the year** — the January invoice cites
+   §3a Abs. 2 (non-EU business, no German VAT), the March invoice cites
+   §19 (Kleinunternehmer). Those regimes are mutually exclusive for a tax
+   year. Which one applied to 2026 needs confirming, since it also governs
+   how the later §3a invoices (Justice, Myosin, Regens Unite) are treated.
+
 ## After issuing — bookkeeping (Claude: do this in the same session)
 
 1. Confirm the PDF is archived to Drive (`Invoices/Invoices <year>/`) —

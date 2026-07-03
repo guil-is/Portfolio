@@ -129,6 +129,39 @@ export const invoiceLedger: LedgerEntry[] = [
     currency: "USD",
     note: "Retainer kickoff Mar 23 – Apr 3 (10h)",
   },
+
+  // Pre-reform invoices (before the INV-260XX scheme). Date-numbered
+  // (YYMMDD), kept here so the ledger is the complete 2026 income record.
+  // They don't match the INV-\d+ pattern, so they don't affect numbering.
+  // ⚠ Two open questions for the Steuerberater — see docs/making-an-invoice.md
+  // "Pre-reform invoices": (1) the Feb and March invoices share number
+  // 260309 (duplicate — §14 UStG requires unique numbers); (2) the VAT
+  // basis is inconsistent across the year (Jan cites §3a, March cites §19
+  // Kleinunternehmer). Amounts below are the invoiced totals as archived.
+  {
+    number: "260309",
+    client: "ThriveCoin (Daniel Jacobs)",
+    issuedAt: "2026-03-30",
+    total: 945,
+    currency: "USD",
+    note: "March consulting, 21h × $45. Doc cites §19 Kleinunternehmer. ⚠ duplicate no. 260309.",
+  },
+  {
+    number: "260309",
+    client: "ThriveCoin (Daniel Jacobs)",
+    issuedAt: "2026-03-09",
+    total: 1750,
+    currency: "USD",
+    note: "Feb 1–7 consulting, pro-rated. ⚠ duplicate no. 260309 (shared with the March invoice).",
+  },
+  {
+    number: "260131",
+    client: "ThriveCoin (Daniel Jacobs)",
+    issuedAt: "2026-01-31",
+    total: 7000,
+    currency: "USD",
+    note: "January consulting, monthly fee. Doc cites §3a Abs. 2 (non-EU business).",
+  },
 ];
 
 /** Next number in the INV-XXXXX sequence, derived from the ledger. */
