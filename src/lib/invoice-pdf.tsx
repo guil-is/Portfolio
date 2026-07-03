@@ -316,7 +316,6 @@ export function InvoicePdf({
           {formatDate(spec.dueAt)}
         </Text>
 
-        {vatNote ? <Text style={styles.boldNote}>{vatNote}</Text> : null}
         {spec.note ? <Text style={styles.plainNote}>{spec.note}</Text> : null}
 
         <View style={{ marginTop: gap }}>
@@ -371,8 +370,12 @@ export function InvoicePdf({
           </View>
         </View>
 
+        {vatNote ? (
+          <Text style={[styles.boldNote, { marginTop: gap }]}>{vatNote}</Text>
+        ) : null}
+
         {profiles.length > 0 ? (
-          <View wrap={false} style={{ marginTop: gap }}>
+          <View wrap={false} style={{ marginTop: vatNote ? gap / 2 : gap }}>
             <Text style={styles.waysHeading}>Ways to pay</Text>
             <View style={styles.waysRow}>
               {profiles.map((p, i) => (
