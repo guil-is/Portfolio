@@ -6,6 +6,7 @@ import {
   ArrowUpRight,
   Check,
   CircleDashed,
+  Download,
   FileSignature,
   FileText,
   ListChecks,
@@ -238,6 +239,15 @@ function ProgressView() {
                     {formatEur(p.amountEur)}
                   </p>
                 </div>
+                {p.invoiceNumber ? (
+                  <a
+                    href={`/api/invoice/${p.invoiceNumber}`}
+                    className="inline-flex items-center gap-1.5 font-caption text-[10px] font-medium uppercase tracking-[1px] text-muted transition-colors hover:text-ink"
+                  >
+                    <Download className="h-3 w-3" strokeWidth={2} aria-hidden />
+                    {p.invoiceNumber} · PDF
+                  </a>
+                ) : null}
                 {p.date ? (
                   <p className="font-caption text-[10px] font-medium uppercase tracking-[1px] text-muted">
                     {formatLongDate(p.date)}

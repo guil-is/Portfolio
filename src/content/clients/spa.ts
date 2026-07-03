@@ -42,6 +42,10 @@ export type PaymentMilestone = {
   status: PaymentStatus;
   /** ISO date paid, if paid. */
   date?: string;
+  /** Issued invoice number, if one exists. Must be registered in
+   * src/content/invoices/issued.ts — the row then shows a PDF download
+   * link served by /api/invoice/[number]. */
+  invoiceNumber?: string;
 };
 
 export type SpaProject = {
@@ -98,6 +102,7 @@ export const spa: SpaClient = {
     {
       text: "Settle the deposit invoice, 1,560 EUR.",
       due: "By July 7",
+      link: { label: "deposit invoice", href: "/api/invoice/INV-26015" },
     },
   ],
 
@@ -138,6 +143,7 @@ export const spa: SpaClient = {
       description: "30% on signing, credited to the first invoice",
       amountEur: 1560,
       status: "invoiced",
+      invoiceNumber: "INV-26015",
     },
     {
       label: "Phase 1-2",
