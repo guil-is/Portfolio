@@ -80,7 +80,9 @@ export const paymentProfiles: Record<string, PaymentProfile> = {
   },
 };
 
-/** Bill-to presets for repeat clients, keyed by a short slug. */
+/** Bill-to presets for repeat clients, keyed by a short slug.
+ * Line order mirrors the Issued-by block: contact person, address,
+ * then the VAT id last. */
 export const billToPresets: Record<string, BillTo> = {
   justice: {
     name: "Justice Conder",
@@ -98,9 +100,9 @@ export const billToPresets: Record<string, BillTo> = {
     name: "red onion GmbH",
     lines: [
       "Stephan Balzer",
-      "TAX/VAT: DE812866010",
       "Ziegelstraße 16",
       "10117 Berlin",
+      "TAX/VAT: DE812866010",
     ],
   },
   // EU cross-border B2B: invoice net, reverse charge note, both VAT IDs
@@ -109,10 +111,10 @@ export const billToPresets: Record<string, BillTo> = {
     name: "Sustainable Public Affairs",
     lines: [
       "Lara Sibbing",
-      "TAX/VAT: BE0642.953.216",
       "c/o Norrsken House Brussels",
       "Rue du Commerce 72",
       "Brussels, Belgium",
+      "TAX/VAT: BE0642.953.216",
     ],
   },
 };
