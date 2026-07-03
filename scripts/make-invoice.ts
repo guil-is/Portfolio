@@ -183,15 +183,45 @@ async function main() {
   writeFileSync(outPath, pdf);
 
   console.log(`✓ ${spec.number} → ${outPath}`);
+  console.log(
+    `  ${spec.billTo.name} · ${formatMoney(grandTotal(spec), spec.currency)} · due ${spec.dueAt}`,
+  );
   if (pages > 1) {
     console.warn(
       `⚠ Invoice spilled to ${pages} pages — invoices should be ONE page.` +
         ` Shorten descriptions or merge related line items, then regenerate.`,
     );
   }
-  console.log(
-    `  ${spec.billTo.name} · ${formatMoney(grandTotal(spec), spec.currency)} · due ${spec.dueAt}`,
-  );
+
+  // Durable archive: copy the issued PDF into INVOICE_ARCHIVE_DIR, under a
+  // per-year subfolder. Point that env var at your Google Drive for
+  // desktop folder (e.g. ".../My Drive/Invoices") and every invoice syncs
+  // to Drive automatically — a GoBD-compliant 10-year archive, no upload
+  // step. Unreachable dir warns but never fails the render.
+  const archiveRoot = process.env.INVOICE_ARCHIVE_DIR;
+  if (archiveRoot) {
+    const year = spec.issuedAt.slice(0, 4);
+    const archiveDir = resolve(archiveRoot, `Invoices ${year}`);
+    try {
+      mkdirSync(archiveDir, { recursive: true });
+      const archivePath = resolve(
+        archiveDir,
+        `${spec.number} ${spec.billTo.name}.pdf`,
+      );
+      writeFileSync(archivePath, pdf);
+      console.log(`  archived → ${archivePath}`);
+    } catch (err) {
+      console.warn(
+        `  ⚠ could not archive to ${archiveDir} (${(err as Error).message}).` +
+          ` Invoice still saved at ${outPath}.`,
+      );
+    }
+  } else {
+    console.log(
+      `  (set INVOICE_ARCHIVE_DIR to your Google Drive path to auto-archive)`,
+    );
+  }
+
   console.log(
     `  Remember: append to src/content/invoices/ledger.ts` +
       (args.justice

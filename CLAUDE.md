@@ -29,7 +29,7 @@
 
 - To make an invoice from a prompt: `npm run invoice` — full workflow in `docs/making-an-invoice.md`.
 - Static data (issuer, bank/crypto details, client addresses): `src/content/invoices/config.ts`. Rule of thumb: German client → EUR + 19% MwSt + N26 IBAN; outside the EU → USD + §3a UStG exemption + Wise details.
-- **After issuing**: append to `src/content/invoices/ledger.ts` (drives auto-numbering). Justice invoices also go into the `hoursLog` (below).
+- **After issuing**: archive the PDF to Google Drive (`Invoices/Invoices <year>/` — the CLI does this when `INVOICE_ARCHIVE_DIR` is set; from a Claude session, upload via the Drive connector), then append to `src/content/invoices/ledger.ts` (drives auto-numbering). Justice invoices also go into the `hoursLog` (below).
 
 # Hours log updates (Justice)
 

@@ -66,11 +66,42 @@ object. Lines are `qty` × `unitPrice`, or a fixed `amount`.
 Omitted fields: `number` (auto), `dueAt` (issued + 7d), `paymentProfiles`
 (EUR → `n26-eur`; USD → Wise + crypto).
 
+## Archiving (Google Drive)
+
+Issued invoices must be kept for 10 years (GoBD). The archive is a
+Google Drive folder (`Invoices/Invoices <year>/`) that
+[Google Drive for desktop](https://www.google.com/drive/download/) mirrors
+to a local path, so saving a file there syncs it to Drive automatically —
+no upload step.
+
+**One-time setup on the Mac:**
+
+1. Install Google Drive for desktop and sign in. It creates a folder like
+   `~/Library/CloudStorage/GoogleDrive-<you>@gmail.com/My Drive`.
+2. Find the `Invoices` folder inside it (it already exists in Drive).
+3. Add the path to your shell profile (`~/.zshrc`):
+   ```sh
+   export INVOICE_ARCHIVE_DIR="$HOME/Library/CloudStorage/GoogleDrive-you@gmail.com/My Drive/Invoices"
+   ```
+   Then `source ~/.zshrc`.
+
+With that set, every `npm run invoice` run drops a copy into
+`Invoices/Invoices <year>/<number> <client>.pdf`, which Drive syncs. The
+env var is read at runtime only — nothing is committed, and if it's unset
+or the path is unreachable the invoice still saves to `invoices/` and the
+CLI just prints a hint.
+
+When issuing from a Claude session (not your Mac), Claude uploads the PDF
+to the same Drive folder via the Drive connector instead.
+
 ## After issuing — bookkeeping (Claude: do this in the same session)
 
-1. Append an entry to `src/content/invoices/ledger.ts` — this drives
+1. Confirm the PDF is archived to Drive (`Invoices/Invoices <year>/`) —
+   the CLI does this when `INVOICE_ARCHIVE_DIR` is set; from a Claude
+   session, upload it via the Drive connector.
+2. Append an entry to `src/content/invoices/ledger.ts` — this drives
    `--next-number`, so skipping it breaks the sequence.
-2. Justice retainer invoices only: also set `invoice: { number, issuedAt }`
+3. Justice retainer invoices only: also set `invoice: { number, issuedAt }`
    on the period in `src/content/clients/justice.ts` and bump its
    `lastUpdated` (see CLAUDE.md "Hours log updates").
-3. When payment lands later: set `paidAt` in both places.
+4. When payment lands later: set `paidAt` in both places.
