@@ -177,11 +177,11 @@ export const spa: SpaClient = {
             rows: [
               [
                 "Provider",
-                "Guilherme Maueler (guil.is), Müggelstraße 15, 10247 Berlin, Germany.",
+                "Guilherme Maueler (guil.is), Müggelstraße 15, 10247 Berlin, Germany, VAT DE308488034.",
               ],
               [
                 "Client",
-                "Sustainable Public Affairs, c/o Norrsken House Brussels, Rue du Commerce 72, Brussels, Belgium, represented by Lara Sibbing.",
+                "Sustainable Public Affairs, c/o Norrsken House Brussels, Rue du Commerce 72, Brussels, Belgium, VAT BE0642.953.216, represented by Lara Sibbing.",
               ],
               ["Project", "WinWin 2026, Brussels."],
               ["Dated", "Auto-filled on signing"],
@@ -276,7 +276,7 @@ export const spa: SpaClient = {
             type: "ul",
             items: [
               "Phase 4 (2,800 EUR) is a working estimate. Its scope and amount are confirmed together before that phase begins, and the total moves with it.",
-              "VAT reverse charge applies: as an EU cross-border business-to-business service, the fee is invoiced net with no German VAT, and the Client accounts for VAT in Belgium. This requires the Client's valid EU VAT identification number.",
+              "VAT reverse charge applies: as an EU cross-border business-to-business service, the fee is invoiced net with no German VAT, and the Client accounts for VAT in Belgium under its VAT number stated in Parties.",
               "The fee covers design and build only. Third-party and production costs are separate: fonts, stock, plugins, print, and similar are billed at cost, quoted and approved before purchase.",
               "The website runs on the Client's own accounts for hosting, domain, and any third-party services (ticketing, email, and similar). Those subscriptions are the Client's cost.",
               "Invoiced to Sustainable Public Affairs.",

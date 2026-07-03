@@ -103,4 +103,16 @@ export const billToPresets: Record<string, BillTo> = {
       "10117 Berlin",
     ],
   },
+  // EU cross-border B2B: invoice net, reverse charge note, both VAT IDs
+  // on the invoice.
+  spa: {
+    name: "Sustainable Public Affairs",
+    lines: [
+      "Lara Sibbing",
+      "TAX/VAT: BE0642.953.216",
+      "c/o Norrsken House Brussels",
+      "Rue du Commerce 72",
+      "Brussels, Belgium",
+    ],
+  },
 };
