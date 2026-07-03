@@ -25,7 +25,11 @@ import {
   paymentProfiles,
   billToPresets,
 } from "../src/content/invoices/config";
-import { nextInvoiceNumber } from "../src/content/invoices/ledger";
+import {
+  nextInvoiceNumber,
+  outstandingInvoices,
+  outstandingByCurrency,
+} from "../src/content/invoices/ledger";
 import {
   justice,
   periodTotal,
@@ -57,6 +61,7 @@ type Args = {
   due?: string;
   out?: string;
   nextNumber?: boolean;
+  status?: boolean;
 };
 
 function parseArgs(argv: string[]): Args {
@@ -70,10 +75,40 @@ function parseArgs(argv: string[]): Args {
     else if (a === "--due") args.due = next();
     else if (a === "-o" || a === "--out") args.out = next();
     else if (a === "--next-number") args.nextNumber = true;
+    else if (a === "--status") args.status = true;
     else if (a.startsWith("-")) fail(`Unknown flag: ${a}`);
     else args.specPath = a;
   }
   return args;
+}
+
+/** Payment radar: outstanding invoices, most-overdue first. */
+function printStatus(): void {
+  const today = todayIso();
+  const outstanding = outstandingInvoices(today);
+  if (outstanding.length === 0) {
+    console.log("✓ No outstanding invoices — all tracked invoices are paid.");
+    return;
+  }
+  console.log(`Outstanding invoices as of ${today}:\n`);
+  for (const e of outstanding) {
+    const money = `${e.total.toFixed(2)} ${e.currency}`;
+    const flag =
+      e.overdueDays > 0
+        ? `OVERDUE ${e.overdueDays}d`
+        : e.overdueDays === 0
+          ? "due today"
+          : `due in ${-e.overdueDays}d`;
+    const mark = e.overdueDays > 0 ? "⚠" : "·";
+    console.log(
+      `  ${mark} ${e.number}  ${money.padStart(13)}  due ${e.dueAt}  ${flag}  — ${e.client}`,
+    );
+  }
+  const totals = outstandingByCurrency(today);
+  const summary = Object.entries(totals)
+    .map(([cur, amt]) => `${amt.toFixed(2)} ${cur}`)
+    .join(" + ");
+  console.log(`\n  Total outstanding: ${summary}`);
 }
 
 function specFromJustice(args: Args): InvoiceSpec {
@@ -152,6 +187,11 @@ async function main() {
     return;
   }
 
+  if (args.status) {
+    printStatus();
+    return;
+  }
+
   let spec: InvoiceSpec;
   if (args.justice) spec = specFromJustice(args);
   else if (args.specPath) spec = specFromFile(args);
@@ -222,11 +262,26 @@ async function main() {
     );
   }
 
+  // Paste-ready ledger entry — includes dueAt so the invoice lands on the
+  // payment radar (`--status`). Prepend it to invoiceLedger in ledger.ts.
+  const clientLabel = spec.billTo.name.replace(/"/g, '\\"');
   console.log(
-    `  Remember: append to src/content/invoices/ledger.ts` +
+    `\n  Remember: prepend to invoiceLedger in src/content/invoices/ledger.ts:` +
       (args.justice
-        ? ` and set hoursLog invoice in src/content/clients/justice.ts`
+        ? ` (and set hoursLog invoice in src/content/clients/justice.ts)`
         : ``),
+  );
+  console.log(
+    [
+      `  {`,
+      `    number: "${spec.number}",`,
+      `    client: "${clientLabel}",`,
+      `    issuedAt: "${spec.issuedAt}",`,
+      `    dueAt: "${spec.dueAt}",`,
+      `    total: ${Number(grandTotal(spec).toFixed(2))},`,
+      `    currency: "${spec.currency}",`,
+      `  },`,
+    ].join("\n"),
   );
 }
 

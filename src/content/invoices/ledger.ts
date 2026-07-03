@@ -16,6 +16,13 @@ export type LedgerEntry = {
   client: string;
   /** ISO issue date. */
   issuedAt: string;
+  /** ISO date payment is due. Set it so the invoice shows on the payment
+   * radar (`npm run invoice -- --status`); an entry with no `dueAt` is
+   * treated as untracked/legacy and stays off the radar. */
+  dueAt?: string;
+  /** ISO date payment landed. Set this when paid — it clears the invoice
+   * from the outstanding/overdue radar. */
+  paidAt?: string;
   /** Grand total (incl. tax) in `currency`. */
   total: number;
   currency: "EUR" | "USD";
@@ -27,6 +34,7 @@ export const invoiceLedger: LedgerEntry[] = [
     number: "INV-26015",
     client: "Sustainable Public Affairs (WinWin 2026)",
     issuedAt: "2026-07-02",
+    dueAt: "2026-07-07",
     total: 1560,
     currency: "EUR",
     note: "30% deposit, credited to the Phase 1–2 invoice (reverse charge)",
@@ -35,6 +43,7 @@ export const invoiceLedger: LedgerEntry[] = [
     number: "INV-26014",
     client: "Studio Huit",
     issuedAt: "2026-07-02",
+    dueAt: "2026-07-16",
     total: 3510.5,
     currency: "EUR",
     note: "Safe Workspace launch video, motion design (€2,950 + 19% MwSt)",
@@ -116,4 +125,44 @@ export function nextInvoiceNumber(): string {
     return m ? Math.max(acc, Number(m[1])) : acc;
   }, 0);
   return `INV-${max + 1}`;
+}
+
+const DAY_MS = 86_400_000;
+
+export type OutstandingInvoice = LedgerEntry & {
+  dueAt: string;
+  /** Whole days overdue as of the reference date; ≤ 0 means not yet due. */
+  overdueDays: number;
+};
+
+/**
+ * Unpaid invoices that carry a due date, most-overdue first. `asOf` is an
+ * ISO date (defaults handled by the caller, since Date isn't available in
+ * every context). Entries with no `dueAt` are legacy/untracked and omitted.
+ */
+export function outstandingInvoices(asOf: string): OutstandingInvoice[] {
+  const asOfMs = Date.parse(`${asOf}T00:00:00Z`);
+  return invoiceLedger
+    .filter((e): e is OutstandingInvoice => Boolean(e.dueAt) && !e.paidAt)
+    .map((e) => ({
+      ...e,
+      overdueDays: Math.floor((asOfMs - Date.parse(`${e.dueAt}T00:00:00Z`)) / DAY_MS),
+    }))
+    .sort((a, b) => b.overdueDays - a.overdueDays);
+}
+
+/** Outstanding invoices already past their due date. */
+export function overdueInvoices(asOf: string): OutstandingInvoice[] {
+  return outstandingInvoices(asOf).filter((e) => e.overdueDays > 0);
+}
+
+/** Sum outstanding totals per currency. */
+export function outstandingByCurrency(
+  asOf: string,
+): Record<string, number> {
+  const totals: Record<string, number> = {};
+  for (const e of outstandingInvoices(asOf)) {
+    totals[e.currency] = (totals[e.currency] ?? 0) + e.total;
+  }
+  return totals;
 }

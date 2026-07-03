@@ -34,7 +34,23 @@ npm run invoice -- path/to/spec.json [-o out.pdf]
 
 # What number comes next in the sequence:
 npm run invoice -- --next-number
+
+# Payment radar: outstanding + overdue invoices, most-overdue first:
+npm run invoice -- --status
 ```
+
+## Payment tracking
+
+Each ledger entry carries `dueAt` (payment due) and, once paid, `paidAt`.
+`--status` lists every entry with a `dueAt` and no `paidAt`, flags the
+overdue ones, and totals what's outstanding per currency. Entries with no
+`dueAt` are treated as legacy/untracked and stay off the radar — every
+invoice issued through the CLI now includes `dueAt`, so new ones track
+automatically.
+
+**When a payment lands:** add `paidAt: "YYYY-MM-DD"` to that ledger entry
+(and, for Justice, set `paidAt` in the `hoursLog` period too). It drops off
+the radar.
 
 PDFs land in `invoices/` (gitignored). Invoice number defaults to the
 next in the ledger sequence; due date defaults to issue date + 7 days.
