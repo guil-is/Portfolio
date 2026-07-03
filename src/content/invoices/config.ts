@@ -15,7 +15,7 @@ import type { BillTo, PaymentProfile } from "../../lib/invoice";
 
 export const issuer = {
   name: "Guilherme Maueler",
-  email: "guil@maueler.com",
+  email: "hello@guil.is",
   addressLines: ["Müggelstraße 15", "10247 Berlin", "Germany"],
   phone: "+49 176 76241374",
   vatId: "USt-IdNr DE308488034",

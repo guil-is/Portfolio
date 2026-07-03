@@ -110,17 +110,11 @@ const styles = StyleSheet.create({
     lineHeight: 1.15,
     marginBottom: 8,
   },
-  boldNote: {
-    fontSize: 8.5,
-    fontWeight: 700,
-    marginBottom: 4,
-    maxWidth: 420,
-  },
-  plainNote: {
-    fontSize: 8.5,
-    color: "#3d3d3d",
-    marginTop: 2,
-    maxWidth: 420,
+  footNote: {
+    fontSize: 8,
+    lineHeight: 1.3,
+    color: MUTED,
+    marginBottom: 3,
   },
   tableHead: {
     flexDirection: "row",
@@ -247,7 +241,7 @@ export function InvoicePdf({
   const showTax = spec.taxMode === "de-19";
   const rowPad = { roomy: 9, compact: 4, dense: 3 }[density];
   const rowFont = { roomy: 9, compact: 8.5, dense: 8 }[density];
-  const gap = { roomy: 26, compact: 14, dense: 10 }[density];
+  const gap = { roomy: 26, compact: 14, dense: 8 }[density];
   const headerGap = { roomy: 26, compact: 18, dense: 12 }[density];
   const wayPad = { roomy: 4, compact: 3, dense: 2 }[density];
 
@@ -316,8 +310,6 @@ export function InvoicePdf({
           {formatDate(spec.dueAt)}
         </Text>
 
-        {spec.note ? <Text style={styles.plainNote}>{spec.note}</Text> : null}
-
         <View style={{ marginTop: gap }}>
           <View style={styles.tableHead}>
             <Text style={[styles.th, styles.colDesc]}>Product or service</Text>
@@ -359,6 +351,7 @@ export function InvoicePdf({
           <View style={styles.totalsRow}>
             <Text style={styles.totalsLabel}>
               {spec.taxMode === "de-19" ? "Total tax (19% MwSt.)" : "Total tax"}
+              {vatNote ? "*" : ""}
             </Text>
             <Text>{formatMoney(taxAmount(spec), cur)}</Text>
           </View>
@@ -370,12 +363,8 @@ export function InvoicePdf({
           </View>
         </View>
 
-        {vatNote ? (
-          <Text style={[styles.boldNote, { marginTop: gap }]}>{vatNote}</Text>
-        ) : null}
-
         {profiles.length > 0 ? (
-          <View wrap={false} style={{ marginTop: vatNote ? gap / 2 : gap }}>
+          <View wrap={false} style={{ marginTop: gap }}>
             <Text style={styles.waysHeading}>Ways to pay</Text>
             <View style={styles.waysRow}>
               {profiles.map((p, i) => (
@@ -407,6 +396,22 @@ export function InvoicePdf({
               ))}
             </View>
           </View>
+        ) : null}
+
+        {spec.note || vatNote ? (
+          <>
+            {/* Spacer pushes the notes to the bottom of the page without
+                risking overlap the way absolute positioning would. */}
+            <View style={{ flexGrow: 1 }} />
+            <View style={{ marginTop: gap / 2 }}>
+              {spec.note ? (
+                <Text style={styles.footNote}>{spec.note}</Text>
+              ) : null}
+              {vatNote ? (
+                <Text style={styles.footNote}>* {vatNote}</Text>
+              ) : null}
+            </View>
+          </>
         ) : null}
 
         <Text style={styles.footer} fixed>
