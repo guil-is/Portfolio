@@ -23,9 +23,10 @@ html = f"""<!doctype html>
     font-weight: 700; font-style: normal; font-display: swap;
   }}
 
+  /* Monochrome palette — black on white, neutral greys only. */
   :root {{
-    --ink:#0a0a0a; --body:#333333; --muted:#7e7e7e; --faint:#afafaf;
-    --rule:#d8d8d8; --accent:#299c68;
+    --ink:#0a0a0a; --body:#1a1a1a; --muted:#6b6b6b; --faint:#9a9a9a;
+    --rule:#d8d8d8; --line:#0a0a0a;
   }}
 
   * {{ box-sizing: border-box; }}
@@ -35,17 +36,17 @@ html = f"""<!doctype html>
     color: var(--body); -webkit-font-smoothing: antialiased;
   }}
 
-  /* A4 sheet */
+  /* A4 sheet — fixed page height + flex column so the footer pins to the bottom. */
   .sheet {{
-    width: 210mm; min-height: 297mm; margin: 24px auto; background:#fff;
-    padding: 20mm 22mm 16mm; display:flex; flex-direction:column;
-    box-shadow: 0 4px 40px rgba(0,0,0,.14);
+    width: 210mm; height: 297mm; margin: 24px auto; background:#fff;
+    padding: 20mm 22mm 15mm; display:flex; flex-direction:column;
+    box-shadow: 0 4px 40px rgba(0,0,0,.14); overflow:hidden;
   }}
 
-  header {{ display:flex; align-items:flex-end; justify-content:space-between; }}
-  header img.logo {{ height: 30px; width:auto; display:block; }}
+  header {{ display:flex; align-items:flex-end; justify-content:space-between; flex:0 0 auto; }}
+  header img.logo {{ height: 40px; width:auto; display:block; }}
   header .date {{ font-size: 10.5px; color: var(--muted); letter-spacing:.02em; }}
-  .rule {{ height:1px; background: var(--accent); border:0; margin: 12px 0 0; }}
+  .rule {{ height:1px; background: var(--line); border:0; margin: 12px 0 0; }}
 
   main {{ flex: 1 1 auto; padding-top: 30px; }}
 
@@ -62,12 +63,12 @@ html = f"""<!doctype html>
 
   .sign {{ margin-top: 26px; }}
   .sign .kr {{ margin-bottom: 4px; }}
-  .sign img.signature {{ height: 66px; width:auto; display:block; margin: 2px 0 -6px -4px; }}
+  .sign img.signature {{ height: 84px; width:auto; display:block; margin: 2px 0 -6px -4px; }}
   .sign .name {{ font-size: 13px; color: var(--ink); font-weight: 600; margin: 0; }}
   .sign .role {{ font-size: 11.5px; color: var(--muted); margin: 2px 0 0; }}
 
   footer {{
-    margin-top: 28px; padding-top: 10px; border-top: 1px solid var(--rule);
+    flex:0 0 auto; margin-top: 24px; padding-top: 10px; border-top: 1px solid var(--rule);
     display:flex; justify-content:space-between; align-items:center; gap:16px;
     font-size: 10px; color: var(--muted); letter-spacing:.01em;
   }}
@@ -77,7 +78,7 @@ html = f"""<!doctype html>
   @page {{ size: A4; margin: 0; }}
   @media print {{
     html, body {{ background:#fff; }}
-    .sheet {{ margin:0; box-shadow:none; width:auto; min-height:auto; }}
+    .sheet {{ margin:0; box-shadow:none; }}
   }}
 </style>
 </head>
@@ -124,7 +125,7 @@ html = f"""<!doctype html>
         <p class="kr">Kind regards,</p>
         <img class="signature" src="data:image/png;base64,{sig}" alt="Guilherme Maueler">
         <p class="name">Guilherme Maueler</p>
-        <p class="role">Creative Director &middot; Sole freelancer</p>
+        <p class="role">Creative Director</p>
       </div>
     </main>
 
