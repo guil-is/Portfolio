@@ -60,6 +60,7 @@ export const invoiceLedger: LedgerEntry[] = [
     number: "INV-26012",
     client: "red onion GmbH (TEDxBerlin)",
     issuedAt: "2026-06-23",
+    dueAt: "2026-07-07",
     total: 1190,
     currency: "EUR",
     note: "TEDxBerlin aftermovie (€1,000 + 19% MwSt)",
