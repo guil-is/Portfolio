@@ -14,6 +14,7 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
+import { DefinitionList } from "@/components/DefinitionList";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import {
   spa,
@@ -626,21 +627,7 @@ function AgreementSection({ section }: { section: SowSection }) {
               </ul>
             );
           }
-          return (
-            <dl
-              key={i}
-              className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 border-y border-rule-soft py-4"
-            >
-              {b.rows.map(([k, v]) => (
-                <div key={k} className="contents">
-                  <dt className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-                    {k}
-                  </dt>
-                  <dd className="text-[1rem] leading-[1.6rem] text-ink">{v}</dd>
-                </div>
-              ))}
-            </dl>
-          );
+          return <DefinitionList key={i} rows={b.rows} />;
         })}
       </div>
     </section>

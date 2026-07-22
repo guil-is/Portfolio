@@ -2,6 +2,7 @@
 
 import { Printer } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
+import { DefinitionList } from "@/components/DefinitionList";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import { huit } from "@/content/clients/huit";
 import type { SowSection } from "@/content/clients/types";
@@ -75,16 +76,7 @@ function SignaturesBlock() {
       <h2 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.875rem]">
         Signatures
       </h2>
-      <dl className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 border-y border-rule-soft py-4">
-        {signatories.map(([k, v]) => (
-          <div key={k} className="contents">
-            <dt className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-              {k}
-            </dt>
-            <dd className="text-[1rem] leading-[1.6rem] text-ink">{v}</dd>
-          </div>
-        ))}
-      </dl>
+      <DefinitionList rows={signatories} />
       <p className="text-[0.9rem] leading-[1.6rem] text-muted">
         Studio Huit signs below.
       </p>
@@ -121,21 +113,7 @@ function AgreementSection({ section }: { section: SowSection }) {
               </ul>
             );
           }
-          return (
-            <dl
-              key={i}
-              className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 border-y border-rule-soft py-4"
-            >
-              {b.rows.map(([k, v]) => (
-                <div key={k} className="contents">
-                  <dt className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-                    {k}
-                  </dt>
-                  <dd className="text-[1rem] leading-[1.6rem] text-ink">{v}</dd>
-                </div>
-              ))}
-            </dl>
-          );
+          return <DefinitionList key={i} rows={b.rows} />;
         })}
       </div>
     </section>

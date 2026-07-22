@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Building2, Check, Pencil } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
 import { CtaButton } from "@/components/CtaButton";
+import { DefinitionList } from "@/components/DefinitionList";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import {
   tedxberlin,
@@ -249,18 +250,11 @@ function SignaturesBlock({ entityDisplay }: { entityDisplay: string }) {
       <h2 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.875rem]">
         Signatures
       </h2>
-      <dl className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 border-y border-rule-soft py-4">
-        {signatories.map(([k, v]) => (
-          <div key={k} className="contents">
-            <dt className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-              {k}
-            </dt>
-            <dd className="text-[1rem] leading-[1.6rem] text-ink">
-              {cell(v, entityDisplay)}
-            </dd>
-          </div>
-        ))}
-      </dl>
+      <DefinitionList
+        rows={signatories.map(
+          ([k, v]) => [k, cell(v, entityDisplay)] as [string, string],
+        )}
+      />
     </section>
   );
 }
@@ -301,21 +295,12 @@ function AgreementSection({
             );
           }
           return (
-            <dl
+            <DefinitionList
               key={i}
-              className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 border-y border-rule-soft py-4"
-            >
-              {b.rows.map(([k, v]) => (
-                <div key={k} className="contents">
-                  <dt className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-                    {k}
-                  </dt>
-                  <dd className="text-[1rem] leading-[1.6rem] text-ink">
-                    {cell(v, entityDisplay)}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+              rows={b.rows.map(
+                ([k, v]) => [k, cell(v, entityDisplay)] as [string, string],
+              )}
+            />
           );
         })}
       </div>
