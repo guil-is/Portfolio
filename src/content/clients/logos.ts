@@ -2,8 +2,8 @@
  * Data for the private client page at /for/logos.
  *
  * One-off video engagement: DWeb Camp 2026 video content for Logos
- * (contact: Jonny, via Discord). Three videos — two ~30s shorts and one
- * 1–1.5 min aftermovie — cut in a raw, DIY, action-oriented style from
+ * (contact: Jonny, via Discord). Three videos (two ~30s shorts and one
+ * 1–1.5 min aftermovie), cut in a raw, DIY, action-oriented style from
  * footage the Contractor captured on site (3 shoot days, 8–12 July 2026).
  * Rendered as a standalone Service Agreement using the same signing
  * backend as the other /for/ pages: this `sow` is a SignableDocument and
@@ -16,7 +16,7 @@
  * deterministic.
  *
  * Contractor USt-IdNr DE308488034 (a VAT ID, not a Steuernummer). Fee is
- * net; statutory VAT is added where applicable — Logos's registered seat
+ * net; statutory VAT is added where applicable, and Logos's registered seat
  * and VAT status determine the treatment (e.g. reverse charge for EU B2B
  * outside Germany), so the placeholder legal entity above must be filled
  * in before an invoice can state the correct VAT.
@@ -28,7 +28,7 @@ import type { SignableDocument } from "./types";
  * entity will go. The signer's entered entity is captured separately on
  * the signature record (`clientEntity`) and surfaced on the page/PDF. */
 export const CLIENT_ENTITY_PLACEHOLDER =
-  "[Logos legal entity — to be completed by the Client]";
+  "[Logos legal entity: to be completed by the Client]";
 
 export type LogosClient = {
   clientName: string;
@@ -41,7 +41,7 @@ export type LogosClient = {
 export const logos: LogosClient = {
   clientName: "Logos",
   password: "dwebcamp",
-  subtitle: "Video content — DWeb Camp 2026",
+  subtitle: "Video content: DWeb Camp 2026",
 
   sow: {
     title: "Service Agreement",
@@ -78,7 +78,7 @@ export const logos: LogosClient = {
           },
           {
             type: "p",
-            text: "The edit is intentionally raw, DIY, and action-oriented — no talking heads and no polished corporate treatment. The scope covers footage review and selection, editing, basic color and sound treatment in keeping with the raw style, and music selection.",
+            text: "The edit is intentionally raw, DIY, and action-oriented, with no talking heads and no polished corporate treatment. The scope covers footage review and selection, editing, basic color and sound treatment in keeping with the raw style, and music selection.",
           },
           {
             type: "p",
