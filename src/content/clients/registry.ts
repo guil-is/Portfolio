@@ -45,6 +45,12 @@ function entry(
 
 export const clientRegistry: ClientEntry[] = [
   entry(
+    "logos",
+    "Logos",
+    "DWeb Camp 2026 video content: two shorts + aftermovie. Editing in progress.",
+    "current",
+  ),
+  entry(
     "spa",
     "WinWin 2026",
     "Identity, invitation, and website for the Brussels summit.",

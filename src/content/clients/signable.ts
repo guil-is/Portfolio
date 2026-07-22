@@ -19,6 +19,7 @@ import { myosin } from "./myosin";
 import { tedxberlin } from "./tedxberlin";
 import { huit } from "./huit";
 import { spa } from "./spa";
+import { logos } from "./logos";
 import type { SignableClient } from "./types";
 
 export const signableClients = {
@@ -27,6 +28,7 @@ export const signableClients = {
   tedxberlin,
   huit,
   spa,
+  logos,
 } as const;
 
 export type SignableClientSlug = keyof typeof signableClients;
