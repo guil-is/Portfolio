@@ -9,26 +9,22 @@
  * backend as the other /for/ pages: this `sow` is a SignableDocument and
  * the client is registered as a SignableClient.
  *
- * The Client's legal entity name is not hardcoded: Logos enters it in a
- * popup on the page at signing, and it is recorded with the signature
- * (shown on the certificate, PDF, and confirmation email). The static
- * document keeps a stable placeholder so the document hash is
- * deterministic.
+ * Client legal entity supplied by Logos: Logos Collective Association,
+ * Baarerstrasse 10, 6300 Zug, Switzerland (UID CHE-134.145.789). Baked
+ * into the document; the signer still signs through the standard flow.
  *
- * Contractor USt-IdNr DE308488034 (a VAT ID, not a Steuernummer). Fee is
- * net; statutory VAT is added where applicable, and Logos's registered seat
- * and VAT status determine the treatment (e.g. reverse charge for EU B2B
- * outside Germany), so the placeholder legal entity above must be filled
- * in before an invoice can state the correct VAT.
+ * VAT: the Client is established in Switzerland (outside the EU). Under
+ * §3a UStG the place of supply is the Client's seat, so the Contractor's
+ * services are not subject to German VAT and none is charged (reverse
+ * charge in the recipient country). Contractor USt-IdNr DE308488034 (a
+ * VAT ID, not a Steuernummer).
  */
 
 import type { SignableDocument } from "./types";
 
-/** Stable text used in the static document wherever the Client's legal
- * entity will go. The signer's entered entity is captured separately on
- * the signature record (`clientEntity`) and surfaced on the page/PDF. */
-export const CLIENT_ENTITY_PLACEHOLDER =
-  "[Logos legal entity: to be completed by the Client]";
+/** Client legal entity, surfaced in the Parties/Signatures blocks and
+ * recorded on the signature (`clientEntity`) via the page. */
+export const CLIENT_ENTITY = "Logos Collective Association";
 
 export type LogosClient = {
   clientName: string;
@@ -45,7 +41,7 @@ export const logos: LogosClient = {
 
   sow: {
     title: "Service Agreement",
-    version: "v1-2026-07-22",
+    version: "v2-2026-07-22",
     preamble:
       "This agreement sets out the terms for producing video content from DWeb Camp 2026 for Logos. The terms are below.",
     effectiveDate: "On signing",
@@ -63,7 +59,10 @@ export const logos: LogosClient = {
                 "Contractor",
                 "Guilherme Maueler, Berlin, Germany. USt-IdNr: DE308488034",
               ],
-              ["Client", CLIENT_ENTITY_PLACEHOLDER],
+              [
+                "Client",
+                "Logos Collective Association, Baarerstrasse 10, 6300 Zug, Switzerland. UID: CHE-134.145.789",
+              ],
               ["Client contact", "Jonny (Logos)"],
             ],
           },
@@ -112,12 +111,12 @@ export const logos: LogosClient = {
             rows: [
               ["Shoot (3 days × EUR 480)", "EUR 1,440"],
               ["Edit & post (3 videos × EUR 500)", "EUR 1,500"],
-              ["Net total", "EUR 2,940"],
+              ["Total", "EUR 2,940"],
             ],
           },
           {
             type: "p",
-            text: "The total fee is EUR 2,940 net, plus statutory VAT where applicable. At the German standard rate of 19% that is EUR 558.60 VAT, for a gross total of EUR 3,498.60; the applicable VAT treatment depends on the Client's registered seat and VAT status (for example, the reverse charge may apply to EU business clients outside Germany).",
+            text: "The total fee is EUR 2,940. The Client is established in Switzerland (outside the EU), so under §3a UStG the place of supply is the Client's seat: the Contractor's services are not subject to German VAT and no German VAT is charged (reverse charge in the recipient country). Any Swiss tax on the acquisition of services, if applicable, is the Client's responsibility.",
           },
           {
             type: "p",
@@ -181,7 +180,7 @@ export const logos: LogosClient = {
     ],
     signatories: [
       ["Contractor", "Guilherme Maueler"],
-      ["Client", CLIENT_ENTITY_PLACEHOLDER],
+      ["Client", CLIENT_ENTITY],
       ["Place", "Berlin"],
       ["Date", "Auto-filled on signing"],
     ],
