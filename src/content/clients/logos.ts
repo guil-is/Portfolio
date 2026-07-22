@@ -41,7 +41,7 @@ export const logos: LogosClient = {
 
   sow: {
     title: "Service Agreement",
-    version: "v2-2026-07-22",
+    version: "v3-2026-07-22",
     preamble:
       "This agreement sets out the terms for producing video content from DWeb Camp 2026 for Logos. The terms are below.",
     effectiveDate: "On signing",
@@ -128,8 +128,21 @@ export const logos: LogosClient = {
         heading: "Timeline",
         blocks: [
           {
-            type: "p",
-            text: "Footage has been captured and editing is in progress. First preview cuts are delivered by Monday, 27 July 2026. Final videos follow shortly after, subject to the Client returning consolidated feedback promptly (within five (5) working days of receiving the preview cuts).",
+            type: "kv",
+            rows: [
+              ["8 to 12 July 2026", "Shoot completed on site (3 shoot days)."],
+              ["In progress", "Editing and post-production."],
+              [
+                "Monday, 27 July 2026",
+                "First preview cuts delivered (one per video).",
+              ],
+              [
+                "Within 5 working days",
+                "Client returns consolidated feedback; one revision round per video.",
+              ],
+              ["Shortly after feedback", "Final videos delivered."],
+              ["On delivery", "Payment due in full (EUR 2,940)."],
+            ],
           },
         ],
       },

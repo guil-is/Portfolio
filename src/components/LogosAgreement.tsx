@@ -85,6 +85,10 @@ function SignaturesBlock() {
 }
 
 function AgreementSection({ section }: { section: SowSection }) {
+  // The Timeline section renders its date/milestone rows as a vertical
+  // timeline on the page; the same rows still print as a plain kv list in
+  // the signed PDF, so the record stays complete and deterministic.
+  const isTimeline = section.heading === "Timeline";
   return (
     <section className="flex flex-col gap-5">
       <h2 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.875rem]">
@@ -113,6 +117,9 @@ function AgreementSection({ section }: { section: SowSection }) {
               </ul>
             );
           }
+          if (isTimeline) {
+            return <Timeline key={i} rows={b.rows} />;
+          }
           return (
             <dl
               key={i}
@@ -131,5 +138,33 @@ function AgreementSection({ section }: { section: SowSection }) {
         })}
       </div>
     </section>
+  );
+}
+
+/**
+ * Vertical timeline: each milestone is a dot on a continuous rail, with
+ * the date as an eyebrow above the milestone text. The rail is a single
+ * absolutely-positioned line running between the first and last dot.
+ */
+function Timeline({ rows }: { rows: Array<[string, string]> }) {
+  return (
+    <ol className="relative mt-1 flex flex-col gap-7 pl-7">
+      <span
+        aria-hidden
+        className="absolute bottom-[7px] left-[5px] top-[7px] w-px bg-rule"
+      />
+      {rows.map(([when, what], i) => (
+        <li key={i} className="relative flex flex-col gap-1">
+          <span
+            aria-hidden
+            className="absolute -left-7 top-[2px] h-[11px] w-[11px] rounded-full border-2 border-ink bg-bg"
+          />
+          <span className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+            {when}
+          </span>
+          <span className="text-[1rem] leading-[1.6rem] text-ink">{what}</span>
+        </li>
+      ))}
+    </ol>
   );
 }
