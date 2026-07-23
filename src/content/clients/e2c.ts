@@ -141,7 +141,7 @@ export const e2c: E2cClient = {
               ],
               [
                 "Client",
-                "Centre National de la Recherche Scientifique (CNRS), Paris. Exact billing entity and address to be confirmed. VAT: FR40 180 089 013.",
+                "Centre National de la Recherche Scientifique (CNRS), Paris. Exact billing entity, address, and VAT number to be confirmed.",
               ],
               ["Project contacts", "Tara Merk, Primavera De Filippi"],
               ["Dated", "Auto-filled on signing"],
