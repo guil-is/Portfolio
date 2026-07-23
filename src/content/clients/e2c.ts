@@ -182,20 +182,6 @@ export const e2c: E2cClient = {
         ],
       },
       {
-        heading: "Process",
-        blocks: [
-          {
-            type: "ul",
-            items: [
-              "1. Direction phase: first cover drafts, one spot illustration, one infographic, and intro layout presented for approval.",
-              "2. Direction lock: client approves before full production begins.",
-              "3. Production: locked system applied across the document.",
-              "4. Delivery: both PDF versions.",
-            ],
-          },
-        ],
-      },
-      {
         heading: "Timeline",
         blocks: [
           {
@@ -208,7 +194,7 @@ export const e2c: E2cClient = {
               ],
               [
                 "3 to 9 August",
-                "Direction presentation. One round of consolidated feedback, then the direction locks.",
+                "Direction presentation: cover drafts, spot illustration, infographic, and intro layout. One round of consolidated feedback, then the client locks the direction before full production begins.",
               ],
               [
                 "10 to 21 August",
