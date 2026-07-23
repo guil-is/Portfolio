@@ -93,13 +93,9 @@ export const spa: SpaClient = {
     targetDelivery: "Late August",
   },
 
-  pendingActions: [
-    {
-      text: "Settle the deposit invoice, 1,560 EUR.",
-      due: "By July 7",
-      link: { label: "deposit invoice", href: "/api/invoice/INV-26015" },
-    },
-  ],
+  // Nothing pending from the client right now. Add items here as they
+  // come up (e.g. the Phase 1-2 invoice once it's issued).
+  pendingActions: [],
 
   milestones: [
     {
@@ -107,21 +103,21 @@ export const spa: SpaClient = {
       title: "Discovery + explorations",
       description:
         "Discovery workshop and questionnaire, then a few distinct brand directions to explore together.",
-      status: "in_progress",
+      status: "approved",
     },
     {
       label: "Phase 2 · Week 2",
       title: "Core identity + invite",
       description:
         "Lock the direction, build the core identity, and ship the save-the-date before the summer break.",
-      status: "upcoming",
+      status: "approved",
     },
     {
       label: "Phase 3 · Weeks 3-4",
       title: "Full website + assets",
       description:
         "The event website, designed and deployed, plus additional brand assets.",
-      status: "upcoming",
+      status: "in_progress",
     },
     {
       label: "Phase 4 · Weeks 5-6",
@@ -137,7 +133,7 @@ export const spa: SpaClient = {
       label: "Deposit",
       description: "30% on signing, credited to the first invoice",
       amountEur: 1560,
-      status: "invoiced",
+      status: "paid",
       invoiceNumber: "INV-26015",
     },
     {
