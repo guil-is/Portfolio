@@ -1,22 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Check,
-  CircleDashed,
-  FileSignature,
-  ListChecks,
-  Loader,
-} from "lucide-react";
+import { FileSignature, ListChecks } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
 import { DefinitionList } from "@/components/DefinitionList";
+import { Timeline } from "@/components/Timeline";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import {
   e2c,
   CLIENT_ENTITY,
   currentPhase,
   phaseStatus,
-  type E2cPhase,
   type PhaseStatus,
 } from "@/content/clients/e2c";
 import type { SowSection } from "@/content/clients/types";
@@ -132,7 +126,8 @@ function Tabs({ tab, setTab }: { tab: TabKey; setTab: (t: TabKey) => void }) {
 }
 
 // ---------------------------------------------------------------------
-// Progress view — four phases driven by the single `currentPhase` value.
+// Progress view — four phases on the shared Timeline, driven by the
+// single `currentPhase` value in the data file.
 // ---------------------------------------------------------------------
 function ProgressView() {
   const { phases } = e2c;
@@ -163,16 +158,37 @@ function ProgressView() {
         <h2 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.875rem]">
           Phases
         </h2>
-        <ol className="flex flex-col">
-          {phases.map((phase, i) => (
-            <PhaseRow
-              key={phase.label}
-              phase={phase}
-              status={phaseStatus(e2c, i)}
-              isLast={i === phases.length - 1}
-            />
-          ))}
-        </ol>
+        <Timeline
+          entries={phases.map((phase, i) => {
+            const status = phaseStatus(e2c, i);
+            const meta = PHASE_META[status];
+            return {
+              eyebrow: `${phase.label} · ${phase.window}`,
+              badge: <StatusPill label={meta.label} tone={meta.tone} />,
+              state: meta.state,
+              content: (
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <h3 className="font-display text-[1.15rem] font-bold leading-tight text-ink md:text-[1.3rem]">
+                    {phase.title}
+                  </h3>
+                  <p className="text-[0.95rem] leading-[1.6rem] text-muted">
+                    {phase.description}
+                  </p>
+                  <ul className="mt-1 flex flex-col gap-1.5 pl-5">
+                    {phase.items.map((item) => (
+                      <li
+                        key={item}
+                        className="list-disc text-[0.95rem] leading-[1.6rem] text-ink marker:text-muted"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ),
+            };
+          })}
+        />
       </section>
     </div>
   );
@@ -203,82 +219,14 @@ function Stat({
   );
 }
 
-const PHASE_META: Record<PhaseStatus, { label: string; tone: PillTone }> = {
-  upcoming: { label: "Upcoming", tone: "muted" },
-  in_progress: { label: "In progress", tone: "info" },
-  done: { label: "Done", tone: "positive" },
+const PHASE_META: Record<
+  PhaseStatus,
+  { label: string; tone: PillTone; state: "done" | "active" | "upcoming" }
+> = {
+  upcoming: { label: "Upcoming", tone: "muted", state: "upcoming" },
+  in_progress: { label: "In progress", tone: "info", state: "active" },
+  done: { label: "Done", tone: "positive", state: "done" },
 };
-
-function PhaseRow({
-  phase,
-  status,
-  isLast,
-}: {
-  phase: E2cPhase;
-  status: PhaseStatus;
-  isLast: boolean;
-}) {
-  const done = status === "done";
-  const active = status === "in_progress";
-  const meta = PHASE_META[status];
-
-  return (
-    <li className="relative flex gap-5 pb-10 last:pb-0">
-      {!isLast ? (
-        <span
-          aria-hidden
-          className="absolute left-[13px] top-8 bottom-0 w-px bg-rule"
-        />
-      ) : null}
-      <span
-        aria-hidden
-        className={[
-          "relative z-10 mt-0.5 flex h-[27px] w-[27px] shrink-0 items-center justify-center rounded-full border",
-          done
-            ? "border-ink bg-ink text-bg"
-            : active
-              ? "border-[#3b82f6]/50 bg-bg text-[#3b82f6]"
-              : "border-rule bg-bg text-muted",
-        ].join(" ")}
-      >
-        {done ? (
-          <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
-        ) : active ? (
-          <Loader
-            className="h-3.5 w-3.5 motion-safe:animate-[spin_3s_linear_infinite]"
-            strokeWidth={2}
-          />
-        ) : (
-          <CircleDashed className="h-3.5 w-3.5" strokeWidth={1.75} />
-        )}
-      </span>
-      <div className="flex min-w-0 flex-col gap-1.5 pt-0.5">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-          <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
-            {phase.label} · {phase.window}
-          </p>
-          <StatusPill label={meta.label} tone={meta.tone} />
-        </div>
-        <h3 className="font-display text-[1.15rem] font-bold leading-tight text-ink md:text-[1.3rem]">
-          {phase.title}
-        </h3>
-        <p className="text-[0.95rem] leading-[1.6rem] text-muted">
-          {phase.description}
-        </p>
-        <ul className="mt-1 flex flex-col gap-1.5 pl-5">
-          {phase.items.map((item) => (
-            <li
-              key={item}
-              className="list-disc text-[0.95rem] leading-[1.6rem] text-ink marker:text-muted"
-            >
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </li>
-  );
-}
 
 // Status color language: grey = not yet, blue = in motion, green = done.
 type PillTone = "muted" | "info" | "positive";
@@ -342,6 +290,10 @@ function AgreementView({
 }
 
 function AgreementSection({ section }: { section: SowSection }) {
+  // The Timeline section renders its date/milestone rows as a vertical
+  // timeline on the page; the same rows still print as a plain kv list in
+  // the signed PDF, so the record stays complete and deterministic.
+  const isTimeline = section.heading === "Timeline";
   return (
     <section className="flex flex-col gap-5">
       <h2 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.875rem]">
@@ -368,6 +320,21 @@ function AgreementSection({ section }: { section: SowSection }) {
                   </li>
                 ))}
               </ul>
+            );
+          }
+          if (isTimeline) {
+            return (
+              <Timeline
+                key={i}
+                entries={b.rows.map(([when, what]) => ({
+                  eyebrow: when,
+                  content: (
+                    <span className="text-[1rem] leading-[1.6rem] text-ink">
+                      {what}
+                    </span>
+                  ),
+                }))}
+              />
             );
           }
           return <DefinitionList key={i} rows={b.rows} />;

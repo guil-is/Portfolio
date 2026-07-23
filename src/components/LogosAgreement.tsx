@@ -2,6 +2,7 @@
 
 import { AgreementSignature } from "@/components/AgreementSignature";
 import { DefinitionList } from "@/components/DefinitionList";
+import { Timeline } from "@/components/Timeline";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import { logos, CLIENT_ENTITY } from "@/content/clients/logos";
 import type { SowSection } from "@/content/clients/types";
@@ -110,39 +111,23 @@ function AgreementSection({ section }: { section: SowSection }) {
             );
           }
           if (isTimeline) {
-            return <Timeline key={i} rows={b.rows} />;
+            return (
+              <Timeline
+                key={i}
+                entries={b.rows.map(([when, what]) => ({
+                  eyebrow: when,
+                  content: (
+                    <span className="text-[1rem] leading-[1.6rem] text-ink">
+                      {what}
+                    </span>
+                  ),
+                }))}
+              />
+            );
           }
           return <DefinitionList key={i} rows={b.rows} />;
         })}
       </div>
     </section>
-  );
-}
-
-/**
- * Vertical timeline: each milestone is a dot on a continuous rail, with
- * the date as an eyebrow above the milestone text. The rail is a single
- * absolutely-positioned line running between the first and last dot.
- */
-function Timeline({ rows }: { rows: Array<[string, string]> }) {
-  return (
-    <ol className="relative mt-1 flex flex-col gap-7 pl-7">
-      <span
-        aria-hidden
-        className="absolute bottom-[7px] left-[5px] top-[7px] w-px bg-rule"
-      />
-      {rows.map(([when, what], i) => (
-        <li key={i} className="relative flex flex-col gap-1">
-          <span
-            aria-hidden
-            className="absolute -left-7 top-[2px] h-[11px] w-[11px] rounded-full border-2 border-ink bg-bg"
-          />
-          <span className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
-            {when}
-          </span>
-          <span className="text-[1rem] leading-[1.6rem] text-ink">{what}</span>
-        </li>
-      ))}
-    </ol>
   );
 }
