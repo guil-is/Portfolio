@@ -45,6 +45,12 @@ function entry(
 
 export const clientRegistry: ClientEntry[] = [
   entry(
+    "e2c",
+    "E2C Cookbook",
+    "Report redesign for Tara Merk and Primavera De Filippi (CNRS). Paperwork phase.",
+    "current",
+  ),
+  entry(
     "logos",
     "Logos",
     "DWeb Camp 2026 video content: two shorts + aftermovie. Editing in progress.",
