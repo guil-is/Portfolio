@@ -1,5 +1,6 @@
 import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { VisitTracker } from "@/components/VisitTracker";
 import { E2cClientPage } from "@/components/E2cClientPage";
 import { e2c } from "@/content/clients/e2c";
 import { getLatestSignature } from "@/lib/signed-agreement";
@@ -28,6 +29,7 @@ export default async function E2cPage() {
         <ThemeToggle />
       </div>
       <PasswordGate password={e2c.password} storageKey="for-e2c-unlocked">
+        <VisitTracker slug="e2c" />
         <E2cClientPage initialSignature={sowSignature} />
       </PasswordGate>
     </>

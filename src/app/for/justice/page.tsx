@@ -1,5 +1,6 @@
 import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { VisitTracker } from "@/components/VisitTracker";
 import { JusticeClientPage } from "@/components/JusticeClientPage";
 import { justice } from "@/content/clients/justice";
 import { getLatestSignature } from "@/lib/signed-agreement";
@@ -32,6 +33,7 @@ export default async function JusticePage() {
         <ThemeToggle />
       </div>
       <PasswordGate password={justice.password} storageKey="for-justice-unlocked">
+        <VisitTracker slug="justice" />
         <JusticeClientPage
           initialSignature={sowSignature}
           amendmentSignatures={amendmentSignatures}

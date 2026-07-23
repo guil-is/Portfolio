@@ -119,14 +119,14 @@ export const clientRegistry: ClientEntry[] = [
   entry(
     "huit",
     "Studio Huit",
-    "Motion design on the Safe Workspace launch video. Delivered; INV-26014 outstanding.",
+    "Motion design on the Safe Workspace launch video. INV-26014 outstanding — follow up 25 July.",
     "delivered",
   ),
   entry(
     "tedxberlin",
     "TEDxBerlin",
-    "Aftermovie collaboration agreement. Delivered; INV-26012 outstanding.",
-    "delivered",
+    "Aftermovie collaboration agreement. Delivered and paid.",
+    "closed",
     {
       billingPreset: "tedxberlin",
       contacts: [{ name: "Stephan Balzer" }],

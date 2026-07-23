@@ -39,7 +39,10 @@ export const invoiceLedger: LedgerEntry[] = [
     client: "Sustainable Public Affairs (WinWin 2026)",
     clientSlug: "spa",
     issuedAt: "2026-07-02",
-    dueAt: "2026-07-07",
+    // Corrected from 2026-07-07: the sent PDF (see issued.ts) and the
+    // SOW's 14-day terms both say the 16th.
+    dueAt: "2026-07-16",
+    paidAt: "2026-07-15",
     total: 1560,
     currency: "EUR",
     note: "30% deposit, credited to the Phase 1–2 invoice (reverse charge)",
@@ -69,6 +72,7 @@ export const invoiceLedger: LedgerEntry[] = [
     clientSlug: "tedxberlin",
     issuedAt: "2026-06-23",
     dueAt: "2026-07-07",
+    paidAt: "2026-07-14",
     total: 1190,
     currency: "EUR",
     note: "TEDxBerlin aftermovie (€1,000 + 19% MwSt)",

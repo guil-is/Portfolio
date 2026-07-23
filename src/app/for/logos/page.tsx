@@ -1,5 +1,6 @@
 import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { VisitTracker } from "@/components/VisitTracker";
 import { LogosAgreement } from "@/components/LogosAgreement";
 import { logos } from "@/content/clients/logos";
 import { getLatestSignature } from "@/lib/signed-agreement";
@@ -28,6 +29,7 @@ export default async function LogosPage() {
         <ThemeToggle />
       </div>
       <PasswordGate password={logos.password} storageKey="for-logos-unlocked">
+        <VisitTracker slug="logos" />
         <LogosAgreement initialSignature={sowSignature} />
       </PasswordGate>
     </>

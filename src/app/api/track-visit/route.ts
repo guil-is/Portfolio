@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { getSanityWriteClient } from "@/lib/sanity-write";
 import { sanityClient } from "@/lib/sanity";
 import { getProposal } from "@/content/proposals";
+import { getClientEntry } from "@/content/clients/registry";
 
 export const runtime = "nodejs";
 
@@ -45,8 +46,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "Invalid slug" }, { status: 400 });
   }
 
+  // Proposals and bespoke client dashboards both track visits; resolve
+  // the display name from whichever registry knows the slug.
   const proposal = getProposal(slug);
-  const clientName = proposal?.clientName ?? undefined;
+  const clientName =
+    proposal?.clientName ?? getClientEntry(slug)?.name ?? undefined;
 
   const visitedAt = new Date().toISOString();
   const ipAddress = getIp(req);

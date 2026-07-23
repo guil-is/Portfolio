@@ -1,5 +1,6 @@
 import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { VisitTracker } from "@/components/VisitTracker";
 import { SpaClientPage } from "@/components/SpaClientPage";
 import { spa } from "@/content/clients/spa";
 import { getLatestSignature } from "@/lib/signed-agreement";
@@ -28,6 +29,7 @@ export default async function SpaPage() {
         <ThemeToggle />
       </div>
       <PasswordGate password={spa.password} storageKey="for-spa-unlocked">
+        <VisitTracker slug="spa" />
         <SpaClientPage initialSignature={sowSignature} />
       </PasswordGate>
     </>
