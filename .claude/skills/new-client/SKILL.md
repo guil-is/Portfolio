@@ -12,7 +12,11 @@ matches what the user brought you:
 1. **A new lead / brief** → § "Lead → intake file". Pick the slug with the
    user, create `src/content/clients/intake/<slug>.ts`, fill it from the
    brief, and report `intakeGaps(intake, "proposal")` as a short list of
-   questions for the user to ask the client.
+   questions for the user to ask the client. Briefs from claude.ai may
+   arrive as a `CLIENT INTAKE HANDOFF` block (format:
+   `docs/claude-ai-brief.md`) — map it field-for-field, treating
+   `unknown` as unset. Never fill legal/billing fields from research;
+   they come from the client.
 2. **Ready to propose** → § "Intake → proposal". Draft the proposal data
    file from the intake + brief, register it, add the registry entry
    (stage `proposal`), and hand back the URL + password to send.

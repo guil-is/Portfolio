@@ -16,6 +16,7 @@ import {
 import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { CtaButton } from "@/components/CtaButton";
+import { AcceptProposal } from "@/components/AcceptProposal";
 import { CenterFocus } from "@/components/CenterFocus";
 import { BriefMediaRow } from "@/components/BriefMediaRow";
 import { CaseStudyHorizontalScroll } from "@/components/CaseStudyHorizontalScroll";
@@ -115,7 +116,7 @@ export default async function ProposalPage({ params }: RouteProps) {
           {proposal.quote ? <QuoteSection data={proposal.quote} /> : null}
           {proposal.terms ? <TermsSection data={proposal.terms} /> : null}
 
-          <NextStep data={proposal.nextStep} />
+          <NextStep data={proposal.nextStep} slug={proposal.slug} />
         </main>
       </PasswordGate>
     </>
@@ -999,7 +1000,13 @@ function TermsSection({ data }: { data: Terms }) {
 // ---------------------------------------------------------------------
 // Next step — proposal-specific closer.
 // ---------------------------------------------------------------------
-function NextStep({ data }: { data: Proposal["nextStep"] }) {
+function NextStep({
+  data,
+  slug,
+}: {
+  data: Proposal["nextStep"];
+  slug: string;
+}) {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>Next step</SectionLabel>
@@ -1014,7 +1021,8 @@ function NextStep({ data }: { data: Proposal["nextStep"] }) {
         </CenterFocus>
 
         <CenterFocus minOpacity={0.15} falloff={0.5} minScale={0.98}>
-          <div className="mt-10">
+          <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-6">
+            <AcceptProposal slug={slug} />
             <CtaButton href={data.ctaHref} label={data.ctaLabel} />
           </div>
         </CenterFocus>

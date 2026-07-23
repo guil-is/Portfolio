@@ -32,7 +32,9 @@ the dashboard's Current list until `paidAt` is set in the ledger.
 
 ## 1 · Lead → intake file
 
-When a new lead lands (from a chat, a claude.ai brief, an email thread):
+When a new lead lands (from a chat, a claude.ai brief, an email thread —
+claude.ai conversations hand off via the block format in
+`docs/claude-ai-brief.md`):
 
 1. Pick the slug.
 2. Create `src/content/clients/intake/<slug>.ts` exporting a `ClientIntake`
@@ -62,10 +64,14 @@ Gate: `intakeGaps(intake, "proposal")` is empty.
    client. Never send it anywhere yourself without being asked.
 4. First visit triggers an email automatically. If nothing after ~5 days,
    the weekly sweep (below) flags it for a nudge.
+5. The page's "Accept this proposal" button (`<AcceptProposal>`, wired
+   into the Next-step section automatically) emails Guil when the client
+   clicks it — acceptance arrives as an event, not just a chat message.
 
 ## 3 · Accepted → agreement
 
-The client said yes (chat/email — there's no button for this yet). Gate:
+The client said yes — via the proposal's Accept button (you'll get the
+"proposal accepted" email) or in chat. Gate:
 `intakeGaps(intake, "agreement")` is empty; the usual blocker is the exact
 legal entity. Do not publish an agreement with a placeholder parties row.
 
