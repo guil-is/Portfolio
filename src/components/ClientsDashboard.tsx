@@ -7,6 +7,7 @@ import {
   clientRegistry,
   currentClients,
   pastClients,
+  stageLabel,
   type ClientEntry,
 } from "@/content/clients/registry";
 
@@ -91,9 +92,9 @@ function ClientCard({ client }: { client: ClientEntry }) {
           <h3 className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.4rem]">
             {client.name}
           </h3>
-          {client.status === "paused" ? (
+          {stageLabel(client) ? (
             <span className="inline-flex items-center rounded-[6px] border border-rule-soft bg-card/50 px-2 py-[2px] font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
-              Paused
+              {stageLabel(client)}
             </span>
           ) : null}
         </div>

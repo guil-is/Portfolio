@@ -16,12 +16,19 @@
 - `src/content/projects.ts` is legacy: it only backfills images/bodies for older pre-CMS projects. Don't add new projects to it.
 - Full workflow + field reference: `docs/adding-a-project.md`.
 
+# Client lifecycle (onboarding → close-out)
+
+- **The protocol for all client admin is `docs/client-lifecycle.md`** — read it before any client-related task (new lead, proposal, agreement, payment, close-out). Skills: `/new-client` (onboarding stages), `/client-sweep` (weekly status/drift check).
+- `src/content/clients/registry.ts` is the master client record: `stage` (proposal → accepted → signed → active → delivered → closed), contacts, `billingPreset`. Keep stages current — the `/for/clients` dashboard derives from them.
+- New leads start as an intake file (`src/content/clients/intake/<slug>.ts`, schema + gap checks in `intake.ts`). Collect what `intakeGaps()` reports missing before crossing each gate — no agreements with placeholder legal entities, no invoicing without full billing data.
+- The client `slug` is the primary key everywhere (registry, signable map, billing preset key, ledger `clientSlug`, storageKey). Never let them diverge.
+
 # Private client pages
 
 - Live at `/for/<slug>`. Two shapes exist today:
   - `/for/[slug]` — pitch proposals, data in `src/content/proposals/<slug>.tsx`.
-  - `/for/justice` — ongoing-client dashboard (SOW + hours log), data in `src/content/clients/justice.ts`.
-- All pages are gated by `<PasswordGate>` and must pass a unique `storageKey` (e.g. `for-justice-unlocked`) so unlocking one doesn't unlock another.
+  - Bespoke client dashboards (agreement + progress), e.g. `/for/e2c` — data in `src/content/clients/<slug>.ts`. `E2cClientPage` is the current best template to copy.
+- All pages are gated by `<PasswordGate>` and must pass a unique `storageKey` (`for-<slug>-unlocked`) so unlocking one doesn't unlock another.
 - All pages must return `robots: { index: false, follow: false }` in `generateMetadata`.
 - Any page with a signable agreement (`<AgreementSignature>`) must have its client registered in `src/content/clients/signable.ts`, or signing returns "Unknown client". The `clientSlug` prop is typed to that map, so `tsc` fails if you forget. To surface a client on the `/for/clients` dashboard, also add it to `registry.ts`.
 
@@ -29,7 +36,7 @@
 
 - To make an invoice from a prompt: `npm run invoice` — full workflow in `docs/making-an-invoice.md`.
 - Static data (issuer, bank/crypto details, client addresses): `src/content/invoices/config.ts`. Rule of thumb: German client → EUR + 19% MwSt + N26 IBAN; outside the EU → USD + §3a UStG exemption + Wise details.
-- **After issuing**: archive the PDF to Google Drive (`Invoices/Invoices <year>/` — the CLI does this when `INVOICE_ARCHIVE_DIR` is set; from a Claude session, upload via the Drive connector), then append to `src/content/invoices/ledger.ts` (drives auto-numbering). Justice invoices also go into the `hoursLog` (below).
+- **After issuing**: archive the PDF to Google Drive (`Invoices/Invoices <year>/` — the CLI does this when `INVOICE_ARCHIVE_DIR` is set; from a Claude session, upload via the Drive connector), then append to `src/content/invoices/ledger.ts` (drives auto-numbering; set `clientSlug` for clients in the registry). Justice invoices also go into the `hoursLog` (below).
 
 # Hours log updates (Justice)
 

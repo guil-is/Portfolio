@@ -14,6 +14,10 @@
 export type LedgerEntry = {
   number: string;
   client: string;
+  /** Registry slug (src/content/clients/registry.ts) when the client has
+   * a /for/ page — this is what links an invoice to its client record.
+   * Unset only for clients that predate the site (e.g. ThriveCoin). */
+  clientSlug?: string;
   /** ISO issue date. */
   issuedAt: string;
   /** ISO date payment is due. Set it so the invoice shows on the payment
@@ -33,6 +37,7 @@ export const invoiceLedger: LedgerEntry[] = [
   {
     number: "INV-26015",
     client: "Sustainable Public Affairs (WinWin 2026)",
+    clientSlug: "spa",
     issuedAt: "2026-07-02",
     dueAt: "2026-07-07",
     total: 1560,
@@ -42,6 +47,7 @@ export const invoiceLedger: LedgerEntry[] = [
   {
     number: "INV-26014",
     client: "Studio Huit",
+    clientSlug: "huit",
     issuedAt: "2026-07-02",
     dueAt: "2026-07-16",
     total: 3510.5,
@@ -51,6 +57,7 @@ export const invoiceLedger: LedgerEntry[] = [
   {
     number: "INV-26013",
     client: "Myosin",
+    clientSlug: "myosin",
     issuedAt: "2026-06-23",
     total: 800,
     currency: "USD",
@@ -59,6 +66,7 @@ export const invoiceLedger: LedgerEntry[] = [
   {
     number: "INV-26012",
     client: "red onion GmbH (TEDxBerlin)",
+    clientSlug: "tedxberlin",
     issuedAt: "2026-06-23",
     dueAt: "2026-07-07",
     total: 1190,
@@ -69,6 +77,7 @@ export const invoiceLedger: LedgerEntry[] = [
   {
     number: "INV-26011",
     client: "Myosin",
+    clientSlug: "myosin",
     issuedAt: "2026-06-08",
     total: 800,
     currency: "USD",
@@ -77,6 +86,7 @@ export const invoiceLedger: LedgerEntry[] = [
   {
     number: "INV-26010",
     client: "Justice Conder (Fraction Software LLC)",
+    clientSlug: "justice",
     issuedAt: "2026-05-30",
     total: 1499,
     currency: "USD",
@@ -93,6 +103,7 @@ export const invoiceLedger: LedgerEntry[] = [
   {
     number: "INV-26008",
     client: "Justice Conder",
+    clientSlug: "justice",
     issuedAt: "2026-05-23",
     total: 2280,
     currency: "USD",
@@ -101,6 +112,7 @@ export const invoiceLedger: LedgerEntry[] = [
   {
     number: "INV-26007",
     client: "Justice Conder",
+    clientSlug: "justice",
     issuedAt: "2026-05-15",
     total: 4257,
     currency: "USD",
@@ -109,6 +121,7 @@ export const invoiceLedger: LedgerEntry[] = [
   {
     number: "INV-26006",
     client: "Justice Conder",
+    clientSlug: "justice",
     issuedAt: "2026-04-30",
     total: 3205,
     currency: "USD",
@@ -117,6 +130,7 @@ export const invoiceLedger: LedgerEntry[] = [
   {
     number: "INV-26005",
     client: "Justice Conder",
+    clientSlug: "justice",
     issuedAt: "2026-04-18",
     total: 1800,
     currency: "USD",
@@ -125,6 +139,7 @@ export const invoiceLedger: LedgerEntry[] = [
   {
     number: "INV-26004",
     client: "Justice Conder",
+    clientSlug: "justice",
     issuedAt: "2026-04-03",
     total: 1200,
     currency: "USD",
