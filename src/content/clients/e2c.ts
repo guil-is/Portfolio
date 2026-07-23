@@ -250,7 +250,7 @@ export const e2c: E2cClient = {
         blocks: [
           {
             type: "p",
-            text: "Two revision rounds included: one at direction lock, one at final delivery. Additional rounds billed at EUR 80 per hour, agreed in advance.",
+            text: "Two revision rounds included: one at direction lock, one at final delivery. Additional rounds billed at EUR 100 per hour, agreed in advance.",
           },
         ],
       },
