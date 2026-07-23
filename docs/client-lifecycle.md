@@ -77,11 +77,15 @@ legal entity. Do not publish an agreement with a placeholder parties row.
    hours log).
 3. Register the client in `signable.ts` — `tsc` enforces this before
    `<AgreementSignature>` can reference the slug.
-4. Build the page. Today this means a bespoke component (`E2cClientPage`
-   is the best current template) plus a thin `src/app/for/<slug>/page.tsx`
-   with `<PasswordGate storageKey="for-<slug>-unlocked">` and
-   `robots: { index: false, follow: false }`. Prefer copying the e2c
-   pattern over inventing a new layout.
+4. Build the page — data only, no new component: a thin
+   `src/app/for/<slug>/page.tsx` that composes `ClientPageData` from the
+   content file and renders the shared `<ClientPage>` inside
+   `<PasswordGate storageKey="for-<slug>-unlocked">`, with
+   `robots: { index: false, follow: false }` and `<VisitTracker>`.
+   `/for/e2c` is the reference implementation. `ClientPage` covers
+   stats, pending actions, phase timeline, payment schedule, and the
+   signable agreement; only reach for a bespoke component if a client
+   genuinely needs something it can't express (like Justice's hours log).
 5. If terms include a deposit: issue that invoice now
    (`docs/making-an-invoice.md`), which requires the `"invoice"` gate —
    so add the `billToPresets` entry (from intake billing data) first.

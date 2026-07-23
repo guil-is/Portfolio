@@ -27,7 +27,7 @@
 
 - Live at `/for/<slug>`. Two shapes exist today:
   - `/for/[slug]` — pitch proposals, data in `src/content/proposals/<slug>.tsx`.
-  - Bespoke client dashboards (agreement + progress), e.g. `/for/e2c` — data in `src/content/clients/<slug>.ts`. `E2cClientPage` is the current best template to copy.
+  - Client dashboards (agreement + progress) — data in `src/content/clients/<slug>.ts`, rendered by the shared `ClientPage` component (`/for/e2c` is the reference). A thin `page.tsx` composes `ClientPageData` from the content file. Older clients (spa, justice, logos, huit, myosin, tedxberlin) still have bespoke components; fold them into `ClientPage` when next touched, don't copy them for new clients.
 - All pages are gated by `<PasswordGate>` and must pass a unique `storageKey` (`for-<slug>-unlocked`) so unlocking one doesn't unlock another.
 - All pages must return `robots: { index: false, follow: false }` in `generateMetadata`.
 - Any page with a signable agreement (`<AgreementSignature>`) must have its client registered in `src/content/clients/signable.ts`, or signing returns "Unknown client". The `clientSlug` prop is typed to that map, so `tsc` fails if you forget. To surface a client on the `/for/clients` dashboard, also add it to `registry.ts`.
