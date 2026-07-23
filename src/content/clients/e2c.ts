@@ -82,11 +82,11 @@ export const e2c: E2cClient = {
     {
       label: "Phase 1",
       window: "28 July to 2 August",
-      title: "Cover directions and layout system",
+      title: "Cover drafts and layout system",
       description: "First visual material to react to.",
       items: [
         "Document setup: masters, styles, color profiles.",
-        "Three distinct cover directions.",
+        "First drafts of the cover.",
         "Layout and type system: grid, type scale, chapter opener template, callouts.",
         "First spot illustration, first infographic (before and after E2C), and the intro spread.",
       ],
@@ -98,7 +98,7 @@ export const e2c: E2cClient = {
       description:
         "Review the directions together and commit to one by the end of the week.",
       items: [
-        "Presentation round 1: PDF with cover directions, spot illustration, infographic, and intro layout.",
+        "Presentation round 1: PDF with cover drafts, spot illustration, infographic, and intro layout.",
         "One round of consolidated feedback.",
         "Cover refinement after the direction lock.",
       ],
@@ -187,7 +187,7 @@ export const e2c: E2cClient = {
           {
             type: "ul",
             items: [
-              "1. Direction phase: cover directions, one spot illustration, one infographic, and intro layout presented for approval.",
+              "1. Direction phase: first cover drafts, one spot illustration, one infographic, and intro layout presented for approval.",
               "2. Direction lock: client approves before full production begins.",
               "3. Production: locked system applied across the document.",
               "4. Delivery: both PDF versions.",
@@ -202,6 +202,18 @@ export const e2c: E2cClient = {
             type: "kv",
             rows: [
               ["28 July 2026", "Work begins."],
+              [
+                "28 July to 2 August",
+                "First cover drafts, layout and type system, first spot illustration and infographic.",
+              ],
+              [
+                "3 to 9 August",
+                "Direction presentation. One round of consolidated feedback, then the direction locks.",
+              ],
+              [
+                "10 to 21 August",
+                "Full production: the locked system applied across the document, plus a print test.",
+              ],
               ["21 August 2026", "Delivery of both PDF versions."],
             ],
           },
