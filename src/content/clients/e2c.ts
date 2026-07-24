@@ -21,9 +21,8 @@
  * 12 Place du Panthéon, 75005 Paris. Project reference: ERC
  * BlockchainGov Grant Agreements No. 865856. Open item: SIRET and VAT
  * number still under confirmation. Fill them into the Parties row once
- * confirmed and validate the VAT number on VIES before invoicing. The
- * agreement is signed by a CERSA representative, not necessarily
- * Primavera, so the signatories block names only the entity.
+ * confirmed and validate the VAT number on VIES before invoicing.
+ * Primavera signs for CERSA (confirmed via Telegram, 24 July).
  */
 
 import type { SignableDocument } from "./types";
@@ -267,7 +266,7 @@ export const e2c: E2cClient = {
     ],
     signatories: [
       ["Designer", "Guilherme Maueler"],
-      ["Client", `${CLIENT_ENTITY}, by its authorized representative`],
+      ["Client", `${CLIENT_ENTITY}, Primavera De Filippi`],
       ["Date signed", "Auto-filled on signing"],
     ],
   },
