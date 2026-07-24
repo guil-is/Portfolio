@@ -17,17 +17,19 @@
  *     everything is delivered. Statuses derive from this one value.
  *   - Bump `sow.version` only if the agreement text changes substantively.
  *
- * Open item: the exact CNRS billing entity and address are pending from
- * Primavera (CNRS has 1,000+ establishments, each with its own SIRET).
- * Fill it into the Parties row once confirmed and validate the VAT
- * number on VIES before invoicing.
+ * Billing entity confirmed by Primavera via Telegram (24 July): CERSA,
+ * 12 Place du Panthéon, 75005 Paris. Project reference: ERC
+ * BlockchainGov Grant Agreements No. 865856. Open item: SIRET and VAT
+ * number still under confirmation. Fill them into the Parties row once
+ * confirmed and validate the VAT number on VIES before invoicing. The
+ * agreement is signed by a CERSA representative, not necessarily
+ * Primavera, so the signatories block names only the entity.
  */
 
 import type { SignableDocument } from "./types";
 
 /** Client legal entity, recorded on the signature (`clientEntity`). */
-export const CLIENT_ENTITY =
-  "Centre National de la Recherche Scientifique (CNRS)";
+export const CLIENT_ENTITY = "CERSA (CNRS)";
 
 export type E2cPhase = {
   /** Small caption above the title, e.g. "Phase 0". */
@@ -141,7 +143,11 @@ export const e2c: E2cClient = {
               ],
               [
                 "Client",
-                "Centre National de la Recherche Scientifique (CNRS), Paris. Exact billing entity, address, and VAT number to be confirmed.",
+                "CERSA (CNRS), 12 Place du Panthéon, 75005 Paris, France. SIRET and VAT number under confirmation.",
+              ],
+              [
+                "Project reference",
+                "ERC BlockchainGov Grant Agreements No. 865856",
               ],
               ["Project contacts", "Tara Merk, Primavera De Filippi"],
               ["Dated", "Auto-filled on signing"],
@@ -261,7 +267,7 @@ export const e2c: E2cClient = {
     ],
     signatories: [
       ["Designer", "Guilherme Maueler"],
-      ["Client", `${CLIENT_ENTITY}, Primavera De Filippi`],
+      ["Client", `${CLIENT_ENTITY}, by its authorized representative`],
       ["Date signed", "Auto-filled on signing"],
     ],
   },
