@@ -53,6 +53,7 @@ export const invoiceLedger: LedgerEntry[] = [
     clientSlug: "huit",
     issuedAt: "2026-07-02",
     dueAt: "2026-07-16",
+    paidAt: "2026-07-25",
     total: 3510.5,
     currency: "EUR",
     note: "Safe Workspace launch video, motion design (€2,950 + 19% MwSt)",
