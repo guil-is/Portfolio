@@ -3,9 +3,9 @@
  * example of the intake pattern (docs/client-lifecycle.md § 1). New
  * leads get one of these before anything else is scaffolded.
  *
- * Open gate: `intakeGaps(e2cIntake, "invoice")` — the exact CNRS billing
- * establishment (and its VAT ID) is pending from Primavera. Do not
- * invoice until it's filled in and validated on VIES.
+ * Open gate: `intakeGaps(e2cIntake, "invoice")` — CERSA's VAT ID (and
+ * SIRET) are still pending. Do not invoice until the VAT ID is recorded
+ * and validated on VIES.
  */
 
 import type { ClientIntake } from "../intake";
@@ -29,10 +29,11 @@ export const e2cIntake: ClientIntake = {
   },
 
   billing: {
-    entityName: "Centre National de la Recherche Scientifique (CNRS)",
-    // CNRS has 1,000+ establishments, each with its own SIRET — the exact
-    // billing establishment, address, and VAT ID are pending from
-    // Primavera. Validate the VAT number on VIES before invoicing.
+    // Confirmed by Primavera via Telegram, 24 July 2026.
+    entityName: "CERSA (CNRS)",
+    addressLines: ["12 Place du Panthéon", "75005 Paris", "France"],
+    // SIRET and VAT ID still pending — validate the VAT number on VIES
+    // before invoicing.
     country: "France",
     taxMode: "reverse-charge",
     currency: "EUR",
@@ -42,6 +43,8 @@ export const e2cIntake: ClientIntake = {
 
   notes: [
     "Agreement is published at /for/e2c (stage: accepted, awaiting signature).",
+    "Primavera signs for CERSA (confirmed via Telegram, 24 July) — record her email as signer when the signature lands.",
+    "Invoice must cite the project reference: ERC BlockchainGov Grant Agreements No. 865856.",
     "Contact emails still to be recorded from the thread.",
   ],
 };
