@@ -50,6 +50,8 @@ export const clients: Client[] = [
   { name: "Prime DAO", description: "Web3 builders scaling DAOs with open-source infrastructure", href: "https://www.prime.xyz" },
   // R
   { name: "Regens Unite", description: "Events and media bridging regenerative sectors", href: "https://regensunite.earth" },
+  // S
+  { name: "Safe", description: "Smart account infrastructure securing onchain assets (via Studio Huit)", href: "https://safe.global" },
   // T
   { name: "The DAOist", description: "Community and events for decentralized governance builders", href: "https://thedaoist2.webflow.io" },
   { name: "Thrive Protocol", description: "Supporting and funding real value in crypto and beyond", href: "https://www.thrive.xyz" },

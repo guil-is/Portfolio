@@ -57,6 +57,7 @@ export const site = {
       { name: "Gitcoin", src: "/logos/Logo_gitcoin.svg" },
       { name: "Native Instruments", src: "/logos/Logo_native%20instruments.svg" },
       { name: "ENS", src: "/logos/Logo_ens.svg" },
+      { name: "Safe", src: "/logos/Logo_safe.svg" },
       { name: "Polygon", src: "/logos/P_olygon.svg" },
       { name: "Ethereum Foundation", src: "/logos/ethereum%20foundation.svg" },
     ],
