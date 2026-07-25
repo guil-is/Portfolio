@@ -93,9 +93,13 @@ export const spa: SpaClient = {
     targetDelivery: "Late August",
   },
 
-  // Nothing pending from the client right now. Add items here as they
-  // come up (e.g. the Phase 1-2 invoice once it's issued).
-  pendingActions: [],
+  pendingActions: [
+    {
+      text: "Settle the Phase 1-2 invoice, 3,640 EUR.",
+      due: "By August 8",
+      link: { label: "Phase 1-2 invoice", href: "/api/invoice/INV-26016" },
+    },
+  ],
 
   milestones: [
     {
@@ -141,7 +145,8 @@ export const spa: SpaClient = {
       label: "Phase 1-2",
       description: "Balance at the end of week 2",
       amountEur: 3640,
-      status: "due",
+      status: "invoiced",
+      invoiceNumber: "INV-26016",
     },
     {
       label: "Phase 3",

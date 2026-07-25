@@ -35,6 +35,16 @@ export type LedgerEntry = {
 
 export const invoiceLedger: LedgerEntry[] = [
   {
+    number: "INV-26016",
+    client: "Sustainable Public Affairs (WinWin 2026)",
+    clientSlug: "spa",
+    issuedAt: "2026-07-25",
+    dueAt: "2026-08-08",
+    total: 3640,
+    currency: "EUR",
+    note: "Phases 1–2 balance (€5,200 less €1,560 deposit credited, reverse charge)",
+  },
+  {
     number: "INV-26015",
     client: "Sustainable Public Affairs (WinWin 2026)",
     clientSlug: "spa",
