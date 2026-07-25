@@ -3,6 +3,15 @@
 import { useEffect } from "react";
 
 /**
+ * localStorage flag marking this browser as the site owner's. Set by the
+ * /for/clients dashboard (whose password only Guil has) and checked here,
+ * so the owner browsing his own client pages doesn't record visits or
+ * trigger "just opened their proposal" emails. Client browsers never see
+ * the dashboard, so they never get flagged.
+ */
+export const OWNER_FLAG_KEY = "guil-owner";
+
+/**
  * Fire-and-forget tracker that pings /api/track-visit once per
  * browser-tab session. Renders nothing. Only mounts inside the
  * unlocked children of <PasswordGate>, so a visit = "they got past
@@ -13,6 +22,7 @@ export function VisitTracker({ slug }: { slug: string }) {
     if (typeof window === "undefined") return;
     const key = `visit-tracked::${slug}`;
     try {
+      if (localStorage.getItem(OWNER_FLAG_KEY) === "1") return;
       if (sessionStorage.getItem(key)) return;
       sessionStorage.setItem(key, "1");
     } catch {

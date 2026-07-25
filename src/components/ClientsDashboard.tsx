@@ -10,16 +10,26 @@ import {
   stageLabel,
   type ClientEntry,
 } from "@/content/clients/registry";
+import { OWNER_FLAG_KEY } from "@/components/VisitTracker";
 
 // Master dashboard for every private /for/ page. Once this page is unlocked
 // (via its own PasswordGate), it writes each client page's unlock flag into
 // sessionStorage, so navigating to any of them from here skips the per-page
 // password. Same-tab navigation only — sessionStorage is per-tab, so a card
 // opened in a brand-new tab would still prompt.
+//
+// It also marks this browser as the owner's (localStorage, so it survives
+// the session): VisitTracker skips flagged browsers, keeping Guil's own
+// page-checking out of the visit log and the first-visit emails.
 export function ClientsDashboard() {
   useEffect(() => {
     for (const c of clientRegistry) {
       window.sessionStorage.setItem(c.storageKey, "1");
+    }
+    try {
+      window.localStorage.setItem(OWNER_FLAG_KEY, "1");
+    } catch {
+      // Storage disabled — visits from this browser will just be logged.
     }
   }, []);
 
