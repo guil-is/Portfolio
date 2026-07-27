@@ -4,12 +4,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { site } from "@/content/site";
 
+export type MarqueeLogo = { name: string; src: string };
+
 // Infinite seamless looping marquee of client logos, inspired by the
 // reference screenshot. Duplicates the logo list 3× so the CSS
 // animation can loop without a visible seam. Pure CSS animation,
 // no JS scroll listener.
-export function ClientLogos() {
-  const { label, viewAllHref, viewAllLabel, logos } = site.trustedBy;
+//
+// The homepage passes a Sanity-merged logo list (featured clients with
+// an uploaded logo override/extend the static site.ts list); with no
+// prop it falls back to site.trustedBy.logos.
+export function ClientLogos({ logos: logosProp }: { logos?: MarqueeLogo[] }) {
+  const { label, viewAllHref, viewAllLabel } = site.trustedBy;
+  const logos = logosProp?.length ? logosProp : site.trustedBy.logos;
 
   // Triple the list so the animation can loop seamlessly
   const tripled = [...logos, ...logos, ...logos];

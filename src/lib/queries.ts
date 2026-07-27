@@ -8,6 +8,8 @@ export type SanityClient = {
   description: string;
   href?: string;
   featured?: boolean;
+  /** Resolved URL of the logo image (marquee), when one is uploaded. */
+  logoUrl?: string;
 };
 
 export async function getAllClients(): Promise<SanityClient[]> {
@@ -21,7 +23,8 @@ export async function getAllClients(): Promise<SanityClient[]> {
 export async function getFeaturedClients(): Promise<SanityClient[]> {
   return sanityClient.fetch(
     `*[_type == "client" && featured == true] | order(name asc) {
-      _id, name, description, href, featured
+      _id, name, description, href, featured,
+      "logoUrl": logo.asset->url
     }`,
   );
 }

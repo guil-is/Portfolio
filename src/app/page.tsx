@@ -10,6 +10,7 @@ import {
   flattenTestimonial,
   getAllProjects,
   getAllTestimonials,
+  getFeaturedClients,
   getSiteSettings,
 } from "@/lib/queries";
 import { site } from "@/content/site";
@@ -30,6 +31,25 @@ export default async function Home() {
   const hoverImages = sanityProjects
     .filter((p) => !!p.gridImage)
     .map((p) => ({ src: p.gridImage!, alt: p.name }));
+
+  // Marquee: Sanity-featured clients with an uploaded logo override the
+  // static site.ts entry of the same name and append after it otherwise,
+  // so the marquee keeps working while logos migrate to the CMS.
+  const featuredClients = await getFeaturedClients().catch(() => []);
+  const sanityLogos = featuredClients
+    .filter((c) => !!c.logoUrl)
+    .map((c) => ({ name: c.name, src: c.logoUrl! }));
+  const bySanityName = (name: string) =>
+    sanityLogos.find((s) => s.name.toLowerCase() === name.toLowerCase());
+  const marqueeLogos = [
+    ...site.trustedBy.logos.map((l) => bySanityName(l.name) ?? l),
+    ...sanityLogos.filter(
+      (s) =>
+        !site.trustedBy.logos.some(
+          (l) => l.name.toLowerCase() === s.name.toLowerCase(),
+        ),
+    ),
+  ];
 
   // Merge Sanity settings over local defaults
   const headline = settings?.headline || site.introHeading;
@@ -52,7 +72,7 @@ export default async function Home() {
           ctaHref={ctaHref}
           hoverImages={hoverImages}
         />
-        <ClientLogos />
+        <ClientLogos logos={marqueeLogos} />
         <ActiveProjects />
         <Expertise />
         <Testimonials testimonials={testimonials} />
