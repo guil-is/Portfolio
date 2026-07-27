@@ -32,6 +32,12 @@
 - All pages must return `robots: { index: false, follow: false }` in `generateMetadata`.
 - Any page with a signable agreement (`<AgreementSignature>`) must have its client registered in `src/content/clients/signable.ts`, or signing returns "Unknown client". The `clientSlug` prop is typed to that map, so `tsc` fails if you forget. To surface a client on the `/for/clients` dashboard, also add it to `registry.ts`.
 
+# WinWin cross-context memory
+
+- WinWin/SPA lives in three places: this repo (client-facing admin), a local Claude Code folder (production files), and a claude.ai project (thinking). The shared index is a Google Doc, "WinWin 2026 — project brain", which mirrors this repo's **Status** and **Money** sections.
+- This repo owns those two sections, kept in `docs/winwin-status.md`. **Whenever SPA state changes here** (phase status, payment landing, invoice issued), update `docs/winwin-status.md` to match `src/content/clients/spa.ts` + the ledger, and bump its "Last reconciled" date.
+- This session's Drive connector is create-only (no update-content tool), so it can't edit the brain Doc in place. After refreshing `winwin-status.md`, hand Guil the updated Status + Money block to paste into the Doc. Don't create a second copy of the Doc.
+
 # Invoices
 
 - To make an invoice from a prompt: `npm run invoice` — full workflow in `docs/making-an-invoice.md`.
