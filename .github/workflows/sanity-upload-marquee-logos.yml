@@ -18,6 +18,9 @@ on:
         required: true
         type: boolean
         default: false
+  push:
+    branches: [main]
+    paths: [".github/triggers/upload-marquee-logos.json"]
 
 jobs:
   upload:
@@ -33,11 +36,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Resolve inputs
+        id: cfg
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "DRY_RUN=${{ inputs.dry_run }}" >> "$GITHUB_OUTPUT"
+            echo "FORCE=${{ inputs.force }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "DRY_RUN=$(jq -r 'if has("dry_run") then .dry_run else true end | tostring' .github/triggers/upload-marquee-logos.json)" >> "$GITHUB_OUTPUT"
+            echo "FORCE=$(jq -r 'if has("force") then .force else false end | tostring' .github/triggers/upload-marquee-logos.json)" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Run upload
         env:
           SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
           SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
-          DRY_RUN: ${{ inputs.dry_run }}
-          FORCE: ${{ inputs.force }}
+          DRY_RUN: ${{ steps.cfg.outputs.DRY_RUN }}
+          FORCE: ${{ steps.cfg.outputs.FORCE }}
         run: npx tsx scripts/sanity/upload-marquee-logos.ts
