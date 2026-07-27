@@ -38,7 +38,7 @@ export default async function Home() {
   const featuredClients = await getFeaturedClients().catch(() => []);
   const sanityLogos = featuredClients
     .filter((c) => !!c.logoUrl)
-    .map((c) => ({ name: c.name, src: c.logoUrl! }));
+    .map((c) => ({ name: c.name, src: c.logoUrl!, href: c.href }));
   const bySanityName = (name: string) =>
     sanityLogos.find((s) => s.name.toLowerCase() === name.toLowerCase());
   const marqueeLogos = [

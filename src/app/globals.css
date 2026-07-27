@@ -253,19 +253,6 @@ html.page-leaving body {
  * width so the seam is invisible.
  * ---------------------------------------------------------------------*/
 
-@keyframes marquee-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-33.333%); }
-}
-
-.marquee-track {
-  animation: marquee-scroll 30s linear infinite;
-}
-
-.marquee-container:hover .marquee-track {
-  animation-play-state: paused;
-}
-
 /* -----------------------------------------------------------------------
  * Hero mark — a thin hairline above the proposal hero kicker that
  * draws in from the left on load. Echoes the `border-rule` system and
@@ -303,7 +290,6 @@ html.page-leaving body {
   .nav-drop-in,
   .intro-rise,
   .pulse-dot,
-  .marquee-track,
   .scroll-hint,
   .hero-mark {
     animation: none;

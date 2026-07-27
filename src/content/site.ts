@@ -49,16 +49,19 @@ export const site = {
     label: "Clients & collaborators",
     viewAllHref: "/clients",
     viewAllLabel: "View all >",
+    // Fallback + order template for the homepage marquee: entries are
+    // overridden by same-named Sanity featured clients (logo + link) and
+    // only render from here when Sanity is unreachable.
     logos: [
-      { name: "N26", src: "/logos/Logo_n26.svg" },
-      { name: "JKR Global", src: "/logos/Logo_jkr.svg" },
-      { name: "Optimism", src: "/logos/Logo_optimism.svg" },
-      { name: "Celo", src: "/logos/CELO.svg" },
-      { name: "Gitcoin", src: "/logos/Logo_gitcoin.svg" },
-      { name: "Native Instruments", src: "/logos/Logo_native%20instruments.svg" },
-      { name: "ENS", src: "/logos/Logo_ens.svg" },
-      { name: "Polygon", src: "/logos/P_olygon.svg" },
-      { name: "Ethereum Foundation", src: "/logos/ethereum%20foundation.svg" },
+      { name: "N26", src: "/logos/Logo_n26.svg", href: "https://n26.com" },
+      { name: "JKR Global", src: "/logos/Logo_jkr.svg", href: "https://www.jkrglobal.com" },
+      { name: "Optimism", src: "/logos/Logo_optimism.svg", href: "https://www.optimism.io" },
+      { name: "Celo", src: "/logos/CELO.svg", href: "https://celo.org" },
+      { name: "Gitcoin", src: "/logos/Logo_gitcoin.svg", href: "https://www.gitcoin.co" },
+      { name: "Native Instruments", src: "/logos/Logo_native%20instruments.svg", href: "https://www.native-instruments.com" },
+      { name: "ENS", src: "/logos/Logo_ens.svg", href: "https://ens.domains" },
+      { name: "Polygon", src: "/logos/P_olygon.svg", href: "https://polygon.technology" },
+      { name: "Ethereum Foundation", src: "/logos/ethereum%20foundation.svg", href: "https://ethereum.foundation" },
     ],
   },
 
