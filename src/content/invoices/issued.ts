@@ -16,8 +16,8 @@ import { billToPresets } from "./config";
 export const issuedInvoices: Record<string, InvoiceSpec> = {
   "INV-26016": {
     number: "INV-26016",
-    issuedAt: "2026-07-25",
-    dueAt: "2026-08-08",
+    issuedAt: "2026-07-27",
+    dueAt: "2026-08-10",
     serviceDate: "Phases 1-2 (weeks 1-2)",
     currency: "EUR",
     taxMode: "reverse-charge",

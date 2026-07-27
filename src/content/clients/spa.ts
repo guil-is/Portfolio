@@ -96,7 +96,7 @@ export const spa: SpaClient = {
   pendingActions: [
     {
       text: "Settle the Phase 1-2 invoice, 3,640 EUR.",
-      due: "By August 8",
+      due: "By August 10",
       link: { label: "Phase 1-2 invoice", href: "/api/invoice/INV-26016" },
     },
   ],
