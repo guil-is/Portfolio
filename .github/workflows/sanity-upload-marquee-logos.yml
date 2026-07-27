@@ -1,0 +1,43 @@
+name: Sanity — Upload marquee logos
+
+# Migrates the homepage marquee logos into Sanity client docs:
+# find-or-create each client by name, upload the SVG from public/logos,
+# set featured: true. Idempotent — docs that already have a logo are
+# skipped unless force is set.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "When true, log the plan without mutating"
+        required: true
+        type: boolean
+        default: true
+      force:
+        description: "Replace logos on docs that already have one"
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run upload
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          FORCE: ${{ inputs.force }}
+        run: npx tsx scripts/sanity/upload-marquee-logos.ts
