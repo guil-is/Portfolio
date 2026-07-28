@@ -69,6 +69,17 @@ export const paymentProfiles: Record<string, PaymentProfile> = {
       ],
     ],
   },
+  // One-off Stripe payment link for the E2C Cookbook invoice (card
+  // payment, CNRS admin workaround). Links can't carry a bank-style
+  // reference, so none is rendered.
+  "stripe-card-e2c": {
+    heading: "Card payment",
+    subheading: "Pay online by credit or debit card via Stripe",
+    includeReference: false,
+    // Rendered without the https:// prefix so the value fits its column
+    // on the PDF (the full URL collides with the neighbouring column).
+    rows: [["Stripe link", "buy.stripe.com/bJe28r4xqfa54Kuaw69fW00"]],
+  },
   "crypto-usdc": {
     heading: "Pay with crypto",
     includeReference: false,
@@ -103,6 +114,17 @@ export const billToPresets: Record<string, BillTo> = {
       "Ziegelstraße 16",
       "10117 Berlin",
       "TAX/VAT: DE812866010",
+    ],
+  },
+  // EU cross-border B2B: invoice net, reverse charge note, both VAT IDs
+  // on the invoice. CNRS is the billing entity for the E2C Cookbook
+  // project (grant holder: Primavera De Filippi, CERSA).
+  e2c: {
+    name: "Centre National de la Recherche Scientifique (CNRS)",
+    lines: [
+      "3 Rue Michel-Ange",
+      "75016 Paris, France",
+      "TAX/VAT: FR40 180089013",
     ],
   },
   // EU cross-border B2B: invoice net, reverse charge note, both VAT IDs

@@ -35,6 +35,18 @@ export type LedgerEntry = {
 
 export const invoiceLedger: LedgerEntry[] = [
   {
+    // Renumbered from INV-26016: that number went to the WinWin phases
+    // 1–2 invoice issued a day earlier in a parallel session.
+    number: "INV-26017",
+    client: "Centre National de la Recherche Scientifique (CNRS)",
+    clientSlug: "e2c",
+    issuedAt: "2026-07-28",
+    dueAt: "2026-07-28",
+    total: 2000,
+    currency: "EUR",
+    note: "E2C Cookbook design, flat fee (reverse charge). Due on receipt; CNRS admin may pay after delivery, accepted knowingly.",
+  },
+  {
     number: "INV-26016",
     client: "Sustainable Public Affairs (WinWin 2026)",
     clientSlug: "spa",

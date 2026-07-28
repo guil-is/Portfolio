@@ -86,6 +86,7 @@ export const clientRegistry: ClientEntry[] = [
     "Report redesign for Tara Merk and Primavera De Filippi (CNRS). Paperwork phase.",
     "accepted",
     {
+      billingPreset: "e2c",
       contacts: [{ name: "Tara Merk" }, { name: "Primavera De Filippi" }],
     },
   ),
