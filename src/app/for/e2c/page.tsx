@@ -30,7 +30,7 @@ function pageData(): ClientPageData {
     slug: "e2c",
     clientName: e2c.clientName,
     heroTitle: "E2C Cookbook × Guil",
-    intro: `${e2c.subtitle} The agreement to approve, and a live view of where the work stands.`,
+    intro: e2c.subtitle,
     defaultTab: "agreement",
     stats: [
       {
