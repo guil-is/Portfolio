@@ -44,7 +44,7 @@ export const invoiceLedger: LedgerEntry[] = [
     dueAt: "2026-07-28",
     total: 2000,
     currency: "EUR",
-    note: "E2C Cookbook design, flat fee (reverse charge). Due on receipt; CNRS admin may pay after delivery, accepted knowingly.",
+    note: "E2C Cookbook design, flat fee (reverse charge). Due on receipt; CNRS admin may pay after delivery, accepted knowingly. Reissued same day at Primavera's request: BlockchainGov named, CERSA added to the bill-to.",
   },
   {
     number: "INV-26016",

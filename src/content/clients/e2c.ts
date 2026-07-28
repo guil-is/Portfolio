@@ -142,7 +142,7 @@ export const e2c: E2cClient = {
               ],
               [
                 "Paying entity",
-                "Centre National de la Recherche Scientifique (CNRS), 3 Rue Michel-Ange, 75016 Paris, France. VAT: FR40 180089013. Payment is processed by CNRS administration under the research grant.",
+                "Centre National de la Recherche Scientifique (CNRS), CERSA, 3 Rue Michel-Ange, 75016 Paris, France. VAT: FR40 180089013. Payment is processed by CNRS administration under the BlockchainGov research grant.",
               ],
               [
                 "Project reference",

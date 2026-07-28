@@ -122,6 +122,7 @@ export const billToPresets: Record<string, BillTo> = {
   e2c: {
     name: "Centre National de la Recherche Scientifique (CNRS)",
     lines: [
+      "CERSA",
       "3 Rue Michel-Ange",
       "75016 Paris, France",
       "TAX/VAT: FR40 180089013",
