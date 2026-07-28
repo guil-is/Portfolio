@@ -2,12 +2,7 @@ import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { VisitTracker } from "@/components/VisitTracker";
 import { ClientPage, type ClientPageData } from "@/components/ClientPage";
-import {
-  e2c,
-  CLIENT_ENTITY,
-  currentPhase,
-  phaseStatus,
-} from "@/content/clients/e2c";
+import { e2c, currentPhase, phaseStatus } from "@/content/clients/e2c";
 import { getLatestSignature } from "@/lib/signed-agreement";
 
 export const metadata = {
@@ -62,7 +57,6 @@ function pageData(): ClientPageData {
       status: phaseStatus(e2c, i),
     })),
     sow: e2c.sow,
-    clientEntity: CLIENT_ENTITY,
     timelineSection: "Timeline",
   };
 }

@@ -17,18 +17,18 @@
  *     everything is delivered. Statuses derive from this one value.
  *   - Bump `sow.version` only if the agreement text changes substantively.
  *
- * Billing entity confirmed by Primavera via Telegram (24 July): CERSA,
- * 12 Place du Panthéon, 75005 Paris. Project reference: ERC
- * BlockchainGov Grant Agreements No. 865856. Open item: SIRET and VAT
- * number still under confirmation. Fill them into the Parties row once
- * confirmed and validate the VAT number on VIES before invoicing.
- * Primavera signs for CERSA (confirmed via Telegram, 24 July).
+ * Signing model (settled 28 July): nobody can sign on behalf of CNRS —
+ * Primavera said so directly. So the roles are split. CNRS is the paying
+ * entity and formalizes its commitment by processing invoice INV-26017
+ * (issued 28 July, EUR 2,000, reverse charge). The agreement itself is
+ * approved by a project lead (Primavera De Filippi or Tara Merk) signing
+ * in their own name: they confirm scope, timeline, fee, and revision
+ * terms, not CNRS's obligations. Billing details per Primavera's
+ * annuaire link: CNRS, 3 Rue Michel-Ange, 75016 Paris, VAT FR40
+ * 180089013 (the earlier CERSA address was wrong info, retracted).
  */
 
 import type { SignableDocument } from "./types";
-
-/** Client legal entity, recorded on the signature (`clientEntity`). */
-export const CLIENT_ENTITY = "CERSA (CNRS)";
 
 export type E2cPhase = {
   /** Small caption above the title, e.g. "Phase 0". */
@@ -122,12 +122,12 @@ export const e2c: E2cClient = {
 
   sow: {
     title: "Service Agreement",
-    version: "v1-2026-07-23",
+    version: "v2-2026-07-28",
     preamble:
-      "Plain-language agreement covering the design refinement of the E2C Cookbook for CNRS. Questions before approving, just message me.",
-    effectiveDate: "On signing",
+      "Plain-language agreement covering the design refinement of the E2C Cookbook. A project lead approves it in their own name. Nobody signs on behalf of CNRS: CNRS commits to payment by processing the invoice. Questions before approving, just message me.",
+    effectiveDate: "On approval",
     acknowledgments: [
-      "I sign on behalf of the Client, and I have read and agree to the terms of this Service Agreement. I consent to sign it electronically. My full name, email, and this confirmation together form my legal signature under applicable electronic signature law.",
+      "I approve this agreement as a project lead for the E2C Cookbook, signing in my own name. I confirm the scope, timeline, fee, and revision terms, and I acknowledge that payment is processed by CNRS administration under the research grant. I consent to sign electronically. My full name, email, and this confirmation together form my signature under applicable electronic signature law.",
     ],
     sections: [
       {
@@ -141,14 +141,14 @@ export const e2c: E2cClient = {
                 "Guilherme Maueler, Berlin, Germany. VAT ID: DE308488034.",
               ],
               [
-                "Client",
-                "CERSA (CNRS), 12 Place du Panthéon, 75005 Paris, France. SIRET and VAT number under confirmation.",
+                "Paying entity",
+                "Centre National de la Recherche Scientifique (CNRS), 3 Rue Michel-Ange, 75016 Paris, France. VAT: FR40 180089013. Payment is processed by CNRS administration under the research grant.",
               ],
               [
                 "Project reference",
                 "ERC BlockchainGov Grant Agreements No. 865856",
               ],
-              ["Project contacts", "Tara Merk, Primavera De Filippi"],
+              ["Project leads", "Tara Merk, Primavera De Filippi"],
               ["Dated", "Auto-filled on signing"],
             ],
           },
@@ -229,8 +229,8 @@ export const e2c: E2cClient = {
           {
             type: "ul",
             items: [
-              "Card payment via Wise payment link.",
-              "Payment may be split into smaller installments to accommodate card limits, with one single-use link per installment.",
+              "Invoice INV-26017 (EUR 2,000, due on receipt) is issued alongside this agreement. CNRS formalizes its commitment to pay by processing it.",
+              "Card payment via the Stripe link on the invoice, or bank transfer. Card payment may be split into smaller installments, one single-use link per installment.",
               "Both parties acknowledge payment is processed by CNRS administration and may complete after delivery.",
             ],
           },
@@ -259,14 +259,14 @@ export const e2c: E2cClient = {
         blocks: [
           {
             type: "p",
-            text: "Guilherme Maueler issues this agreement, and issuing it is his acceptance of these terms. The Client accepts by approving below. Both parties are then bound, with no second signature block needed.",
+            text: "Guilherme Maueler issues this agreement, and issuing it is his acceptance of these terms. A project lead (Primavera De Filippi or Tara Merk) approves by signing below in their own name. Approval confirms the scope, timeline, and fee, and work begins. It does not bind CNRS: CNRS commits to payment by processing the invoice.",
           },
         ],
       },
     ],
     signatories: [
       ["Designer", "Guilherme Maueler"],
-      ["Client", `${CLIENT_ENTITY}, Primavera De Filippi`],
+      ["Project lead", "Primavera De Filippi or Tara Merk"],
       ["Date signed", "Auto-filled on signing"],
     ],
   },
