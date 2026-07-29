@@ -34,9 +34,11 @@
 
 # WinWin cross-context memory
 
-- WinWin/SPA lives in three places: this repo (client-facing admin), a local Claude Code folder (production files), and a claude.ai project (thinking). The shared index is a Google Doc, "WinWin 2026 — project brain", which mirrors this repo's **Status** and **Money** sections.
-- This repo owns those two sections, kept in `docs/winwin-status.md`. **Whenever SPA state changes here** (phase status, payment landing, invoice issued), update `docs/winwin-status.md` to match `src/content/clients/spa.ts` + the ledger, and bump its "Last reconciled" date.
-- This session's Drive connector is create-only (no update-content tool), so it can't edit the brain Doc in place. After refreshing `winwin-status.md`, hand Guil the updated Status + Money block to paste into the Doc. Don't create a second copy of the Doc.
+- WinWin/SPA lives in three places: this repo (client-facing admin), a local Claude Code folder (production files), and a claude.ai project (thinking). The shared index is a **Notion page**, "WinWin 2026 — project brain" (under "WinWin Brussels"): https://app.notion.com/p/3ac9754238ea8106b9e9c0bf7b0a0132 (page id `3ac97542-38ea-8106-b9e9-c0bf7b0a0132`). Migrated from Google Docs on 2026-07-29; the old GDoc is frozen and points here.
+- Four sections, one owner each. **This repo owns "Status" and "Money".** "Production" belongs to the local WINWIN folder, "Decisions & context" to the claude.ai project.
+- Routine on any session that touches SPA: (1) read the whole Notion page first via the Notion MCP (`notion-fetch`); (2) do the work; (3) edit ONLY the Status and Money sections via `notion-update-page` (`update_content` for targeted edits) — note cross-owner facts in your own section, never edit theirs; (4) bump "Last reconciled" to today.
+- Keep `docs/winwin-status.md` (the repo mirror of Status + Money) in step with the Notion page and with `src/content/clients/spa.ts` + the ledger.
+- If the Notion MCP is not connected in a session, say so and stop rather than guessing — the page can only be edited through it. To connect: `claude mcp add --transport http notion https://mcp.notion.com/mcp` (then authenticate).
 
 # Invoices
 

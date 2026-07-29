@@ -1,36 +1,36 @@
-# WinWin 2026 — project status
+# WinWin 2026 — project status (repo mirror)
 
-Single source of truth for where the WinWin 2026 engagement stands. This is
-generated from the repo (`src/content/clients/spa.ts`, the invoice ledger, and
-the client page), which is where the live state lives. When something material
-changes, refresh this file, then paste it into the claude.ai "freelance designer
-OS" project so both memories match. The claude.ai project holds the static
-context (brief, proposal, visual direction, discovery); this holds current state.
+This is the guil.is repo's half of the shared **WinWin brain**. The brain lives
+in Notion ("WinWin 2026 — project brain", under "WinWin Brussels"), where this
+repo owns the **Status** and **Money** sections. This file mirrors those two
+sections in the repo, generated from `src/content/clients/spa.ts` + the invoice
+ledger. When SPA state changes here, update this file, then push the same edits
+to the Notion Status/Money sections via the Notion MCP. Production and Decisions
+live in Notion, owned by the other two contexts.
 
-_Last reconciled: 2026-07-27._
+Notion brain: https://app.notion.com/p/3ac9754238ea8106b9e9c0bf7b0a0132
 
-## The engagement
+_Last reconciled: 2026-07-29._
+
+## Status
 
 - **Client:** Sustainable Public Affairs (SPA), Lara Sibbing. Brussels, Belgium.
   VAT BE0642.953.216.
-- **Project:** WinWin 2026 — visual identity, invitation, and event website for
-  the Brussels summit (29 October 2026).
+- **Project:** WinWin 2026 — visual identity, invitation, and event website.
+  Summit **3 November 2026** in Brussels (was 29 Oct at kickoff, briefly 9 Nov;
+  3 Nov is final).
 - **Fee:** 11,800 EUR net, fixed, billed by phase. Invoiced net with VAT reverse
   charge (EU cross-border B2B).
-- **Timeline:** kickoff 7 July 2026, wrapping late August. Four phases.
+- **Timeline:** kickoff 7 July 2026. Design work wraps late August, but speaker
+  and programme content may slip into September (per the 29 Jul Phase 3 call), so
+  "late August" is no longer a hard promise for full completion.
 - **Client page:** guil.is/for/spa — password `winwin`. Tabs: Progress,
   Agreement, and a link to the frozen original Proposal (guil.is/for/spa/proposal).
 - **Agreement:** Service Agreement v1-2026-07-02, signed. It incorporates the
   proposal by reference, so the proposal page stays frozen.
-
-## Phases
-
-| Phase | Scope | Status |
-| --- | --- | --- |
-| 1 (Week 1) | Discovery + explorations | Approved |
-| 2 (Week 2) | Core identity + invite (incl. save-the-date) | Approved |
-| 3 (Weeks 3-4) | Full website + assets | **In progress** |
-| 4 (Weeks 5-6) | All deliverables (extended assets, print, merch) | Upcoming, scope + amount confirmed before it starts |
+- **Phases:** 1 Discovery + explorations — approved. 2 Core identity + invite —
+  approved. 3 Full website + assets — **in progress** (kicked off 29 Jul).
+  4 All deliverables — upcoming, scope + amount confirmed before it starts.
 
 ## Money
 
@@ -38,12 +38,16 @@ _Last reconciled: 2026-07-27._
 | --- | --- | --- | --- |
 | Deposit (30%) | 1,560 EUR | Paid 2026-07-15 | INV-26015 |
 | Phase 1-2 balance | 3,640 EUR | Invoiced, due 2026-08-10 | INV-26016 |
-| Phase 3 | 3,800 EUR | Not yet billed | — |
+| Phase 3 | 3,800 EUR | In progress, not yet billed | — |
 | Phase 4 (estimate) | 2,800 EUR | Not yet billed | — |
 | **Total** | **11,800 EUR** | 1,560 paid, 10,240 outstanding | — |
 
 - Phase 1-2 invoice (INV-26016) = 5,200 Phase 1-2 fee less the 1,560 deposit
-  credited. Emailed to Lara on 2026-07-27.
+  credited. Emailed to Lara on 2026-07-27. Lara forwarded it to SPA finance on
+  29 Jul; their finance pays **without** sending confirmation, so watch the
+  account rather than waiting for a reply.
+- Phase 3 kicked off 29 Jul and is not yet billed. Decide whether to invoice now
+  or hold to a phase-3 milestone.
 - Phase 4 (2,800) is a working estimate. Its scope and amount are confirmed
   together before that phase begins, and the total moves with it.
 
@@ -60,12 +64,13 @@ _Last reconciled: 2026-07-27._
 - **Brief + discovery notes:** `docs/spa-brief-notes.md`.
 - **Walkthrough script:** `docs/spa-loom-script.md`.
 
-## How to keep the two memories in sync
+## How this stays in sync
 
-1. The repo is the source of truth. Update `spa.ts` (and the ledger) as the
-   project moves; the client page derives from it automatically.
+1. The repo is the source of truth for Status + Money. Update `spa.ts` (and the
+   ledger) as the project moves; the client page derives from it automatically.
 2. When a phase completes, an invoice goes out, or a payment lands, refresh this
-   file to match.
-3. Paste this file into the claude.ai project so its knowledge reflects reality.
-   Don't edit project state in claude.ai and expect it to flow back — that
-   direction drifts. claude.ai is for thinking and content; the repo is the record.
+   file, then apply the same edits to the Notion brain's Status/Money sections
+   (Notion MCP: fetch, then update_content) and bump "Last reconciled".
+3. Edit ONLY the Status and Money sections in Notion. Production and Decisions
+   belong to the other two contexts. Note cross-owner facts in your own section
+   instead of editing theirs.
