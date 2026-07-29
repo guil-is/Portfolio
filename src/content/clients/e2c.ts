@@ -175,7 +175,6 @@ export const e2c: E2cClient = {
               "Flavor matrix component (one design, applied across all ~12 placements).",
               "Redesigned before/after E2C infographic.",
               "Refined TLDR box and case study template styles.",
-              "Refinement of up to 6 existing spot illustrations.",
               "Print-ready PDF (color-managed, with bleed, print-tested).",
               "Web-optimized PDF with the case study annex replaced by links to e2c.how.",
             ],
