@@ -40,6 +40,12 @@
 - Keep `docs/winwin-status.md` (the repo mirror of Status + Money) in step with the Notion page and with `src/content/clients/spa.ts` + the ledger.
 - If the Notion MCP is not connected in a session, say so and stop rather than guessing — the page can only be edited through it. To connect: `claude mcp add --transport http notion https://mcp.notion.com/mcp` (then authenticate).
 
+# E2C cross-context memory
+
+- E2C Cookbook lives in two places: this repo (agreement, phases, money) and a claude.ai project (design thinking). The shared index is a Notion page, **"E2C Cookbook — project brain"** (page id `3ac97542-38ea-817e-8255-f7e5311fd5b2`), readable and writable by both via the Notion connector.
+- This repo owns the **Status**, **Money**, and **Agreement** sections of that page. **Whenever E2C state changes here** (`currentPhase` bump, agreement edit, ledger entry, payment landing), update the Notion page to match `src/content/clients/e2c.ts` + the ledger via `notion-update-page` (targeted `update_content` edits, not full replaces), and bump its "Last reconciled" line. The claude.ai project owns **Thinking** — don't overwrite it.
+- Unlike the WinWin Google Doc, the Notion connector CAN edit in place. No manual paste step, and never create a second copy of the page.
+
 # Invoices
 
 - To make an invoice from a prompt: `npm run invoice` — full workflow in `docs/making-an-invoice.md`.
