@@ -42,9 +42,10 @@
 
 # E2C cross-context memory
 
-- E2C Cookbook lives in two places: this repo (agreement, phases, money) and a claude.ai project (design thinking). The shared index is a Notion page, **"E2C Cookbook — project brain"** (page id `3ac97542-38ea-817e-8255-f7e5311fd5b2`), readable and writable by both via the Notion connector.
-- This repo owns the **Status**, **Money**, and **Agreement** sections of that page. **Whenever E2C state changes here** (`currentPhase` bump, agreement edit, ledger entry, payment landing), update the Notion page to match `src/content/clients/e2c.ts` + the ledger via `notion-update-page` (targeted `update_content` edits, not full replaces), and bump its "Last reconciled" line. The claude.ai project owns **Thinking** — don't overwrite it.
-- Unlike the WinWin Google Doc, the Notion connector CAN edit in place. No manual paste step, and never create a second copy of the page.
+- E2C Cookbook lives in two places: this repo (agreement, phases, money) and a claude.ai project (design thinking). The shared index is a **Notion page**, "E2C Cookbook — project brain": https://app.notion.com/p/3ac9754238ea817e8255f7e5311fd5b2 (page id `3ac97542-38ea-817e-8255-f7e5311fd5b2`).
+- Section ownership: **this repo owns "Status", "Money", "Agreement", and "Open items"**; the claude.ai project owns "Thinking"; "Decisions log" is shared, append-only with dates.
+- Same routine as WinWin: (1) read the whole page first (`notion-fetch`); (2) do the work; (3) **whenever E2C state changes here** (`currentPhase` bump, agreement edit, ledger entry, payment landing), edit only your sections via `notion-update-page` (`update_content` targeted edits, not full replaces) to match `src/content/clients/e2c.ts` + the ledger; (4) bump "Last reconciled" to today. Never edit "Thinking", never create a second copy of the page.
+- If the Notion MCP is not connected, say so and stop rather than guessing — same as WinWin.
 
 # Invoices
 
