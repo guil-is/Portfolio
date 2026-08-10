@@ -9,6 +9,19 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "cdn.sanity.io" },
     ],
   },
+  async rewrites() {
+    return {
+      // beforeFiles so the host match wins over the portfolio's own pages —
+      // collage.guil.is proxies the Webflow site while keeping the URL masked.
+      beforeFiles: [
+        {
+          source: "/:path*",
+          destination: "https://guil-collages.webflow.io/:path*",
+          has: [{ type: "host", value: "collage.guil.is" }],
+        },
+      ],
+    };
+  },
   async redirects() {
     return [
       // Proposals moved from /<slug> to /for/<slug>. The Odyssey link
