@@ -10,7 +10,7 @@ live in Notion, owned by the other two contexts.
 
 Notion brain: https://app.notion.com/p/3ac9754238ea8106b9e9c0bf7b0a0132
 
-_Last reconciled: 2026-07-29._
+_Last reconciled: 2026-08-10._
 
 ## Status
 
@@ -45,7 +45,10 @@ _Last reconciled: 2026-07-29._
 - Phase 1-2 invoice (INV-26016) = 5,200 Phase 1-2 fee less the 1,560 deposit
   credited. Emailed to Lara on 2026-07-27. Lara forwarded it to SPA finance on
   29 Jul; their finance pays **without** sending confirmation, so watch the
-  account rather than waiting for a reply.
+  account rather than waiting for a reply. **10 Aug (due date):** still unpaid.
+  Checked in with Lara same day — all good her side, most of SPA on holiday this
+  week (only Lara in), she's double-checking with their finance colleague. Expect
+  a slower turnaround this week.
 - Phase 3 kicked off 29 Jul and is not yet billed. Decide whether to invoice now
   or hold to a phase-3 milestone.
 - Phase 4 (2,800) is a working estimate. Its scope and amount are confirmed
