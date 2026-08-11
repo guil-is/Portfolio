@@ -20,6 +20,7 @@ import {
   formatMoney,
   formatMoneyCompact,
   formatDate,
+  formatDateRange,
 } from "./invoice";
 import { issuer } from "@/content/invoices/config";
 
@@ -291,9 +292,13 @@ export function InvoicePdf({
             </View>
             {spec.serviceDate ? (
               <View>
-                <Text style={styles.headerMetaLabel}>Service date</Text>
+                <Text style={styles.headerMetaLabel}>
+                  {spec.serviceEndDate ? "Service period" : "Service date"}
+                </Text>
                 <Text style={styles.headerMetaValue}>
-                  {formatDate(spec.serviceDate)}
+                  {spec.serviceEndDate
+                    ? formatDateRange(spec.serviceDate, spec.serviceEndDate)
+                    : formatDate(spec.serviceDate)}
                 </Text>
               </View>
             ) : null}

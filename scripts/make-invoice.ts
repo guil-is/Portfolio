@@ -156,6 +156,7 @@ function specFromFile(args: Args): InvoiceSpec {
     issuedAt,
     dueAt: args.due ?? raw.dueAt ?? isoPlusDays(issuedAt, 7),
     serviceDate: raw.serviceDate,
+    serviceEndDate: raw.serviceEndDate,
     currency: raw.currency ?? "EUR",
     taxMode: raw.taxMode ?? "de-19",
     billTo:

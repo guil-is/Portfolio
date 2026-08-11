@@ -46,8 +46,14 @@ export type InvoiceSpec = {
   issuedAt: string;
   /** ISO date payment is due. */
   dueAt: string;
-  /** Optional ISO date (or short label) for when the work happened. */
+  /** Optional ISO date (or short label) for when the work happened.
+   * With `serviceEndDate` it becomes the start of the service period. */
   serviceDate?: string;
+  /** Optional ISO end date. Set it when the work spans a period rather
+   * than a single day: the invoice then states the Leistungszeitraum
+   * ("Service period", e.g. July 8 – August 11, 2026) instead of one
+   * date, which is what §14 UStG asks for on multi-day engagements. */
+  serviceEndDate?: string;
   currency: Currency;
   taxMode: TaxMode;
   billTo: BillTo;
@@ -108,4 +114,25 @@ export function formatDate(iso: string): string {
     dateStyle: "long",
     timeZone: "UTC",
   });
+}
+
+/**
+ * A service period, e.g. "July 8 – August 11, 2026". The year is printed
+ * once when both ends fall in the same year, so the range stays narrow
+ * enough for the invoice header.
+ */
+export function formatDateRange(startIso: string, endIso: string): string {
+  const start = new Date(`${startIso}T00:00:00Z`);
+  const end = new Date(`${endIso}T00:00:00Z`);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return `${formatDate(startIso)} – ${formatDate(endIso)}`;
+  }
+  const sameYear = start.getUTCFullYear() === end.getUTCFullYear();
+  const startText = start.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    ...(sameYear ? {} : { year: "numeric" }),
+    timeZone: "UTC",
+  });
+  return `${startText} – ${formatDate(endIso)}`;
 }
