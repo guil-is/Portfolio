@@ -128,6 +128,17 @@ export const billToPresets: Record<string, BillTo> = {
       "TAX/VAT: FR40 180089013",
     ],
   },
+  // Non-EU (Switzerland): invoice net, §3a place-of-supply exemption.
+  logos: {
+    name: "Logos Collective Association",
+    lines: [
+      "Attn: Jonny",
+      "Baarerstrasse 10",
+      "6300 Zug",
+      "Switzerland",
+      "UID: CHE-134.145.789",
+    ],
+  },
   // EU cross-border B2B: invoice net, reverse charge note, both VAT IDs
   // on the invoice.
   spa: {

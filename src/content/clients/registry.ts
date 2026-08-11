@@ -93,8 +93,9 @@ export const clientRegistry: ClientEntry[] = [
   entry(
     "logos",
     "Logos",
-    "DWeb Camp 2026 video content: two shorts + aftermovie. Editing in progress.",
-    "active",
+    "DWeb Camp 2026 video content: two shorts + aftermovie. Delivered, invoice out.",
+    "delivered",
+    { billingPreset: "logos" },
   ),
   entry(
     "spa",
