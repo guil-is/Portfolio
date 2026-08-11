@@ -67,10 +67,21 @@ Matches `InvoiceSpec` in `src/lib/invoice.ts`. `billTo` may be a preset
 key from `config.ts` (`justice`, `myosin`, `tedxberlin`) or an inline
 object. Lines are `qty` × `unitPrice`, or a fixed `amount`.
 
+**Always set the service date to when the work actually happened.** This
+is the Leistungsdatum/-zeitraum §14 UStG requires, and it is the easiest
+field to get wrong: leaving it out says nothing, and copying the issue
+date into it says nothing twice. When the work spanned more than a day —
+which it usually did — set `serviceDate` to the start and `serviceEndDate`
+to the end, and the invoice prints "Service period · July 8 – August 11,
+2026". A single `serviceDate` is right only for genuine same-day work.
+The CLI warns when the field is missing or equals the issue date; Justice
+retainer invoices derive the period from the hours-log block.
+
 ```json
 {
   "issuedAt": "2026-06-23",
-  "serviceDate": "2026-06-19",
+  "serviceDate": "2026-06-08",
+  "serviceEndDate": "2026-06-19",
   "currency": "EUR",
   "taxMode": "de-19",
   "billTo": "tedxberlin",

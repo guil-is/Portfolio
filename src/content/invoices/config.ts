@@ -84,8 +84,7 @@ export const paymentProfiles: Record<string, PaymentProfile> = {
     heading: "Pay with crypto",
     includeReference: false,
     rows: [
-      // TODO: verify — transcribed from INV-26013's PDF, confirm against
-      // your wallet before including on a live invoice.
+      // Verified against the wallet on 2026-08-11 and used on INV-26018.
       ["USDC on Ethereum Mainnet", "0x06B759c70c2136224D4cFA6C79de0a3c1F4D7131"],
     ],
   },

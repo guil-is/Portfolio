@@ -127,6 +127,13 @@ function specFromJustice(args: Args): InvoiceSpec {
     number: args.number ?? nextInvoiceNumber(),
     issuedAt,
     dueAt: args.due ?? isoPlusDays(issuedAt, 7),
+    // The retainer period IS the Leistungszeitraum — derive it rather
+    // than leaving the invoice without one. weekStart is a Monday, so the
+    // period runs to the Friday of its last week; that matches the
+    // period's own label (e.g. "May 25 – 29, 2026"), which is printed in
+    // the note, so the header and the note can't contradict each other.
+    serviceDate: period.weekStart,
+    serviceEndDate: isoPlusDays(period.weekStart, ((period.weeks ?? 1) - 1) * 7 + 4),
     currency: "USD",
     taxMode: "outside-eu",
     billTo: billToPresets.justice,
@@ -180,6 +187,31 @@ function specFromFile(args: Args): InvoiceSpec {
   return spec;
 }
 
+/**
+ * The service date is the Leistungsdatum/-zeitraum §14 UStG asks for, and
+ * it is the field easiest to get wrong: leaving it unset says nothing, and
+ * copying the issue date into it (a tempting placeholder) says nothing
+ * twice. Warn on both — loudly enough to notice, without blocking the
+ * genuine same-day job.
+ */
+function warnOnServicePeriod(spec: InvoiceSpec): void {
+  if (!spec.serviceDate) {
+    console.warn(
+      `⚠ No service date — §14 UStG wants the date or period the work` +
+        ` happened. Set "serviceDate" (plus "serviceEndDate" if it spans` +
+        ` days) and regenerate.`,
+    );
+    return;
+  }
+  if (!spec.serviceEndDate && spec.serviceDate === spec.issuedAt) {
+    console.warn(
+      `⚠ Service date equals the issue date. If the work actually spanned` +
+        ` days, set "serviceDate" to when it started and "serviceEndDate"` +
+        ` to when it finished. Ignore this for genuine same-day work.`,
+    );
+  }
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
@@ -200,6 +232,8 @@ async function main() {
     fail(
       "Pass a spec JSON path, --justice <weekStart>, or --next-number. See docs/making-an-invoice.md",
     );
+
+  warnOnServicePeriod(spec);
 
   const profiles = spec.paymentProfiles.map(
     (key) =>

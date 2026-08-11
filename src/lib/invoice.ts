@@ -117,9 +117,13 @@ export function formatDate(iso: string): string {
 }
 
 /**
- * A service period, e.g. "July 8 – August 11, 2026". The year is printed
- * once when both ends fall in the same year, so the range stays narrow
- * enough for the invoice header.
+ * A service period. Repeated parts are printed once, so the range stays
+ * narrow enough for the invoice header and reads the way the hours-log
+ * period labels do:
+ *
+ *   same month  → "May 4 – 15, 2026"
+ *   same year   → "July 8 – August 11, 2026"
+ *   otherwise   → "December 20, 2026 – January 8, 2027"
  */
 export function formatDateRange(startIso: string, endIso: string): string {
   const start = new Date(`${startIso}T00:00:00Z`);
@@ -128,6 +132,15 @@ export function formatDateRange(startIso: string, endIso: string): string {
     return `${formatDate(startIso)} – ${formatDate(endIso)}`;
   }
   const sameYear = start.getUTCFullYear() === end.getUTCFullYear();
+  const sameMonth = sameYear && start.getUTCMonth() === end.getUTCMonth();
+  if (sameMonth) {
+    const startText = start.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      timeZone: "UTC",
+    });
+    return `${startText} – ${end.getUTCDate()}, ${end.getUTCFullYear()}`;
+  }
   const startText = start.toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
