@@ -205,6 +205,26 @@ const styles = StyleSheet.create({
     fontSize: 8.5,
     lineHeight: 1.3,
   },
+  // Long values (crypto wallet addresses, payment links) don't fit beside
+  // the label column: they wrap mid-string and can run past the page edge,
+  // which would leave a client copying a mangled address. These stack the
+  // label above a full-width value instead.
+  waysItemStacked: {
+    flexDirection: "column",
+    marginBottom: 4,
+  },
+  waysLabelStacked: {
+    width: "100%",
+    fontSize: 8,
+    lineHeight: 1.3,
+    color: MUTED,
+    marginBottom: 1,
+  },
+  waysValueStacked: {
+    width: "100%",
+    fontSize: 8,
+    lineHeight: 1.3,
+  },
   footer: {
     position: "absolute",
     bottom: 22,
@@ -381,17 +401,38 @@ export function InvoicePdf({
                       <Text style={styles.waysValue}>{spec.number}</Text>
                     </View>
                   ) : null}
-                  {p.rows.map(([label, value], j) => (
-                    <View
-                      key={j}
-                      style={[styles.waysItemRow, { marginBottom: wayPad }]}
-                    >
-                      <Text style={styles.waysLabel}>{label}</Text>
-                      <Text style={styles.waysValue}>
-                        {density === "roomy" ? value : value.replace(/\n/g, ", ")}
-                      </Text>
-                    </View>
-                  ))}
+                  {p.rows.map(([label, value], j) => {
+                    const text =
+                      density === "roomy" ? value : value.replace(/\n/g, ", ");
+                    // A long single-line value (wallet address, payment
+                    // link) can't share the row with the label without
+                    // overflowing — give it the full column width.
+                    const stacked = !text.includes("\n") && text.length > 30;
+                    return (
+                      <View
+                        key={j}
+                        style={[
+                          stacked ? styles.waysItemStacked : styles.waysItemRow,
+                          { marginBottom: wayPad },
+                        ]}
+                      >
+                        <Text
+                          style={
+                            stacked ? styles.waysLabelStacked : styles.waysLabel
+                          }
+                        >
+                          {label}
+                        </Text>
+                        <Text
+                          style={
+                            stacked ? styles.waysValueStacked : styles.waysValue
+                          }
+                        >
+                          {text}
+                        </Text>
+                      </View>
+                    );
+                  })}
                 </View>
               ))}
             </View>
