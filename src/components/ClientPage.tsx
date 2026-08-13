@@ -648,9 +648,11 @@ function AgreementView({
         <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
           {sow.title ?? "Service Agreement"}
         </h2>
-        <p className="max-w-[640px] text-[1rem] italic leading-[1.75rem] text-ink">
-          {sow.preamble}
-        </p>
+        {sow.preamble ? (
+          <p className="max-w-[640px] text-[1rem] italic leading-[1.75rem] text-ink">
+            {sow.preamble}
+          </p>
+        ) : null}
       </header>
 
       {sow.sections.map((s) => (

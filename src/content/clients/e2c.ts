@@ -123,8 +123,7 @@ export const e2c: E2cClient = {
   sow: {
     title: "Service Agreement",
     version: "v2-2026-07-28",
-    preamble:
-      "Plain-language agreement covering the design refinement of the E2C Cookbook. A project lead approves it in their own name. Nobody signs on behalf of CNRS: CNRS commits to payment by processing the invoice. Questions before approving, just message me.",
+    preamble: "",
     effectiveDate: "On approval",
     acknowledgments: [
       "I approve this agreement as a project lead for the E2C Cookbook, signing in my own name. I confirm the scope, timeline, fee, and revision terms, and I acknowledge that payment is processed by CNRS administration under the research grant. I consent to sign electronically. My full name, email, and this confirmation together form my signature under applicable electronic signature law.",
