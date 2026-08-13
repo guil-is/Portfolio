@@ -260,7 +260,11 @@ export async function POST(req: Request) {
         pdfAttached: !!pdfBuffer,
         clientEntity: clientEntity || undefined,
       });
-      await resend.emails.send({
+      // The Resend SDK does not throw on API errors — it resolves with
+      // { data, error }. Ignoring the result means a rejected send (bad
+      // from-domain, rate limit, invalid recipient) vanishes silently,
+      // so check it and log both outcomes.
+      const result = await resend.emails.send({
         from: `Guil Maueler <${fromAddress}>`,
         to: [email, notifyAddress],
         subject: mail.subject,
@@ -276,6 +280,16 @@ export async function POST(req: Request) {
             ]
           : undefined,
       });
+      if (result.error) {
+        console.error(
+          `[sign-agreement] email rejected by Resend (to ${email}, ${notifyAddress}):`,
+          result.error,
+        );
+      } else {
+        console.log(
+          `[sign-agreement] confirmation email sent to ${email}, ${notifyAddress} (id ${result.data?.id})`,
+        );
+      }
     } catch (err) {
       console.error("[sign-agreement] email send failed", err);
     }
