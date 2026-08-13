@@ -10,7 +10,7 @@ live in Notion, owned by the other two contexts.
 
 Notion brain: https://app.notion.com/p/3ac9754238ea8106b9e9c0bf7b0a0132
 
-_Last reconciled: 2026-08-10._
+_Last reconciled: 2026-08-13._
 
 ## Status
 
@@ -48,7 +48,10 @@ _Last reconciled: 2026-08-10._
   account rather than waiting for a reply. **10 Aug (due date):** still unpaid.
   Checked in with Lara same day — all good her side, most of SPA on holiday this
   week (only Lara in), she's double-checking with their finance colleague. Expect
-  a slower turnaround this week.
+  a slower turnaround this week. **12 Aug:** Lara pinged finance again.
+  **13 Aug:** still not received. Lara also asked for Brussels printer
+  recommendations — print production is SPA's cost per the SOW; we supply
+  print-ready files and can liaise on specs.
 - Phase 3 kicked off 29 Jul and is not yet billed. Decide whether to invoice now
   or hold to a phase-3 milestone.
 - Phase 4 (2,800) is a working estimate. Its scope and amount are confirmed
