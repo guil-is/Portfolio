@@ -49,9 +49,10 @@ _Last reconciled: 2026-08-13._
   Checked in with Lara same day — all good her side, most of SPA on holiday this
   week (only Lara in), she's double-checking with their finance colleague. Expect
   a slower turnaround this week. **12 Aug:** Lara pinged finance again.
-  **13 Aug:** still not received. Lara also asked for Brussels printer
-  recommendations — print production is SPA's cost per the SOW; we supply
-  print-ready files and can liaise on specs.
+  **13 Aug:** still not received; told Lara, suggested another ping to
+  finance. Sent printer recs (IPM Printing local; Printdeal.be / Helloprint.be
+  for fast basic runs) and offered to join printer email threads for specs —
+  print production is SPA's cost per the SOW; we supply print-ready files.
 - Phase 3 kicked off 29 Jul and is not yet billed. Decide whether to invoice now
   or hold to a phase-3 milestone.
 - Phase 4 (2,800) is a working estimate. Its scope and amount are confirmed
