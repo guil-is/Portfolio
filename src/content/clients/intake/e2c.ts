@@ -3,9 +3,8 @@
  * example of the intake pattern (docs/client-lifecycle.md § 1). New
  * leads get one of these before anything else is scaffolded.
  *
- * Open gate: `intakeGaps(e2cIntake, "invoice")` — CERSA's VAT ID (and
- * SIRET) are still pending. Do not invoice until the VAT ID is recorded
- * and validated on VIES.
+ * All gates cleared: invoice INV-26017 issued 28 July against the
+ * billing details below. Kept for the historical record.
  */
 
 import type { ClientIntake } from "../intake";
@@ -29,11 +28,11 @@ export const e2cIntake: ClientIntake = {
   },
 
   billing: {
-    // Confirmed by Primavera via Telegram, 24 July 2026.
-    entityName: "CERSA (CNRS)",
-    addressLines: ["12 Place du Panthéon", "75005 Paris", "France"],
-    // SIRET and VAT ID still pending — validate the VAT number on VIES
-    // before invoicing.
+    // Final address/VAT per Primavera's annuaire link (retracted the
+    // earlier CERSA-only address). Used on invoice INV-26017.
+    entityName: "Centre National de la Recherche Scientifique (CNRS), CERSA",
+    addressLines: ["3 Rue Michel-Ange", "75016 Paris", "France"],
+    vatId: "FR40 180089013",
     country: "France",
     taxMode: "reverse-charge",
     currency: "EUR",
@@ -42,9 +41,9 @@ export const e2cIntake: ClientIntake = {
   password: "cookbook",
 
   notes: [
-    "Agreement is published at /for/e2c (stage: accepted, awaiting signature).",
-    "Primavera signs for CERSA (confirmed via Telegram, 24 July) — record her email as signer when the signature lands.",
-    "Invoice must cite the project reference: ERC BlockchainGov Grant Agreements No. 865856.",
+    "Agreement live at /for/e2c, project in Phase 3 (full production, delivery 21 Aug).",
+    "Signing model settled 28 July: nobody can sign for CNRS, so a project lead (Primavera De Filippi or Tara Merk) approves the agreement in their own name, while CNRS formalizes payment by processing the invoice.",
+    "Invoice INV-26017 (EUR 2,000) issued 28 July, citing project reference ERC BlockchainGov Grant Agreements No. 865856. Card payment via Stripe, settlement pending — overdue as of the 15 Aug sweep (due 28 Jul), chase Primavera.",
     "Contact emails still to be recorded from the thread.",
   ],
 };
