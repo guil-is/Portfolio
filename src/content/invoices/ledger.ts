@@ -63,9 +63,10 @@ export const invoiceLedger: LedgerEntry[] = [
     clientSlug: "e2c",
     issuedAt: "2026-07-28",
     dueAt: "2026-07-28",
+    paidAt: "2026-07-29",
     total: 2000,
     currency: "EUR",
-    note: "E2C Cookbook design, flat fee (reverse charge). Reissued same day at Primavera's request: BlockchainGov named, CERSA added to the bill-to. Card payment executed via Stripe 28 July, settlement pending — set paidAt when it lands.",
+    note: "E2C Cookbook design, flat fee (reverse charge). Reissued same day at Primavera's request: BlockchainGov named, CERSA added to the bill-to. Card payment via Stripe 28 July, settled the next day (confirmed 27 Aug). Stripe fee absorbed.",
   },
   {
     number: "INV-26016",

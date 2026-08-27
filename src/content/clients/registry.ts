@@ -83,7 +83,7 @@ export const clientRegistry: ClientEntry[] = [
   entry(
     "e2c",
     "E2C Cookbook",
-    "Report redesign for Tara Merk and Primavera De Filippi (CNRS). Final PDFs delivered 25 Aug; INV-26017 payment unconfirmed in ledger.",
+    "Report redesign for Tara Merk and Primavera De Filippi (CNRS). Delivered 25 Aug, paid in full. Offboarding next.",
     "delivered",
     {
       billingPreset: "e2c",
