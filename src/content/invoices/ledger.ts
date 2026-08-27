@@ -35,11 +35,22 @@ export type LedgerEntry = {
 
 export const invoiceLedger: LedgerEntry[] = [
   {
+    number: "INV-26019",
+    client: "Logos Collective Association",
+    clientSlug: "logos",
+    issuedAt: "2026-08-27",
+    dueAt: "2026-09-10",
+    total: 500,
+    currency: "EUR",
+    note: "Add-on: Alisher Sherali talk edit (YouTube version), agreed with Jonny over Discord 11 Aug. Non-EU, §3a UStG exempt. Sent to billing@status.im, cc Jonny.",
+  },
+  {
     number: "INV-26018",
     client: "Logos Collective Association",
     clientSlug: "logos",
     issuedAt: "2026-08-11",
     dueAt: "2026-08-25",
+    paidAt: "2026-08-24",
     total: 2940,
     currency: "EUR",
     note: "DWeb Camp 2026 video content (2 shorts + aftermovie). Non-EU, §3a UStG exempt. Full on delivery.",
