@@ -10,15 +10,16 @@
  * Uses the shared SignableDocument shape so it plugs into the signing
  * backend (hash, PDF, email) and matches the other agreements' typography.
  *
- * v6 (Aug 2026) turns this into a framework: standing terms signed once,
- * with each video commissioned by a written confirmation rather than a new
- * contract. Studio Huit stays on a project basis with Safe rather than
- * folding motion design into an hourly retainer, so per-video pricing is
- * the shape that has to hold.
+ * v7 (Aug 2026) is a framework: standing terms signed once, covering any
+ * short-form Safe video up to 30 seconds. Studio Huit stays on a project
+ * basis with Safe rather than folding motion design into an hourly
+ * retainer, so per-video pricing is the shape that has to hold.
  *
- * Deliberately no rate card in the document, because prices move and
- * standing terms don't. "Confirmed in writing before work starts" is the
- * protection; the tiers live in chat and change without a re-signature.
+ * Two things are deliberately absent. There is no rate card, because
+ * prices move and standing terms don't. And there are no per-video
+ * details: each video is commissioned by a written confirmation, which
+ * the client dashboard will carry so terms can be agreed case by case
+ * without touching the signed document.
  */
 
 import type { SignableDocument } from "./types";
@@ -42,9 +43,9 @@ export const huit: HuitClient = {
 
   sow: {
     title: "Framework Agreement",
-    version: "v6-2026-08-27",
+    version: "v7-2026-08-27",
     preamble:
-      "Guilherme Maueler provides motion design to Studio Huit for Safe's videos. This agreement sits under Studio Huit's contract with the end client, Safe Labs GmbH. It sets the terms once, so each new video only needs a short written confirmation instead of another contract.",
+      "Guilherme Maueler provides motion design to Studio Huit for Safe's short-form videos. This agreement sits under Studio Huit's contract with the end client, Safe Labs GmbH. It sets the terms once, so each new video only needs a short written confirmation.",
     effectiveDate: "August 2026",
     acknowledgments: [
       "I sign on behalf of Studio Huit, and I have read and agree to the terms of this Framework Agreement. I consent to sign it electronically. My full name, email, and this confirmation together form my legal signature under applicable electronic signature law.",
@@ -74,14 +75,13 @@ export const huit: HuitClient = {
         blocks: [
           {
             type: "p",
-            text: "This agreement covers the motion design I provide to Studio Huit for Safe's videos, priced per video rather than by the hour. It applies to every video commissioned under it and runs until either of us ends it, so there is no separate contract each time.",
+            text: "This agreement covers the motion design I provide to Studio Huit for Safe's short-form videos, up to 30 seconds each, priced per video rather than by the hour. It applies to every video commissioned under it and runs until either of us ends it.",
           },
           {
             type: "ul",
             items: [
               "I provide animation and production support under Studio Huit's creative direction.",
               "Studio Huit leads script, storyboard, creative direction, client coordination, and final delivery.",
-              "Safe Labs supplies voice over and any live-action footage. Studio Huit supplies music tracks and holds their licences.",
               "I deliver final exports and project files to Studio Huit.",
             ],
           },
@@ -92,15 +92,16 @@ export const huit: HuitClient = {
         blocks: [
           {
             type: "p",
-            text: "Each video starts with a short written confirmation from Studio Huit. A message is enough. It needs to cover:",
+            text: "Each video starts with a short written confirmation from Studio Huit. A message is enough, and it needs to cover:",
           },
           {
             type: "ul",
             items: [
-              "What the video is: runtime, aspect ratios, roughly how many scenes, and whether it reuses the established Safe style or needs new components.",
-              "The fee for that video, net of VAT.",
-              "The delivery date, and when the voice over, footage and other source material will reach me.",
-              "Anything out of the ordinary: added formats, a rush turnaround, or more than the one revision round included below.",
+              "What the video is: runtime, aspect ratios, how many scenes, and whether it reuses the established Safe style.",
+              "The fee, net of VAT.",
+              "The delivery date, and when the source material reaches me.",
+              "Who supplies the voice over, footage and music.",
+              "Anything out of the ordinary: added formats, a rush turnaround, extra revision rounds.",
             ],
           },
           {
@@ -110,36 +111,24 @@ export const huit: HuitClient = {
         ],
       },
       {
-        heading: "Fees",
+        heading: "Fees and payment",
         blocks: [
           {
             type: "p",
-            text: "The standard rate is 1600 EUR net for a video of about 30 seconds and ten scenes, in 16:9, animated from Studio Huit's animatic in the Safe style we have already established. The \"address poisoning\" video below is the reference for what that covers.",
+            text: "The standard rate is 1600 EUR net for a video of up to 30 seconds in one aspect ratio, around ten scenes, animated from Studio Huit's animatic in the Safe style we have already established.",
           },
           {
             type: "ul",
             items: [
               "Shorter or simpler videos cost less, agreed video by video.",
-              "Anything that adds work is quoted before it starts: longer runtimes, extra scenes or aspect ratios, new components outside the established style, rush turnarounds, or revision rounds beyond the one included.",
-              "Fees are always net. I add 19% VAT and invoice Studio Huit for each video.",
+              "Anything that adds work is quoted before it starts: extra scenes or aspect ratios, new components outside the established style, rush turnarounds, or revision rounds beyond the one included.",
+              "Fees are net. I add 19% VAT and invoice for each video on delivery.",
+              "Payment is due within 14 days and does not depend on when the end client pays.",
             ],
           },
           {
             type: "p",
-            text: "We keep a shared rate card for the common video shapes so Studio Huit can quote Safe without checking with me each time. That rate card is a working reference rather than part of this agreement, and either of us can suggest changes to it. What binds is the fee confirmed for the video in question.",
-          },
-        ],
-      },
-      {
-        heading: "Payment terms",
-        blocks: [
-          {
-            type: "p",
-            text: "I invoice for each video on delivery. Payment follows my delivery to Studio Huit and does not depend on when the end client pays.",
-          },
-          {
-            type: "p",
-            text: "The full amount is due within 14 days of final handoff. If Studio Huit takes over the remaining animation on a video, the 14 days run from the day I hand over the project files.",
+            text: "We keep a shared rate card so Studio Huit can quote Safe without checking with me each time. It is a working reference rather than part of this agreement. What binds is the fee confirmed for the video in question.",
           },
         ],
       },
@@ -157,66 +146,29 @@ export const huit: HuitClient = {
         ],
       },
       {
-        heading: "Timelines and slippage",
+        heading: "Timelines",
         blocks: [
           {
             type: "p",
-            text: "Every delivery date assumes the source material for that video (voice over, footage, animatic and anything else) reaches me by the date named in the confirmation. If it arrives late, the delivery date moves by at least as much, and we agree the new date together instead of compressing production.",
+            text: "Every delivery date assumes the source material for that video reaches me by the date named in the confirmation. If it arrives late, the delivery date moves by at least as much, and we agree the new date together instead of compressing production.",
           },
           {
             type: "p",
-            text: "If Studio Huit would rather take over the remaining animation than reschedule, I hand over the project files and invoice pro rata for the work done up to that point.",
+            text: "If Studio Huit would rather take over the remaining animation than reschedule, I hand over the project files and invoice pro rata for the work done, payable within 14 days of the handover.",
           },
           {
             type: "p",
-            text: "I tell Studio Huit about time off before confirming a video. Studio Huit gives me reasonable notice before commissioning one so I can hold the time.",
+            text: "I tell Studio Huit about time off before confirming a video, and Studio Huit gives me reasonable notice before commissioning one so I can hold the time.",
           },
         ],
       },
       {
-        heading: 'First video: "address poisoning"',
-        blocks: [
-          {
-            type: "p",
-            text: "The first video under this agreement, confirmed here instead of by separate message.",
-          },
-          {
-            type: "kv",
-            rows: [
-              [
-                "Scope",
-                'About 30 seconds and ten scenes, 16:9 only, animated from Studio Huit\'s Figma animatic in the style we established on the Safe "Workspace" video.',
-              ],
-              ["Fee", "1600 EUR net, plus 19% VAT (304 EUR). Total 1904 EUR."],
-              ["Monday 31 August", "First animation pass to Studio Huit, end of day."],
-              [
-                "Tuesday 1 September",
-                "Safe Labs delivers the voice over and live-action footage.",
-              ],
-              ["Wednesday 2 September", "Final version to Studio Huit, end of day."],
-              [
-                "Thursday 3 September",
-                "Small tweaks until midday. I travel from 15:00 and am unavailable Thursday 3 to Monday 7 September.",
-              ],
-            ],
-          },
-        ],
-      },
-      {
-        heading: "Credit",
-        blocks: [
-          {
-            type: "p",
-            text: "Studio Huit credits me as a collaborator on the finished videos.",
-          },
-        ],
-      },
-      {
-        heading: "Ownership",
+        heading: "Credit and ownership",
         blocks: [
           {
             type: "ul",
             items: [
+              "Studio Huit credits me as a collaborator on the finished videos.",
               "Rights to final approved deliverables transfer on full payment.",
               "I share editable source and project files with Studio Huit.",
             ],
@@ -254,7 +206,7 @@ export const huit: HuitClient = {
           },
           {
             type: "p",
-            text: "This signature covers the framework and every video commissioned under it. Later videos need only the written confirmation described above, not a new signature.",
+            text: "This signature covers the framework and every video commissioned under it. Later videos need only the written confirmation described above.",
           },
         ],
       },
