@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
   Check,
+  Clapperboard,
   Download,
   FileSignature,
   FileText,
   ListChecks,
+  Lock,
   TriangleAlert,
 } from "lucide-react";
 import { AgreementSignature } from "@/components/AgreementSignature";
@@ -16,7 +18,12 @@ import { DefinitionList } from "@/components/DefinitionList";
 import { Timeline } from "@/components/Timeline";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import type { SignableClientSlug } from "@/content/clients/signable";
-import type { SignableDocument, SowSection } from "@/content/clients/types";
+import type {
+  ClientVideo,
+  SignableDocument,
+  SowSection,
+} from "@/content/clients/types";
+import { VideoBriefs } from "@/components/VideoBriefs";
 
 /**
  * Shared, data-driven client dashboard: agreement tab (signable SOW) plus
@@ -109,9 +116,18 @@ export type ClientPageData = {
   /** SOW section heading whose kv rows render as a vertical Timeline on
    * the page (they still print as plain kv in the signed PDF). */
   timelineSection?: string;
+  /** Per-video briefs commissioned under the agreement. The tab is locked
+   * until the framework is signed, then opens automatically on signing:
+   * a brief only binds under the framework's terms, so there is nothing
+   * to confirm before those terms exist. */
+  videos?: {
+    items: ClientVideo[];
+    /** Latest signature per video key (the brief's documentKey). */
+    signatures: Record<string, SignedAgreement | null>;
+  };
 };
 
-type TabKey = "agreement" | "progress";
+type TabKey = "agreement" | "progress" | "videos";
 
 export function ClientPage({
   data,
@@ -126,40 +142,87 @@ export function ClientPage({
       data.phases?.length ||
       data.payments?.items.length,
   );
-  const [tab, setTab] = useState<TabKey>(data.defaultTab ?? "agreement");
+  const hasVideos = Boolean(data.videos?.items.length);
 
-  // Deep-link support — #agreement / #progress map to tabs.
+  // Lifted so the videos tab can gate on it and unlock the moment the
+  // framework is signed, without a page reload.
+  const [sowSignature, setSowSignature] = useState<SignedAgreement | null>(
+    initialSignature,
+  );
+  const videosLocked = hasVideos && !sowSignature;
+
+  const [tab, setTab] = useState<TabKey>(() => {
+    const wanted = data.defaultTab ?? "agreement";
+    return wanted === "videos" && videosLocked ? "agreement" : wanted;
+  });
+  const hasTabs = hasProgress || hasVideos;
+
+  function handleSowSigned(s: SignedAgreement) {
+    setSowSignature(s);
+    // The signature unlocks the briefs; take the signer straight there.
+    if (hasVideos) setTab("videos");
+  }
+
+  // Deep-link support — #agreement / #progress / #videos map to tabs.
+  // Reads the hash on mount and on real hashchange events only: the effect
+  // re-runs when videosLocked flips (signing unlocks the tab), and reading
+  // the stale hash then would stomp the auto-switch to the videos tab.
+  const didInitialHashSync = useRef(false);
   useEffect(() => {
-    if (!hasProgress) return;
+    if (!hasTabs) return;
     function syncFromHash() {
       const hash = window.location.hash.replace(/^#/, "");
-      if (hash === "agreement" || hash === "progress") setTab(hash);
+      if (hash === "agreement" || (hash === "progress" && hasProgress)) {
+        setTab(hash);
+      }
+      if (hash === "videos" && hasVideos && !videosLocked) setTab("videos");
     }
-    syncFromHash();
+    if (!didInitialHashSync.current) {
+      didInitialHashSync.current = true;
+      syncFromHash();
+    }
     window.addEventListener("hashchange", syncFromHash);
     return () => window.removeEventListener("hashchange", syncFromHash);
-  }, [hasProgress]);
+  }, [hasTabs, hasProgress, hasVideos, videosLocked]);
 
   // Reflect the active tab in the URL hash so refresh/share preserves it.
   useEffect(() => {
-    if (!hasProgress || typeof window === "undefined") return;
+    if (!hasTabs || typeof window === "undefined") return;
     const desired = `#${tab}`;
     if (window.location.hash !== desired) {
       window.history.replaceState(null, "", desired);
     }
-  }, [tab, hasProgress]);
+  }, [tab, hasTabs]);
 
   return (
     <main className="page-fade-in mx-auto w-full max-w-[880px] px-6 pt-10 pb-40 md:px-10 md:pt-16">
       <Header data={data} />
-      {hasProgress ? (
-        <Tabs tab={tab} setTab={setTab} proposalHref={data.proposalHref} />
+      {hasTabs ? (
+        <Tabs
+          tab={tab}
+          setTab={setTab}
+          hasProgress={hasProgress}
+          hasVideos={hasVideos}
+          videosLocked={videosLocked}
+          proposalHref={data.proposalHref}
+        />
       ) : null}
       <div className="mt-12 md:mt-16">
         {hasProgress && tab === "progress" ? (
           <ProgressView data={data} />
+        ) : hasVideos && tab === "videos" && data.videos && sowSignature ? (
+          <VideoBriefs
+            slug={data.slug}
+            videos={data.videos.items}
+            signatures={data.videos.signatures}
+            sowSignature={sowSignature}
+          />
         ) : (
-          <AgreementView data={data} initialSignature={initialSignature} />
+          <AgreementView
+            data={data}
+            initialSignature={initialSignature}
+            onSigned={handleSowSigned}
+          />
         )}
       </div>
     </main>
@@ -191,17 +254,41 @@ function Header({ data }: { data: ClientPageData }) {
 function Tabs({
   tab,
   setTab,
+  hasProgress,
+  hasVideos,
+  videosLocked,
   proposalHref,
 }: {
   tab: TabKey;
   setTab: (t: TabKey) => void;
+  hasProgress: boolean;
+  hasVideos: boolean;
+  /** Videos exist but the framework isn't signed yet: the tab renders
+   * with a lock and doesn't switch, telling the signer what opens it. */
+  videosLocked: boolean;
   proposalHref?: string;
 }) {
-  const items: Array<{ key: TabKey; label: string; Icon: typeof ListChecks }> =
-    [
-      { key: "agreement", label: "Agreement", Icon: FileSignature },
-      { key: "progress", label: "Progress", Icon: ListChecks },
-    ];
+  const items: Array<{
+    key: TabKey;
+    label: string;
+    Icon: typeof ListChecks;
+    locked?: boolean;
+  }> = [
+    { key: "agreement", label: "Agreement", Icon: FileSignature },
+    ...(hasVideos
+      ? [
+          {
+            key: "videos" as const,
+            label: "Videos",
+            Icon: Clapperboard,
+            locked: videosLocked,
+          },
+        ]
+      : []),
+    ...(hasProgress
+      ? [{ key: "progress" as const, label: "Progress", Icon: ListChecks }]
+      : []),
+  ];
   return (
     <div className="flex items-stretch border-b border-rule">
       <div
@@ -217,13 +304,27 @@ function Tabs({
               key={item.key}
               role="tab"
               aria-selected={active}
-              onClick={() => setTab(item.key)}
+              aria-disabled={item.locked || undefined}
+              title={
+                item.locked ? "Opens once the agreement is signed" : undefined
+              }
+              onClick={() => {
+                if (!item.locked) setTab(item.key);
+              }}
               className={[
                 "relative -mb-px inline-flex shrink-0 items-center gap-2 whitespace-nowrap px-4 py-4 font-caption text-[12px] font-semibold uppercase tracking-[1.5px] transition-colors md:px-6",
-                active ? "text-ink" : "text-muted hover:text-ink",
+                item.locked
+                  ? "cursor-not-allowed text-faint"
+                  : active
+                    ? "text-ink"
+                    : "text-muted hover:text-ink",
               ].join(" ")}
             >
-              <Icon className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
+              {item.locked ? (
+                <Lock className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
+              ) : (
+                <Icon className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
+              )}
               {item.label}
               <span
                 className={[
@@ -634,9 +735,11 @@ function formatLongDate(iso: string): string {
 function AgreementView({
   data,
   initialSignature,
+  onSigned,
 }: {
   data: ClientPageData;
   initialSignature: SignedAgreement | null;
+  onSigned?: (s: SignedAgreement) => void;
 }) {
   const { sow } = data;
   return (
@@ -673,6 +776,7 @@ function AgreementView({
           initialSignature={initialSignature}
           clientEntity={data.clientEntity}
           requireEntity={data.requireEntity}
+          onSigned={onSigned}
         />
       </section>
     </article>

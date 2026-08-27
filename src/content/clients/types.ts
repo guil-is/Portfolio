@@ -57,6 +57,21 @@ export type SignableEngagement = {
   weeklyHoursMax: number;
 };
 
+/**
+ * One video commissioned under a framework agreement. `key` is the stable
+ * id and doubles as the `documentKey` the signature API stores, so each
+ * brief is signed independently of the framework and of the other briefs.
+ */
+export type ClientVideo = {
+  key: string;
+  title: string;
+  /** Drives the pill on the brief card. */
+  status: "briefed" | "in production" | "delivered";
+  /** Where the final exports live once delivered (Drive folder). */
+  deliveryUrl?: string;
+  brief: SignableDocument;
+};
+
 /** Minimal shape the signing backend needs from any client. */
 export type SignableClient = {
   clientName: string;

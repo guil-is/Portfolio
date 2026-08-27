@@ -22,26 +22,7 @@
  * without touching the signed document.
  */
 
-import type { SignableDocument } from "./types";
-
-/**
- * One video commissioned under the framework. `key` is the stable id and
- * doubles as the `documentKey` the signature API stores, so each brief is
- * signed independently of the framework and of every other brief.
- *
- * Noa confirms a brief with one click instead of re-reading the agreement,
- * which gives a hashed, timestamped record that a Telegram message can't
- * (messages can be edited after the fact; a signature record can't).
- */
-export type HuitVideo = {
-  key: string;
-  title: string;
-  /** Drives the pill on the card. */
-  status: "briefed" | "in production" | "delivered";
-  /** Where the final exports live once delivered (Drive folder). */
-  deliveryUrl?: string;
-  brief: SignableDocument;
-};
+import type { ClientVideo, SignableDocument } from "./types";
 
 export type HuitClient = {
   clientName: string;
@@ -53,7 +34,7 @@ export type HuitClient = {
   subtitle: string;
   sow: SignableDocument;
   /** Newest first. Rendered as brief cards under the agreement. */
-  videos: HuitVideo[];
+  videos: ClientVideo[];
   /** Derived from `videos` so the signing backend can resolve a brief by
    * its key. Keep in step by building it from the same array. */
   amendments: Record<string, SignableDocument>;
@@ -62,7 +43,7 @@ export type HuitClient = {
 /** The framework version each brief is commissioned under. */
 const FRAMEWORK_VERSION = "v7-2026-08-27";
 
-const videos: HuitVideo[] = [
+const videos: ClientVideo[] = [
   {
     key: "address-poisoning",
     title: "Address poisoning",

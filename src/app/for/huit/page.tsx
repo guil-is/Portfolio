@@ -1,8 +1,7 @@
 import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { VisitTracker } from "@/components/VisitTracker";
-import { HuitAgreement } from "@/components/HuitAgreement";
-import { VideoBriefs } from "@/components/VideoBriefs";
+import { ClientPage, type ClientPageData } from "@/components/ClientPage";
 import { huit } from "@/content/clients/huit";
 import { getLatestSignature, type SignedAgreement } from "@/lib/signed-agreement";
 
@@ -22,8 +21,8 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function HuitPage() {
-  // The framework and every video brief are separate signable documents, so
-  // each needs its own lookup. Fetched together to keep the page one round.
+  // The framework and every video brief are separate signable documents,
+  // so each needs its own lookup. Fetched together in one round.
   const [sowSignature, briefSignatures] = await Promise.all([
     getLatestSignature("huit", huit.sow.version),
     Promise.all(
@@ -37,6 +36,18 @@ export default async function HuitPage() {
     ),
   ]);
 
+  const data: ClientPageData = {
+    slug: "huit",
+    clientName: huit.clientName,
+    heroTitle: huit.heading,
+    intro: huit.subtitle,
+    // Returning visits land on the briefs once the framework is signed;
+    // before that the videos tab is locked and the agreement leads.
+    defaultTab: sowSignature ? "videos" : "agreement",
+    sow: huit.sow,
+    videos: { items: huit.videos, signatures: briefSignatures },
+  };
+
   return (
     <>
       <div className="no-print fixed right-4 top-4 z-50">
@@ -44,10 +55,7 @@ export default async function HuitPage() {
       </div>
       <PasswordGate password={huit.password} storageKey="for-huit-unlocked">
         <VisitTracker slug="huit" />
-        <HuitAgreement initialSignature={sowSignature} />
-        <div className="mx-auto w-full max-w-[760px] px-6 pb-40 md:px-10">
-          <VideoBriefs videos={huit.videos} signatures={briefSignatures} />
-        </div>
+        <ClientPage data={data} initialSignature={sowSignature} />
       </PasswordGate>
     </>
   );

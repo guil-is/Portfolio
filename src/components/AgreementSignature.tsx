@@ -24,6 +24,9 @@ type Props = {
   formTitle?: string;
   /** Submit button label. Defaults to "Sign agreement". */
   submitLabel?: string;
+  /** Notifies the page when a signature lands, e.g. to unlock content
+   * gated behind the signed agreement. Internal state updates regardless. */
+  onSigned?: (s: SignedAgreement) => void;
 };
 
 export function AgreementSignature({
@@ -36,10 +39,16 @@ export function AgreementSignature({
   requireEntity = false,
   formTitle,
   submitLabel,
+  onSigned,
 }: Props) {
   const [signature, setSignature] = useState<SignedAgreement | null>(
     initialSignature,
   );
+
+  function handleSigned(s: SignedAgreement) {
+    setSignature(s);
+    onSigned?.(s);
+  }
 
   if (signature) {
     return <SignedCertificate signature={signature} />;
@@ -55,7 +64,7 @@ export function AgreementSignature({
       requireEntity={requireEntity}
       formTitle={formTitle}
       submitLabel={submitLabel}
-      onSigned={setSignature}
+      onSigned={handleSigned}
     />
   );
 }
