@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Check, Download, Feather } from "lucide-react";
-import { DefinitionList } from "@/components/DefinitionList";
 import { Timeline } from "@/components/Timeline";
 import type { SignedAgreement } from "@/lib/signed-agreement";
 import type { SignableClientSlug } from "@/content/clients/signable";
@@ -19,7 +18,8 @@ import type { ClientVideo, SowSection } from "@/content/clients/types";
  * with the brief's acknowledgment text — the same thing the long form
  * produces, minus the form.
  *
- * The card leads with the timeline; scope and fee stay compact above it.
+ * The card is two columns on desktop: the dates timeline on the left is
+ * the centerpiece, with scope, fee and supply condensed on the right.
  */
 export function VideoBriefs({
   slug,
@@ -40,8 +40,8 @@ export function VideoBriefs({
     <div className="flex flex-col gap-10">
       <p className="max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
         Each video commissioned under the agreement gets a short brief.
-        Confirming one takes a click — the signed agreement covers the terms,
-        the brief only pins scope, fee and dates.
+        Confirming one takes a click: the signed agreement covers the terms,
+        and the brief pins the scope, fee and dates.
       </p>
 
       {videos.map((video) => (
@@ -73,8 +73,13 @@ function BriefCard({
   );
   const { brief } = video;
 
+  // The timeline is the card's centerpiece; everything else condenses
+  // into a summary column beside it (stacked above it on small screens).
+  const datesSection = brief.sections.find((x) => x.heading === "Dates");
+  const summarySections = brief.sections.filter((x) => x.heading !== "Dates");
+
   return (
-    <article className="brief-card flex flex-col gap-7 rounded-[14px] border border-rule p-6 md:p-9">
+    <article className="brief-card flex flex-col gap-8 rounded-[14px] border border-rule p-6 md:p-9">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.75rem]">
           {video.title}
@@ -82,25 +87,13 @@ function BriefCard({
         <StatusPill status={video.status} confirmed={Boolean(signature)} />
       </header>
 
-      <div className="flex flex-col gap-7">
-        {brief.sections.map((section) => (
-          <BriefSection key={section.heading} section={section} />
-        ))}
+      <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.15fr_1fr] md:gap-12">
+        {datesSection ? <DatesColumn section={datesSection} /> : null}
+        <SummaryColumn
+          sections={summarySections}
+          deliveryUrl={video.deliveryUrl}
+        />
       </div>
-
-      {video.deliveryUrl ? (
-        <p className="text-[0.9rem] leading-[1.6rem] text-muted">
-          Final exports:{" "}
-          <a
-            href={video.deliveryUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="text-ink underline underline-offset-2"
-          >
-            Google Drive
-          </a>
-        </p>
-      ) : null}
 
       <div className="no-print border-t border-rule-soft pt-6">
         {signature ? (
@@ -244,10 +237,7 @@ function StatusPill({
   );
 }
 
-function BriefSection({ section }: { section: SowSection }) {
-  // "Dates" is the heart of a brief — its kv rows render as the shared
-  // vertical Timeline. Other kv sections stay compact definition lists.
-  const asTimeline = section.heading === "Dates";
+function DatesColumn({ section }: { section: SowSection }) {
   return (
     <section className="flex flex-col gap-4">
       <h3 className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
@@ -255,28 +245,7 @@ function BriefSection({ section }: { section: SowSection }) {
       </h3>
       <div className="flex flex-col gap-4">
         {section.blocks.map((b, i) => {
-          if (b.type === "p") {
-            return (
-              <p key={i} className="text-[0.95rem] leading-[1.7rem] text-muted">
-                {b.text}
-              </p>
-            );
-          }
-          if (b.type === "ul") {
-            return (
-              <ul key={i} className="flex flex-col gap-2 pl-5">
-                {b.items.map((it, j) => (
-                  <li
-                    key={j}
-                    className="list-disc text-[0.95rem] leading-[1.7rem] text-ink marker:text-muted"
-                  >
-                    {it}
-                  </li>
-                ))}
-              </ul>
-            );
-          }
-          if (asTimeline) {
+          if (b.type === "kv") {
             return (
               <Timeline
                 key={i}
@@ -291,9 +260,95 @@ function BriefSection({ section }: { section: SowSection }) {
               />
             );
           }
-          return <DefinitionList key={i} rows={b.rows} />;
+          if (b.type === "p") {
+            return (
+              <p key={i} className="text-[0.85rem] leading-[1.55rem] text-muted">
+                {b.text}
+              </p>
+            );
+          }
+          return null;
         })}
       </div>
     </section>
+  );
+}
+
+/**
+ * Everything that isn't the timeline, condensed: each kv row becomes a
+ * stacked label-over-value pair, sections separated by soft rules.
+ */
+function SummaryColumn({
+  sections,
+  deliveryUrl,
+}: {
+  sections: SowSection[];
+  deliveryUrl?: string;
+}) {
+  return (
+    <div className="flex flex-col gap-6">
+      {sections.map((section) => (
+        <section
+          key={section.heading}
+          className="flex flex-col gap-4 border-b border-rule-soft pb-6 last:border-b-0 last:pb-0"
+        >
+          <h3 className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted">
+            {section.heading}
+          </h3>
+          <div className="flex flex-col gap-3">
+            {section.blocks.map((b, i) => {
+              if (b.type === "kv") {
+                return b.rows.map(([k, v]) => (
+                  <div key={`${i}-${k}`} className="flex flex-col gap-0.5">
+                    <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.2px] text-faint">
+                      {k}
+                    </p>
+                    <p className="text-[0.9rem] leading-[1.55rem] text-ink">
+                      {v}
+                    </p>
+                  </div>
+                ));
+              }
+              if (b.type === "p") {
+                return (
+                  <p
+                    key={i}
+                    className="text-[0.85rem] leading-[1.55rem] text-muted"
+                  >
+                    {b.text}
+                  </p>
+                );
+              }
+              return (
+                <ul key={i} className="flex flex-col gap-1.5 pl-4">
+                  {b.items.map((it, j) => (
+                    <li
+                      key={j}
+                      className="list-disc text-[0.9rem] leading-[1.55rem] text-ink marker:text-muted"
+                    >
+                      {it}
+                    </li>
+                  ))}
+                </ul>
+              );
+            })}
+          </div>
+        </section>
+      ))}
+
+      {deliveryUrl ? (
+        <p className="text-[0.85rem] leading-[1.55rem] text-muted">
+          Final exports:{" "}
+          <a
+            href={deliveryUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-ink underline underline-offset-2"
+          >
+            Google Drive
+          </a>
+        </p>
+      ) : null}
+    </div>
   );
 }

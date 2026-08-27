@@ -160,7 +160,12 @@ export function ClientPage({
   function handleSowSigned(s: SignedAgreement) {
     setSowSignature(s);
     // The signature unlocks the briefs; take the signer straight there.
-    if (hasVideos) setTab("videos");
+    // The sign form sits at the bottom of a long document, so scroll back
+    // up or the tab switch happens out of view.
+    if (hasVideos) {
+      setTab("videos");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   }
 
   // Deep-link support — #agreement / #progress / #videos map to tabs.
