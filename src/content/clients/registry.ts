@@ -83,8 +83,8 @@ export const clientRegistry: ClientEntry[] = [
   entry(
     "e2c",
     "E2C Cookbook",
-    "Report redesign for Tara Merk and Primavera De Filippi (CNRS). Delivered 25 Aug, paid in full. Offboarding next.",
-    "delivered",
+    "Report redesign for Tara Merk and Primavera De Filippi (CNRS): cover, layout system, illustrations, print and web PDFs. Delivered 25 Aug, paid in full.",
+    "closed",
     {
       billingPreset: "e2c",
       contacts: [{ name: "Tara Merk" }, { name: "Primavera De Filippi" }],
@@ -125,10 +125,9 @@ export const clientRegistry: ClientEntry[] = [
   entry(
     "justice",
     "Justice Conder",
-    "Design retainer: scope of work and hours log. On pause.",
-    "active",
+    "Design retainer, Mar to May 2026: hours log and scope of work. Paused, then wrapped without resuming.",
+    "closed",
     {
-      paused: true,
       billingPreset: "justice",
       contacts: [{ name: "Justice Conder" }],
     },
