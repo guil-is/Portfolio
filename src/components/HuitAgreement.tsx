@@ -20,7 +20,7 @@ export function HuitAgreement({
 }) {
   const { sow, subtitle, heading } = huit;
   return (
-    <main className="print-document page-fade-in mx-auto w-full max-w-[760px] px-6 pt-10 pb-40 md:px-10 md:pt-16">
+    <main className="print-document page-fade-in mx-auto w-full max-w-[760px] px-6 pt-10 pb-16 md:px-10 md:pt-16">
       <article className="flex flex-col gap-14">
         <header className="flex flex-col gap-5">
           <div className="flex items-center justify-between gap-4">

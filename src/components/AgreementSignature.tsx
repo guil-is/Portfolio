@@ -19,6 +19,11 @@ type Props = {
   clientEntity?: string;
   /** When true, signing is blocked until `clientEntity` is provided. */
   requireEntity?: boolean;
+  /** Heading above the form. Defaults to the agreement wording; briefs and
+   * other short documents pass their own so the copy fits what is signed. */
+  formTitle?: string;
+  /** Submit button label. Defaults to "Sign agreement". */
+  submitLabel?: string;
 };
 
 export function AgreementSignature({
@@ -29,6 +34,8 @@ export function AgreementSignature({
   initialSignature,
   clientEntity,
   requireEntity = false,
+  formTitle,
+  submitLabel,
 }: Props) {
   const [signature, setSignature] = useState<SignedAgreement | null>(
     initialSignature,
@@ -46,6 +53,8 @@ export function AgreementSignature({
       documentVersion={documentVersion}
       clientEntity={clientEntity}
       requireEntity={requireEntity}
+      formTitle={formTitle}
+      submitLabel={submitLabel}
       onSigned={setSignature}
     />
   );
@@ -94,6 +103,8 @@ function SignatureForm({
   acknowledgments,
   clientEntity,
   requireEntity,
+  formTitle = "Sign electronically",
+  submitLabel = "Sign agreement",
   onSigned,
 }: {
   clientSlug: string;
@@ -102,6 +113,8 @@ function SignatureForm({
   documentVersion: string;
   clientEntity?: string;
   requireEntity?: boolean;
+  formTitle?: string;
+  submitLabel?: string;
   onSigned: (s: SignedAgreement) => void;
 }) {
   const [name, setName] = useState("");
@@ -167,7 +180,7 @@ function SignatureForm({
     >
       <div>
         <h3 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.875rem]">
-          Sign electronically
+          {formTitle}
         </h3>
         <p className="mt-3 max-w-[560px] text-[0.95rem] leading-[1.65rem] text-muted">
           Your name, email, and the box below form your legal signature. A
@@ -242,7 +255,7 @@ function SignatureForm({
           <Feather className="h-5 w-5" strokeWidth={2} />
         </span>
         <span className="font-caption text-[13px] font-bold uppercase tracking-[1px]">
-          {submitting ? "Signing…" : "Sign agreement"}
+          {submitting ? "Signing…" : submitLabel}
         </span>
       </button>
     </form>
