@@ -75,7 +75,7 @@ export const huit: HuitClient = {
         blocks: [
           {
             type: "p",
-            text: "This agreement covers the motion design I provide to Studio Huit for Safe's short-form videos, up to 30 seconds each, priced per video rather than by the hour. It applies to every video commissioned under it and runs until either of us ends it.",
+            text: "This agreement covers the motion design I provide to Studio Huit for Safe's short-form videos, up to 30 seconds each, priced per video. It applies to every video commissioned under it and runs until either of us ends it.",
           },
           {
             type: "ul",
@@ -98,7 +98,6 @@ export const huit: HuitClient = {
             type: "ul",
             items: [
               "What the video is: runtime, aspect ratios, how many scenes, and whether it reuses the established Safe style.",
-              "The fee, net of VAT.",
               "The delivery date, and when the source material reaches me.",
               "Who supplies the voice over, footage and music.",
               "Anything out of the ordinary: added formats, a rush turnaround, extra revision rounds.",
@@ -115,7 +114,7 @@ export const huit: HuitClient = {
         blocks: [
           {
             type: "p",
-            text: "The standard rate is 1600 EUR net for a video of up to 30 seconds in one aspect ratio, around ten scenes, animated from Studio Huit's animatic in the Safe style we have already established.",
+            text: "The standard rate is 1600 EUR net for a video of up to 30 seconds in one aspect ratio, around ten scenes, animated from Studio Huit's animatic in the Safe style we have already established. It is the fee for any video commissioned under this agreement unless the confirmation names a different one.",
           },
           {
             type: "ul",
@@ -154,11 +153,7 @@ export const huit: HuitClient = {
           },
           {
             type: "p",
-            text: "If Studio Huit would rather take over the remaining animation than reschedule, I hand over the project files and invoice pro rata for the work done, payable within 14 days of the handover.",
-          },
-          {
-            type: "p",
-            text: "I tell Studio Huit about time off before confirming a video, and Studio Huit gives me reasonable notice before commissioning one so I can hold the time.",
+            text: "I tell Studio Huit about my availability before confirming a video, and Studio Huit gives me reasonable notice before commissioning one so I can hold the time.",
           },
         ],
       },
