@@ -121,8 +121,9 @@ export const clientRegistry: ClientEntry[] = [
   entry(
     "huit",
     "Studio Huit",
-    "Motion design on the Safe Workspace launch video. Delivered and paid.",
-    "closed",
+    'Safe "address poisoning" video: 1600 EUR net, delivery 2 Sept. One-off while Huit negotiates an ongoing Safe retainer.',
+    "active",
+    { contacts: [{ name: "Lea Filipowicz (Noa)" }] },
   ),
   entry(
     "tedxberlin",

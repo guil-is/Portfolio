@@ -9,6 +9,11 @@
  *
  * Uses the shared SignableDocument shape so it plugs into the signing
  * backend (hash, PDF, email) and matches the other agreements' typography.
+ *
+ * v5 (Aug 2026) covers the "address poisoning" video only — one video of
+ * the four Safe approved, deliberately scoped as a one-off while Studio
+ * Huit negotiates an ongoing retainer with Safe. The remaining videos and
+ * any retainer get their own agreement once that shape is known.
  */
 
 import type { SignableDocument } from "./types";
@@ -27,15 +32,15 @@ export type HuitClient = {
 export const huit: HuitClient = {
   clientName: "Studio Huit",
   password: "studiohuit",
-  heading: "Safe Workspace video",
+  heading: "Safe — Address poisoning video",
   subtitle: "Motion design collaboration with Studio Huit",
 
   sow: {
     title: "Service Agreement",
-    version: "v4-2026-06-25",
+    version: "v5-2026-08-27",
     preamble:
-      "Guilherme Maueler provides motion design to Studio Huit for the Safe Workspace launch video. This agreement sits under Studio Huit's contract with the end client, Safe Labs GmbH.",
-    effectiveDate: "June 2026",
+      "Guilherme Maueler provides motion design to Studio Huit for Safe's \"address poisoning\" video. This agreement sits under Studio Huit's contract with the end client, Safe Labs GmbH, and covers this one video.",
+    effectiveDate: "August 2026",
     acknowledgments: [
       "I sign on behalf of Studio Huit, and I have read and agree to the terms of this Service Agreement. I consent to sign it electronically. My full name, email, and this confirmation together form my legal signature under applicable electronic signature law.",
     ],
@@ -54,7 +59,7 @@ export const huit: HuitClient = {
                 "Client",
                 "Studio Huit, represented by Lea Filipowicz (Noa), Reichenberger Str. 60, 10999 Berlin.",
               ],
-              ["Dated", "25 June 2026"],
+              ["Dated", "27 August 2026"],
             ],
           },
         ],
@@ -64,15 +69,16 @@ export const huit: HuitClient = {
         blocks: [
           {
             type: "p",
-            text: 'Motion design and animation for Studio Huit\'s Safe "Workspace" launch video. 30 seconds, in 9:16, 1:1, and 16:9.',
+            text: 'Motion design and animation for Safe\'s "address poisoning" video: approximately 30 seconds, 16:9 only, animated from Studio Huit\'s Figma animatic in the style established by the Safe "Workspace" video.',
           },
           {
             type: "ul",
             items: [
               "I provide animation and production support under Studio Huit's creative direction.",
-              "Studio Huit leads storyboard, creative direction, client coordination, and final delivery.",
-              "We agree specific scene allocation as the storyboard develops, aiming for balanced effort rather than scene count alone.",
-              "I deliver final exports and project files to Studio Huit.",
+              "Studio Huit leads script, storyboard, creative direction, client coordination, and final delivery.",
+              "Safe Labs supplies the voice over and the live-action footage. Studio Huit supplies the music track and holds its licence.",
+              "I deliver the final export and project files to Studio Huit.",
+              "This agreement covers this one video. Further videos, and any ongoing retainer between Studio Huit and Safe Labs, are agreed separately.",
             ],
           },
         ],
@@ -83,10 +89,14 @@ export const huit: HuitClient = {
           {
             type: "ul",
             items: [
-              "2950 EUR net for motion design services.",
-              "Plus 19% VAT (560.50 EUR). Total 3510.50 EUR.",
+              "1600 EUR net for motion design services.",
+              "Plus 19% VAT (304 EUR). Total 1904 EUR.",
               "I invoice Studio Huit.",
             ],
+          },
+          {
+            type: "p",
+            text: "This rate covers a video of the scope above. Materially more animation — longer runtime, more scenes, added formats, or new components beyond the established style — is quoted separately before the work starts.",
           },
         ],
       },
@@ -99,7 +109,7 @@ export const huit: HuitClient = {
           },
           {
             type: "p",
-            text: "Full amount due within 14 days of final handoff.",
+            text: "Full amount due within 14 days of final handoff — or, where Studio Huit takes over the remaining animation, within 14 days of the project files being handed over.",
           },
         ],
       },
@@ -108,7 +118,7 @@ export const huit: HuitClient = {
         blocks: [
           {
             type: "p",
-            text: "I fold in revisions that stay within the agreed creative direction and scope, where production time allows.",
+            text: "The fee includes one round of revisions within the agreed creative direction, folded in before final delivery.",
           },
           {
             type: "p",
@@ -117,14 +127,35 @@ export const huit: HuitClient = {
         ],
       },
       {
-        heading: "Dependency and timeline",
+        heading: "Timeline",
         blocks: [
           {
-            type: "ul",
-            items: [
-              "Animation work depends on a locked storyboard by Friday evening.",
-              "Delays to the storyboard, source materials, or client feedback may shift the delivery timeline.",
+            type: "kv",
+            rows: [
+              ["Monday 31 August", "First animation pass to Studio Huit, end of day."],
+              [
+                "Tuesday 1 September",
+                "Safe Labs delivers the voice over and live-action footage.",
+              ],
+              ["Wednesday 2 September", "Final version to Studio Huit, end of day."],
+              [
+                "Thursday 3 September",
+                "Small tweaks until midday. I travel from 15:00 and am unavailable Thursday 3 to Monday 7 September.",
+              ],
             ],
+          },
+        ],
+      },
+      {
+        heading: "If the timeline slips",
+        blocks: [
+          {
+            type: "p",
+            text: "The schedule above depends on Safe Labs delivering the voice over and footage by Tuesday 1 September. If those arrive later, the Wednesday delivery no longer applies and we agree a new date together — both parties have limited availability the following week.",
+          },
+          {
+            type: "p",
+            text: "If Studio Huit takes over the remaining animation rather than rescheduling, I hand over the project files and the work completed to that point is invoiced pro rata against the fee above.",
           },
         ],
       },
