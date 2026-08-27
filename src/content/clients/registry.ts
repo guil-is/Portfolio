@@ -121,7 +121,7 @@ export const clientRegistry: ClientEntry[] = [
   entry(
     "huit",
     "Studio Huit",
-    'Safe "address poisoning" video: 1600 EUR net, delivery 2 Sept. One-off while Huit negotiates an ongoing Safe retainer.',
+    'Ongoing Safe video series, project basis. Standard rate 1600 EUR net/video; first is "address poisoning", delivery 2 Sept.',
     "active",
     { contacts: [{ name: "Lea Filipowicz (Noa)" }] },
   ),
