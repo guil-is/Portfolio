@@ -75,16 +75,18 @@ function BriefCard({
 
   // The timeline is the card's centerpiece; everything else condenses
   // into a summary column beside it (stacked above it on small screens).
-  const datesSection = brief.sections.find((x) => x.heading === "Dates");
-  const summarySections = brief.sections.filter((x) => x.heading !== "Dates");
+  const datesSection = brief.sections.find((x) => x.heading === "Timeline");
+  const summarySections = brief.sections.filter(
+    (x) => x.heading !== "Timeline",
+  );
 
   return (
     <article className="brief-card flex flex-col gap-8 rounded-[14px] border border-rule p-6 md:p-9">
-      <header className="flex flex-wrap items-center justify-between gap-3">
+      <header>
         <h2 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.75rem]">
-          {video.title}
+          {`"${video.title}"`}{" "}
+          <span className="font-normal text-muted">brief</span>
         </h2>
-        <StatusPill status={video.status} confirmed={Boolean(signature)} />
       </header>
 
       <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.15fr_1fr] md:gap-12">
@@ -219,21 +221,6 @@ function ConfirmedRow({ signature }: { signature: SignedAgreement }) {
         PDF
       </a>
     </div>
-  );
-}
-
-function StatusPill({
-  status,
-  confirmed,
-}: {
-  status: ClientVideo["status"];
-  confirmed: boolean;
-}) {
-  const label = confirmed && status === "briefed" ? "confirmed" : status;
-  return (
-    <span className="font-caption rounded-full border border-rule-soft px-3 py-1 text-[10px] font-semibold uppercase tracking-[1.2px] text-muted">
-      {label}
-    </span>
   );
 }
 

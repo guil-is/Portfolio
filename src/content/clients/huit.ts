@@ -58,16 +58,12 @@ const videos: ClientVideo[] = [
       ],
       sections: [
         {
-          heading: "The video",
+          heading: "Details",
           blocks: [
             {
               type: "kv",
               rows: [
-                ["Scope", "About 30 seconds, ten scenes, 16:9."],
-                [
-                  "Animatic",
-                  "Provided by Studio Huit, in the established Safe style.",
-                ],
+                ["Scope", "~30s / 10 scenes, 16:9 format."],
                 ["Fee", "1904 EUR total (1600 EUR net + 19% VAT)."],
               ],
             },
@@ -80,14 +76,14 @@ const videos: ClientVideo[] = [
               type: "kv",
               rows: [
                 ["Safe Labs", "Voice over (Rahul), live-action footage."],
-                ["Studio Huit", "Animatic, Figma board, music, notes."],
-                ["Guilherme", "Animation, final export, project files."],
+                ["Studio Huit", "Script, animatic, Figma board, notes."],
+                ["Guilherme", "Animation, music track, final export."],
               ],
             },
           ],
         },
         {
-          heading: "Dates",
+          heading: "Timeline",
           blocks: [
             {
               type: "kv",
@@ -169,7 +165,7 @@ export const huit: HuitClient = {
             items: [
               "I provide animation and production support under Studio Huit's creative direction.",
               "Studio Huit leads script, storyboard, creative direction, client coordination, and final delivery.",
-              "I deliver final exports and project files to Studio Huit.",
+              "I deliver final exports to Studio Huit, plus project files where the brief includes them.",
             ],
           },
         ],
@@ -252,7 +248,7 @@ export const huit: HuitClient = {
             items: [
               "Studio Huit credits me as a collaborator on the finished videos.",
               "Rights to final approved deliverables transfer on full payment.",
-              "I share editable source and project files with Studio Huit.",
+              "I share editable source and project files where a video\u0027s brief includes them.",
             ],
           },
         ],
