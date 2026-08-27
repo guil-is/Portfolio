@@ -61,7 +61,7 @@ export const e2c: E2cClient = {
   subtitle:
     "Design refinement of the E2C Cookbook for Tara Merk and Primavera De Filippi, in collaboration with the Exit to Community collective. A CNRS research grant project.",
 
-  currentPhase: 3,
+  currentPhase: 4,
   finalDelivery: "21 August",
   launchEvent: "28 August",
 
