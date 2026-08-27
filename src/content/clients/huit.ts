@@ -63,12 +63,12 @@ const videos: ClientVideo[] = [
             {
               type: "kv",
               rows: [
+                ["Scope", "About 30 seconds, ten scenes, 16:9."],
                 [
-                  "Scope",
-                  'About 30 seconds and ten scenes, 16:9 only, animated from Studio Huit\'s Figma animatic in the style established on the Safe "Workspace" video.',
+                  "Animatic",
+                  "Provided by Studio Huit, in the established Safe style.",
                 ],
-                ["Fee", "1600 EUR net, plus 19% VAT (304 EUR). Total 1904 EUR."],
-                ["Revisions", "One round, within the agreed creative direction."],
+                ["Fee", "1904 EUR total (1600 EUR net + 19% VAT)."],
               ],
             },
           ],
@@ -79,9 +79,9 @@ const videos: ClientVideo[] = [
             {
               type: "kv",
               rows: [
-                ["Safe Labs", "Voice over (Rahul) and the live-action footage."],
-                ["Studio Huit", "Animatic, Figma board, music track, and notes."],
-                ["Guilherme", "Animation, final export, and project files."],
+                ["Safe Labs", "Voice over (Rahul), live-action footage."],
+                ["Studio Huit", "Animatic, Figma board, music, notes."],
+                ["Guilherme", "Animation, final export, project files."],
               ],
             },
           ],
@@ -104,15 +104,8 @@ const videos: ClientVideo[] = [
                   "Wednesday 2 September",
                   "Final version to Studio Huit, end of day.",
                 ],
-                [
-                  "Thursday 3 September",
-                  "Small tweaks until midday. I travel from 15:00 and am unavailable until Tuesday 8 September.",
-                ],
+                ["Thursday 3 September", "Small tweaks until midday."],
               ],
-            },
-            {
-              type: "p",
-              text: "If the voice over or footage arrives after Tuesday 1 September, the Wednesday delivery no longer holds and we agree a new date together, as set out in the Framework Agreement.",
             },
           ],
         },
