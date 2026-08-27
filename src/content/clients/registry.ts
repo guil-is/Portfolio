@@ -95,7 +95,22 @@ export const clientRegistry: ClientEntry[] = [
     "Logos",
     "DWeb Camp 2026 videos: delivered and paid. Talk edit add-on delivered, invoice out.",
     "delivered",
-    { billingPreset: "logos" },
+    {
+      billingPreset: "logos",
+      contacts: [
+        { name: "Jonny", role: "Main contact, reachable on Discord only" },
+        {
+          name: "Adam Kissack",
+          email: "adam.kissack@free.technology",
+          role: "Signed the agreement",
+        },
+        {
+          name: "Status billing",
+          email: "billing@status.im",
+          role: "Send invoices here",
+        },
+      ],
+    },
   ),
   entry(
     "spa",

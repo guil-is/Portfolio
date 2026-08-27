@@ -42,7 +42,7 @@ export const invoiceLedger: LedgerEntry[] = [
     dueAt: "2026-09-10",
     total: 500,
     currency: "EUR",
-    note: "Add-on: Alisher Sherali talk edit (YouTube version), agreed with Jonny over Discord 11 Aug. Non-EU, §3a UStG exempt. Sent to billing@status.im, cc Jonny.",
+    note: "Add-on: Alisher Sherali talk edit (YouTube version), agreed with Jonny over Discord 11 Aug. Non-EU, §3a UStG exempt. Sent to billing@status.im 27 Aug; Jonny notified on Discord (no email address on file).",
   },
   {
     number: "INV-26018",
