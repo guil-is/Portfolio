@@ -24,6 +24,22 @@ A project appears on the homepage grid automatically once it is published with
 a grid image and `isActiveProject` is off. The detail page lives at
 `/projects/<slug>`.
 
+## TODO: list the Thrive product case study
+
+`/projects/thrive-product` is a bespoke code page
+(`src/app/projects/thrive-product/page.tsx`), currently **unlisted** — live at
+the URL, noindex, not in the grid or sitemap. To surface it in the work index
+later:
+
+1. Create a minimal Sanity project doc: name **Thrive Protocol (Product)**,
+   slug **`thrive-product`**, client, summary, grid thumbnail, sort order next
+   to the Thrive brand entry. Fields beyond the grid card don't matter — the
+   static page shadows the `[slug]` route, so the bespoke page still renders.
+2. In `page.tsx`, remove `robots: { index: false, follow: false }` from the
+   metadata.
+3. Optionally add the slug to `src/app/sitemap.ts` (it derives from the legacy
+   TS file, which this project is not in).
+
 ## Field reference
 
 | Field | Notes |
