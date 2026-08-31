@@ -352,9 +352,8 @@ export default function ThriveProductPage() {
             <Copy>
               I restructured the app&apos;s information architecture, starting
               from the full project lifecycle: application, review,
-              contracts, milestones, payment. I also contributed to the
-              design system, including button and state components and the
-              typography scale.
+              contracts, milestones, payment. I also built the design
+              system: components, states, and the typography scale.
             </Copy>
             <CaseFigure
               items={[
