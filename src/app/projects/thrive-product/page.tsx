@@ -36,6 +36,11 @@ export const metadata: Metadata = {
 
 const brandProject = pastProjects.find((p) => p.slug === "thrive");
 
+// Cover: the same hero gif the brand case study uses as its main image.
+const coverImage =
+  brandProject?.mainImage ??
+  "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/699dc8c76563ae4fa076fec0_home%20page.gif";
+
 export default function ThriveProductPage() {
   return (
     <>
@@ -60,9 +65,25 @@ export default function ThriveProductPage() {
         />
 
         <main className="px-6 md:px-10">
+          {/* Cover */}
+          <FadeIn>
+            <section className="mx-auto w-full max-w-[960px] pb-2 pt-10">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[16px] bg-card shadow-card">
+                <Image
+                  src={coverImage}
+                  alt="The Thrive home page"
+                  fill
+                  sizes="(min-width: 768px) 960px, 100vw"
+                  unoptimized
+                  className="object-cover"
+                />
+              </div>
+            </section>
+          </FadeIn>
+
           {/* Header: title, subtitle, meta row */}
           <FadeIn>
-            <section className="mx-auto w-full max-w-[960px] pt-14 md:pt-20">
+            <section className="mx-auto w-full max-w-[960px] pt-10 md:pt-12">
               <h1 className="font-display text-[3rem] font-bold leading-none text-ink md:text-[4.5rem]">
                 Thrive
               </h1>
