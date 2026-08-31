@@ -19,18 +19,32 @@ import { img } from "./media";
 // To list it later: flip robots to index, add a minimal Sanity project
 // doc (name, slug "thrive-product", grid thumbnail) for the grid card.
 
+const pageTitle = `Thrive Protocol — Product Design | ${site.name}`;
+const shareDescription =
+  "Product design for a capital allocation platform. Design Lead, Aug 2025 to Feb 2026.";
+const shareImage = "/projects/thrive-product/og.png";
+
 export const metadata: Metadata = {
-  title: `Thrive — Product Design | ${site.name}`,
+  title: pageTitle,
   description:
     "Product design for Thrive, a capital allocation platform. Structured intake, verification flows, and a decision layer that turns dense on-chain and off-chain data into decisions non-experts can act on.",
   // Unlisted for now — remove when the page goes into the work index.
   robots: { index: false, follow: false },
   openGraph: {
-    title: `Thrive — Product Design | ${site.name}`,
-    description:
-      "Product design for a capital allocation platform. Design Lead, Aug 2025 to Feb 2026.",
+    title: pageTitle,
+    description: shareDescription,
     type: "article",
-    images: [{ url: "/projects/thrive-product/og.png" }],
+    url: "https://guil.is/projects/thrive-product",
+    images: [{ url: shareImage, width: 2400, height: 1350 }],
+  },
+  // Without this the page inherits the root layout's generic twitter
+  // card, and scrapers that prefer twitter:image show the wrong image.
+  twitter: {
+    card: "summary_large_image",
+    title: pageTitle,
+    description: shareDescription,
+    creator: "@guil_is",
+    images: [shareImage],
   },
 };
 
