@@ -117,6 +117,15 @@ export default function ThriveProductPage() {
             <CaseFigure
               items={[
                 img(
+                  "01-context-powerlist.png",
+                  "The Power List: verified ecosystem projects ranked by score for investors",
+                ),
+              ]}
+              caption="The Power List itself. Verified projects, ranked, ready to invest in."
+            />
+            <CaseFigure
+              items={[
+                img(
                   "01-context-dashboard.png",
                   "A program dashboard: daily applications, approvals and funds paid out at a glance",
                 ),
@@ -245,9 +254,8 @@ export default function ThriveProductPage() {
             <Copy>
               This is where an investor or reviewer makes a call. The
               Verification Terminal compresses a project into score, coverage
-              and confidence, with the full report one click away. The
-              Powerlist ranks validated projects so capital can find them. I
-              mapped every approve and reject path before drawing screens.
+              and confidence, with the full report one click away. I mapped
+              every approve and reject path before drawing screens.
             </Copy>
             <CaseFigure
               items={[
@@ -257,14 +265,6 @@ export default function ThriveProductPage() {
                 ),
               ]}
               caption="The Verification Terminal, mid build in Lovable."
-            />
-            <CaseFigure
-              items={[
-                img(
-                  "06-decision-powerlist.png",
-                  "The Powerlist: validated projects ranked by score with badges and 7 day movement",
-                ),
-              ]}
             />
             <CaseFigure
               items={[
