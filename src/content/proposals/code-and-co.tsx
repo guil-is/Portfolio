@@ -47,14 +47,14 @@ export const codeAndCo: Proposal = {
         body: [
           "You have more product work than hands. The two I know about:",
           <span key="target-portal">
-            <strong className="font-semibold">Target Portal.</strong> Moving
+            <strong className="font-semibold">Target Portal.</strong>{" "}Moving
             due diligence intake from forms to a guided, conversational flow.
             Target companies see what&rsquo;s missing, what it&rsquo;s worth,
             and how to fix it, without your team chasing documents by email. I
             designed this exact pattern at Thrive.
           </span>,
           <span key="ai-kpi">
-            <strong className="font-semibold">AI KPI tracking.</strong> The
+            <strong className="font-semibold">AI KPI tracking.</strong>{" "}The
             reporting layer for the US investor engagement. Standardised
             intake across 50 companies, scoring against defined rubrics,
             trends over time, rolled up into a dashboard the investor reads
