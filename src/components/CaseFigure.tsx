@@ -23,6 +23,9 @@ type Props = {
    * pauses on hover and while the lightbox is open. Falls back to the
    * grid when any item is missing from /public. */
   slideshow?: boolean;
+  /** Cap the figure's width in px and center it. For diagrams that stay
+   * legible smaller than the full 960px column. */
+  maxWidth?: number;
 };
 
 const SLIDE_INTERVAL_MS = 4000;
@@ -40,7 +43,9 @@ export function CaseFigure({
   caption,
   className = "",
   slideshow = false,
+  maxWidth,
 }: Props) {
+  const capStyle = maxWidth ? { maxWidth } : undefined;
   const [openAt, setOpenAt] = useState(-1);
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -78,9 +83,10 @@ export function CaseFigure({
     return (
       <figure className={`my-10 w-full ${className}`}>
         <div
-          className="relative w-full overflow-hidden rounded-[16px] bg-card shadow-card"
+          className="relative mx-auto w-full overflow-hidden rounded-[16px]"
           style={{
             aspectRatio: `${first.width ?? 16} / ${first.height ?? 9}`,
+            ...capStyle,
           }}
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
@@ -140,7 +146,10 @@ export function CaseFigure({
 
   return (
     <figure className={`my-10 w-full ${className}`}>
-      <div className={`grid grid-cols-1 gap-4 md:gap-6 ${cols}`}>
+      <div
+        className={`mx-auto grid w-full grid-cols-1 gap-4 md:gap-6 ${cols}`}
+        style={capStyle}
+      >
         {items.map((item) =>
           item.src ? (
             <button
@@ -150,7 +159,7 @@ export function CaseFigure({
               onClick={() =>
                 setOpenAt(loaded.findIndex((l) => l.file === item.file))
               }
-              className="cursor-zoom-in overflow-hidden rounded-[16px] bg-card shadow-card"
+              className="cursor-zoom-in overflow-hidden rounded-[16px]"
             >
               <Image
                 src={item.src}

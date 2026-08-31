@@ -128,6 +128,7 @@ export default function ThriveProductPage() {
               covers the rest.
             </Copy>
             <CaseFigure
+              maxWidth={640}
               items={[
                 img(
                   "01-context-participants.png",
