@@ -109,7 +109,7 @@ export default function ThriveProductPage() {
               items={[
                 img(
                   "01-context-hero.png",
-                  "Thrive platform dashboard overview",
+                  "The Thrive Power List: builders get verified, Guardians validate, ecosystems fund",
                 ),
               ]}
             />
@@ -117,7 +117,7 @@ export default function ThriveProductPage() {
               items={[
                 img(
                   "01-context-platform.png",
-                  "A project profile page inside Thrive",
+                  "The Verification Terminal: a project summary in deal flow with score, coverage and confidence",
                 ),
               ]}
             />
@@ -170,7 +170,7 @@ export default function ThriveProductPage() {
               items={[
                 img(
                   "03-intake-research.png",
-                  "Research flow mapping for the intake process",
+                  "A Guardian research task for a missing signal, with step by step instructions",
                 ),
               ]}
             />
@@ -196,7 +196,7 @@ export default function ThriveProductPage() {
               items={[
                 img(
                   "04-missing-data-overview.png",
-                  "Missing data overview listing outstanding items for a project",
+                  "The Verification Hub: verification progress and the biggest confidence boosts available",
                 ),
               ]}
             />
@@ -226,8 +226,8 @@ export default function ThriveProductPage() {
             <CaseFigure
               items={[
                 img(
-                  "04-missing-data-states.png",
-                  "Empty, partial and complete states of the missing data checklist",
+                  "04-missing-data-actions.png",
+                  "Top actions a project can take to improve its score",
                 ),
               ]}
             />
@@ -247,8 +247,8 @@ export default function ThriveProductPage() {
             <CaseFigure
               items={[
                 img(
-                  "05-verify-states.png",
-                  "Verification states for a Guardian review",
+                  "05-verify-states.jpg",
+                  "A Guardian verifying a claim against its proof, with accept and reject states",
                 ),
               ]}
             />
@@ -292,7 +292,7 @@ export default function ThriveProductPage() {
               items={[
                 img(
                   "06-decision-powerlist.png",
-                  "Powerlist project detail page",
+                  "The Powerlist: validated projects ranked by score with badges and 7 day movement",
                 ),
               ]}
             />
@@ -310,12 +310,16 @@ export default function ThriveProductPage() {
             <CaseFigure
               items={[
                 img(
-                  "07-systems-ia.png",
-                  "The restructured information architecture",
-                ),
-                img(
                   "07-systems-components.png",
-                  "Button and state components in the design system",
+                  "Button components across variants, sizes and states",
+                ),
+              ]}
+            />
+            <CaseFigure
+              items={[
+                img(
+                  "07-systems-typography.png",
+                  "The typography scale for desktop and mobile",
                 ),
               ]}
             />
