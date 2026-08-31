@@ -30,8 +30,6 @@ export const metadata: Metadata = {
     description:
       "Product design for a capital allocation platform. Design Lead, Aug 2025 to Feb 2026.",
     type: "article",
-    // OG image slot — drop og.png (1200x630 or 1920x1080) into
-    // /public/projects/thrive-product/ and it's picked up on deploy.
     images: [{ url: "/projects/thrive-product/og.png" }],
   },
 };
@@ -98,9 +96,12 @@ export default function ThriveProductPage() {
             </Copy>
             {/* TODO copy */}
             <Copy>
-              I owned product and brand design end to end. This page covers the
-              product work. The{" "}
-              <Link href="/projects/thrive" className="text-accent underline underline-offset-4 hover:opacity-70">
+              I owned product and brand design end to end. This page covers
+              the product work. The{" "}
+              <Link
+                href="/projects/thrive"
+                className="text-accent underline underline-offset-4 hover:opacity-70"
+              >
                 brand case study
               </Link>{" "}
               covers the rest.
@@ -116,10 +117,11 @@ export default function ThriveProductPage() {
             <CaseFigure
               items={[
                 img(
-                  "01-context-platform.png",
-                  "The Verification Terminal: a project summary in deal flow with score, coverage and confidence",
+                  "01-context-dashboard.png",
+                  "A program dashboard: daily applications, approvals and funds paid out at a glance",
                 ),
               ]}
+              caption="The program side. Every action is visible, including who approved what and when."
             />
           </CaseSection>
 
@@ -142,18 +144,6 @@ export default function ThriveProductPage() {
                 to inflate it.
               </li>
             </ul>
-            <CaseFigure
-              items={[
-                img(
-                  "02-problem-onchain-data.png",
-                  "Dense on-chain metrics as they arrive",
-                ),
-                img(
-                  "02-problem-offchain-claims.png",
-                  "Off-chain claims submitted by a project",
-                ),
-              ]}
-            />
           </CaseSection>
 
           {/* 3. Structured intake */}
@@ -161,65 +151,36 @@ export default function ThriveProductPage() {
             {/* TODO copy */}
             <Copy>
               Scoring only works if evidence arrives in a shape we can score.
-              Projects submit against three signal categories: Product
-              execution, On-chain transactions, and Team credibility. I mapped
-              the flows before drawing screens, so every question the form
-              asks earns its place.
+              I mapped the pipeline end to end. Data connects at the source,
+              Guardians verify it, intelligence turns it into scores, and the
+              output is ready for a decision. Every submission maps to three
+              signal categories: Product execution, On-chain transactions,
+              and Team credibility.
             </Copy>
             <CaseFigure
               items={[
                 img(
-                  "03-intake-research.png",
-                  "A Guardian research task for a missing signal, with step by step instructions",
+                  "03-intake-pipeline.png",
+                  "The verification pipeline: connect data, verify, intelligence, decision-ready outputs",
                 ),
               ]}
-            />
-            <CaseFigure
-              items={[
-                img(
-                  "03-intake-categories.png",
-                  "The three signal categories a submission maps to",
-                ),
-              ]}
+              caption="From raw data to decision-ready. Founders control who sees their data and at what level of detail."
             />
           </CaseSection>
 
-          {/* 4. Missing data — the section that matters most, given room */}
+          {/* 4. Missing data */}
           <CaseSection number="04" title="Missing data">
             {/* TODO copy */}
             <Copy>
               A submission is rarely complete on the first pass. The platform
-              tells a project exactly what is missing and how to fix it,
-              without a human sending emails.
+              tells a project exactly what is missing, what each item is
+              worth, and how to fix it, without a human sending emails.
             </Copy>
             <CaseFigure
               items={[
                 img(
                   "04-missing-data-overview.png",
                   "The Verification Hub: verification progress and the biggest confidence boosts available",
-                ),
-              ]}
-            />
-            {/* TODO copy */}
-            <Copy>
-              I designed the flows for adding team members, linking smart
-              contracts, and connecting a GitHub repository. Each one turns a
-              vague rejection into a concrete next step the project can
-              complete on its own.
-            </Copy>
-            <CaseFigure
-              items={[
-                img(
-                  "04-missing-data-team.png",
-                  "Flow for adding a team member",
-                ),
-                img(
-                  "04-missing-data-contracts.png",
-                  "Flow for linking a smart contract",
-                ),
-                img(
-                  "04-missing-data-github.png",
-                  "Flow for connecting a GitHub repository",
                 ),
               ]}
             />
@@ -230,6 +191,21 @@ export default function ThriveProductPage() {
                   "Top actions a project can take to improve its score",
                 ),
               ]}
+              caption="Each gap becomes a concrete next step: connect an API, send a document for review, verify a profile."
+            />
+            {/* TODO copy */}
+            <Copy>
+              Gaps a project cannot fill become research tasks. Guardians pick
+              them up, follow written steps, and file the missing signal. No
+              chasing, no email threads.
+            </Copy>
+            <CaseFigure
+              items={[
+                img(
+                  "04-missing-data-research.png",
+                  "A Guardian research task for a missing signal, with step by step instructions",
+                ),
+              ]}
             />
           </CaseSection>
 
@@ -237,12 +213,12 @@ export default function ThriveProductPage() {
           <CaseSection number="05" title="Verification and scoring">
             {/* TODO copy */}
             <Copy>
-              Guardians are the human reviewers. They verify each submission
-              against a rubric. Every signal has a 1 to 5 scale with a
+              Guardians are the human reviewers. They verify each claim
+              against its proof. Every signal has a 1 to 5 scale with a
               readable label, instructions for the reviewer, and the data
-              required to back a score. The rubric and the interface were
-              designed together, so what reviewers see matches what they are
-              asked to judge.
+              required to back a score. A review walks the same steps every
+              time, so two Guardians looking at the same project reach
+              comparable results.
             </Copy>
             <CaseFigure
               items={[
@@ -255,15 +231,11 @@ export default function ThriveProductPage() {
             <CaseFigure
               items={[
                 img(
-                  "05-rubric-example.png",
-                  "Rubric for one signal with its 1 to 5 scale",
-                ),
-                img(
-                  "05-rubric-ui.png",
-                  "The scoring interface the rubric produced",
+                  "05-verify-review.png",
+                  "A review step: traction and validation evidence laid out against the reviewer instructions",
                 ),
               ]}
-              caption="One rubric, side by side with the UI it produced."
+              caption="Dense evidence, one step at a time. The reviewer sees the instructions and the data side by side."
             />
           </CaseSection>
 
@@ -271,22 +243,20 @@ export default function ThriveProductPage() {
           <CaseSection number="06" title="The decision layer">
             {/* TODO copy */}
             <Copy>
-              This is where an investor or reviewer makes a call. Guardian
-              Reviews collects verified projects into a shortlist. Approve and
-              reject confirmations spell out what happens next. The Powerlist
-              project detail holds the dense data behind one clear next
-              action.
+              This is where an investor or reviewer makes a call. The
+              Verification Terminal compresses a project into score, coverage
+              and confidence, with the full report one click away. The
+              Powerlist ranks validated projects so capital can find them. I
+              mapped every approve and reject path before drawing screens.
             </Copy>
             <CaseFigure
               items={[
-                img("06-decision-reviews.png", "The Guardian Reviews shortlist"),
+                img(
+                  "06-decision-terminal.png",
+                  "The Verification Terminal: a project summary in deal flow with score, coverage and confidence",
+                ),
               ]}
-            />
-            <CaseFigure
-              items={[
-                img("06-decision-approve.png", "Approve confirmation dialog"),
-                img("06-decision-reject.png", "Reject confirmation dialog"),
-              ]}
+              caption="The Verification Terminal, mid build in Lovable."
             />
             <CaseFigure
               items={[
@@ -296,21 +266,68 @@ export default function ThriveProductPage() {
                 ),
               ]}
             />
+            <CaseFigure
+              items={[
+                img(
+                  "06-decision-flows.png",
+                  "The full approval and rejection flow for applications, mapped screen by screen",
+                ),
+              ]}
+              caption="Approve and reject paths mapped screen by screen before any UI was final."
+            />
           </CaseSection>
 
-          {/* 7. Systems work */}
-          <CaseSection number="07" title="Systems work">
+          {/* 7. Thrive Agent */}
+          <CaseSection number="07" title="Thrive Agent">
             {/* TODO copy */}
             <Copy>
-              I restructured the app&apos;s information architecture and
-              contributed to the design system, including button and state
-              components. This kept the new flows consistent with the rest of
-              the product.
+              The same discipline, turned toward founders. Thrive Agent locks
+              a goal, pulls real data from the tools a company already runs,
+              and challenges its own recommendations against that data before
+              showing them. Claims that fail the check get dropped, visibly.
             </Copy>
             <CaseFigure
               items={[
                 img(
-                  "07-systems-components.png",
+                  "07-agent-clarify.png",
+                  "Agent step one: clarify the business goal",
+                ),
+                img(
+                  "07-agent-connect.png",
+                  "Agent step two: connect real data sources",
+                ),
+                img(
+                  "07-agent-verify.png",
+                  "Agent step three: recommendations challenged against the data",
+                ),
+              ]}
+              caption="Clarify, connect, verify. Every recommendation traces back to a data source."
+            />
+          </CaseSection>
+
+          {/* 8. Systems work */}
+          <CaseSection number="08" title="Systems work">
+            {/* TODO copy */}
+            <Copy>
+              I restructured the app&apos;s information architecture, starting
+              from the full project lifecycle: application, review,
+              contracts, milestones, payment. I also contributed to the
+              design system, including button and state components and the
+              typography scale.
+            </Copy>
+            <CaseFigure
+              items={[
+                img(
+                  "08-systems-lifecycle.png",
+                  "The full project lifecycle, mapped state by state",
+                ),
+              ]}
+              caption="The lifecycle map behind the IA restructure. Every state a project can be in, and every way out of it."
+            />
+            <CaseFigure
+              items={[
+                img(
+                  "08-systems-components.png",
                   "Button components across variants, sizes and states",
                 ),
               ]}
@@ -318,20 +335,21 @@ export default function ThriveProductPage() {
             <CaseFigure
               items={[
                 img(
-                  "07-systems-typography.png",
+                  "08-systems-typography.png",
                   "The typography scale for desktop and mobile",
                 ),
               ]}
             />
           </CaseSection>
 
-          {/* 8. Shipping */}
-          <CaseSection number="08" title="Shipping">
+          {/* 9. Shipping */}
+          <CaseSection number="09" title="Shipping">
             {/* TODO copy */}
             <Copy>
               I shipped production interfaces directly with Lovable. That cut
               the design to build loop from weeks to days. Decisions were
-              tested in the real product, not in mockups.
+              tested in the real product, not in mockups. The Verification
+              Terminal above still carries the build bar.
             </Copy>
           </CaseSection>
 
