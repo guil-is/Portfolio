@@ -44,7 +44,7 @@ const coverImage =
 export default function ThriveProductPage() {
   return (
     <>
-      <ProjectSideTitle title="Thrive" client="Product Design" />
+      <ProjectSideTitle title="Thrive Protocol" client="Product Design" />
 
       <div className="page-fade-in">
         <PageHeader
@@ -59,16 +59,18 @@ export default function ThriveProductPage() {
                 work
               </Link>
               <span>&gt;</span>
-              <span className="truncate font-bold text-ink">Thrive</span>
+              <span className="truncate font-bold text-ink">
+                Thrive Protocol
+              </span>
             </div>
           }
         />
 
         <main className="px-6 md:px-10">
-          {/* Cover */}
+          {/* Hero media — same treatment as /projects/[slug] */}
           <FadeIn>
-            <section className="mx-auto w-full max-w-[960px] pb-2 pt-10">
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[16px] bg-card shadow-card">
+            <section className="mx-auto w-full max-w-[960px] pb-10 pt-10">
+              <div className="relative aspect-[16/9] max-h-[960px] w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433]">
                 <Image
                   src={coverImage}
                   alt="The Thrive home page"
@@ -81,27 +83,40 @@ export default function ThriveProductPage() {
             </section>
           </FadeIn>
 
-          {/* Header: title, subtitle, meta row */}
+          {/* Info row — summary on the left, role / scope / period stacked
+              on the right, mirroring /projects/[slug] */}
           <FadeIn>
-            <section className="mx-auto w-full max-w-[960px] pt-10 md:pt-12">
-              <h1 className="font-display text-[3rem] font-bold leading-none text-ink md:text-[4.5rem]">
-                Thrive
-              </h1>
-              <p className="mt-6 max-w-[720px] font-display text-[1.5rem] font-bold leading-[1.3] text-ink md:text-[2rem] md:leading-[1.25]">
-                Product design for a capital allocation platform.
-              </p>
-            </section>
-          </FadeIn>
+            <section className="mx-auto w-full max-w-[960px] border-y border-[#ebebeb] py-14 dark:border-rule md:py-20">
+              <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_280px] md:gap-16">
+                <div className="flex flex-col gap-8">
+                  <p className="font-display text-[1.75rem] font-bold leading-[1.3] text-ink md:text-[2.125rem] md:leading-[1.25]">
+                    Thrive Protocol: Product design for a capital allocation
+                    platform.
+                  </p>
+                </div>
 
-          <FadeIn>
-            <section className="mx-auto mt-10 w-full max-w-[960px] border-y border-rule-soft py-2 md:mt-14">
-              <div className="grid grid-cols-1 md:grid-cols-3 md:gap-8">
-                <MetaRow label="Role">Design Lead</MetaRow>
-                <MetaRow label="Period">Aug 2025 to Feb 2026</MetaRow>
-                <MetaRow label="Scope">
-                  Product design, information architecture, design systems,
-                  verification flows
-                </MetaRow>
+                <div className="flex flex-col">
+                  <MetaRow label="Role" first>
+                    <span className="font-display text-[1rem] text-ink">
+                      Design Lead
+                    </span>
+                  </MetaRow>
+                  <MetaRow label="Scope">
+                    <ScopeTags
+                      tags={[
+                        "Product design",
+                        "Information architecture",
+                        "Design systems",
+                        "Verification flows",
+                      ]}
+                    />
+                  </MetaRow>
+                  <MetaRow label="Period">
+                    <span className="font-display text-[1rem] text-ink">
+                      Aug 2025 to Feb 2026
+                    </span>
+                  </MetaRow>
+                </div>
               </div>
             </section>
           </FadeIn>
@@ -480,18 +495,37 @@ function Copy({ children }: { children: ReactNode }) {
 function MetaRow({
   label,
   children,
+  first,
 }: {
   label: string;
   children: ReactNode;
+  first?: boolean;
 }) {
   return (
-    <div className="grid grid-cols-[80px_1fr] items-start gap-4 border-b border-rule-soft py-4 last:border-b-0 md:block md:border-b-0 md:py-4">
+    <div
+      className={`grid grid-cols-[80px_1fr] items-center gap-4 py-4 ${
+        first ? "" : "border-t border-rule-soft"
+      }`}
+    >
       <h6 className="text-[10px] font-semibold uppercase leading-[22px] tracking-[1px] text-ink/35">
         {label}
       </h6>
-      <div className="min-w-0 font-display text-[1rem] text-ink md:mt-1">
-        {children}
-      </div>
+      <div className="min-w-0">{children}</div>
+    </div>
+  );
+}
+
+function ScopeTags({ tags }: { tags: string[] }) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {tags.map((t) => (
+        <span
+          key={t}
+          className="rounded-full border border-rule-soft px-3 py-1 font-caption text-[11px] font-medium uppercase tracking-[1px] text-ink"
+        >
+          {t}
+        </span>
+      ))}
     </div>
   );
 }
