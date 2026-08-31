@@ -86,13 +86,13 @@ export default function ThriveProductPage() {
           {/* Info row — summary full width, role / scope / period in a
               band underneath */}
           <FadeIn>
-            <section className="mx-auto w-full max-w-[960px] border-y border-[#ebebeb] py-14 dark:border-rule md:py-20">
+            <section className="mx-auto w-full max-w-[960px] border-t border-[#ebebeb] py-14 dark:border-rule md:py-20">
               <p className="font-display text-[1.75rem] font-bold leading-[1.3] text-ink md:text-[2.125rem] md:leading-[1.25]">
                 Thrive Protocol: Product design for a capital allocation
                 platform.
               </p>
 
-              <div className="mt-10 grid grid-cols-1 gap-8 md:mt-12 md:grid-cols-[minmax(0,1fr)_minmax(0,2.2fr)_minmax(0,1fr)] md:gap-12">
+              <div className="mt-10 grid grid-cols-1 gap-8 border-t border-[#ebebeb] pt-10 dark:border-rule md:mt-12 md:grid-cols-[minmax(0,1fr)_minmax(0,2.2fr)_minmax(0,1fr)] md:gap-12 md:pt-12">
                 <MetaBlock label="Role">
                   <span className="font-display text-[1rem] text-ink">
                     Design Lead
