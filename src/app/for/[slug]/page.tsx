@@ -14,6 +14,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { PasswordGate } from "@/components/PasswordGate";
+import { DefinitionList } from "@/components/DefinitionList";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { CtaButton } from "@/components/CtaButton";
 import { AcceptProposal } from "@/components/AcceptProposal";
@@ -177,12 +178,14 @@ function Header({ proposal }: { proposal: Proposal }) {
           ) : null}
         </h1>
 
-        <p
-          className="intro-rise mt-6 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted md:mt-8 md:text-[1rem]"
-          style={{ animationDelay: "380ms" }}
-        >
-          {proposal.hero.blurb}
-        </p>
+        {proposal.hero.blurb ? (
+          <p
+            className="intro-rise mt-6 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted md:mt-8 md:text-[1rem]"
+            style={{ animationDelay: "380ms" }}
+          >
+            {proposal.hero.blurb}
+          </p>
+        ) : null}
 
         {proposal.hero.loomUrl ? (
           <div
@@ -612,7 +615,9 @@ function TierCard({ tier }: { tier: Tier }) {
 function BriefSection({ data }: { data: Brief }) {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
-      <SectionLabel>{data.heading ?? "The brief"}</SectionLabel>
+      {data.heading === "" ? null : (
+        <SectionLabel>{data.heading ?? "The brief"}</SectionLabel>
+      )}
       <div className="mx-auto flex w-full max-w-[960px] flex-col gap-12">
         {data.blocks.map((block, i) => (
           <CenterFocus
@@ -991,7 +996,8 @@ function TermsSection({ data }: { data: Terms }) {
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>{data.heading ?? "Terms"}</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
-        <BulletList items={data.items} />
+        {data.items ? <BulletList items={data.items} /> : null}
+        {data.kv ? <DefinitionList rows={data.kv} /> : null}
       </div>
     </section>
   );
@@ -1028,20 +1034,22 @@ function NextStep({
         </CenterFocus>
 
         <CenterFocus minOpacity={0.15} falloff={0.5} minScale={0.99}>
-          <div className="mt-16 flex flex-wrap items-center gap-x-10 gap-y-5 border-t border-rule-soft pt-10">
-            <a
-              href="https://guil.is"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 font-caption text-[13px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted"
-            >
-              <ArrowUpRight
-                className="h-4 w-4 transition-transform group-hover:-rotate-45"
-                strokeWidth={1.75}
-              />
-              See my full portfolio
-            </a>
-          </div>
+          {data.showPortfolioLink !== false ? (
+            <div className="mt-16 flex flex-wrap items-center gap-x-10 gap-y-5 border-t border-rule-soft pt-10">
+              <a
+                href="https://guil.is"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-2 font-caption text-[13px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted"
+              >
+                <ArrowUpRight
+                  className="h-4 w-4 transition-transform group-hover:-rotate-45"
+                  strokeWidth={1.75}
+                />
+                See my full portfolio
+              </a>
+            </div>
+          ) : null}
 
           <p className="mt-20 font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
             guil.is

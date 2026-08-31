@@ -532,7 +532,7 @@ function ProposalView() {
         </ProposalSection>
       ) : null}
 
-      {p.terms ? (
+      {p.terms?.items ? (
         <ProposalSection label={p.terms.heading ?? "Terms"}>
           <BulletList items={p.terms.items} />
         </ProposalSection>

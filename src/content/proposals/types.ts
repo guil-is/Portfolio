@@ -13,7 +13,8 @@ import type { ReactNode } from "react";
  *   2. Project quote (Myosin-style): brief + scope + quote + terms.
  */
 
-export type Body = string | string[];
+/** One paragraph or several. Accepts JSX so copy can embed inline links. */
+export type Body = ReactNode | ReactNode[];
 
 export type CaseStudyData = {
   sectionLabel: string;
@@ -78,6 +79,8 @@ export type LabeledMedia = {
 export type BriefBlock = LabeledBody | LabeledList | LabeledMedia;
 
 export type Brief = {
+  /** Section label. Defaults to "The brief"; pass "" to render the
+   * blocks with no section label (document-style pages). */
   heading?: string;
   blocks: BriefBlock[];
 };
@@ -125,7 +128,11 @@ export type Quote = {
 
 export type Terms = {
   heading?: string;
-  items: string[];
+  /** Bulleted list of terms (Odyssey/Myosin style). */
+  items?: string[];
+  /** Label/value rows rendered with DefinitionList — scannable
+   * rate-card style terms. Use instead of (or alongside) `items`. */
+  kv?: Array<[ReactNode, ReactNode]>;
 };
 
 export type TimelineMilestone = {
@@ -165,7 +172,8 @@ export type Proposal = {
     /** Optional softer continuation line under the title (rendered in
      * muted weight/color for a two-tier editorial treatment). */
     titleContinuation?: string;
-    blurb: string;
+    /** Optional intro paragraph under the title. */
+    blurb?: string;
     /** Optional Loom walkthrough link. When set, renders a CTA button. */
     loomUrl?: string;
     loomLabel?: string;
@@ -190,6 +198,9 @@ export type Proposal = {
     body: string;
     ctaHref: string;
     ctaLabel: string;
+    /** Set false for single-audience documents that should end without
+     * the portfolio cross-link. Defaults to true. */
+    showPortfolioLink?: boolean;
   };
   /** Optional HTML head overrides. */
   metadata?: {
