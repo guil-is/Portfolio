@@ -83,40 +83,36 @@ export default function ThriveProductPage() {
             </section>
           </FadeIn>
 
-          {/* Info row — summary on the left, role / scope / period stacked
-              on the right, mirroring /projects/[slug] */}
+          {/* Info row — summary full width, role / scope / period in a
+              band underneath */}
           <FadeIn>
             <section className="mx-auto w-full max-w-[960px] border-y border-[#ebebeb] py-14 dark:border-rule md:py-20">
-              <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_280px] md:gap-16">
-                <div className="flex flex-col gap-8">
-                  <p className="font-display text-[1.75rem] font-bold leading-[1.3] text-ink md:text-[2.125rem] md:leading-[1.25]">
-                    Thrive Protocol: Product design for a capital allocation
-                    platform.
-                  </p>
-                </div>
+              <p className="font-display text-[1.75rem] font-bold leading-[1.3] text-ink md:text-[2.125rem] md:leading-[1.25]">
+                Thrive Protocol: Product design for a capital allocation
+                platform.
+              </p>
 
-                <div className="flex flex-col">
-                  <MetaRow label="Role" first>
-                    <span className="font-display text-[1rem] text-ink">
-                      Design Lead
-                    </span>
-                  </MetaRow>
-                  <MetaRow label="Scope">
-                    <ScopeTags
-                      tags={[
-                        "Product design",
-                        "Information architecture",
-                        "Design systems",
-                        "Verification flows",
-                      ]}
-                    />
-                  </MetaRow>
-                  <MetaRow label="Period">
-                    <span className="font-display text-[1rem] text-ink">
-                      Aug 2025 to Feb 2026
-                    </span>
-                  </MetaRow>
-                </div>
+              <div className="mt-10 grid grid-cols-1 gap-8 md:mt-12 md:grid-cols-[minmax(0,1fr)_minmax(0,2.2fr)_minmax(0,1fr)] md:gap-12">
+                <MetaBlock label="Role">
+                  <span className="font-display text-[1rem] text-ink">
+                    Design Lead
+                  </span>
+                </MetaBlock>
+                <MetaBlock label="Scope">
+                  <ScopeTags
+                    tags={[
+                      "Product design",
+                      "Information architecture",
+                      "Design systems",
+                      "Verification flows",
+                    ]}
+                  />
+                </MetaBlock>
+                <MetaBlock label="Period">
+                  <span className="font-display text-[1rem] text-ink">
+                    Aug 2025 to Feb 2026
+                  </span>
+                </MetaBlock>
               </div>
             </section>
           </FadeIn>
@@ -492,22 +488,16 @@ function Copy({ children }: { children: ReactNode }) {
   );
 }
 
-function MetaRow({
+function MetaBlock({
   label,
   children,
-  first,
 }: {
   label: string;
   children: ReactNode;
-  first?: boolean;
 }) {
   return (
-    <div
-      className={`grid grid-cols-[80px_1fr] items-center gap-4 py-4 ${
-        first ? "" : "border-t border-rule-soft"
-      }`}
-    >
-      <h6 className="text-[10px] font-semibold uppercase leading-[22px] tracking-[1px] text-ink/35">
+    <div className="flex flex-col gap-3">
+      <h6 className="text-[10px] font-semibold uppercase leading-none tracking-[1px] text-ink/35">
         {label}
       </h6>
       <div className="min-w-0">{children}</div>
