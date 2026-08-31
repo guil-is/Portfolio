@@ -1,5 +1,6 @@
 import type { Proposal } from "./types";
 import { odyssey } from "./odyssey";
+import { codeAndCo } from "./code-and-co";
 
 /**
  * Registry of all client proposals served by the dynamic /for/[slug]
@@ -14,6 +15,7 @@ import { odyssey } from "./odyssey";
  */
 export const proposals: Record<string, Proposal> = {
   odyssey,
+  "code-and-co": codeAndCo,
 };
 
 export function getProposal(slug: string): Proposal | null {
