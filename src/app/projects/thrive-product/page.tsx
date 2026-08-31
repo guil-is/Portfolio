@@ -287,6 +287,7 @@ export default function ThriveProductPage() {
               showing them. Claims that fail the check get dropped, visibly.
             </Copy>
             <CaseFigure
+              slideshow
               items={[
                 img(
                   "07-agent-clarify.png",

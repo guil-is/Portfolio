@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
@@ -19,21 +19,46 @@ type Props = {
   items: CaseFigureItem[];
   caption?: string;
   className?: string;
+  /** Crossfade the items in place instead of a grid row. Auto-advances,
+   * pauses on hover and while the lightbox is open. Falls back to the
+   * grid when any item is missing from /public. */
+  slideshow?: boolean;
 };
+
+const SLIDE_INTERVAL_MS = 4000;
 
 /**
  * Case-study figure row: 1 item renders full width, 2 or 3 items render
- * as a responsive grid (stacked on mobile). Items whose file exists in
- * /public render via next/image and open in the shared lightbox; missing
- * items render a dashed placeholder card showing the expected filename,
- * so layout can be reviewed before all exports are done.
+ * as a responsive grid (stacked on mobile) — or a crossfade slideshow
+ * with `slideshow`. Items whose file exists in /public render via
+ * next/image and open in the shared lightbox; missing items render a
+ * dashed placeholder card showing the expected filename, so layout can
+ * be reviewed before all exports are done.
  */
-export function CaseFigure({ items, caption, className = "" }: Props) {
+export function CaseFigure({
+  items,
+  caption,
+  className = "",
+  slideshow = false,
+}: Props) {
   const [openAt, setOpenAt] = useState(-1);
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   const loaded = items.filter(
     (i): i is CaseFigureItem & { src: string } => !!i.src,
   );
+
+  const asSlideshow = slideshow && loaded.length === items.length && items.length > 1;
+
+  useEffect(() => {
+    if (!asSlideshow || paused || openAt >= 0) return;
+    const id = setInterval(
+      () => setActive((a) => (a + 1) % loaded.length),
+      SLIDE_INTERVAL_MS,
+    );
+    return () => clearInterval(id);
+  }, [asSlideshow, paused, openAt, loaded.length]);
   const slides = loaded.map((i) => ({
     src: i.src,
     width: i.width,
@@ -47,6 +72,71 @@ export function CaseFigure({ items, caption, className = "" }: Props) {
       : items.length === 2
         ? "md:grid-cols-2"
         : "";
+
+  if (asSlideshow) {
+    const first = loaded[0];
+    return (
+      <figure className={`my-10 w-full ${className}`}>
+        <div
+          className="relative w-full overflow-hidden rounded-[16px] bg-card shadow-card"
+          style={{
+            aspectRatio: `${first.width ?? 16} / ${first.height ?? 9}`,
+          }}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          {loaded.map((item, i) => (
+            <button
+              key={item.file}
+              type="button"
+              aria-label={`View ${item.alt} full screen`}
+              aria-hidden={i !== active}
+              tabIndex={i === active ? 0 : -1}
+              onClick={() => setOpenAt(i)}
+              className={`absolute inset-0 cursor-zoom-in transition-opacity duration-700 ease-in-out ${
+                i === active ? "opacity-100" : "pointer-events-none opacity-0"
+              }`}
+            >
+              <Image
+                src={item.src}
+                alt={item.alt}
+                fill
+                sizes="(min-width: 768px) 960px, 100vw"
+                className="object-cover"
+              />
+            </button>
+          ))}
+        </div>
+        <div className="mt-4 flex justify-center gap-2">
+          {loaded.map((item, i) => (
+            <button
+              key={item.file}
+              type="button"
+              aria-label={`Show slide ${i + 1}: ${item.alt}`}
+              onClick={() => setActive(i)}
+              className={`h-2 w-2 rounded-full transition-colors ${
+                i === active ? "bg-ink" : "bg-rule hover:bg-muted"
+              }`}
+            />
+          ))}
+        </div>
+        {caption ? (
+          <figcaption className="mx-auto mt-3 max-w-[720px] text-center text-[14px] text-muted">
+            {caption}
+          </figcaption>
+        ) : null}
+        <Lightbox
+          open={openAt >= 0}
+          close={() => setOpenAt(-1)}
+          slides={slides}
+          index={openAt < 0 ? 0 : openAt}
+          controller={{ closeOnBackdropClick: true }}
+          animation={{ fade: 150, swipe: 180, navigation: 180 }}
+          carousel={{ finite: slides.length <= 1 }}
+        />
+      </figure>
+    );
+  }
 
   return (
     <figure className={`my-10 w-full ${className}`}>
