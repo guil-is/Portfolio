@@ -130,6 +130,23 @@ export default function ThriveProductPage() {
             <CaseFigure
               items={[
                 img(
+                  "01-context-participants.png",
+                  "The consensus loop: Builders create impact, Guardians verify it, Ecosystems fund it",
+                ),
+              ]}
+              caption="Builders create impact. Guardians verify it. Ecosystems fund it."
+            />
+            <CaseFigure
+              items={[
+                img(
+                  "01-context-powerscore.png",
+                  "How the Power Score works: power signals feed the Thrive algorithm, out comes the score",
+                ),
+              ]}
+            />
+            <CaseFigure
+              items={[
+                img(
                   "01-context-hero.png",
                   "The Thrive Power List: builders get verified, Guardians validate, ecosystems fund",
                 ),
@@ -182,10 +199,10 @@ export default function ThriveProductPage() {
             <Copy>
               Scoring only works if evidence arrives in a shape we can score.
               I mapped the pipeline end to end. Data connects at the source,
-              Guardians verify it, intelligence turns it into scores, and the
-              output is ready for a decision. Every submission maps to three
-              signal categories: Product execution, On-chain transactions,
-              and Team credibility.
+              Guardians and agents verify it, intelligence turns it into
+              scores, and the output is ready for a decision. Every
+              submission maps to four signal categories: Capital Efficiency,
+              Team Credibility, Revenue Quality, and Traction Velocity.
             </Copy>
             <CaseFigure
               items={[
@@ -243,12 +260,14 @@ export default function ThriveProductPage() {
           <CaseSection number="05" title="Verification and scoring">
             {/* TODO copy */}
             <Copy>
-              Guardians are the human reviewers. They verify each claim
-              against its proof. Every signal has a 1 to 5 scale with a
-              readable label, instructions for the reviewer, and the data
-              required to back a score. A review walks the same steps every
-              time, so two Guardians looking at the same project reach
-              comparable results.
+              Guardians verify each claim against its proof. They are a
+              vetted network of human experts and AI agents. Every signal has
+              a 1 to 5 scale with a readable label, instructions for the
+              reviewer, and the data required to back a score. A review walks
+              the same steps every time, so two Guardians looking at the same
+              project reach comparable results. Guardians earn Thrive points
+              for the work, and points translate to tokens. Verifying impact
+              carries financial upside.
             </Copy>
             <CaseFigure
               items={[
