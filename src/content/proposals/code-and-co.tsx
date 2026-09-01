@@ -79,14 +79,27 @@ export const codeAndCo: Proposal = {
         body: "Priorities set weekly with Kelly. Async by default, Berlin time.",
       },
       {
+        // TODO copy: card written for this grid.
+        icon: "zap",
+        title: "I ship fast",
+        body: "Quick iteration. We zoom through explorations until something feels right, then lock it in.",
+      },
+      {
         icon: "hammer",
         title: "Design to shipped",
         body: "I design in Figma and ship working interfaces directly when useful. At Thrive this cut the design to build loop from weeks to days.",
       },
       {
-        icon: "zap",
-        title: "Room to flex",
-        body: "More than two days needed in a week? Extra days billed on top, agreed in advance.",
+        // TODO copy: card written for this grid.
+        icon: "compass",
+        title: "AI-augmented workflow",
+        body: "AI tooling runs through my whole process, from exploration to production code. More output from the same two days.",
+      },
+      {
+        // TODO copy: card written for this grid.
+        icon: "video",
+        title: "Loom demos",
+        body: "Work in progress goes out as short Loom videos with voice over. You see where things stand without a meeting.",
       },
     ],
   },
