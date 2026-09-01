@@ -39,6 +39,8 @@ export type CaseStudyData = {
 export type Tier = {
   label: string;
   price: string;
+  /** Suffix after the price, e.g. "/ day". Defaults to "/ month". */
+  per?: string;
   cadence: string;
   priceNote?: string;
   body: string;
@@ -82,6 +84,8 @@ export type Brief = {
   /** Section label. Defaults to "The brief"; pass "" to render the
    * blocks with no section label (document-style pages). */
   heading?: string;
+  /** Optional lead-in paragraph(s) rendered above the blocks. */
+  intro?: Body;
   blocks: BriefBlock[];
 };
 
@@ -187,10 +191,18 @@ export type Proposal = {
   terms?: Terms;
   /** Whether to render the static "How I work" section. Defaults to true. */
   showApproach?: boolean;
+  /** Per-proposal override for the approach icon grid. When set, these
+   * items render instead of the static "My approach" defaults. Icon
+   * names come from the page's iconMap (users, zap, video, hammer,
+   * grid, compass). */
+  approach?: {
+    heading?: string;
+    items: Array<{ icon: string; title: string; body: string }>;
+  };
   engagement?: {
     heading: string;
     subheading: string;
-    footnote: string;
+    footnote?: string;
     tiers: Tier[];
   };
   nextStep: {

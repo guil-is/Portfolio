@@ -108,7 +108,13 @@ export default async function ProposalPage({ params }: RouteProps) {
           {proposal.brief ? <BriefSection data={proposal.brief} /> : null}
           {proposal.scope ? <ScopeSection data={proposal.scope} /> : null}
 
-          {proposal.showApproach !== false && (proposal.caseStudies?.length ?? 0) > 0 ? (
+          {proposal.approach ? (
+            <HowIWork
+              heading={proposal.approach.heading}
+              items={proposal.approach.items}
+            />
+          ) : proposal.showApproach !== false &&
+            (proposal.caseStudies?.length ?? 0) > 0 ? (
             <HowIWork />
           ) : null}
 
@@ -491,13 +497,19 @@ const howItems = [
   },
 ];
 
-function HowIWork() {
+function HowIWork({
+  heading,
+  items = howItems,
+}: {
+  heading?: string;
+  items?: Array<{ icon: string; title: string; body: string }>;
+}) {
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 pb-20 md:px-10 md:pb-28">
-      <SectionLabel>My approach</SectionLabel>
+      <SectionLabel>{heading ?? "My approach"}</SectionLabel>
 
       <div className="grid grid-cols-1 gap-x-12 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
-        {howItems.map((item) => {
+        {items.map((item) => {
           const Icon = iconMap[item.icon] ?? Compass;
           return (
             <CenterFocus
@@ -545,7 +557,13 @@ function Engagement({ data }: { data: NonNullable<Proposal["engagement"]> }) {
           </p>
         </CenterFocus>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2">
+        <div
+          className={
+            data.tiers.length > 1
+              ? "mt-12 grid grid-cols-1 gap-6 md:mt-16 md:grid-cols-2"
+              : "mt-12 md:mx-auto md:mt-16 md:max-w-[600px]"
+          }
+        >
           {data.tiers.map((tier) => (
             <CenterFocus
               key={tier.label}
@@ -559,16 +577,18 @@ function Engagement({ data }: { data: NonNullable<Proposal["engagement"]> }) {
           ))}
         </div>
 
-        <CenterFocus
-          minOpacity={0.15}
-          falloff={0.55}
-          minScale={0.99}
-          disableBelowMd
-        >
-          <p className="mt-10 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
-            {data.footnote}
-          </p>
-        </CenterFocus>
+        {data.footnote ? (
+          <CenterFocus
+            minOpacity={0.15}
+            falloff={0.55}
+            minScale={0.99}
+            disableBelowMd
+          >
+            <p className="mt-10 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
+              {data.footnote}
+            </p>
+          </CenterFocus>
+        ) : null}
       </div>
     </section>
   );
@@ -585,7 +605,7 @@ function TierCard({ tier }: { tier: Tier }) {
           {tier.price}
           <span className="font-caption text-[13px] font-medium uppercase tracking-[1.5px] text-muted">
             {" "}
-            / month
+            {tier.per ?? "/ month"}
           </span>
         </p>
         <p className="mt-3 text-[0.9rem] leading-[1.5rem] text-muted">
@@ -618,6 +638,11 @@ function BriefSection({ data }: { data: Brief }) {
       {data.heading === "" ? null : (
         <SectionLabel>{data.heading ?? "The brief"}</SectionLabel>
       )}
+      {data.intro ? (
+        <div className="mx-auto mb-12 w-full max-w-[960px]">
+          <Paragraphs body={data.intro} />
+        </div>
+      ) : null}
       <div className="mx-auto flex w-full max-w-[960px] flex-col gap-12">
         {data.blocks.map((block, i) => (
           <CenterFocus
