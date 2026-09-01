@@ -157,13 +157,10 @@ export const codeAndCo: Proposal = {
     // TODO copy: intro-call closer in the Odyssey style.
     heading: "Ready to move?",
     body: "Next step is a 30-minute intro call. We talk through Target Portal, AI KPI tracking and how the retainer works. If it fits, send me the paperwork and a first priority. I can start on the 9th. hi@guil.is, or Telegram.",
-    // Prefilled subject so the mailto opens ready to send on mobile.
-    ctaHref:
-      "mailto:hi@guil.is?subject=Intro%20call%20-%20Code%20%26%20Co.%20proposal",
+    ctaHref: "https://cal.com/guil-is",
     ctaLabel: "Schedule an intro call",
     // Call-first close: no accept button on first touch.
     showAccept: false,
-    showPortfolioLink: false,
   },
 
   metadata: {
