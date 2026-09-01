@@ -224,6 +224,9 @@ export type Proposal = {
     body: string;
     ctaHref: string;
     ctaLabel: string;
+    /** Set false to drop the "Accept this proposal" action — e.g. when
+     * the next step is a call, not an acceptance. Defaults to true. */
+    showAccept?: boolean;
     /** Set false for single-audience documents that should end without
      * the portfolio cross-link. Defaults to true. */
     showPortfolioLink?: boolean;

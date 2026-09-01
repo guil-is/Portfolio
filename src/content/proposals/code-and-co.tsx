@@ -20,9 +20,10 @@ export const codeAndCo: Proposal = {
   hero: {
     eyebrow: "Proposal",
     title: `Design partner for ${CLIENT_NAME}`,
-    // TODO copy: reframed around Code & Co.'s situation, Odyssey-style.
+    // TODO copy: reframed around Code & Co.'s situation, Odyssey-style,
+    // with the draft's credentials line folded back in.
     blurb:
-      "Code & Co. has more product work than hands, and the next two surfaces are already defined. You need a design partner embedded enough to move at your pace, and senior enough to take Target Portal and AI KPI tracking from first flow to working interface without being managed.",
+      "Code & Co. has more product work than hands, and the next two surfaces are already defined. You need a design partner embedded enough to move at your pace, and senior enough to take Target Portal and AI KPI tracking from first flow to working interface without being managed. I bring 15 years across product, brand and design systems, built and led the motion team at N26 during its global expansion, and was most recently Design Lead at Thrive.",
   },
 
   caseStudies: [
@@ -32,9 +33,10 @@ export const codeAndCo: Proposal = {
       title: "Thrive",
       // Links to the full case study at guil.is/projects/thrive-product.
       url: "/projects/thrive-product",
-      // TODO copy: case study framing written for this proposal.
+      // TODO copy: case study framing written for this proposal, leading
+      // with the diligence-shaped problem rather than the crypto stack.
       problem:
-        "Thrive scores capital allocation with dense on-chain and off-chain data. The hard part was intake: getting structured, verifiable information out of people without chasing them, then turning it into decisions non-experts can act on.",
+        "Thrive evaluates companies and projects for capital allocation. The hard part was intake: getting structured, verifiable information out of teams without chasing them, then turning dense data into decisions non-experts can act on.",
       // TODO copy: assembled from the draft's Thrive references.
       whatIShipped:
         "Product UI across intake, verification and decision flows. A guided intake pattern that shows what’s missing, what it’s worth, and how to fix it. Design system, and working interfaces shipped directly, cutting the design to build loop from weeks to days.",
@@ -58,18 +60,18 @@ export const codeAndCo: Proposal = {
   ],
 
   brief: {
-    heading: "What I'd work on",
+    heading: "What I’d work on",
     // TODO copy: intro shortened, "more product work than hands" moved
     // to the hero blurb.
-    intro: "The two I know about:",
+    intro: "These are the two I know about.",
     columns: [
       {
-        icon: "compass",
+        icon: "message",
         title: "Target Portal",
         body: "Moving due diligence intake from forms to a guided, conversational flow. Target companies see what’s missing, what it’s worth, and how to fix it, without your team chasing documents by email. I designed this exact pattern at Thrive.",
       },
       {
-        icon: "grid",
+        icon: "chart",
         title: "AI KPI tracking",
         body: "The reporting layer for the US investor engagement. Standardised intake across 50 companies, scoring against defined rubrics, trends over time, rolled up into a dashboard the investor reads without an analyst next to them.",
       },
@@ -96,7 +98,7 @@ export const codeAndCo: Proposal = {
         // From the Odyssey proposal's approach grid.
         icon: "grid",
         title: "I work in systems",
-        body: "I create reusable components whether it's a feature or a design system.",
+        body: "I create reusable components whether it’s a feature or a design system.",
       },
       {
         // TODO copy: card written for this grid.
@@ -131,8 +133,11 @@ export const codeAndCo: Proposal = {
         price: "950 EUR",
         per: "/ day",
         cadence: "2 days per week, fixed",
-        // TODO copy: draft terms joined into one card body.
-        body: "Invoiced monthly, from my German freelance business. Rolling engagement, one month notice either side. Extra days billed on top, agreed in advance.",
+        // TODO copy: weekly and monthly rollup for faster decisions.
+        priceNote: "1,900 EUR per week, around 8,200 EUR per month.",
+        // TODO copy: draft terms joined into one card body, plus the
+        // draft's working-model line restored.
+        body: "Priorities set weekly with Kelly. Async by default, Berlin time. Invoiced monthly, from my German freelance business. Rolling engagement, one month notice either side. Extra days billed on top, agreed in advance.",
         response: "Available from September 9, 2026",
       },
     ],
@@ -141,9 +146,13 @@ export const codeAndCo: Proposal = {
   nextStep: {
     // TODO copy: intro-call closer in the Odyssey style.
     heading: "Ready to move?",
-    body: "Next step is a 30-minute intro call. We talk through Target Portal, AI KPI tracking and how the retainer works. If it fits, send me the paperwork and a first priority. I can start on the 9th. hi@guil.is, or the usual Telegram.",
-    ctaHref: "mailto:hi@guil.is",
+    body: "Next step is a 30-minute intro call. We talk through Target Portal, AI KPI tracking and how the retainer works. If it fits, send me the paperwork and a first priority. I can start on the 9th. hi@guil.is, or Telegram.",
+    // Prefilled subject so the mailto opens ready to send on mobile.
+    ctaHref:
+      "mailto:hi@guil.is?subject=Intro%20call%20-%20Code%20%26%20Co.%20proposal",
     ctaLabel: "Schedule an intro call",
+    // Call-first close: no accept button on first touch.
+    showAccept: false,
     showPortfolioLink: false,
   },
 

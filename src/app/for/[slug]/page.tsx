@@ -8,6 +8,8 @@ import {
   Hammer,
   LayoutGrid,
   Compass,
+  MessageSquare,
+  BarChart3,
   ChevronDown,
   ArrowUpRight,
   Play,
@@ -483,6 +485,8 @@ const iconMap: Record<string, LucideIcon> = {
   hammer: Hammer,
   grid: LayoutGrid,
   compass: Compass,
+  message: MessageSquare,
+  chart: BarChart3,
 };
 
 const howItems = [
@@ -1104,7 +1108,7 @@ function NextStep({
 
         <CenterFocus minOpacity={0.15} falloff={0.5} minScale={0.98}>
           <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-6">
-            <AcceptProposal slug={slug} />
+            {data.showAccept !== false ? <AcceptProposal slug={slug} /> : null}
             <CtaButton href={data.ctaHref} label={data.ctaLabel} />
           </div>
         </CenterFocus>
