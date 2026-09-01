@@ -137,7 +137,7 @@ export const clientRegistry: ClientEntry[] = [
     "Studio Huit",
     'Ongoing Safe video series, project basis. Standard rate 1600 EUR net/video; first is "address poisoning", delivery 2 Sept.',
     "active",
-    { contacts: [{ name: "Lea Filipowicz (Noa)" }] },
+    { billingPreset: "huit", contacts: [{ name: "Lea Filipowicz (Noa)" }] },
   ),
   entry(
     "tedxberlin",

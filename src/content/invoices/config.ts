@@ -138,6 +138,11 @@ export const billToPresets: Record<string, BillTo> = {
       "UID: CHE-134.145.789",
     ],
   },
+  // German client: invoice net + 19% MwSt.
+  huit: {
+    name: "Studio Huit",
+    lines: ["Attn: Lea Filipowicz (Noa)", "Reichenberger Str. 60", "10999 Berlin"],
+  },
   // EU cross-border B2B: invoice net, reverse charge note, both VAT IDs
   // on the invoice.
   spa: {
