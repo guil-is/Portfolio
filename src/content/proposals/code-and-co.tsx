@@ -141,8 +141,7 @@ export const codeAndCo: Proposal = {
   engagement: {
     tiers: [
       {
-        // TODO copy: card label.
-        label: "Design retainer",
+        label: "Weekly retainer",
         price: "950 EUR",
         per: "/ day",
         cadence: "2 days per week, fixed",
@@ -156,8 +155,8 @@ export const codeAndCo: Proposal = {
         response: "Available from September 9, 2026",
       },
       {
-        // TODO copy: sprint card written for this proposal.
-        label: "Kickoff sprint",
+        // TODO copy: sprint card body written for this proposal.
+        label: "Full-week sprint",
         price: "5,200 EUR",
         // One-time sprint: no per-unit suffix on the price.
         per: "",

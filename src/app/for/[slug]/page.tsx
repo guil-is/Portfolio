@@ -663,7 +663,9 @@ function TierCard({ tier }: { tier: Tier }) {
   return (
     <div className="flex flex-col gap-8 rounded-[16px] border border-rule bg-transparent p-8">
       <div>
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+        {/* Full-contrast label (black/white, not ink) so the engagement
+            type reads at a glance. */}
+        <p className="font-caption text-[13px] font-semibold uppercase tracking-[1.5px] text-black dark:text-white">
           {tier.label}
         </p>
         <p className="mt-4 font-display text-[2rem] font-bold leading-none text-ink md:text-[2.5rem]">
