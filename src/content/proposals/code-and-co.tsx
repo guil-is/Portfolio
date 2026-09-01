@@ -19,9 +19,10 @@ export const codeAndCo: Proposal = {
 
   hero: {
     eyebrow: "Proposal",
-    title: `Design support for ${CLIENT_NAME}`,
+    title: `Design partner for ${CLIENT_NAME}`,
+    // TODO copy: reframed around Code & Co.'s situation, Odyssey-style.
     blurb:
-      "Guil Maueler. Design Lead with 15 years across product, brand and design systems. Built and led the motion team at N26 during its global expansion. Most recently Design Lead at Thrive, a capital allocation platform turning dense on-chain and off-chain data into decisions non-experts can act on.",
+      "Code & Co. has more product work than hands, and the next two surfaces are already defined. You need a design partner embedded enough to move at your pace, and senior enough to take Target Portal and AI KPI tracking from first flow to working interface without being managed.",
   },
 
   caseStudies: [
@@ -36,8 +37,20 @@ export const codeAndCo: Proposal = {
         "Thrive scores capital allocation with dense on-chain and off-chain data. The hard part was intake: getting structured, verifiable information out of people without chasing them, then turning it into decisions non-experts can act on.",
       // TODO copy: assembled from the draft's Thrive references.
       whatIShipped:
-        "Product UI across intake, verification and decision flows. A guided intake pattern that shows what’s missing, what it’s worth, and how to fix it. Design system, and working interfaces shipped directly — cutting the design to build loop from weeks to days.",
-      galleryFolder: "code-and-co/thrive",
+        "Product UI across intake, verification and decision flows. A guided intake pattern that shows what’s missing, what it’s worth, and how to fix it. Design system, and working interfaces shipped directly, cutting the design to build loop from weeks to days.",
+      // Hero opener gif (same one the public case studies use, served
+      // from the Webflow CDN), then the verification pipeline and deal
+      // flow screens. Local files are measured at build so the frames
+      // match their aspect ratio instead of cropping.
+      media: [
+        {
+          src: "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/699dc8c76563ae4fa076fec0_home%20page.gif",
+          aspect: 16 / 9,
+        },
+        { src: "/code-and-co/thrive/02-verification-pipeline.png" },
+        { src: "/code-and-co/thrive/03-deal-flows.png" },
+      ],
+      mediaHref: "/projects/thrive-product",
       // TODO copy: relevance line written for this proposal.
       relevance:
         "Target Portal is this exact pattern: guided, conversational intake instead of forms and email chases. I have designed and shipped it once already.",
@@ -46,16 +59,22 @@ export const codeAndCo: Proposal = {
 
   brief: {
     heading: "What I'd work on",
-    intro: "You have more product work than hands. The two I know about:",
-    blocks: [
+    // TODO copy: intro shortened, "more product work than hands" moved
+    // to the hero blurb.
+    intro: "The two I know about:",
+    columns: [
       {
-        label: "Target Portal",
+        icon: "compass",
+        title: "Target Portal",
         body: "Moving due diligence intake from forms to a guided, conversational flow. Target companies see what’s missing, what it’s worth, and how to fix it, without your team chasing documents by email. I designed this exact pattern at Thrive.",
       },
       {
-        label: "AI KPI tracking",
+        icon: "grid",
+        title: "AI KPI tracking",
         body: "The reporting layer for the US investor engagement. Standardised intake across 50 companies, scoring against defined rubrics, trends over time, rolled up into a dashboard the investor reads without an analyst next to them.",
       },
+    ],
+    blocks: [
       {
         label: "Plus whatever ships next",
         body: "The retainer model below exists because your priorities move. Brand and visual work fits inside it too.",
@@ -69,14 +88,15 @@ export const codeAndCo: Proposal = {
     heading: "How I work",
     items: [
       {
-        icon: "grid",
+        icon: "users",
         title: "Reserved capacity",
         body: "Two days a week, reserved. Yours whether the week is one project or five.",
       },
       {
-        icon: "users",
-        title: "Weekly priorities",
-        body: "Priorities set weekly with Kelly. Async by default, Berlin time.",
+        // From the Odyssey proposal's approach grid.
+        icon: "grid",
+        title: "I work in systems",
+        body: "I create reusable components whether it's a feature or a design system.",
       },
       {
         // TODO copy: card written for this grid.
@@ -96,19 +116,14 @@ export const codeAndCo: Proposal = {
         body: "AI tooling runs through my whole process, from exploration to production code. More output from the same two days.",
       },
       {
-        // TODO copy: card written for this grid.
         icon: "video",
-        title: "Loom demos",
-        body: "Work in progress goes out as short Loom videos with voice over. You see where things stand without a meeting.",
+        title: "Show and tell",
+        body: "I frequently share work in progress via screen recording walkthroughs.",
       },
     ],
   },
 
   engagement: {
-    // TODO copy: section framing written for the card format.
-    heading: "One offer, one price.",
-    subheading:
-      "A fixed block of two days per week, reserved for Code & Co. No tiers, no minimum project size.",
     tiers: [
       {
         // TODO copy: card label.
@@ -124,12 +139,11 @@ export const codeAndCo: Proposal = {
   },
 
   nextStep: {
-    // TODO copy: short closer heading in the Odyssey style.
-    heading: "Ready when you are.",
-    body: "If this works, send me the paperwork and a first priority. I can start on the 9th. hi@guil.is, or the usual Telegram.",
+    // TODO copy: intro-call closer in the Odyssey style.
+    heading: "Ready to move?",
+    body: "Next step is a 30-minute intro call. We talk through Target Portal, AI KPI tracking and how the retainer works. If it fits, send me the paperwork and a first priority. I can start on the 9th. hi@guil.is, or the usual Telegram.",
     ctaHref: "mailto:hi@guil.is",
-    // TODO copy: CTA button label not in the draft.
-    ctaLabel: "Email me",
+    ctaLabel: "Schedule an intro call",
     showPortfolioLink: false,
   },
 
