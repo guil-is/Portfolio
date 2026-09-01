@@ -31,8 +31,10 @@ export type CaseStudyData = {
   /** Explicit gallery list — used instead of galleryFolder discovery
    * when set. Remote URLs are allowed (rendered unoptimized); pass
    * `aspect` (width/height) for them, local files are measured at
-   * build time so frames match the image instead of cropping. */
-  media?: Array<{ src: string; aspect?: number }>;
+   * build time so frames match the image instead of cropping.
+   * An array `src` renders as a rapid-fire slideshow in one frame:
+   * 2s per shot, hard cut, aspect taken from the first shot. */
+  media?: Array<{ src: string | string[]; aspect?: number }>;
   /** Click-through for gallery slides without a mediaLinks entry.
    * Also enables the cursor-following hover label on desktop. */
   mediaHref?: string;
@@ -177,6 +179,9 @@ export type Proposal = {
   slug: string;
   /** Shared-secret password for the gate. */
   password: string;
+  /** Theme applied on first visit when the visitor has no stored
+   * preference. The toggle still works and wins afterwards. */
+  defaultTheme?: "dark" | "light";
   /** Used in the hero meta line and "Why it matters for <clientName>" labels. */
   clientName: string;
   /** e.g. "Prepared for Nick DeNuzzo & Chris · Odyssey" */
@@ -190,8 +195,8 @@ export type Proposal = {
     /** Optional softer continuation line under the title (rendered in
      * muted weight/color for a two-tier editorial treatment). */
     titleContinuation?: string;
-    /** Optional intro paragraph under the title. */
-    blurb?: string;
+    /** Optional intro paragraph(s) under the title. */
+    blurb?: string | string[];
     /** Optional Loom walkthrough link. When set, renders a CTA button. */
     loomUrl?: string;
     loomLabel?: string;

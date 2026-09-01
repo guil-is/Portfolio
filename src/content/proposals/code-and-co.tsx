@@ -13,6 +13,7 @@ const CLIENT_NAME = "Code & Co.";
 export const codeAndCo: Proposal = {
   slug: "code-and-co",
   password: "duediligence",
+  defaultTheme: "dark",
   clientName: CLIENT_NAME,
   preparedFor: "Prepared for Kelly Cheesman",
   date: "September 2026",
@@ -20,8 +21,10 @@ export const codeAndCo: Proposal = {
   hero: {
     eyebrow: "Proposal",
     title: `Design partner for ${CLIENT_NAME}`,
-    blurb:
-      "Code & Co. has more product work than hands, and the next two surfaces are already defined. You need a design partner embedded enough to move at your pace, and senior enough to take several product surfaces from first flow to working interface without being managed. I bring 15 years across product, brand and design systems, built and led the motion team at N26 during its global expansion, and was most recently Design Lead at Thrive.",
+    blurb: [
+      "Code & Co. has more product work than hands, and the next two surfaces are already defined. You need a design partner embedded enough to move at your pace, and senior enough to take several product surfaces from first flow to working interface without being managed.",
+      "I bring 15 years across product, brand and design systems, built and led the motion team at N26 during its global expansion, and was most recently Design Lead at Thrive.",
+    ],
   },
 
   caseStudies: [
@@ -39,16 +42,27 @@ export const codeAndCo: Proposal = {
       whatIShipped:
         "Product UI across intake, verification and decision flows. A guided intake pattern that shows what’s missing, what it’s worth, and how to fix it. Design system, and working interfaces shipped directly, cutting the design to build loop from weeks to days.",
       // Hero opener gif (same one the public case studies use, served
-      // from the Webflow CDN), then the verification pipeline and the
-      // Power List. Local files are measured at build so the frames
-      // match their aspect ratio instead of cropping.
+      // from the Webflow CDN), then the verification pipeline, then a
+      // rapid-fire slideshow of UI shots (2s per shot, hard cut).
+      // Local files are measured at build so the frames match their
+      // aspect ratio instead of cropping.
       media: [
         {
           src: "https://cdn.prod.website-files.com/5ea0098428bdbf1b20d2c9af/699dc8c76563ae4fa076fec0_home%20page.gif",
           aspect: 16 / 9,
         },
         { src: "/code-and-co/thrive/02-verification-pipeline.png" },
-        { src: "/code-and-co/thrive/03-power-list.png" },
+        {
+          src: [
+            "/code-and-co/thrive/ui/01.png",
+            "/code-and-co/thrive/ui/02.png",
+            "/code-and-co/thrive/ui/03.png",
+            "/code-and-co/thrive/ui/04.png",
+            "/code-and-co/thrive/ui/05.png",
+            "/code-and-co/thrive/ui/06.png",
+            "/code-and-co/thrive/ui/07.png",
+          ],
+        },
       ],
       mediaHref: "/projects/thrive-product",
       // TODO copy: relevance line written for this proposal.
@@ -124,19 +138,7 @@ export const codeAndCo: Proposal = {
   },
 
   engagement: {
-    // TODO copy: footnote tying the two modes together.
-    footnote:
-      "Most engagements would start with the sprint and continue on the retainer. Going straight to the retainer works too.",
     tiers: [
-      {
-        // TODO copy: sprint card written for this proposal.
-        label: "Kickoff sprint",
-        price: "5,200 EUR",
-        per: "/ week",
-        cadence: "One full week, one project",
-        body: "We pick one project, likely Target Portal. Five days, full focus. You get a working first version and a plan for the rest. One invoice.",
-        response: "Available September 14–18, 2026",
-      },
       {
         // TODO copy: card label.
         label: "Design retainer",
@@ -149,6 +151,16 @@ export const codeAndCo: Proposal = {
         // draft's working-model line restored.
         body: "Priorities set weekly with Kelly. Async by default, Berlin time. Invoiced monthly, from my German freelance business. Rolling engagement, one month notice either side. Extra days billed on top, agreed in advance.",
         response: "Available from September 9, 2026",
+      },
+      {
+        // TODO copy: sprint card written for this proposal.
+        label: "Kickoff sprint",
+        price: "5,200 EUR",
+        // One-time sprint: no per-unit suffix on the price.
+        per: "",
+        cadence: "One full week, one project",
+        body: "We pick one project. Five days, full focus. You get a working first version and a plan for the rest.",
+        response: "Available September 14–18, 2026",
       },
     ],
   },

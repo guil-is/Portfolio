@@ -3,17 +3,21 @@
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import type { GalleryMediaItem } from "@/lib/gallery";
+import { RotatingShot } from "@/components/RotatingShot";
 
 const isVideo = (src: string) => /\.(mp4|webm|mov)$/i.test(src);
 const isRemote = (src: string) => /^https?:/i.test(src);
+
+/** One gallery slide: a single src, or an array rendered as a
+ * rapid-fire slideshow (2s per shot, hard cut) in one frame. */
+export type CaseMediaItem = { src: string | string[]; aspect: number };
 
 type Props = {
   /** The half-width first slide — case study title, problem, stat, quote, relevance. */
   info: ReactNode;
   /** Media for the subsequent slides. Each frame takes its item's
    * aspect ratio, so nothing crops — width adjusts per image. */
-  media: GalleryMediaItem[];
+  media: CaseMediaItem[];
   /** Alt text base — "Clawbank" → "Clawbank 1", "Clawbank 2", … */
   alt: string;
   /** Optional map of media basename → external URL. When a slide's
@@ -204,7 +208,8 @@ export function CaseStudyHorizontalScroll({
             />
           ) : (
             media.map(({ src, aspect }, i) => {
-              const basename = src.split("/").pop() ?? src;
+              const firstSrc = Array.isArray(src) ? src[0] : src;
+              const basename = firstSrc.split("/").pop() ?? firstSrc;
               const href = mediaLinks?.[basename] ?? mediaHref;
               const showCursorLabel = Boolean(
                 mediaHref && href === mediaHref,
@@ -215,7 +220,9 @@ export function CaseStudyHorizontalScroll({
               };
               const frameClass =
                 "relative block overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none";
-              const inner = isVideo(src) ? (
+              const inner = Array.isArray(src) ? (
+                <RotatingShot srcs={src} alt={`${alt} ${i + 1}`} sizes="90vw" />
+              ) : isVideo(src) ? (
                 <video
                   src={src}
                   autoPlay
@@ -237,7 +244,7 @@ export function CaseStudyHorizontalScroll({
               );
               return (
                 <div
-                  key={src}
+                  key={firstSrc}
                   className="flex h-full shrink-0 items-center justify-center"
                   style={{ width: slideWidthFor(aspect) }}
                 >

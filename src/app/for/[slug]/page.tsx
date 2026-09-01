@@ -22,13 +22,13 @@ import { CtaButton } from "@/components/CtaButton";
 import { AcceptProposal } from "@/components/AcceptProposal";
 import { CenterFocus } from "@/components/CenterFocus";
 import { BriefMediaRow } from "@/components/BriefMediaRow";
-import { CaseStudyHorizontalScroll } from "@/components/CaseStudyHorizontalScroll";
-import { VisitTracker } from "@/components/VisitTracker";
 import {
-  getGalleryMedia,
-  getMediaAspect,
-  type GalleryMediaItem,
-} from "@/lib/gallery";
+  CaseStudyHorizontalScroll,
+  type CaseMediaItem,
+} from "@/components/CaseStudyHorizontalScroll";
+import { RotatingShot } from "@/components/RotatingShot";
+import { VisitTracker } from "@/components/VisitTracker";
+import { getGalleryMedia, getMediaAspect } from "@/lib/gallery";
 import {
   getAllProposalSlugs,
   getProposal,
@@ -94,6 +94,19 @@ export default async function ProposalPage({ params }: RouteProps) {
 
   return (
     <>
+      {/* First-visit theme default. Runs pre-hydration; when the
+          visitor has no explicit preference (nothing stored, or the
+          auto-written "system"), it stores this page's default so the
+          ThemeProvider resolves it on hydration instead of stripping
+          the class. An explicit toggle choice takes precedence. */}
+      {proposal.defaultTheme ? (
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t='${proposal.defaultTheme}';var s=localStorage.getItem('theme');if(!s||s==='system'||s==='"system"'){localStorage.setItem('theme',t);document.documentElement.classList.toggle('dark',t==='dark')}}catch(e){}})()`,
+          }}
+        />
+      ) : null}
+
       <div className="fixed right-4 top-4 z-50">
         <ThemeToggle />
       </div>
@@ -191,12 +204,22 @@ function Header({ proposal }: { proposal: Proposal }) {
         </h1>
 
         {proposal.hero.blurb ? (
-          <p
-            className="intro-rise mt-6 max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted md:mt-8 md:text-[1rem]"
+          <div
+            className="intro-rise mt-6 flex max-w-[620px] flex-col gap-4 md:mt-8"
             style={{ animationDelay: "380ms" }}
           >
-            {proposal.hero.blurb}
-          </p>
+            {(Array.isArray(proposal.hero.blurb)
+              ? proposal.hero.blurb
+              : [proposal.hero.blurb]
+            ).map((para, i) => (
+              <p
+                key={i}
+                className="text-[0.95rem] leading-[1.7rem] text-muted md:text-[1rem]"
+              >
+                {para}
+              </p>
+            ))}
+          </div>
         ) : null}
 
         {proposal.hero.loomUrl ? (
@@ -248,10 +271,12 @@ function CaseStudy({
   data: CaseStudyData;
   clientName: string;
 }) {
-  const media: GalleryMediaItem[] = data.media
+  const media: CaseMediaItem[] = data.media
     ? data.media.map((m) => ({
         src: m.src,
-        aspect: m.aspect ?? getMediaAspect(m.src),
+        aspect:
+          m.aspect ??
+          getMediaAspect(Array.isArray(m.src) ? m.src[0] : m.src),
       }))
     : data.galleryFolder
       ? getGalleryMedia(data.galleryFolder)
@@ -406,7 +431,7 @@ function MobileGallery({
   mediaLinks,
   mediaHref,
 }: {
-  media: GalleryMediaItem[];
+  media: CaseMediaItem[];
   alt: string;
   mediaLinks?: Record<string, string>;
   mediaHref?: string;
@@ -426,12 +451,15 @@ function MobileGallery({
   return (
     <div className="scroll-row flex snap-x snap-mandatory overflow-x-auto pb-2">
       {media.map(({ src, aspect }, i) => {
-        const basename = src.split("/").pop() ?? src;
+        const firstSrc = Array.isArray(src) ? src[0] : src;
+        const basename = firstSrc.split("/").pop() ?? firstSrc;
         const href = mediaLinks?.[basename] ?? mediaHref;
         const frameClass =
           "relative block w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none";
         const frameStyle = { aspectRatio: `${aspect}` };
-        const inner = /\.(mp4|webm|mov)$/i.test(src) ? (
+        const inner = Array.isArray(src) ? (
+          <RotatingShot srcs={src} alt={`${alt} ${i + 1}`} sizes="100vw" />
+        ) : /\.(mp4|webm|mov)$/i.test(src) ? (
           <video
             src={src}
             autoPlay
@@ -452,7 +480,7 @@ function MobileGallery({
           />
         );
         return (
-          <div key={src} className="w-screen shrink-0 snap-center px-4">
+          <div key={firstSrc} className="w-screen shrink-0 snap-center px-4">
             {href ? (
               <a
                 href={href}
