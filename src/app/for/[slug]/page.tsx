@@ -22,7 +22,11 @@ import { CenterFocus } from "@/components/CenterFocus";
 import { BriefMediaRow } from "@/components/BriefMediaRow";
 import { CaseStudyHorizontalScroll } from "@/components/CaseStudyHorizontalScroll";
 import { VisitTracker } from "@/components/VisitTracker";
-import { getGalleryImages } from "@/lib/gallery";
+import {
+  getGalleryMedia,
+  getMediaAspect,
+  type GalleryMediaItem,
+} from "@/lib/gallery";
 import {
   getAllProposalSlugs,
   getProposal,
@@ -242,7 +246,14 @@ function CaseStudy({
   data: CaseStudyData;
   clientName: string;
 }) {
-  const images = getGalleryImages(data.galleryFolder);
+  const media: GalleryMediaItem[] = data.media
+    ? data.media.map((m) => ({
+        src: m.src,
+        aspect: m.aspect ?? getMediaAspect(m.src),
+      }))
+    : data.galleryFolder
+      ? getGalleryMedia(data.galleryFolder)
+      : [];
   const info = (
     <CaseStudyInfo data={data} clientName={clientName} />
   );
@@ -258,9 +269,10 @@ function CaseStudy({
         {info}
         <div className="-mx-6 mt-12">
           <MobileGallery
-            images={images}
+            media={media}
             alt={data.title}
             mediaLinks={data.mediaLinks}
+            mediaHref={data.mediaHref}
           />
         </div>
       </section>
@@ -268,9 +280,11 @@ function CaseStudy({
       {/* Desktop: scroll-hijacked horizontal track */}
       <CaseStudyHorizontalScroll
         info={info}
-        images={images}
+        media={media}
         alt={data.title}
         mediaLinks={data.mediaLinks}
+        mediaHref={data.mediaHref}
+        mediaHoverLabel={data.mediaHoverLabel}
       />
     </>
   );
@@ -385,15 +399,17 @@ function CaseStudyInfo({
 // MobileGallery — mobile-only scroll-snap gallery.
 // ---------------------------------------------------------------------
 function MobileGallery({
-  images,
+  media,
   alt,
   mediaLinks,
+  mediaHref,
 }: {
-  images: string[];
+  media: GalleryMediaItem[];
   alt: string;
   mediaLinks?: Record<string, string>;
+  mediaHref?: string;
 }) {
-  if (images.length === 0) {
+  if (media.length === 0) {
     return (
       <div className="px-6">
         <div className="flex aspect-[16/9] w-full items-center justify-center rounded-[16px] border border-dashed border-rule bg-card/30">
@@ -407,11 +423,12 @@ function MobileGallery({
 
   return (
     <div className="scroll-row flex snap-x snap-mandatory overflow-x-auto pb-2">
-      {images.map((src, i) => {
+      {media.map(({ src, aspect }, i) => {
         const basename = src.split("/").pop() ?? src;
-        const href = mediaLinks?.[basename];
+        const href = mediaLinks?.[basename] ?? mediaHref;
         const frameClass =
-          "relative aspect-[16/9] block w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none";
+          "relative block w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none";
+        const frameStyle = { aspectRatio: `${aspect}` };
         const inner = /\.(mp4|webm|mov)$/i.test(src) ? (
           <video
             src={src}
@@ -428,6 +445,7 @@ function MobileGallery({
             alt={`${alt} ${i + 1}`}
             fill
             sizes="100vw"
+            unoptimized={/^https?:/i.test(src)}
             className="object-cover"
           />
         );
@@ -439,11 +457,14 @@ function MobileGallery({
                 target="_blank"
                 rel="noopener noreferrer"
                 className={frameClass}
+                style={frameStyle}
               >
                 {inner}
               </a>
             ) : (
-              <div className={frameClass}>{inner}</div>
+              <div className={frameClass} style={frameStyle}>
+                {inner}
+              </div>
             )}
           </div>
         );
@@ -543,19 +564,25 @@ function Engagement({ data }: { data: NonNullable<Proposal["engagement"]> }) {
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>Engagement</SectionLabel>
       <div className="mx-auto w-full max-w-[960px]">
-        <CenterFocus
-          minOpacity={0.15}
-          falloff={0.55}
-          minScale={0.99}
-          disableBelowMd
-        >
-          <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
-            {data.heading}
-          </h2>
-          <p className="mt-5 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
-            {data.subheading}
-          </p>
-        </CenterFocus>
+        {data.heading || data.subheading ? (
+          <CenterFocus
+            minOpacity={0.15}
+            falloff={0.55}
+            minScale={0.99}
+            disableBelowMd
+          >
+            {data.heading ? (
+              <h2 className="font-display text-[2rem] font-bold leading-tight text-ink md:text-[2.75rem]">
+                {data.heading}
+              </h2>
+            ) : null}
+            {data.subheading ? (
+              <p className="mt-5 max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
+                {data.subheading}
+              </p>
+            ) : null}
+          </CenterFocus>
+        ) : null}
 
         <div
           className={
@@ -641,6 +668,30 @@ function BriefSection({ data }: { data: Brief }) {
       {data.intro ? (
         <div className="mx-auto mb-12 w-full max-w-[960px]">
           <Paragraphs body={data.intro} />
+        </div>
+      ) : null}
+      {data.columns ? (
+        <div className="mx-auto mb-16 grid w-full max-w-[960px] grid-cols-1 gap-12 md:grid-cols-2">
+          {data.columns.map((col) => {
+            const Icon = iconMap[col.icon] ?? Compass;
+            return (
+              <CenterFocus
+                key={col.title}
+                minOpacity={0.2}
+                falloff={0.55}
+                minScale={0.99}
+                disableBelowMd
+              >
+                <div className="flex flex-col gap-4">
+                  <Icon className="h-5 w-5 text-ink" strokeWidth={1.75} />
+                  <h3 className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.5rem]">
+                    {col.title}
+                  </h3>
+                  <Paragraphs body={col.body} />
+                </div>
+              </CenterFocus>
+            );
+          })}
         </div>
       ) : null}
       <div className="mx-auto flex w-full max-w-[960px] flex-col gap-12">

@@ -27,7 +27,17 @@ export type CaseStudyData = {
   whatIDid?: Body;
   whatChanged?: Body;
   /** Folder under /public/ to auto-discover images/videos from. */
-  galleryFolder: string;
+  galleryFolder?: string;
+  /** Explicit gallery list — used instead of galleryFolder discovery
+   * when set. Remote URLs are allowed (rendered unoptimized); pass
+   * `aspect` (width/height) for them, local files are measured at
+   * build time so frames match the image instead of cropping. */
+  media?: Array<{ src: string; aspect?: number }>;
+  /** Click-through for gallery slides without a mediaLinks entry.
+   * Also enables the cursor-following hover label on desktop. */
+  mediaHref?: string;
+  /** Hover label next to the cursor. Defaults to "View case study". */
+  mediaHoverLabel?: string;
   /** Map of media basename → external URL (clickable slides). */
   mediaLinks?: Record<string, string>;
   stat?: string;
@@ -86,6 +96,10 @@ export type Brief = {
   heading?: string;
   /** Optional lead-in paragraph(s) rendered above the blocks. */
   intro?: Body;
+  /** Optional two-up icon columns rendered between intro and blocks
+   * (e.g. two workstreams side by side). Icon names come from the
+   * page's iconMap (users, zap, video, hammer, grid, compass). */
+  columns?: Array<{ icon: string; title: string; body: Body }>;
   blocks: BriefBlock[];
 };
 
@@ -200,8 +214,8 @@ export type Proposal = {
     items: Array<{ icon: string; title: string; body: string }>;
   };
   engagement?: {
-    heading: string;
-    subheading: string;
+    heading?: string;
+    subheading?: string;
     footnote?: string;
     tiers: Tier[];
   };

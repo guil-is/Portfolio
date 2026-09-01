@@ -1,20 +1,29 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, type ReactNode } from "react";
+import { ArrowUpRight } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import type { GalleryMediaItem } from "@/lib/gallery";
 
 const isVideo = (src: string) => /\.(mp4|webm|mov)$/i.test(src);
+const isRemote = (src: string) => /^https?:/i.test(src);
 
 type Props = {
   /** The half-width first slide — case study title, problem, stat, quote, relevance. */
   info: ReactNode;
-  /** Image URLs for the subsequent full-width slides. */
-  images: string[];
+  /** Media for the subsequent slides. Each frame takes its item's
+   * aspect ratio, so nothing crops — width adjusts per image. */
+  media: GalleryMediaItem[];
   /** Alt text base — "Clawbank" → "Clawbank 1", "Clawbank 2", … */
   alt: string;
   /** Optional map of media basename → external URL. When a slide's
    * filename matches, its visual frame becomes a clickable anchor. */
   mediaLinks?: Record<string, string>;
+  /** Fallback click-through for slides without a mediaLinks entry.
+   * Slides linking here get the cursor-following hover label. */
+  mediaHref?: string;
+  /** Cursor label text. Defaults to "View case study". */
+  mediaHoverLabel?: string;
 };
 
 // Scroll-hijacked horizontal case study — desktop only (md+).
@@ -37,15 +46,20 @@ type Props = {
 // (info above, scroll-snap gallery below) for narrow viewports.
 export function CaseStudyHorizontalScroll({
   info,
-  images,
+  media,
   alt,
   mediaLinks,
+  mediaHref,
+  mediaHoverLabel = "View case study",
 }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  // Cursor-following "view case study" label, shown while hovering a
+  // slide that click-throughs to mediaHref.
+  const [cursor, setCursor] = useState<{ x: number; y: number } | null>(null);
 
-  const slideCount = Math.max(images.length, 1);
+  const slideCount = Math.max(media.length, 1);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -146,9 +160,13 @@ export function CaseStudyHorizontalScroll({
   }, [slideCount]);
 
   // Slide width formula: (2 × visual + 100vw) / 3 = visual + gap/3.
-  const slideWidth =
-    "calc((2 * min(90vw, 80vh * 16 / 9) + 100vw) / 3)";
-  const visualWidth = "min(90vw, calc(80vh * 16 / 9))";
+  // The visual keeps its own aspect ratio (capped at 90vw wide and
+  // 80vh tall), so per-slide widths vary with each image's shape.
+  const visualWidthFor = (aspect: number) =>
+    `min(90vw, calc(80vh * ${aspect}))`;
+  const slideWidthFor = (aspect: number) =>
+    `calc((2 * min(90vw, 80vh * ${aspect}) + 100vw) / 3)`;
+  const lastAspect = media[media.length - 1]?.aspect ?? 16 / 9;
 
   return (
     <section ref={sectionRef} className="relative hidden md:block">
@@ -176,21 +194,24 @@ export function CaseStudyHorizontalScroll({
           </div>
 
           {/* Media slides. The slide container is slightly wider than
-              its 16:9 visual so the gap between two adjacent visuals
-              is 1/3 of what a 100vw slide would produce. */}
-          {images.length === 0 ? (
+              its visual so the gap between two adjacent visuals is
+              1/3 of what a 100vw slide would produce. */}
+          {media.length === 0 ? (
             <PlaceholderSlide
               alt={alt}
-              slideWidth={slideWidth}
-              visualWidth={visualWidth}
+              slideWidth={slideWidthFor(16 / 9)}
+              visualWidth={visualWidthFor(16 / 9)}
             />
           ) : (
-            images.map((src, i) => {
+            media.map(({ src, aspect }, i) => {
               const basename = src.split("/").pop() ?? src;
-              const href = mediaLinks?.[basename];
+              const href = mediaLinks?.[basename] ?? mediaHref;
+              const showCursorLabel = Boolean(
+                mediaHref && href === mediaHref,
+              );
               const frameStyle = {
-                aspectRatio: "16 / 9",
-                width: visualWidth,
+                aspectRatio: `${aspect}`,
+                width: visualWidthFor(aspect),
               };
               const frameClass =
                 "relative block overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none";
@@ -210,6 +231,7 @@ export function CaseStudyHorizontalScroll({
                   alt={`${alt} ${i + 1}`}
                   fill
                   sizes="90vw"
+                  unoptimized={isRemote(src)}
                   className="object-cover"
                 />
               );
@@ -217,7 +239,7 @@ export function CaseStudyHorizontalScroll({
                 <div
                   key={src}
                   className="flex h-full shrink-0 items-center justify-center"
-                  style={{ width: slideWidth }}
+                  style={{ width: slideWidthFor(aspect) }}
                 >
                   {href ? (
                     <a
@@ -226,6 +248,26 @@ export function CaseStudyHorizontalScroll({
                       rel="noopener noreferrer"
                       className={frameClass}
                       style={frameStyle}
+                      onMouseMove={
+                        showCursorLabel
+                          ? (e) => {
+                              // Coordinates relative to the sticky
+                              // container — it acts as the containing
+                              // block, so viewport coords would land
+                              // off-screen while the section is pinned.
+                              const rect =
+                                stickyRef.current?.getBoundingClientRect();
+                              setCursor({
+                                x: e.clientX - (rect?.left ?? 0),
+                                y: e.clientY - (rect?.top ?? 0),
+                              });
+                            }
+                          : undefined
+                      }
+                      onMouseLeave={
+                        showCursorLabel ? () => setCursor(null) : undefined
+                      }
+                      aria-label={mediaHoverLabel}
                     >
                       {inner}
                     </a>
@@ -245,11 +287,26 @@ export function CaseStudyHorizontalScroll({
           <div
             className="shrink-0"
             style={{
-              width: "calc((100vw - min(90vw, 80vh * 16 / 9)) / 3)",
+              width: `calc((100vw - min(90vw, 80vh * ${lastAspect})) / 3)`,
             }}
             aria-hidden
           />
         </div>
+
+        {/* Cursor-following CTA label. Positioned absolutely inside
+            the sticky container (which fills the viewport while the
+            section is pinned) — the container establishes the fixed
+            containing block anyway, so absolute keeps the math honest. */}
+        {cursor ? (
+          <div
+            className="pointer-events-none absolute z-50 flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-bg"
+            style={{ left: cursor.x + 16, top: cursor.y + 16 }}
+            aria-hidden
+          >
+            {mediaHoverLabel}
+            <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2} />
+          </div>
+        ) : null}
       </div>
     </section>
   );
