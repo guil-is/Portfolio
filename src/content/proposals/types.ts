@@ -33,8 +33,13 @@ export type CaseStudyData = {
    * `aspect` (width/height) for them, local files are measured at
    * build time so frames match the image instead of cropping.
    * An array `src` renders as a rapid-fire slideshow in one frame:
-   * 2s per shot, hard cut, aspect taken from the first shot. */
-  media?: Array<{ src: string | string[]; aspect?: number }>;
+   * hard cut every `intervalMs` (default 2000), aspect taken from
+   * the first shot. */
+  media?: Array<{
+    src: string | string[];
+    aspect?: number;
+    intervalMs?: number;
+  }>;
   /** Click-through for gallery slides without a mediaLinks entry.
    * Also enables the cursor-following hover label on desktop. */
   mediaHref?: string;

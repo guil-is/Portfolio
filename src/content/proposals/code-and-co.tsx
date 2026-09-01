@@ -43,7 +43,7 @@ export const codeAndCo: Proposal = {
         "Product UI across intake, verification and decision flows. A guided intake pattern that shows what’s missing, what it’s worth, and how to fix it. Design system, and working interfaces shipped directly, cutting the design to build loop from weeks to days.",
       // Hero opener gif (same one the public case studies use, served
       // from the Webflow CDN), then the verification pipeline, then a
-      // rapid-fire slideshow of UI shots (2s per shot, hard cut).
+      // rapid-fire slideshow of UI shots (1s per shot, hard cut).
       // Local files are measured at build so the frames match their
       // aspect ratio instead of cropping.
       media: [
@@ -62,6 +62,7 @@ export const codeAndCo: Proposal = {
             "/code-and-co/thrive/ui/06.png",
             "/code-and-co/thrive/ui/07.png",
           ],
+          intervalMs: 1000,
         },
       ],
       mediaHref: "/projects/thrive-product",
@@ -145,8 +146,10 @@ export const codeAndCo: Proposal = {
         price: "950 EUR",
         per: "/ day",
         cadence: "2 days per week, fixed",
-        // TODO copy: weekly and monthly rollup for faster decisions.
-        priceNote: "1,900 EUR per week, around 8,200 EUR per month.",
+        // Weekly rollup only: a month averages 4.33 weeks, so a monthly
+        // figure either overstates (x4.33 reads high) or understates
+        // (x4 misses what invoices will actually average) — skip it.
+        priceNote: "1,900 EUR per week.",
         // TODO copy: draft terms joined into one card body, plus the
         // draft's working-model line restored.
         body: "Priorities set weekly with Kelly. Async by default, Berlin time. Invoiced monthly, from my German freelance business. Rolling engagement, one month notice either side. Extra days billed on top, agreed in advance.",

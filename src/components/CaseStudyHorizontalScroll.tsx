@@ -9,8 +9,12 @@ const isVideo = (src: string) => /\.(mp4|webm|mov)$/i.test(src);
 const isRemote = (src: string) => /^https?:/i.test(src);
 
 /** One gallery slide: a single src, or an array rendered as a
- * rapid-fire slideshow (2s per shot, hard cut) in one frame. */
-export type CaseMediaItem = { src: string | string[]; aspect: number };
+ * rapid-fire slideshow (hard cut every intervalMs) in one frame. */
+export type CaseMediaItem = {
+  src: string | string[];
+  aspect: number;
+  intervalMs?: number;
+};
 
 type Props = {
   /** The half-width first slide — case study title, problem, stat, quote, relevance. */
@@ -207,7 +211,7 @@ export function CaseStudyHorizontalScroll({
               visualWidth={visualWidthFor(16 / 9)}
             />
           ) : (
-            media.map(({ src, aspect }, i) => {
+            media.map(({ src, aspect, intervalMs }, i) => {
               const firstSrc = Array.isArray(src) ? src[0] : src;
               const basename = firstSrc.split("/").pop() ?? firstSrc;
               const href = mediaLinks?.[basename] ?? mediaHref;
@@ -221,7 +225,12 @@ export function CaseStudyHorizontalScroll({
               const frameClass =
                 "relative block overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none";
               const inner = Array.isArray(src) ? (
-                <RotatingShot srcs={src} alt={`${alt} ${i + 1}`} sizes="90vw" />
+                <RotatingShot
+                  srcs={src}
+                  alt={`${alt} ${i + 1}`}
+                  sizes="90vw"
+                  intervalMs={intervalMs}
+                />
               ) : isVideo(src) ? (
                 <video
                   src={src}

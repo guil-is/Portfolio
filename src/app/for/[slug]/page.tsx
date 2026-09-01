@@ -277,6 +277,7 @@ function CaseStudy({
         aspect:
           m.aspect ??
           getMediaAspect(Array.isArray(m.src) ? m.src[0] : m.src),
+        intervalMs: m.intervalMs,
       }))
     : data.galleryFolder
       ? getGalleryMedia(data.galleryFolder)
@@ -450,7 +451,7 @@ function MobileGallery({
 
   return (
     <div className="scroll-row flex snap-x snap-mandatory overflow-x-auto pb-2">
-      {media.map(({ src, aspect }, i) => {
+      {media.map(({ src, aspect, intervalMs }, i) => {
         const firstSrc = Array.isArray(src) ? src[0] : src;
         const basename = firstSrc.split("/").pop() ?? firstSrc;
         const href = mediaLinks?.[basename] ?? mediaHref;
@@ -458,7 +459,12 @@ function MobileGallery({
           "relative block w-full overflow-hidden rounded-[16px] bg-card shadow-[0_4px_40px_#cfc8c433] dark:shadow-none";
         const frameStyle = { aspectRatio: `${aspect}` };
         const inner = Array.isArray(src) ? (
-          <RotatingShot srcs={src} alt={`${alt} ${i + 1}`} sizes="100vw" />
+          <RotatingShot
+            srcs={src}
+            alt={`${alt} ${i + 1}`}
+            sizes="100vw"
+            intervalMs={intervalMs}
+          />
         ) : /\.(mp4|webm|mov)$/i.test(src) ? (
           <video
             src={src}
