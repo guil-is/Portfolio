@@ -91,7 +91,7 @@ export const codeAndCo: Proposal = {
     blocks: [
       {
         label: "Plus whatever ships next",
-        body: "The retainer model below exists because your priorities move. Brand and visual work fits inside it too.",
+        body: "A retainer model can keep us flexible while priorities shift. Brand and marketing work fits inside it too.",
       },
     ],
   },
