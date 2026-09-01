@@ -41,8 +41,8 @@ export const codeAndCo: Proposal = {
       whatIShipped:
         "Product UI across intake, verification and decision flows. A guided intake pattern that shows what’s missing, what it’s worth, and how to fix it. Design system, and working interfaces shipped directly, cutting the design to build loop from weeks to days.",
       // Hero opener gif (same one the public case studies use, served
-      // from the Webflow CDN), then the verification pipeline and deal
-      // flow screens. Local files are measured at build so the frames
+      // from the Webflow CDN), then the verification pipeline and the
+      // Power List. Local files are measured at build so the frames
       // match their aspect ratio instead of cropping.
       media: [
         {
@@ -50,7 +50,7 @@ export const codeAndCo: Proposal = {
           aspect: 16 / 9,
         },
         { src: "/code-and-co/thrive/02-verification-pipeline.png" },
-        { src: "/code-and-co/thrive/03-deal-flows.png" },
+        { src: "/code-and-co/thrive/03-power-list.png" },
       ],
       mediaHref: "/projects/thrive-product",
       // TODO copy: relevance line written for this proposal.
