@@ -10,7 +10,7 @@ live in Notion, owned by the other two contexts.
 
 Notion brain: https://app.notion.com/p/3ac9754238ea8106b9e9c0bf7b0a0132
 
-_Last reconciled: 2026-08-13._
+_Last reconciled: 2026-09-02._
 
 ## Status
 
@@ -21,46 +21,48 @@ _Last reconciled: 2026-08-13._
   3 Nov is final).
 - **Fee:** 11,800 EUR net, fixed, billed by phase. Invoiced net with VAT reverse
   charge (EU cross-border B2B).
-- **Timeline:** kickoff 7 July 2026. Design work wraps late August, but speaker
-  and programme content may slip into September (per the 29 Jul Phase 3 call), so
-  "late August" is no longer a hard promise for full completion.
+- **Timeline:** kickoff 7 July 2026. Phases 1-3 done by 2 Sep. Phase 4 runs
+  September-October against the product list from the 1 Sep call, with
+  speaker/programme content landing late by design. Client page now shows
+  "Before Nov 3" as the target instead of "Late August".
 - **Client page:** guil.is/for/spa — password `winwin`. Tabs: Progress,
   Agreement, and a link to the frozen original Proposal (guil.is/for/spa/proposal).
 - **Agreement:** Service Agreement v1-2026-07-02, signed. It incorporates the
   proposal by reference, so the proposal page stays frozen.
 - **Phases:** 1 Discovery + explorations — approved. 2 Core identity + invite —
-  approved. 3 Full website + assets — **in progress** (kicked off 29 Jul).
-  4 All deliverables — upcoming, scope + amount confirmed before it starts.
+  approved. 3 Full website + assets — **delivered 2 Sep** (kicked off 29 Jul;
+  site live, partner logos, VDL photo, doc renderer, AV colour spec). 4 All
+  deliverables — **next up**: the 1 Sep product list is the scope trigger;
+  quote scope + amount before work starts (likely above the 2,800 estimate).
 
 ## Money
 
 | Item | Amount (net) | Status | Invoice |
 | --- | --- | --- | --- |
 | Deposit (30%) | 1,560 EUR | Paid 2026-07-15 | INV-26015 |
-| Phase 1-2 balance | 3,640 EUR | Invoiced, due 2026-08-10 | INV-26016 |
-| Phase 3 | 3,800 EUR | In progress, not yet billed | — |
-| Phase 4 (estimate) | 2,800 EUR | Not yet billed | — |
-| **Total** | **11,800 EUR** | 1,560 paid, 10,240 outstanding | — |
+| Phase 1-2 balance | 3,640 EUR | Paid 2026-08-17 | INV-26016 |
+| Phase 3 | 3,800 EUR | Invoiced 2026-09-02, due 2026-09-16 | INV-26020 |
+| Phase 4 (estimate) | 2,800 EUR | Not yet billed, quote pending | — |
+| **Total** | **11,800 EUR** | 5,200 paid, 6,600 outstanding | — |
 
 - Phase 1-2 invoice (INV-26016) = 5,200 Phase 1-2 fee less the 1,560 deposit
-  credited. Emailed to Lara on 2026-07-27. Lara forwarded it to SPA finance on
-  29 Jul; their finance pays **without** sending confirmation, so watch the
-  account rather than waiting for a reply. **10 Aug (due date):** still unpaid.
-  Checked in with Lara same day — all good her side, most of SPA on holiday this
-  week (only Lara in), she's double-checking with their finance colleague. Expect
-  a slower turnaround this week. **12 Aug:** Lara pinged finance again.
-  **13 Aug:** still not received; told Lara, suggested another ping to
-  finance. Sent printer recs (IPM Printing local; Printdeal.be / Helloprint.be
-  for fast basic runs) and offered to join printer email threads for specs —
-  print production is SPA's cost per the SOW; we supply print-ready files.
-- Phase 3 kicked off 29 Jul and is not yet billed. Decide whether to invoice now
-  or hold to a phase-3 milestone.
-- Phase 4 (2,800) is a working estimate. Its scope and amount are confirmed
-  together before that phase begins, and the total moves with it.
+  credited. Emailed 27 Jul, due 10 Aug, **paid 17 Aug** (a week late, after
+  three pings while SPA was on holiday). Lesson for next time: SPA finance pays
+  without confirmation, so watch the account, and expect ~3 weeks from send.
+- Phase 3 invoice (INV-26020), 3,800 EUR, issued 2026-09-02 as Phase 3 wraps
+  and Phase 4 scoping starts. Service period 29 Jul – 2 Sep. Due 2026-09-16
+  (14 days per the SOW). Downloadable from the client page. Still to do: drop
+  the PDF into Drive (Invoices 2026) by hand, and email it to Lara.
+- Phase 4 (2,800) is a working estimate. The consolidated product list from the
+  1 Sep call is the scope trigger; quote scope + amount before work starts, and
+  the total moves with it. Watch scope: pages system + SoMe kit + stickers +
+  signage + PPT is likely above 2,800. September Phase 3 leftovers (site pages,
+  reminder emails) stay under Phase 3, already billed.
 
 ## Pending from the client
 
-- Settle the Phase 1-2 invoice (3,640 EUR), due 2026-08-10.
+- Settle the Phase 3 invoice (3,800 EUR), due 2026-09-16.
+- Confirm Phase 4 scope + amount once the quote goes out.
 
 ## Where to find things
 

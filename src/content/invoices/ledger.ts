@@ -35,6 +35,16 @@ export type LedgerEntry = {
 
 export const invoiceLedger: LedgerEntry[] = [
   {
+    number: "INV-26020",
+    client: "Sustainable Public Affairs (WinWin 2026)",
+    clientSlug: "spa",
+    issuedAt: "2026-09-02",
+    dueAt: "2026-09-16",
+    total: 3800,
+    currency: "EUR",
+    note: "Phase 3 (full website + assets), service period 29 Jul – 2 Sep (reverse charge). Issued as Phase 3 wraps and Phase 4 scoping starts.",
+  },
+  {
     number: "INV-26019",
     client: "Logos Collective Association",
     clientSlug: "logos",
@@ -74,9 +84,10 @@ export const invoiceLedger: LedgerEntry[] = [
     clientSlug: "spa",
     issuedAt: "2026-07-27",
     dueAt: "2026-08-10",
+    paidAt: "2026-08-17",
     total: 3640,
     currency: "EUR",
-    note: "Phases 1–2 balance (€5,200 less €1,560 deposit credited, reverse charge)",
+    note: "Phases 1–2 balance (€5,200 less €1,560 deposit credited, reverse charge). Paid 17 Aug, a week late — SPA finance pays without confirmation.",
   },
   {
     number: "INV-26015",

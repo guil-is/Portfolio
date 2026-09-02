@@ -90,14 +90,14 @@ export const spa: SpaClient = {
     feeEur: 11800,
     startDate: "July 7, 2026",
     // Keep this short: it renders as a large one-line stat value.
-    targetDelivery: "Late August",
+    targetDelivery: "Before Nov 3",
   },
 
   pendingActions: [
     {
-      text: "Settle the Phase 1-2 invoice, 3,640 EUR.",
-      due: "Overdue since August 10",
-      link: { label: "Phase 1-2 invoice", href: "/api/invoice/INV-26016" },
+      text: "Settle the Phase 3 invoice, 3,800 EUR.",
+      due: "By Wednesday, September 16",
+      link: { label: "Phase 3 invoice", href: "/api/invoice/INV-26020" },
     },
   ],
 
@@ -121,13 +121,14 @@ export const spa: SpaClient = {
       title: "Full website + assets",
       description:
         "The event website, designed and deployed, plus additional brand assets.",
-      status: "in_progress",
+      status: "delivered",
+      date: "2026-09-02",
     },
     {
       label: "Phase 4 · Weeks 5-6",
       title: "All deliverables",
       description:
-        "Extended brand assets, printed collateral, and merch. Scope confirmed as needs firm up.",
+        "Extended brand assets, printed collateral, and merch. Scope and amount confirmed against the September 1 product list before work starts.",
       status: "upcoming",
     },
   ],
@@ -145,14 +146,16 @@ export const spa: SpaClient = {
       label: "Phase 1-2",
       description: "Balance at the end of week 2",
       amountEur: 3640,
-      status: "overdue",
+      status: "paid",
+      date: "2026-08-17",
       invoiceNumber: "INV-26016",
     },
     {
       label: "Phase 3",
       description: "At the end of week 4",
       amountEur: 3800,
-      status: "due",
+      status: "invoiced",
+      invoiceNumber: "INV-26020",
     },
     {
       label: "Phase 4",

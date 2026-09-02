@@ -14,6 +14,23 @@ import type { InvoiceSpec } from "../../lib/invoice";
 import { billToPresets } from "./config";
 
 export const issuedInvoices: Record<string, InvoiceSpec> = {
+  "INV-26020": {
+    number: "INV-26020",
+    issuedAt: "2026-09-02",
+    dueAt: "2026-09-16",
+    serviceDate: "2026-07-29",
+    serviceEndDate: "2026-09-02",
+    currency: "EUR",
+    taxMode: "reverse-charge",
+    billTo: billToPresets.spa,
+    lines: [
+      {
+        description: "WinWin 2026: Phase 3 (full website + assets)",
+        amount: 3800,
+      },
+    ],
+    paymentProfiles: ["n26-eur"],
+  },
   "INV-26016": {
     number: "INV-26016",
     issuedAt: "2026-07-27",
