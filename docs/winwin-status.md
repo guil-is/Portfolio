@@ -74,6 +74,7 @@ _Last reconciled: 2026-09-02._
 - **Original proposal (frozen):** `src/app/for/spa/proposal/` → guil.is/for/spa/proposal.
 - **Invoices:** specs in `src/content/invoices/issued.ts`, ledger in
   `src/content/invoices/ledger.ts`, bill-to in `src/content/invoices/config.ts`.
+- **Internal action plan (weekly checklist to the summit):** `docs/winwin-action-plan.md`.
 - **Brief + discovery notes:** `docs/spa-brief-notes.md`.
 - **Walkthrough script:** `docs/spa-loom-script.md`.
 
