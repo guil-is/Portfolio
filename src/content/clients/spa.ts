@@ -23,12 +23,6 @@ export type MilestoneStatus =
   | "delivered"
   | "approved";
 
-export type MilestoneDeliverable = {
-  title: string;
-  /** One or two sentences: what it is, what the client supplies. */
-  detail?: string;
-};
-
 export type ProjectMilestone = {
   /** Small caption above the title, e.g. "Phase 1 · Week 1". */
   label: string;
@@ -37,16 +31,20 @@ export type ProjectMilestone = {
   status: MilestoneStatus;
   /** ISO date this phase was delivered or approved, if reached. */
   date?: string;
-  /** In-page anchor (e.g. "phase-4") so pending actions can link to it. */
-  anchor?: string;
-  /** Itemised scope, shown under the description. Use it when a phase's
-   * scope is agreed as a list (Phase 4), not for the early phases. */
-  deliverables?: {
-    intro?: string;
-    items: MilestoneDeliverable[];
-    /** Rendered after the list: exclusions, who pays for what. */
-    note?: string;
-  };
+};
+
+export type DeliverableStatus = "upcoming" | "in_progress" | "done";
+
+export type Deliverable = {
+  title: string;
+  /** Which phase it's billed under, shown as a small tag ("Phase 4"). */
+  phase: string;
+  status: DeliverableStatus;
+  /** Shown when the row is opened: what it covers, what the client
+   * supplies. Keep it to a couple of sentences. */
+  detail?: string;
+  /** ISO date delivered, once done. */
+  date?: string;
 };
 
 export type PaymentStatus = "due" | "invoiced" | "paid" | "overdue";
@@ -88,6 +86,15 @@ export type SpaClient = {
   password: string;
   project: SpaProject;
   milestones: ProjectMilestone[];
+  /** Itemised checklist under the phases: everything still to land, one
+   * row each, with detail on open. Flip `status` (and set `date`) as
+   * items ship; the "n of m delivered" count derives from it. */
+  deliverables?: {
+    intro?: string;
+    items: Deliverable[];
+    /** Rendered after the list: exclusions, who pays for what. */
+    note?: string;
+  };
   payments: PaymentMilestone[];
   /** Open items the Client needs to act on, shown as a pending checklist
    * at the top of the Progress tab. Remove items as they're resolved;
@@ -118,7 +125,7 @@ export const spa: SpaClient = {
     {
       text: "Confirm the Phase 4 deliverables list, or flag anything to change, so that work can start.",
       due: "Before Phase 4 kicks off",
-      link: { label: "Phase 4 deliverables list", href: "#phase-4" },
+      link: { label: "Phase 4 deliverables list", href: "#deliverables" },
     },
   ],
 
@@ -149,54 +156,82 @@ export const spa: SpaClient = {
       label: "Phase 4 · Weeks 5-6",
       title: "All deliverables",
       description:
-        "Extended brand assets, printed collateral, and event materials for the day itself.",
+        "Extended brand assets, printed collateral, and event materials for the day itself. Itemised in the deliverables list below.",
       status: "upcoming",
-      anchor: "phase-4",
-      deliverables: {
-        intro:
-          "What Phase 4 covers, as agreed on our September 1 call. Confirm the list, or flag anything to change, and work starts.",
-        items: [
-          {
-            title: "Main-stage backdrop",
-            detail:
-              "Print-ready artwork to the AV partner's spec. Your team sends the dimensions and places the print order.",
-          },
-          {
-            title: "Roll-up banners",
-            detail:
-              "Four to six cardboard roll-ups in the one standard size. No date on them, so they work again next year: logo, tagline, website.",
-          },
-          {
-            title: "LinkedIn speaker kit",
-            detail:
-              "Personal \"stay tuned\" cards for up to ten key speakers, speaker announcement posts for the WinWin account, and countdown visuals. Claire collects the speaker photos.",
-          },
-          {
-            title: "Partner comms kit",
-            detail:
-              "Shareable graphics and ready-to-post copy blocks for partners, delivered as a kit on the site's partner page.",
-          },
-          {
-            title: "Name stickers",
-            detail:
-              "One colour-coded template covering six roles (team, participant, speaker, roundtable host, moderator, roundtable speaker) plus blanks. Roundtable numbers stay hand-written so late host confirmations don't break the print run.",
-          },
-          {
-            title: "Venue signage",
-            detail:
-              "Floor-tape navigation lines, arrow floor stickers, and standing signs. Placement planned at the venue walk-through mid-September.",
-          },
-          {
-            title: "Event slide template",
-            detail:
-              "Welcome screens, interstitials, and a speaker slide template in the brand, ready for the AV team to run on the day.",
-          },
-        ],
-        note:
-          "Print production stays your cost, as in the agreement; I supply print-ready files. Not in this phase: the aftermovie (quoted separately), table tents (parked until we know they're needed), and the September site pages and reminder emails, which sit under Phase 3.",
-      },
     },
   ],
+
+  deliverables: {
+    intro:
+      "Everything still to land, one row each. Open a row for what it covers and what your team supplies. The Phase 4 rows are what we agreed on our September 1 call: confirm the list, or flag anything to change, and that work starts.",
+    items: [
+      {
+        title: "Site pages: programme, press, partners, Letter to the Future",
+        phase: "Phase 3",
+        status: "in_progress",
+        detail:
+          "Hidden pages on winwin.brussels instead of Word templates: pitcher, letter to the future, programme, press, partner kit. Flora sends the copy in Word and I transpose it. Password only where participant lists appear; the press kit and manifesto stay public.",
+      },
+      {
+        title: "Second invitation round (reminder emails)",
+        phase: "Phase 3",
+        status: "in_progress",
+        detail:
+          "Claire duplicates the first email in Mailchimp and adapts the copy. I do the final design pass before each send.",
+      },
+      {
+        title: "Main-stage backdrop",
+        phase: "Phase 4",
+        status: "upcoming",
+        detail:
+          "Print-ready artwork to the AV partner's spec. Your team sends the dimensions and places the print order.",
+      },
+      {
+        title: "Roll-up banners",
+        phase: "Phase 4",
+        status: "upcoming",
+        detail:
+          "Four to six cardboard roll-ups in the one standard size. No date on them, so they work again next year: logo, tagline, website.",
+      },
+      {
+        title: "LinkedIn speaker kit",
+        phase: "Phase 4",
+        status: "upcoming",
+        detail:
+          "Personal \"stay tuned\" cards for up to ten key speakers, speaker announcement posts for the WinWin account, and countdown visuals. Claire collects the speaker photos.",
+      },
+      {
+        title: "Partner comms kit",
+        phase: "Phase 4",
+        status: "upcoming",
+        detail:
+          "Shareable graphics and ready-to-post copy blocks for partners, delivered as a kit on the site's partner page.",
+      },
+      {
+        title: "Name stickers",
+        phase: "Phase 4",
+        status: "upcoming",
+        detail:
+          "One colour-coded template covering six roles (team, participant, speaker, roundtable host, moderator, roundtable speaker) plus blanks. Roundtable numbers stay hand-written so late host confirmations don't break the print run.",
+      },
+      {
+        title: "Venue signage",
+        phase: "Phase 4",
+        status: "upcoming",
+        detail:
+          "Floor-tape navigation lines, arrow floor stickers, and standing signs. Placement planned at the venue walk-through mid-September.",
+      },
+      {
+        title: "Event slide template",
+        phase: "Phase 4",
+        status: "upcoming",
+        detail:
+          "Welcome screens, interstitials, and a speaker slide template in the brand, ready for the AV team to run on the day.",
+      },
+    ],
+    note:
+      "Print production stays your cost, as in the agreement; I supply print-ready files. Not listed: the aftermovie (quoted separately) and table tents (parked until we know they're needed).",
+  },
 
   payments: [
     {

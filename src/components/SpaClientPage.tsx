@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   ArrowUpRight,
   Check,
+  ChevronDown,
   CircleDashed,
   Download,
   FileSignature,
@@ -23,6 +24,7 @@ import {
   totalOutstanding,
   totalPaid,
   type ClientAction,
+  type Deliverable,
   type MilestoneStatus,
   type PaymentStatus,
   type ProjectMilestone,
@@ -214,6 +216,10 @@ function ProgressView() {
           ))}
         </ol>
       </section>
+
+      {spa.deliverables ? (
+        <DeliverablesSection deliverables={spa.deliverables} />
+      ) : null}
 
       <section className="flex flex-col gap-6">
         <h2 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.875rem]">
@@ -460,10 +466,7 @@ function MilestoneRow({
   const meta = MILESTONE_META[milestone.status];
 
   return (
-    <li
-      id={milestone.anchor}
-      className="relative flex scroll-mt-24 gap-5 pb-10 last:pb-0"
-    >
+    <li className="relative flex gap-5 pb-10 last:pb-0">
       {!isLast ? (
         <span
           aria-hidden
@@ -512,52 +515,123 @@ function MilestoneRow({
             {milestone.description}
           </p>
         ) : null}
-        {milestone.deliverables ? (
-          <DeliverablesList deliverables={milestone.deliverables} />
-        ) : null}
       </div>
     </li>
   );
 }
 
-// Itemised scope for a phase agreed as a list (Phase 4). Sits inside the
-// milestone row so the client reads it in context, and the pending action
-// can deep-link to it via the row's anchor.
-function DeliverablesList({
+// Itemised checklist under the phases. Native <details> so each row opens
+// without JS state; the box on the left reads delivery status from the
+// data (grey = upcoming, blue = in motion, filled = delivered), so it is
+// not a control the client ticks. The pending action deep-links here.
+function DeliverablesSection({
   deliverables,
 }: {
-  deliverables: NonNullable<ProjectMilestone["deliverables"]>;
+  deliverables: NonNullable<typeof spa.deliverables>;
 }) {
+  const done = deliverables.items.filter((d) => d.status === "done").length;
   return (
-    <div className="mt-3 flex flex-col gap-4 rounded-[12px] border border-rule-soft p-5">
+    <section id="deliverables" className="flex scroll-mt-24 flex-col gap-6">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+        <h2 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.875rem]">
+          Deliverables
+        </h2>
+        <p className="font-caption text-[11px] font-semibold uppercase tracking-[1px] text-muted">
+          {done} of {deliverables.items.length} delivered
+        </p>
+      </div>
       {deliverables.intro ? (
-        <p className="text-[0.9rem] leading-[1.5rem] text-muted">
+        <p className="text-[0.95rem] leading-[1.6rem] text-muted">
           {deliverables.intro}
         </p>
       ) : null}
-      <ul className="flex flex-col">
+      <ul className="flex flex-col border-t border-rule">
         {deliverables.items.map((d) => (
-          <li
-            key={d.title}
-            className="flex flex-col gap-0.5 border-b border-rule-soft py-3 first:pt-0 last:border-b-0 last:pb-0"
-          >
-            <p className="text-[0.95rem] font-semibold leading-[1.5rem] text-ink">
-              {d.title}
-            </p>
-            {d.detail ? (
-              <p className="text-[0.9rem] leading-[1.5rem] text-muted">
-                {d.detail}
-              </p>
-            ) : null}
-          </li>
+          <DeliverableRow key={d.title} item={d} />
         ))}
       </ul>
       {deliverables.note ? (
-        <p className="border-t border-rule-soft pt-4 text-[0.85rem] leading-[1.45rem] text-muted">
+        <p className="text-[0.85rem] leading-[1.5rem] text-muted">
           {deliverables.note}
         </p>
       ) : null}
-    </div>
+    </section>
+  );
+}
+
+function DeliverableRow({ item }: { item: Deliverable }) {
+  const done = item.status === "done";
+  const active = item.status === "in_progress";
+  const hasBody = Boolean(item.detail || item.date);
+  return (
+    <li className="border-b border-rule-soft">
+      <details className="group">
+        <summary
+          className={[
+            "flex list-none items-center gap-4 py-4 [&::-webkit-details-marker]:hidden",
+            hasBody ? "cursor-pointer" : "cursor-default",
+          ].join(" ")}
+        >
+          <span
+            aria-hidden
+            className={[
+              "flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-[6px] border",
+              done
+                ? "border-ink bg-ink text-bg"
+                : active
+                  ? "border-[#3b82f6]/50 text-[#3b82f6]"
+                  : "border-rule text-muted",
+            ].join(" ")}
+          >
+            {done ? (
+              <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+            ) : active ? (
+              <Loader
+                className="h-3 w-3 motion-safe:animate-[spin_3s_linear_infinite]"
+                strokeWidth={2}
+              />
+            ) : null}
+          </span>
+          <span
+            className={[
+              "min-w-0 flex-1 text-[0.95rem] font-semibold leading-[1.5rem]",
+              done ? "text-muted line-through decoration-rule" : "text-ink",
+            ].join(" ")}
+          >
+            {item.title}
+          </span>
+          <span className="hidden shrink-0 font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted sm:inline">
+            {item.phase}
+          </span>
+          {hasBody ? (
+            <ChevronDown
+              className="h-4 w-4 shrink-0 text-muted transition-transform duration-200 group-open:rotate-180"
+              strokeWidth={2}
+              aria-hidden
+            />
+          ) : null}
+        </summary>
+        {hasBody ? (
+          <div className="flex flex-col gap-2 pb-5 pl-[38px] pr-8">
+            {item.detail ? (
+              <p className="text-[0.9rem] leading-[1.5rem] text-muted">
+                {item.detail}
+              </p>
+            ) : null}
+            <div className="flex flex-wrap gap-x-4 gap-y-1">
+              <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted sm:hidden">
+                {item.phase}
+              </p>
+              {item.date ? (
+                <p className="font-caption text-[10px] font-medium uppercase tracking-[1px] text-muted">
+                  Delivered {formatLongDate(item.date)}
+                </p>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+      </details>
+    </li>
   );
 }
 

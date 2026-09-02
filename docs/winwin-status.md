@@ -33,7 +33,7 @@ _Last reconciled: 2026-09-02._
   approved. 3 Full website + assets — **delivered 2 Sep** (kicked off 29 Jul;
   site live, partner logos, VDL photo, doc renderer, AV colour spec). 4 All
   deliverables — **next up**: the Phase 4 deliverables list (7 items from the
-  1 Sep call, with exclusions) is on the client page under the Phase 4 row,
+  1 Sep call, with exclusions) is its own "Deliverables" checklist on the client page (rows open for detail, Phase 3 leftovers included),
   with a pending action for Lara to confirm it. Amount stays at the 2,800
   estimate (decided 2 Sep, after the Phase 3 invoice went out).
 
@@ -65,7 +65,7 @@ _Last reconciled: 2026-09-02._
 ## Pending from the client
 
 - Settle the Phase 3 invoice (3,800 EUR), due 2026-09-16.
-- Confirm the Phase 4 deliverables list (on the client page, #phase-4).
+- Confirm the Phase 4 deliverables list (on the client page, #deliverables).
 
 ## Where to find things
 
