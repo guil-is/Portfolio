@@ -53,9 +53,10 @@ _Last reconciled: 2026-09-02._
   without confirmation, so watch the account, and expect ~3 weeks from send.
 - Phase 3 invoice (INV-26020), 3,800 EUR, issued 2026-09-02 as Phase 3 wraps
   and Phase 4 scoping starts. Service period 29 Jul – 2 Sep. Due 2026-09-16
-  (14 days per the SOW). Downloadable from the client page; PDF archived to
-  Drive (Invoices 2026) via the new archive sync, same day. Still to do:
-  email it to Lara.
+  (14 days per the SOW). Emailed to Lara 2 Sep (same thread style as the
+  Phase 1-2 one, with the client-page link). Downloadable from the client page;
+  PDF archived to Drive (Invoices 2026). Expect ~3 weeks: SPA finance pays
+  without confirmation.
 - Phase 4 stays at 2,800 (Guil's call, 2 Sep): no re-quote. Next step is
   sending Lara the deliverables list from the 1 Sep call so scope is locked in
   writing before work starts, per the SOW. Anything beyond that list is billed

@@ -54,7 +54,7 @@ export const invoiceLedger: LedgerEntry[] = [
     dueAt: "2026-09-16",
     total: 3800,
     currency: "EUR",
-    note: "Phase 3 (full website + assets), service period 29 Jul – 2 Sep (reverse charge). Issued as Phase 3 wraps and Phase 4 scoping starts.",
+    note: "Phase 3 (full website + assets), service period 29 Jul – 2 Sep (reverse charge). Issued as Phase 3 wraps and Phase 4 scoping starts. Emailed to Lara 2 Sep.",
   },
   {
     number: "INV-26019",
@@ -64,7 +64,7 @@ export const invoiceLedger: LedgerEntry[] = [
     dueAt: "2026-09-10",
     total: 500,
     currency: "EUR",
-    note: "Add-on: Alisher Sherali talk edit (YouTube version), agreed with Jonny over Discord 11 Aug. Non-EU, §3a UStG exempt. Sent to billing@status.im 27 Aug; Jonny notified on Discord (no email address on file).",
+    note: "Add-on: Alisher Sherali talk edit (YouTube version), agreed with Jonny over Discord 11 Aug. Non-EU, §3a UStG exempt. Sent to billing@status.im 27 Aug; Jonny notified on Discord (no email address on file). PDF archived to Drive by hand 2 Sep (not in issued.ts).",
   },
   {
     number: "INV-26018",
