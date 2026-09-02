@@ -163,8 +163,73 @@ export const spa: SpaClient = {
 
   deliverables: {
     intro:
-      "Everything still to land, one row each. Open a row for what it covers and what your team supplies. The Phase 4 rows are what we agreed on our September 1 call: confirm the list, or flag anything to change, and that work starts.",
+      "The whole project, one row each: delivered, in progress, and still to come. Open a row for what it covers and what your team supplies. The Phase 4 rows are what we agreed on our September 1 call: confirm the list, or flag anything to change, and that work starts.",
     items: [
+      {
+        title: "Discovery workshop and questionnaire",
+        phase: "Phase 1",
+        status: "done",
+        detail:
+          "Kickoff workshop plus the written questionnaire that set the brief: the one takeaway for attendees, the objection to design against, and the references to lean on and avoid.",
+      },
+      {
+        title: "Three brand directions",
+        phase: "Phase 1",
+        status: "done",
+        date: "2026-07-17",
+        detail:
+          "Minimal, bold, and a middle route, explored side by side. The bold direction was chosen and signed off on July 17.",
+      },
+      {
+        title: "Visual identity and logo system",
+        phase: "Phase 2",
+        status: "done",
+        detail:
+          "Neon spectrum on cream, condensed Archivo display type, the generative WIN/WIN lockup, and the woven-strip motion system, with the never-on-dark rule. Applied across every asset since.",
+      },
+      {
+        title: "Save-the-date email and animated header",
+        phase: "Phase 2",
+        status: "done",
+        detail:
+          "The first invitation email built as a Mailchimp master template with swappable zones, plus animated GIFs of the lockup for the header. Rebuilt for Outlook so the callout renders everywhere.",
+      },
+      {
+        title: "Key visuals",
+        phase: "Phase 2",
+        status: "done",
+        detail:
+          "Two risograph-style illustrations in the brand (the thermal Atomium, which also animates as a loop, and the light burst between arches), plus the social share card.",
+      },
+      {
+        title: "Event website with RSVP",
+        phase: "Phase 3",
+        status: "done",
+        detail:
+          "winwin.brussels: the save-the-date one-pager in the neon identity, RSVP wired to your Microsoft Forms, with a light brand treatment on the form itself.",
+      },
+      {
+        title: "Partner logos and speaker slot on the site",
+        phase: "Phase 3",
+        status: "done",
+        date: "2026-08-25",
+        detail:
+          "Four partner logos live (Norrsken, We Mean Business Coalition, Centre for Future Generations, CISL), added as each was cleared, and the official Commission photo in the speaker slot. More logos go in as they land.",
+      },
+      {
+        title: "Branded document template and renderer",
+        phase: "Phase 3",
+        status: "done",
+        detail:
+          "The Anchor Partners info pack as a branded Google Doc template your team edits directly, plus winwin.brussels/doc, which turns any shared Google Doc into a branded, paginated PDF.",
+      },
+      {
+        title: "Brand colour spec for the AV partner",
+        phase: "Phase 3",
+        status: "in_progress",
+        detail:
+          "Palette and usage notes for the venue's AV and lighting team, sent ahead of the main-stage backdrop work.",
+      },
       {
         title: "Site pages: programme, press, partners, Letter to the Future",
         phase: "Phase 3",

@@ -524,21 +524,70 @@ function MilestoneRow({
 // without JS state; the box on the left reads delivery status from the
 // data (grey = upcoming, blue = in motion, filled = delivered), so it is
 // not a control the client ticks. The pending action deep-links here.
+// "Hide delivered" is a per-browser preference, stored the same way as the
+// pending-list checks (localStorage + useSyncExternalStore) so it hydrates
+// without an effect.
+const HIDE_DELIVERED_KEY = "for-spa-hide-delivered";
+const hideDoneListeners = new Set<() => void>();
+function subscribeHideDone(cb: () => void) {
+  hideDoneListeners.add(cb);
+  return () => {
+    hideDoneListeners.delete(cb);
+  };
+}
+function readHideDone(): boolean {
+  try {
+    return window.localStorage.getItem(HIDE_DELIVERED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
 function DeliverablesSection({
   deliverables,
 }: {
   deliverables: NonNullable<typeof spa.deliverables>;
 }) {
   const done = deliverables.items.filter((d) => d.status === "done").length;
+  const hideDone = useSyncExternalStore(
+    subscribeHideDone,
+    readHideDone,
+    () => false,
+  );
+  function toggleHideDone() {
+    try {
+      window.localStorage.setItem(HIDE_DELIVERED_KEY, hideDone ? "0" : "1");
+    } catch {
+      // localStorage unavailable — the toggle just won't stick.
+    }
+    hideDoneListeners.forEach((cb) => cb());
+  }
+
+  const visible = hideDone
+    ? deliverables.items.filter((d) => d.status !== "done")
+    : deliverables.items;
+
   return (
     <section id="deliverables" className="flex scroll-mt-24 flex-col gap-6">
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
         <h2 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.875rem]">
           Deliverables
         </h2>
-        <p className="font-caption text-[11px] font-semibold uppercase tracking-[1px] text-muted">
-          {done} of {deliverables.items.length} delivered
-        </p>
+        <div className="flex items-baseline gap-4">
+          <p className="font-caption text-[11px] font-semibold uppercase tracking-[1px] text-muted">
+            {done} of {deliverables.items.length} delivered
+          </p>
+          {done > 0 ? (
+            <button
+              type="button"
+              onClick={toggleHideDone}
+              aria-pressed={hideDone}
+              className="font-caption text-[11px] font-semibold uppercase tracking-[1px] text-ink underline decoration-rule underline-offset-4 transition-colors hover:decoration-ink"
+            >
+              {hideDone ? "Show delivered" : "Hide delivered"}
+            </button>
+          ) : null}
+        </div>
       </div>
       {deliverables.intro ? (
         <p className="text-[0.95rem] leading-[1.6rem] text-muted">
@@ -546,7 +595,14 @@ function DeliverablesSection({
         </p>
       ) : null}
       <ul className="flex flex-col border-t border-rule">
-        {deliverables.items.map((d) => (
+        {hideDone && done > 0 ? (
+          <li className="border-b border-rule-soft py-3">
+            <p className="font-caption text-[10px] font-medium uppercase tracking-[1px] text-muted">
+              {done} delivered {done === 1 ? "item" : "items"} hidden
+            </p>
+          </li>
+        ) : null}
+        {visible.map((d) => (
           <DeliverableRow key={d.title} item={d} />
         ))}
       </ul>
