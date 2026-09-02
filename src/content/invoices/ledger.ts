@@ -35,6 +35,18 @@ export type LedgerEntry = {
 
 export const invoiceLedger: LedgerEntry[] = [
   {
+    // Renumbered from INV-26020: that number went to the WinWin phase 3
+    // invoice issued the same day in a parallel session.
+    number: "INV-26021",
+    client: "Studio Huit",
+    clientSlug: "huit",
+    issuedAt: "2026-09-02",
+    dueAt: "2026-09-16",
+    total: 1904,
+    currency: "EUR",
+    note: 'Safe "address poisoning" video, motion design (1,600 EUR + 19% MwSt)',
+  },
+  {
     number: "INV-26020",
     client: "Sustainable Public Affairs (WinWin 2026)",
     clientSlug: "spa",

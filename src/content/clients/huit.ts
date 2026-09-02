@@ -47,7 +47,7 @@ const videos: ClientVideo[] = [
   {
     key: "address-poisoning",
     title: "Address poisoning",
-    status: "briefed",
+    status: "delivered",
     brief: {
       title: "Video brief",
       version: "brief-address-poisoning-2026-08-27",

@@ -14,6 +14,24 @@ import type { InvoiceSpec } from "../../lib/invoice";
 import { billToPresets } from "./config";
 
 export const issuedInvoices: Record<string, InvoiceSpec> = {
+  "INV-26021": {
+    number: "INV-26021",
+    issuedAt: "2026-09-02",
+    dueAt: "2026-09-16",
+    serviceDate: "2026-08-28",
+    serviceEndDate: "2026-09-02",
+    currency: "EUR",
+    taxMode: "de-19",
+    billTo: billToPresets.huit,
+    lines: [
+      {
+        description: 'Safe "address poisoning" video: motion design, ~30s, 16:9',
+        amount: 1600,
+      },
+    ],
+    note: "Per the Safe videos framework agreement (27 Aug 2026). Payment within 14 days of delivery.",
+    paymentProfiles: ["n26-eur"],
+  },
   "INV-26020": {
     number: "INV-26020",
     issuedAt: "2026-09-02",
