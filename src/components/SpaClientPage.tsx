@@ -268,7 +268,8 @@ function ProgressView() {
         </div>
         <p className="text-[0.85rem] leading-[1.5rem] text-muted">
           All amounts net. VAT reverse charge applies for EU business clients.
-          Phase 4 is a working estimate, confirmed before that phase begins.
+          Phase 4 scope is locked with the deliverables list above before that
+          phase begins.
         </p>
       </section>
     </div>
@@ -459,7 +460,10 @@ function MilestoneRow({
   const meta = MILESTONE_META[milestone.status];
 
   return (
-    <li className="relative flex gap-5 pb-10 last:pb-0">
+    <li
+      id={milestone.anchor}
+      className="relative flex scroll-mt-24 gap-5 pb-10 last:pb-0"
+    >
       {!isLast ? (
         <span
           aria-hidden
@@ -508,8 +512,52 @@ function MilestoneRow({
             {milestone.description}
           </p>
         ) : null}
+        {milestone.deliverables ? (
+          <DeliverablesList deliverables={milestone.deliverables} />
+        ) : null}
       </div>
     </li>
+  );
+}
+
+// Itemised scope for a phase agreed as a list (Phase 4). Sits inside the
+// milestone row so the client reads it in context, and the pending action
+// can deep-link to it via the row's anchor.
+function DeliverablesList({
+  deliverables,
+}: {
+  deliverables: NonNullable<ProjectMilestone["deliverables"]>;
+}) {
+  return (
+    <div className="mt-3 flex flex-col gap-4 rounded-[12px] border border-rule-soft p-5">
+      {deliverables.intro ? (
+        <p className="text-[0.9rem] leading-[1.5rem] text-muted">
+          {deliverables.intro}
+        </p>
+      ) : null}
+      <ul className="flex flex-col">
+        {deliverables.items.map((d) => (
+          <li
+            key={d.title}
+            className="flex flex-col gap-0.5 border-b border-rule-soft py-3 first:pt-0 last:border-b-0 last:pb-0"
+          >
+            <p className="text-[0.95rem] font-semibold leading-[1.5rem] text-ink">
+              {d.title}
+            </p>
+            {d.detail ? (
+              <p className="text-[0.9rem] leading-[1.5rem] text-muted">
+                {d.detail}
+              </p>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+      {deliverables.note ? (
+        <p className="border-t border-rule-soft pt-4 text-[0.85rem] leading-[1.45rem] text-muted">
+          {deliverables.note}
+        </p>
+      ) : null}
+    </div>
   );
 }
 
