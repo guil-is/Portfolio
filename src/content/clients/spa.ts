@@ -128,7 +128,7 @@ export const spa: SpaClient = {
       label: "Phase 4 · Weeks 5-6",
       title: "All deliverables",
       description:
-        "Extended brand assets, printed collateral, and merch. Scope and amount confirmed against the September 1 product list before work starts.",
+        "Extended brand assets, printed collateral, and merch. Scope locked against the September 1 deliverables list before work starts.",
       status: "upcoming",
     },
   ],

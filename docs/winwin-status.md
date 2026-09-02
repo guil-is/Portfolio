@@ -32,8 +32,9 @@ _Last reconciled: 2026-09-02._
 - **Phases:** 1 Discovery + explorations — approved. 2 Core identity + invite —
   approved. 3 Full website + assets — **delivered 2 Sep** (kicked off 29 Jul;
   site live, partner logos, VDL photo, doc renderer, AV colour spec). 4 All
-  deliverables — **next up**: the 1 Sep product list is the scope trigger;
-  quote scope + amount before work starts (likely above the 2,800 estimate).
+  deliverables — **next up**: Guil sends Lara the Phase 4 deliverables list
+  (from the 1 Sep call) to lock scope before work starts. Amount stays at the
+  2,800 estimate (decided 2 Sep, after the Phase 3 invoice went out).
 
 ## Money
 
@@ -54,16 +55,16 @@ _Last reconciled: 2026-09-02._
   (14 days per the SOW). Downloadable from the client page; PDF archived to
   Drive (Invoices 2026) via the new archive sync, same day. Still to do:
   email it to Lara.
-- Phase 4 (2,800) is a working estimate. The consolidated product list from the
-  1 Sep call is the scope trigger; quote scope + amount before work starts, and
-  the total moves with it. Watch scope: pages system + SoMe kit + stickers +
-  signage + PPT is likely above 2,800. September Phase 3 leftovers (site pages,
-  reminder emails) stay under Phase 3, already billed.
+- Phase 4 stays at 2,800 (Guil's call, 2 Sep): no re-quote. Next step is
+  sending Lara the deliverables list from the 1 Sep call so scope is locked in
+  writing before work starts, per the SOW. Anything beyond that list is billed
+  separately, quoted first. September Phase 3 leftovers (site pages, reminder
+  emails) stay under Phase 3, already billed.
 
 ## Pending from the client
 
 - Settle the Phase 3 invoice (3,800 EUR), due 2026-09-16.
-- Confirm Phase 4 scope + amount once the quote goes out.
+- Confirm the Phase 4 deliverables list once Guil sends it.
 
 ## Where to find things
 
