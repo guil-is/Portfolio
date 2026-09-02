@@ -139,6 +139,12 @@ needed.
    account, "Advanced → Go to the app", allow Drive access. The script
    catches the redirect, verifies the account, and prints a
    `GDRIVE_REFRESH_TOKEN=…` line. Add it to `.env.local`.
+
+   **No local machine (cloud Claude session only)?** Same thing in two
+   halves: `npm run gdrive:auth -- --url` prints the consent URL. After
+   approving, the browser lands on a `127.0.0.1` address that fails to
+   load; that is expected. Copy that address and run
+   `npm run gdrive:auth -- --code '<address>'` to get the token line.
 5. Add the same three values as **GitHub repository secrets**
    (`Settings → Secrets and variables → Actions`): `GDRIVE_CLIENT_ID`,
    `GDRIVE_CLIENT_SECRET`, `GDRIVE_REFRESH_TOKEN`. Then run the
