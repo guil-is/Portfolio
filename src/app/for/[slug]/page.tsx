@@ -303,6 +303,15 @@ function CaseStudy({
             mediaHref={data.mediaHref}
           />
         </div>
+        {/* No hover on touch — explicit case study CTA under the slider. */}
+        {data.mediaHref ? (
+          <div className="mt-8">
+            <CtaButton
+              href={data.mediaHref}
+              label={data.mediaHoverLabel ?? "View case study"}
+            />
+          </div>
+        ) : null}
       </section>
 
       {/* Desktop: scroll-hijacked horizontal track */}
@@ -450,7 +459,9 @@ function MobileGallery({
   }
 
   return (
-    <div className="scroll-row flex snap-x snap-mandatory overflow-x-auto pb-2">
+    // Slides are narrower than the viewport so the next one peeks in
+    // from the right — the affordance that there's more to swipe.
+    <div className="scroll-row flex snap-x snap-mandatory gap-3 overflow-x-auto px-6 pb-2">
       {media.map(({ src, aspect, intervalMs }, i) => {
         const firstSrc = Array.isArray(src) ? src[0] : src;
         const basename = firstSrc.split("/").pop() ?? firstSrc;
@@ -486,7 +497,7 @@ function MobileGallery({
           />
         );
         return (
-          <div key={firstSrc} className="w-screen shrink-0 snap-center px-4">
+          <div key={firstSrc} className="w-[85vw] shrink-0 snap-center">
             {href ? (
               <a
                 href={href}
