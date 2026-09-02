@@ -13,6 +13,17 @@
 
 import type { BillTo, PaymentProfile } from "../../lib/invoice";
 
+/**
+ * Google Drive folder that holds the "Invoices <year>" subfolders — the
+ * 10-year GoBD archive. `npm run invoice` uploads into it straight after
+ * rendering when Drive credentials are set, and the archive-invoices
+ * workflow syncs everything in issued.ts on every push to main. Override
+ * with GDRIVE_INVOICES_FOLDER_ID. Setup: docs/making-an-invoice.md.
+ */
+export const driveArchive = {
+  rootFolderId: "1AbNjvgi6TSCgx0bUxy7nBYskJcphq2dO",
+};
+
 export const issuer = {
   name: "Guilherme Maueler",
   email: "hello@guil.is",

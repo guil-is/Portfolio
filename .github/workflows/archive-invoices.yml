@@ -1,0 +1,37 @@
+name: Invoices — Archive to Google Drive
+
+# Every invoice registered in src/content/invoices/issued.ts gets its PDF
+# re-rendered and uploaded to Drive ("Invoices/Invoices <year>/") unless
+# it's already there. Runs on every push to main that touches that file,
+# so issuing an invoice from any Claude session (no local Drive creds)
+# still lands in the 10-year archive. Also runnable by hand.
+#
+# Secrets: GDRIVE_CLIENT_ID, GDRIVE_CLIENT_SECRET, GDRIVE_REFRESH_TOKEN
+# (minted with `npm run gdrive:auth`; see docs/making-an-invoice.md).
+
+on:
+  push:
+    branches: [main]
+    paths: ["src/content/invoices/issued.ts"]
+  workflow_dispatch:
+
+concurrency:
+  group: archive-invoices
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+      - run: npm ci
+      - name: Archive
+        env:
+          GDRIVE_CLIENT_ID: ${{ secrets.GDRIVE_CLIENT_ID }}
+          GDRIVE_CLIENT_SECRET: ${{ secrets.GDRIVE_CLIENT_SECRET }}
+          GDRIVE_REFRESH_TOKEN: ${{ secrets.GDRIVE_REFRESH_TOKEN }}
+        run: npx tsx scripts/archive-invoices.ts

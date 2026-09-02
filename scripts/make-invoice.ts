@@ -2,7 +2,7 @@
  * Invoice maker CLI. Full workflow doc: docs/making-an-invoice.md
  *
  * Usage:
- *   npm run invoice -- <spec.json> [-o out.pdf]
+ *   npm run invoice -- <spec.json> [-o out.pdf]      (archives to Drive when GDRIVE_* is set)
  *   npm run invoice -- --justice <weekStart> [--number INV-26014] [--issued YYYY-MM-DD]
  *   npm run invoice -- --next-number
  *
@@ -21,9 +21,16 @@ import { fileURLToPath } from "node:url";
 import type { InvoiceSpec } from "../src/lib/invoice";
 import { grandTotal, formatMoney } from "../src/lib/invoice";
 import { renderInvoicePdf } from "../src/lib/invoice-pdf";
+import { loadEnvFiles } from "./lib/env";
+import {
+  DriveClient,
+  archiveInvoicePdf,
+  driveConfigFromEnv,
+} from "./lib/gdrive";
 import {
   paymentProfiles,
   billToPresets,
+  driveArchive,
 } from "../src/content/invoices/config";
 import {
   nextInvoiceNumber,
@@ -37,6 +44,7 @@ import {
 } from "../src/content/clients/justice";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+loadEnvFiles(repoRoot);
 
 function fail(msg: string): never {
   console.error(`✗ ${msg}`);
@@ -268,11 +276,40 @@ async function main() {
     );
   }
 
-  // Durable archive: copy the issued PDF into INVOICE_ARCHIVE_DIR, under a
-  // per-year subfolder. Point that env var at your Google Drive for
-  // desktop folder (e.g. ".../My Drive/Invoices") and every invoice syncs
-  // to Drive automatically — a GoBD-compliant 10-year archive, no upload
-  // step. Unreachable dir warns but never fails the render.
+  // Durable archive, two routes to the same Drive folder:
+  //   1. Drive API upload (GDRIVE_* creds from `npm run gdrive:auth`) —
+  //      works from any machine, this is the one that matters.
+  //   2. Local copy into INVOICE_ARCHIVE_DIR (Google Drive for desktop
+  //      mirror) — legacy Mac path, kept as a fallback.
+  // Neither failing ever fails the render; the archive-invoices workflow
+  // re-syncs everything in issued.ts on push to main anyway.
+  const driveCfg = driveConfigFromEnv(driveArchive.rootFolderId);
+  if (driveCfg) {
+    try {
+      const result = await archiveInvoicePdf(
+        new DriveClient(driveCfg),
+        driveCfg.rootFolderId,
+        {
+          number: spec.number,
+          clientName: spec.billTo.name,
+          issuedAt: spec.issuedAt,
+          pdf,
+        },
+      );
+      const verb = result.status === "uploaded" ? "archived" : "already in";
+      console.log(
+        `  ${verb} Drive → ${result.folderName}/${result.file.name}` +
+          (result.file.webViewLink ? `  ${result.file.webViewLink}` : ""),
+      );
+    } catch (err) {
+      console.warn(
+        `  ⚠ Drive upload failed: ${(err as Error).message}\n` +
+          `    Invoice still saved at ${outPath}. Register it in issued.ts` +
+          ` and push, or rerun: npm run invoice:archive -- ${spec.number}`,
+      );
+    }
+  }
+
   const archiveRoot = process.env.INVOICE_ARCHIVE_DIR;
   if (archiveRoot) {
     const year = spec.issuedAt.slice(0, 4);
@@ -291,14 +328,18 @@ async function main() {
           ` Invoice still saved at ${outPath}.`,
       );
     }
-  } else {
+  } else if (!driveCfg) {
     console.log(
-      `  (set INVOICE_ARCHIVE_DIR to your Google Drive path to auto-archive)`,
+      `  (no Drive credentials — set GDRIVE_* via \`npm run gdrive:auth\`` +
+        ` to auto-archive, or register the invoice in issued.ts and push` +
+        ` so CI archives it)`,
     );
   }
 
   // Paste-ready ledger entry — includes dueAt so the invoice lands on the
   // payment radar (`--status`). Prepend it to invoiceLedger in ledger.ts.
+  // (The spec also belongs in issued.ts: that makes the PDF downloadable
+  // from the client page and is what the Drive archive syncs from.)
   const clientLabel = spec.billTo.name.replace(/"/g, '\\"');
   console.log(
     `\n  Remember: prepend to invoiceLedger in src/content/invoices/ledger.ts:` +

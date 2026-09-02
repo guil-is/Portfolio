@@ -95,31 +95,60 @@ Omitted fields: `number` (auto), `dueAt` (issued + 7d), `paymentProfiles`
 
 ## Archiving (Google Drive)
 
-Issued invoices must be kept for 10 years (GoBD). The archive is a
-Google Drive folder (`Invoices/Invoices <year>/`) that
-[Google Drive for desktop](https://www.google.com/drive/download/) mirrors
-to a local path, so saving a file there syncs it to Drive automatically —
-no upload step.
+Issued invoices must be kept for 10 years (GoBD). The archive is the
+Google Drive folder `Invoices/Invoices <year>/`. Two things keep it full,
+and both are idempotent (an invoice number already in the year folder is
+never uploaded twice, whatever the old file was called):
 
-**One-time setup on the Mac:**
+1. **`npm run invoice`** uploads the PDF through the Drive API right after
+   rendering, whenever the `GDRIVE_*` credentials below are set. Works on
+   the Mac and in any Claude session whose environment has them.
+2. **The `archive-invoices` GitHub workflow** re-syncs every spec in
+   `src/content/invoices/issued.ts` on each push to `main` that touches
+   that file (and on demand from the Actions tab). So from a Claude
+   session with no credentials, registering the spec in `issued.ts` and
+   pushing is enough: CI renders the same PDF and archives it. The spec
+   in `issued.ts` must match the PDF that was emailed, which it has to
+   anyway for the client-page download.
 
-1. Install Google Drive for desktop and sign in. It creates a folder like
-   `~/Library/CloudStorage/GoogleDrive-<you>@gmail.com/My Drive`.
-2. Find the `Invoices` folder inside it (it already exists in Drive).
-3. Add the path to your shell profile (`~/.zshrc`):
+`npm run invoice:archive` runs the same sync locally (`-- INV-26020` for
+one invoice, `--dry-run` to only render and list).
+
+The old route, `INVOICE_ARCHIVE_DIR` pointed at the Google Drive for
+desktop mirror, still works as a fallback on the Mac but is no longer
+needed.
+
+### One-time setup (about 10 minutes, once)
+
+1. [console.cloud.google.com](https://console.cloud.google.com): create a
+   project (e.g. `guil-invoices`), then **APIs & Services → Library →
+   Google Drive API → Enable**.
+2. **APIs & Services → OAuth consent screen** (Google Auth Platform):
+   External, any app name, your email. Under **Audience**, set the
+   publishing status to **In production**. This matters: while the app
+   is in "Testing", Google expires refresh tokens after 7 days. The app
+   stays unverified, which is fine because you are its only user; the
+   consent page shows a warning you click through once.
+3. **Credentials → Create credentials → OAuth client ID → Desktop app**.
+   Copy the client ID and secret into `.env.local`:
    ```sh
-   export INVOICE_ARCHIVE_DIR="$HOME/Library/CloudStorage/GoogleDrive-you@gmail.com/My Drive/Invoices"
+   GDRIVE_CLIENT_ID=….apps.googleusercontent.com
+   GDRIVE_CLIENT_SECRET=…
    ```
-   Then `source ~/.zshrc`.
+4. Run `npm run gdrive:auth`. It prints a URL: open it, pick your
+   account, "Advanced → Go to the app", allow Drive access. The script
+   catches the redirect, verifies the account, and prints a
+   `GDRIVE_REFRESH_TOKEN=…` line. Add it to `.env.local`.
+5. Add the same three values as **GitHub repository secrets**
+   (`Settings → Secrets and variables → Actions`): `GDRIVE_CLIENT_ID`,
+   `GDRIVE_CLIENT_SECRET`, `GDRIVE_REFRESH_TOKEN`. Then run the
+   "Invoices — Archive to Google Drive" workflow once by hand to
+   backfill anything missing from `issued.ts`.
 
-With that set, every `npm run invoice` run drops a copy into
-`Invoices/Invoices <year>/<number> <client>.pdf`, which Drive syncs. The
-env var is read at runtime only — nothing is committed, and if it's unset
-or the path is unreachable the invoice still saves to `invoices/` and the
-CLI just prints a hint.
-
-When issuing from a Claude session (not your Mac), Claude uploads the PDF
-to the same Drive folder via the Drive connector instead.
+The folder id of the `Invoices` root lives in `config.ts`
+(`driveArchive.rootFolderId`); override with `GDRIVE_INVOICES_FOLDER_ID`
+if it ever moves. If the token is ever revoked (the CLI will say
+`invalid_grant`), rerun step 4.
 
 ## Pre-reform invoices to review
 
@@ -148,12 +177,15 @@ quirk. All three are §3a place-of-supply (US client, no German VAT).
 
 ## After issuing — bookkeeping (Claude: do this in the same session)
 
-1. Confirm the PDF is archived to Drive (`Invoices/Invoices <year>/`) —
-   the CLI does this when `INVOICE_ARCHIVE_DIR` is set; from a Claude
-   session, upload it via the Drive connector.
+1. Register the spec in `src/content/invoices/issued.ts` — this makes
+   the PDF downloadable from the client page and is what the Drive
+   archive syncs from.
 2. Append an entry to `src/content/invoices/ledger.ts` — this drives
    `--next-number`, so skipping it breaks the sequence.
-3. Justice retainer invoices only: also set `invoice: { number, issuedAt }`
+3. Archive: if the CLI printed `archived Drive → …`, done. Otherwise push
+   to `main`; the archive-invoices workflow uploads it. Do not paste PDFs
+   through the Drive connector; that path stalls.
+4. Justice retainer invoices only: also set `invoice: { number, issuedAt }`
    on the period in `src/content/clients/justice.ts` and bump its
    `lastUpdated` (see CLAUDE.md "Hours log updates").
-4. When payment lands later: set `paidAt` in both places.
+5. When payment lands later: set `paidAt` in both places.

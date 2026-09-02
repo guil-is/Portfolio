@@ -10,7 +10,9 @@
     "sanity:merge-projects": "tsx scripts/sanity/merge-projects.ts",
     "sanity:migrate-content": "tsx scripts/sanity/migrate-project-content.ts",
     "sanity:tidy-n26-business-black": "tsx scripts/sanity/tidy-n26-business-black.ts",
-    "invoice": "tsx scripts/make-invoice.ts"
+    "invoice": "tsx scripts/make-invoice.ts",
+    "invoice:archive": "tsx scripts/archive-invoices.ts",
+    "gdrive:auth": "tsx scripts/gdrive-auth.ts"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.5.1",

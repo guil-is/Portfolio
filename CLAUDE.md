@@ -51,7 +51,7 @@
 
 - To make an invoice from a prompt: `npm run invoice` — full workflow in `docs/making-an-invoice.md`.
 - Static data (issuer, bank/crypto details, client addresses): `src/content/invoices/config.ts`. Rule of thumb: German client → EUR + 19% MwSt + N26 IBAN; outside the EU → USD + §3a UStG exemption + Wise details.
-- **After issuing**: archive the PDF to Google Drive (`Invoices/Invoices <year>/` — the CLI does this when `INVOICE_ARCHIVE_DIR` is set; from a Claude session, upload via the Drive connector), then append to `src/content/invoices/ledger.ts` (drives auto-numbering; set `clientSlug` for clients in the registry). Justice invoices also go into the `hoursLog` (below).
+- **After issuing**: (1) register the spec in `src/content/invoices/issued.ts` (client-page download + what the Drive archive syncs from); (2) append to `src/content/invoices/ledger.ts` (drives auto-numbering; set `clientSlug` for clients in the registry); (3) archive to Google Drive (`Invoices/Invoices <year>/`): the CLI uploads directly when `GDRIVE_*` creds are set, otherwise pushing `issued.ts` to `main` triggers the `archive-invoices` workflow. Never push PDFs through the Drive connector — it stalls. Justice invoices also go into the `hoursLog` (below).
 
 # Hours log updates (Justice)
 
