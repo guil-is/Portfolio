@@ -303,13 +303,22 @@ function CaseStudy({
             mediaHref={data.mediaHref}
           />
         </div>
-        {/* No hover on touch — explicit case study CTA under the slider. */}
+        {/* No hover on touch — explicit case study link under the
+            slider, styled like the closer's portfolio link. */}
         {data.mediaHref ? (
           <div className="mt-8">
-            <CtaButton
+            <a
               href={data.mediaHref}
-              label={data.mediaHoverLabel ?? "View case study"}
-            />
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 font-caption text-[13px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted"
+            >
+              <ArrowUpRight
+                className="h-4 w-4 transition-transform group-hover:-rotate-45"
+                strokeWidth={1.75}
+              />
+              {data.mediaHoverLabel ?? "View case study"}
+            </a>
           </div>
         ) : null}
       </section>
