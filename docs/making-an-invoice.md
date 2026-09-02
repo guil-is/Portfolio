@@ -191,7 +191,13 @@ quirk. All three are §3a place-of-supply (US client, no German VAT).
 3. Archive: if the CLI printed `archived Drive → …`, done. Otherwise push
    to `main`; the archive-invoices workflow uploads it. Do not paste PDFs
    through the Drive connector; that path stalls.
-4. Justice retainer invoices only: also set `invoice: { number, issuedAt }`
+4. Create the payment follow-up in Google Calendar (via the Calendar
+   connector): an all-day event on the day after `dueAt`, titled
+   `💸 Follow up: <client> <number> (<total>)`, marked Free. The
+   description names who to nudge and reminds to set `paidAt` when paid.
+   Pass all-day dates as UTC midnight or the date shifts back a day.
+5. Justice retainer invoices only: also set `invoice: { number, issuedAt }`
    on the period in `src/content/clients/justice.ts` and bump its
    `lastUpdated` (see CLAUDE.md "Hours log updates").
-5. When payment lands later: set `paidAt` in both places.
+6. When payment lands later: set `paidAt` in both places and delete or
+   tick off the follow-up event.
