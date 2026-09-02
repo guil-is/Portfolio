@@ -45,6 +45,8 @@ export type Deliverable = {
   detail?: string;
   /** ISO date delivered, once done. */
   date?: string;
+  /** Optional link shown in the opened row (the live thing itself). */
+  link?: { label: string; href: string };
 };
 
 export type PaymentStatus = "due" | "invoiced" | "paid" | "overdue";
@@ -224,11 +226,12 @@ export const spa: SpaClient = {
           "The Anchor Partners info pack as a branded Google Doc template your team edits directly, plus winwin.brussels/doc, which turns any shared Google Doc into a branded, paginated PDF.",
       },
       {
-        title: "Brand colour spec for the AV partner",
+        title: "Brand assets page",
         phase: "Phase 3",
-        status: "in_progress",
+        status: "done",
         detail:
-          "Palette and usage notes for the venue's AV and lighting team, sent ahead of the main-stage backdrop work.",
+          "Logo pack, palette, type, and usage rules in one place at winwin.brussels/brand, for your team, partners, and the venue's AV crew to pull from directly.",
+        link: { label: "winwin.brussels/brand", href: "https://winwin.brussels/brand/" },
       },
       {
         title: "Site pages: programme, press, partners, Letter to the Future",

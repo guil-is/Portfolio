@@ -580,11 +580,28 @@ function DeliverablesSection({
           {done > 0 ? (
             <button
               type="button"
+              role="switch"
+              aria-checked={!hideDone}
               onClick={toggleHideDone}
-              aria-pressed={hideDone}
-              className="font-caption text-[11px] font-semibold uppercase tracking-[1px] text-ink underline decoration-rule underline-offset-4 transition-colors hover:decoration-ink"
+              className="group/switch flex items-center gap-2.5 font-caption text-[11px] font-semibold uppercase tracking-[1px] text-muted transition-colors hover:text-ink"
             >
-              {hideDone ? "Show delivered" : "Hide delivered"}
+              <span>Show delivered</span>
+              <span
+                aria-hidden
+                className={[
+                  "relative inline-flex h-[18px] w-[32px] shrink-0 items-center rounded-full border transition-colors",
+                  hideDone
+                    ? "border-rule bg-rule-soft"
+                    : "border-ink bg-ink",
+                ].join(" ")}
+              >
+                <span
+                  className={[
+                    "absolute top-[2px] h-[12px] w-[12px] rounded-full transition-[left] duration-200",
+                    hideDone ? "left-[2px] bg-muted" : "left-[16px] bg-bg",
+                  ].join(" ")}
+                />
+              </span>
             </button>
           ) : null}
         </div>
@@ -618,7 +635,7 @@ function DeliverablesSection({
 function DeliverableRow({ item }: { item: Deliverable }) {
   const done = item.status === "done";
   const active = item.status === "in_progress";
-  const hasBody = Boolean(item.detail || item.date);
+  const hasBody = Boolean(item.detail || item.date || item.link);
   return (
     <li className="border-b border-rule-soft">
       <details className="group">
@@ -651,7 +668,7 @@ function DeliverableRow({ item }: { item: Deliverable }) {
           <span
             className={[
               "min-w-0 flex-1 text-[0.95rem] font-semibold leading-[1.5rem]",
-              done ? "text-muted line-through decoration-rule" : "text-ink",
+              done ? "text-muted" : "text-ink",
             ].join(" ")}
           >
             {item.title}
@@ -674,10 +691,21 @@ function DeliverableRow({ item }: { item: Deliverable }) {
                 {item.detail}
               </p>
             ) : null}
-            <div className="flex flex-wrap gap-x-4 gap-y-1">
+            <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
               <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted sm:hidden">
                 {item.phase}
               </p>
+              {item.link ? (
+                <a
+                  href={item.link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-ink underline decoration-rule underline-offset-4 transition-colors hover:decoration-ink"
+                >
+                  {item.link.label}
+                  <ArrowUpRight className="h-3 w-3" strokeWidth={2} aria-hidden />
+                </a>
+              ) : null}
               {item.date ? (
                 <p className="font-caption text-[10px] font-medium uppercase tracking-[1px] text-muted">
                   Delivered {formatLongDate(item.date)}
