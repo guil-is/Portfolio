@@ -36,7 +36,7 @@ _Last reviewed: 2026-09-02 (evening)._
 - [ ] Reminder emails (second invitation round): Claire adapts copy in Mailchimp, I do the final design pass. Lara said first half of September, so expect the ask now.
 - [ ] Site pages: chase Flora for the Word copy for /pitcher, /letterforthefuture, /program, /press, /partner. Build as copy lands. Password only where participant lists appear.
 - [ ] Aftermovie: send a quote or point Lara to Roman Piola. Separate from the design scope either way.
-- [x] LinkedIn speaker kit: self-serve card tool built on the WinWin site (hidden /speaker page, 2 Sep). Team or speakers enter name, role, photo and download a 4:5 or 1:1 card. Still to do: countdown frame, and send Lara/Flora the link with a two-line how-to.
+- [ ] LinkedIn speaker kit: self-serve card tool on the WinWin site (hidden /speaker page), started 2 Sep, partly built. Finish it, test on a phone with a real LinkedIn photo, then send Lara/Flora the link with a two-line how-to. Countdown frame comes later.
 - [ ] Venue visit prep: signage concept sketches (floor tape lines, arrow stickers, standing signs), a list of what to measure (backdrop wall, sign spots, floor surface for tape), and questions for the AV partner (backdrop dimensions, file specs, screen ratios for the slide template).
 
 ## 10–17 Sep, Brussels
