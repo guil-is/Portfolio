@@ -264,9 +264,9 @@ export const spa: SpaClient = {
       {
         title: "LinkedIn speaker kit",
         phase: "Phase 4",
-        status: "upcoming",
+        status: "in_progress",
         detail:
-          "Personal \"stay tuned\" cards for up to ten key speakers, speaker announcement posts for the WinWin account, and countdown visuals. Claire collects the speaker photos.",
+          "A self-serve page on the site: your team or the speaker enters name, role and photo, and downloads a LinkedIn-ready card in seconds, as a personal \"stay tuned\" post or an announcement from the WinWin account. Countdown visuals to follow. Claire collects the speaker photos.",
       },
       {
         title: "Partner comms kit",
