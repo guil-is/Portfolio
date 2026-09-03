@@ -115,7 +115,7 @@ export const spa: SpaClient = {
     feeEur: 11800,
     startDate: "July 7, 2026",
     // Keep this short: it renders as a large one-line stat value.
-    targetDelivery: "Before Nov 3",
+    targetDelivery: "September 30",
   },
 
   pendingActions: [
@@ -126,8 +126,20 @@ export const spa: SpaClient = {
     },
     {
       text: "Confirm the Phase 4 deliverables list, or flag anything to change, so that work can start.",
-      due: "Before Phase 4 kicks off",
+      due: "By Friday, September 12",
       link: { label: "Phase 4 deliverables list", href: "#deliverables" },
+    },
+    {
+      text: "Send the main-stage backdrop dimensions and the AV partner's file spec, plus the screen ratio for the slide template.",
+      due: "By Friday, September 12",
+    },
+    {
+      text: "Send the copy for the site pages (pitcher, Letter to the Future, programme, press, partner kit), drafts are fine.",
+      due: "By Friday, September 19",
+    },
+    {
+      text: "Share the speaker photos you have so far, and the reminder-email copy in Mailchimp.",
+      due: "By Friday, September 19",
     },
   ],
 
@@ -158,7 +170,7 @@ export const spa: SpaClient = {
       label: "Phase 4 · Weeks 5-6",
       title: "All deliverables",
       description:
-        "Extended brand assets, printed collateral, and event materials for the day itself. Itemised in the deliverables list below.",
+        "Extended brand assets, printed collateral, and event materials for the day itself. Itemised in the deliverables list below. Everything is delivered by September 30, so October stays free for your team to run the tools without waiting on me.",
       status: "upcoming",
     },
   ],

@@ -21,10 +21,10 @@ _Last reconciled: 2026-09-02._
   3 Nov is final).
 - **Fee:** 11,800 EUR net, fixed, billed by phase. Invoiced net with VAT reverse
   charge (EU cross-border B2B).
-- **Timeline:** kickoff 7 July 2026. Phases 1-3 done by 2 Sep. Phase 4 runs
-  September-October against the product list from the 1 Sep call, with
-  speaker/programme content landing late by design. Client page now shows
-  "Before Nov 3" as the target instead of "Late August".
+- **Timeline:** kickoff 7 July 2026. Phases 1-3 delivered by 2 September.
+  Phase 4 ships in full by **30 September** (decided 2 Sep): no scheduled
+  work in October. Late-confirming content (speakers, programme, hosts) is
+  handled by SPA on self-serve tools. Client page target reads "September 30".
 - **Client page:** guil.is/for/spa — password `winwin`. Tabs: Progress,
   Agreement, and a link to the frozen original Proposal (guil.is/for/spa/proposal).
 - **Agreement:** Service Agreement v1-2026-07-02, signed. It incorporates the
