@@ -4,8 +4,7 @@
  * as decided, pending, or exportable.
  */
 
-import { classify } from "./classify";
-import { merchantKey } from "./text";
+import { classify, itemKey } from "./classify";
 import {
   AUTO_THRESHOLD,
   type Category,
@@ -20,7 +19,8 @@ export type Item = {
   tx: Transaction;
   auto: Classification;
   decision?: Decision;
-  /** Memory key shared with every other payment to the same merchant. */
+  /** Memory key shared with every other payment to the same merchant
+   * (merchant + amount for pass-through billers like Apple). */
   key: string;
 };
 
@@ -35,7 +35,7 @@ export function buildItems(
 ): Item[] {
   return transactions.map((tx) => {
     const auto = classify(tx, memory);
-    const key = merchantKey(tx.partner);
+    const key = itemKey(tx);
     const pinned = tx.id in saved;
     let decision: Decision | undefined = saved[tx.id] ?? undefined;
     if (!pinned && auto.verdict !== "unsure" && auto.confidence >= AUTO_THRESHOLD) {

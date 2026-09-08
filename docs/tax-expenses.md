@@ -67,6 +67,13 @@ category, confidence and the sentence shown on the card. PayPal / Google /
 Apple / Stripe are `passthrough`: if the payment reference names a
 merchant with its own rule, that rule wins ("MyFonts, billed via PayPal").
 
+Apple, Google Play, PayPal and Klarna hide the real merchant, so for
+them the memory key is merchant + amount: decide one €9.99 Apple charge
+and every other €9.99 Apple charge follows, while the €5.49 ones stay
+separate. To see which app is behind an amount: iPhone → Settings → your
+name → Media & Purchases → Purchase History, or search your mail for
+"Your receipt from Apple".
+
 Patterns run on folded text (lowercase, no diacritics). Keep `\b` word
 boundaries on short names. After editing, sanity-check with the CLI:
 

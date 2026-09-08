@@ -488,6 +488,7 @@ function CardFront({
   siblingsCount: number;
 }) {
   const { tx, auto } = item;
+  const byAmount = item.key.includes("@");
   return (
     <div className="flex h-full flex-col justify-between p-7">
       <div className="flex items-center justify-between gap-4">
@@ -531,9 +532,13 @@ function CardFront({
         <p className="text-[0.8rem] leading-[1.3rem] text-muted">
           Suggested: {CATEGORY_LABELS[auto.category]}
           {similarCount > 0
-            ? ` · your answer applies to ${similarCount} more from this merchant (€${formatEur(similarTotal)})`
+            ? byAmount
+              ? ` · applies to ${similarCount} more charge${similarCount === 1 ? "" : "s"} of exactly €${formatEur(Math.abs(tx.amount))} from this biller (€${formatEur(similarTotal)})`
+              : ` · your answer applies to ${similarCount} more from this merchant (€${formatEur(similarTotal)})`
             : siblingsCount > 0
-              ? ` · ${siblingsCount} other payment${siblingsCount === 1 ? "" : "s"} to this merchant already sorted`
+              ? byAmount
+                ? ` · ${siblingsCount} other charge${siblingsCount === 1 ? "" : "s"} of this amount already sorted`
+                : ` · ${siblingsCount} other payment${siblingsCount === 1 ? "" : "s"} to this merchant already sorted`
               : ""}
         </p>
       </div>
@@ -620,7 +625,7 @@ function CardBack({
 
       <label className="flex items-center justify-between gap-3 rounded-[10px] border border-rule px-3 py-2">
         <span className="text-[0.85rem] leading-[1.3rem] text-body">
-          Apply to {similarCount} more from this merchant and remember it
+          Apply to {similarCount} more {item.key.includes("@") ? "of this exact amount" : "from this merchant"} and remember it
         </span>
         <input
           type="checkbox"
@@ -664,7 +669,7 @@ function CardBack({
       {decidedSiblings.length > 0 || siblings.length > 0 ? (
         <div className="flex flex-col gap-1.5">
           <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
-            Same merchant · {siblings.length} other{siblings.length === 1 ? "" : "s"} · €
+            {item.key.includes("@") ? "Same biller, same amount" : "Same merchant"} · {siblings.length} other{siblings.length === 1 ? "" : "s"} · €
             {formatEur(siblings.reduce((s, i) => s + Math.abs(i.tx.amount), 0))}
           </p>
           <ul className="flex flex-col gap-0.5 text-[0.8rem] leading-[1.25rem] text-muted">

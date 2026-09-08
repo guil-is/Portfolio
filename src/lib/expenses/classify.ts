@@ -67,6 +67,22 @@ function fromRule(rule: Rule, confidence = rule.confidence, reason = rule.reason
   };
 }
 
+/**
+ * Pass-through billers (Apple, Google Play, PayPal, Klarna) hide the real
+ * merchant, but a subscription recurs at a fixed price — so for them the
+ * memory key includes the amount: "apple com@9.99" is one app, "apple
+ * com@5.49" another. Everything else keys on the merchant alone.
+ */
+export function isPassthrough(partner: string): boolean {
+  const text = fold(partner);
+  return RULES.some((r) => r.passthrough && r.scope !== "any" && r.match.test(text));
+}
+
+export function itemKey(tx: Transaction): string {
+  const key = merchantKey(tx.partner);
+  return isPassthrough(tx.partner) ? `${key}@${Math.abs(tx.amount).toFixed(2)}` : key;
+}
+
 export function classify(
   tx: Transaction,
   memory: Record<string, MerchantMemory> = {},
@@ -81,8 +97,7 @@ export function classify(
     };
   }
 
-  const key = merchantKey(tx.partner);
-  const remembered = memory[key];
+  const remembered = memory[itemKey(tx)];
   if (remembered) {
     return {
       verdict: remembered.verdict,
