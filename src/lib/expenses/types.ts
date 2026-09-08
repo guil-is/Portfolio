@@ -38,7 +38,9 @@ export type Category =
   | "services"
   | "other"
   | "tax"
+  | "vat"
   | "health"
+  | "taxother"
   | "personal"
   | "internal";
 
@@ -58,8 +60,10 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   insurance: "Insurance",
   services: "Professional services",
   other: "Other business",
-  tax: "Tax payments",
+  tax: "Income-tax prepayment",
+  vat: "VAT prepayment",
   health: "Health & pension",
+  taxother: "Other tax-relevant",
   personal: "Personal",
   internal: "Internal transfer",
 };
@@ -82,6 +86,9 @@ export const BUSINESS_CATEGORIES: Category[] = [
   "services",
   "other",
 ];
+
+/** Categories a tax-relevant row can carry, in menu order. */
+export const TAX_CATEGORIES: Category[] = ["tax", "vat", "health", "taxother"];
 
 /** How the bank moved the money. Derived from the export's type column. */
 export type TransactionKind =

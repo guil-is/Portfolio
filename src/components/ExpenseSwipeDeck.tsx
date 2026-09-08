@@ -124,7 +124,9 @@ export function ExpenseSwipeDeck({
       if (!top || exit) return;
       setExit("down");
       exitTimer.current = window.setTimeout(() => {
-        onDecide(top, verdict, { ...optsRef.current });
+        // Tax-relevant: keep the rule's bucket (VAT, health, …) when it has one.
+        const category = verdict === "tax" ? top.auto.category : optsRef.current.category;
+        onDecide(top, verdict, { ...optsRef.current, category });
         setExitState({ id: "", exit: null });
       }, EXIT_MS);
     },

@@ -83,7 +83,50 @@ export function itemKey(tx: Transaction): string {
   return isPassthrough(tx.partner) ? `${key}@${Math.abs(tx.amount).toFixed(2)}` : key;
 }
 
+export const VAT_REF = /umsatzsteuer|\bust\b|ust-?va|ust-?vz|\bvat\b|mehrwertsteuer|voranmeldung/;
+export const INCOME_TAX_REF = /einkommensteuer|\best\b|est-?vz|solidarit|\bsoli\b|vorauszahlung/;
+
+/**
+ * A Finanzamt payment is only a prepayment for THIS year's income tax if
+ * it says so. VAT goes to its own bucket; a Nachzahlung or a payment
+ * that names an earlier year is tax-relevant but doesn't reduce this
+ * year's bill.
+ */
+export function refineTaxCategory(tx: Transaction, c: Classification): Classification {
+  if (c.verdict !== "tax" || c.category !== "tax") return c;
+  const ref = fold(`${tx.partner} ${tx.reference}`);
+  const year = Number(tx.date.slice(0, 4));
+  // "EST2024" has no word boundary before the year, so look for digits
+  // that aren't part of a longer number.
+  const yearsNamed = [...ref.matchAll(/(?<!\d)(20[0-4]\d)(?!\d)/g)].map((m) => Number(m[1]));
+  if (VAT_REF.test(ref)) {
+    return { ...c, category: "vat", reason: "Umsatzsteuer payment to the Finanzamt" };
+  }
+  if (/nachzahlung|abschlusszahlung/.test(ref) || (yearsNamed.length > 0 && yearsNamed.every((y) => y < year))) {
+    return {
+      ...c,
+      category: "taxother",
+      reason: "Finanzamt payment for an earlier year — tax-relevant, but not a prepayment for this one",
+    };
+  }
+  if (INCOME_TAX_REF.test(ref)) {
+    return { ...c, category: "tax", reason: "Income-tax prepayment (Vorauszahlung)" };
+  }
+  return {
+    ...c,
+    category: "taxother",
+    reason: "Finanzamt payment — the reference doesn't say whether it's income tax or VAT. Set it in All entries.",
+  };
+}
+
 export function classify(
+  tx: Transaction,
+  memory: Record<string, MerchantMemory> = {},
+): Classification {
+  return refineTaxCategory(tx, classifyRaw(tx, memory));
+}
+
+function classifyRaw(
   tx: Transaction,
   memory: Record<string, MerchantMemory> = {},
 ): Classification {

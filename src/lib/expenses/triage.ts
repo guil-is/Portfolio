@@ -4,9 +4,11 @@
  * as decided, pending, or exportable.
  */
 
-import { classify, itemKey } from "./classify";
+import { classify, itemKey, refineTaxCategory } from "./classify";
 import {
   AUTO_THRESHOLD,
+  BUSINESS_CATEGORIES,
+  TAX_CATEGORIES,
   type Category,
   type DecidedVerdict,
   type Decision,
@@ -76,9 +78,12 @@ export function makeDecision(
   category: Category,
   note?: string,
 ): Decision {
+  const keep =
+    (verdict === "business" && BUSINESS_CATEGORIES.includes(category)) ||
+    (verdict === "tax" && TAX_CATEGORIES.includes(category));
   return {
     verdict,
-    category: verdict === "business" ? category : defaultCategory(verdict),
+    category: keep ? category : defaultCategory(verdict),
     note: note?.trim() ? note.trim() : undefined,
     by: "you",
     at: new Date().toISOString(),
@@ -92,7 +97,9 @@ export function defaultCategory(verdict: DecidedVerdict): Category {
     case "personal":
       return "personal";
     case "tax":
-      return "tax";
+      // Unknown tax-relevant rows are listed, not counted, until you
+      // say which bucket they belong to.
+      return "taxother";
     case "skip":
       return "internal";
   }
@@ -177,17 +184,32 @@ export type TaxSideTotals = {
   business: number;
   /** Health insurance, KSK, pension — Sonderausgaben. */
   insurance: number;
-  /** Income-tax (and soli) prepayments to the Finanzamt. */
+  /** Income-tax (and soli) prepayments to the Finanzamt for this year. */
   incomeTaxPrepaid: number;
   /** Umsatzsteuer-Voranmeldungen paid. */
   vatPaid: number;
-  /** Tax-relevant rows that fit neither bucket. */
+  /** Tax-relevant rows that don't change this year's bill. */
   otherTax: number;
   entries: number;
+  /** The rows behind each bucket, so the estimate can show its work. */
+  rows: Record<"tax" | "vat" | "health" | "taxother", Item[]>;
 };
 
-const VAT_REF = /umsatzsteuer|\bust\b|ust-?va|voranmeldung.*ust|\bvat\b|mehrwertsteuer/;
-const INCOME_TAX_REF = /einkommensteuer|\best\b|solidarit|soli\b|vorauszahlung|nachzahlung|abschlusszahlung/;
+export type TaxBucket = keyof TaxSideTotals["rows"];
+
+/** Which bucket a tax-relevant row counts in. Legacy rows still carrying
+ * the broad "tax" category are re-read from their reference. */
+export function taxBucket(item: Item): TaxBucket {
+  const c = item.decision?.category;
+  if (c === "vat" || c === "health" || c === "taxother") return c;
+  const refined = refineTaxCategory(item.tx, {
+    verdict: "tax",
+    category: "tax",
+    confidence: 1,
+    reason: "",
+  });
+  return refined.category === "tax" ? "tax" : (refined.category as TaxBucket);
+}
 
 export function taxSideTotals(items: Item[], year: number): TaxSideTotals {
   const t: TaxSideTotals = {
@@ -198,6 +220,7 @@ export function taxSideTotals(items: Item[], year: number): TaxSideTotals {
     vatPaid: 0,
     otherTax: 0,
     entries: 0,
+    rows: { tax: [], vat: [], health: [], taxother: [] },
   };
   for (const i of items) {
     if (!i.tx.date.startsWith(String(year)) || !i.decision) continue;
@@ -207,12 +230,12 @@ export function taxSideTotals(items: Item[], year: number): TaxSideTotals {
       t.entries++;
     } else if (i.decision.verdict === "tax") {
       t.entries++;
-      const ref = `${i.tx.partner} ${i.tx.reference} ${i.decision.note ?? ""}`.toLowerCase();
-      if (i.decision.category === "health") t.insurance += amount;
-      else if (VAT_REF.test(ref)) t.vatPaid += amount;
-      else if (INCOME_TAX_REF.test(ref) || /finanzamt|finanzkasse|bundeskasse|landeshauptkasse/.test(ref)) {
-        t.incomeTaxPrepaid += amount;
-      } else t.otherTax += amount;
+      const bucket = taxBucket(i);
+      t.rows[bucket].push(i);
+      if (bucket === "health") t.insurance += amount;
+      else if (bucket === "vat") t.vatPaid += amount;
+      else if (bucket === "tax") t.incomeTaxPrepaid += amount;
+      else t.otherTax += amount;
     }
   }
   return t;

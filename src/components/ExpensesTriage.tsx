@@ -19,8 +19,10 @@ import {
   makeDecision,
   pendingItems,
   summarize,
+  taxBucket,
   taxSideTotals,
   yearsOf,
+  type TaxBucket,
   type DecisionMap,
   type Item,
 } from "@/lib/expenses/triage";
@@ -51,6 +53,7 @@ import { contentKey } from "@/lib/expenses/text";
 import {
   BUSINESS_CATEGORIES,
   CATEGORY_LABELS,
+  TAX_CATEGORIES,
   type Category,
   type DecidedVerdict,
   type Decision,
@@ -338,7 +341,13 @@ export function ExpensesTriage({ income }: { income: IncomeYear[] }) {
             : BUSINESS_CATEGORIES.includes(item.auto.category)
               ? item.auto.category
               : "other"
-          : "other";
+          : value === "tax"
+            ? current?.verdict === "tax"
+              ? current.category
+              : TAX_CATEGORIES.includes(item.auto.category)
+                ? item.auto.category
+                : "taxother"
+            : "other";
       return { ...d, [item.tx.id]: { ...makeDecision(value, category, current?.note), by: "you" } };
     });
   }
@@ -873,9 +882,17 @@ function EntriesTable({
                 />
               </div>
             ) : i.decision?.verdict === "tax" ? (
-              <p className="text-[0.8rem] text-faint md:col-start-5">
-                {CATEGORY_LABELS[i.decision.category]}
-              </p>
+              <select
+                value={taxBucket(i)}
+                onChange={(e) => onPatch(i, { category: e.target.value as Category })}
+                className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.8rem] text-ink focus:border-ink focus:outline-none md:col-start-5"
+              >
+                {TAX_CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {CATEGORY_LABELS[c]}
+                  </option>
+                ))}
+              </select>
             ) : (
               <span className="hidden md:col-start-5 md:block" />
             )}
@@ -1150,9 +1167,52 @@ function TaxPanel({
         <ul className="flex flex-col divide-y divide-rule-soft rounded-[14px] border border-rule px-4">
           <TaxRow label="Einkommensteuer" value={eur(est.incomeTax)} />
           <TaxRow label="Solidaritätszuschlag" value={eur(est.soli)} />
-          <TaxRow label="Prepaid to the Finanzamt" sub={side.otherTax > 0 ? `+ ${eur(side.otherTax)} tax rows not matched — check them` : undefined} value={`− ${eur(side.incomeTaxPrepaid)}`} />
+          <TaxRow label="Prepaid for this year" sub={side.otherTax > 0 ? `${eur(side.otherTax)} of other Finanzamt payments not counted — see below` : undefined} value={`− ${eur(side.incomeTaxPrepaid)}`} />
           <TaxRow label={est.incomeTaxDue >= 0 ? "Expected bill" : "Expected refund"} value={eur(Math.abs(est.incomeTaxDue))} strong />
         </ul>
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
+          Tax-relevant rows · what counts where
+        </p>
+        <p className="text-[0.85rem] leading-[1.45rem] text-muted">
+          Read off each payment&apos;s reference. Wrong bucket? Change it in All entries — the dropdown next to a tax-relevant row.
+        </p>
+        {(
+          [
+            ["tax", "Income-tax prepayments for this year", "reduce the bill"],
+            ["vat", "Umsatzsteuer paid", "count against VAT collected"],
+            ["health", "Health, KSK, pension", "Sonderausgaben"],
+            ["taxother", "Not counted", "earlier years, or unclear — set them"],
+          ] as [TaxBucket, string, string][]
+        ).map(([bucket, title, hint]) =>
+          side.rows[bucket].length === 0 ? null : (
+            <div key={bucket} className="rounded-[14px] border border-rule px-4">
+              <p className="flex items-baseline justify-between gap-4 border-b border-rule-soft py-2.5 text-[0.85rem]">
+                <span className="text-ink">
+                  {title} <span className="ml-1 text-muted">· {hint}</span>
+                </span>
+                <span className="tabular-nums text-ink">{eur(side.rows[bucket].reduce((t, i) => t + Math.abs(i.tx.amount), 0))}</span>
+              </p>
+              <ul className="flex flex-col divide-y divide-rule-soft">
+                {side.rows[bucket]
+                  .slice()
+                  .sort((a, b) => a.tx.date.localeCompare(b.tx.date))
+                  .map((i) => (
+                    <li key={i.tx.id} className="grid grid-cols-[84px_minmax(0,1fr)_auto] items-baseline gap-3 py-2 text-[0.8rem]">
+                      <span className="font-caption text-[10px] uppercase tracking-[1px] text-muted">{prettyDate(i.tx.date)}</span>
+                      <span className="truncate text-body">
+                        {i.tx.partner}
+                        {i.tx.reference ? <span className="text-muted"> · {i.tx.reference}</span> : null}
+                      </span>
+                      <span className="tabular-nums text-ink">{eur(Math.abs(i.tx.amount))}</span>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          ),
+        )}
       </div>
 
       <ul className="flex flex-col gap-1.5 text-[0.85rem] leading-[1.45rem] text-muted">

@@ -57,8 +57,12 @@ The **Tax** tab joins the two halves of the money picture:
   (`entryTaxMode()` infers it from the note when unset — set it on new
   entries). USD invoices convert at the rate you type in.
 - **Expenses** come from this page: business rows, the health / KSK /
-  pension rows as Sonderausgaben, Finanzamt rows split into income-tax
-  prepayments and Umsatzsteuer-Voranmeldungen by their reference.
+  pension rows as Sonderausgaben, Finanzamt rows split by their
+  reference into income-tax prepayments for the year, Umsatzsteuer
+  payments, and "other" (a Nachzahlung or anything naming an earlier
+  year, e.g. "EST2024" paid in February 2026 — listed, not counted).
+  Every tax-relevant row is shown under the estimate with its bucket;
+  change a bucket via the dropdown next to the row in All entries.
 - `src/lib/tax.ts` applies the § 32a EStG tariff (2025 and 2026 encoded,
   add a year when published) and the Solidaritätszuschlag with its
   Milderungszone, then subtracts what's prepaid.
