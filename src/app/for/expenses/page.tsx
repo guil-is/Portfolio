@@ -1,6 +1,7 @@
 import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { ExpensesTriage } from "@/components/ExpensesTriage";
+import { incomeByYear } from "@/lib/income";
 
 export const metadata = {
   title: "Expenses | Private",
@@ -15,6 +16,8 @@ export const metadata = {
 
 // Owner-only tool: N26 export in, tax-sheet rows out. The bank data is
 // parsed in the browser and kept in localStorage — no upload, no API.
+// Income comes the other way: aggregated from the invoice ledger here on
+// the server, so the ledger itself never ships to the client.
 export default function ExpensesPage() {
   return (
     <>
@@ -22,7 +25,7 @@ export default function ExpensesPage() {
         <ThemeToggle />
       </div>
       <PasswordGate password="beancounter" storageKey="for-expenses-unlocked">
-        <ExpensesTriage />
+        <ExpensesTriage income={incomeByYear()} />
       </PasswordGate>
     </>
   );

@@ -30,8 +30,19 @@ export type LedgerEntry = {
   /** Grand total (incl. tax) in `currency`. */
   total: number;
   currency: "EUR" | "USD";
+  /** "de-19" when the total includes 19 % MwSt (German clients); "none"
+   * for reverse charge, §3a exempt and USD. Optional: `entryTaxMode()`
+   * infers it from the note when unset. Set it on new entries. */
+  taxMode?: "de-19" | "none";
   note?: string;
 };
+
+/** VAT treatment of an entry — explicit `taxMode`, else read off the note. */
+export function entryTaxMode(e: LedgerEntry): "de-19" | "none" {
+  if (e.taxMode) return e.taxMode;
+  if (e.currency !== "EUR") return "none";
+  return /mwst|19\s?%/i.test(e.note ?? "") ? "de-19" : "none";
+}
 
 export const invoiceLedger: LedgerEntry[] = [
   {
@@ -44,6 +55,7 @@ export const invoiceLedger: LedgerEntry[] = [
     dueAt: "2026-09-16",
     total: 1904,
     currency: "EUR",
+    taxMode: "de-19",
     note: 'Safe "address poisoning" video, motion design (1,600 EUR + 19% MwSt)',
   },
   {
@@ -123,6 +135,7 @@ export const invoiceLedger: LedgerEntry[] = [
     paidAt: "2026-07-25",
     total: 3510.5,
     currency: "EUR",
+    taxMode: "de-19",
     note: "Safe Workspace launch video, motion design (€2,950 + 19% MwSt)",
   },
   {
@@ -143,6 +156,7 @@ export const invoiceLedger: LedgerEntry[] = [
     paidAt: "2026-07-14",
     total: 1190,
     currency: "EUR",
+    taxMode: "de-19",
     note: "TEDxBerlin aftermovie (€1,000 + 19% MwSt)",
   },
   // Backfilled 2026-07-03 by reading the archived PDFs in Drive.

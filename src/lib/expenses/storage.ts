@@ -32,6 +32,8 @@ export type Prefs = {
   order: QueueOrder;
   /** "Sweep" button marks pending cards under this amount as personal. */
   sweepUnder: number;
+  /** EUR per 1 USD, for converting USD invoices in the tax estimate. */
+  usdRate: number;
 };
 
 function read<T>(key: string): T | null {
@@ -96,6 +98,7 @@ export function loadPrefs(): Prefs {
     includeTax: true,
     order: "date",
     sweepUnder: 10,
+    usdRate: 0.9,
     ...(read<Partial<Prefs>>(PREFS_KEY) ?? {}),
   };
 }

@@ -170,3 +170,55 @@ export function formatEur(n: number, decimalComma = false): string {
   const grouped = int.replace(/\B(?=(\d{3})+(?!\d))/g, decimalComma ? "." : ",");
   return `${n < 0 ? "-" : ""}${grouped}${decimalComma ? "," : "."}${dec}`;
 }
+
+/** What the tax estimate needs from the sorted expenses of one year. */
+export type TaxSideTotals = {
+  year: number;
+  business: number;
+  /** Health insurance, KSK, pension — Sonderausgaben. */
+  insurance: number;
+  /** Income-tax (and soli) prepayments to the Finanzamt. */
+  incomeTaxPrepaid: number;
+  /** Umsatzsteuer-Voranmeldungen paid. */
+  vatPaid: number;
+  /** Tax-relevant rows that fit neither bucket. */
+  otherTax: number;
+  entries: number;
+};
+
+const VAT_REF = /umsatzsteuer|\bust\b|ust-?va|voranmeldung.*ust|\bvat\b|mehrwertsteuer/;
+const INCOME_TAX_REF = /einkommensteuer|\best\b|solidarit|soli\b|vorauszahlung|nachzahlung|abschlusszahlung/;
+
+export function taxSideTotals(items: Item[], year: number): TaxSideTotals {
+  const t: TaxSideTotals = {
+    year,
+    business: 0,
+    insurance: 0,
+    incomeTaxPrepaid: 0,
+    vatPaid: 0,
+    otherTax: 0,
+    entries: 0,
+  };
+  for (const i of items) {
+    if (!i.tx.date.startsWith(String(year)) || !i.decision) continue;
+    const amount = Math.abs(i.tx.amount);
+    if (i.decision.verdict === "business") {
+      t.business += amount;
+      t.entries++;
+    } else if (i.decision.verdict === "tax") {
+      t.entries++;
+      const ref = `${i.tx.partner} ${i.tx.reference} ${i.decision.note ?? ""}`.toLowerCase();
+      if (i.decision.category === "health") t.insurance += amount;
+      else if (VAT_REF.test(ref)) t.vatPaid += amount;
+      else if (INCOME_TAX_REF.test(ref) || /finanzamt|finanzkasse|bundeskasse|landeshauptkasse/.test(ref)) {
+        t.incomeTaxPrepaid += amount;
+      } else t.otherTax += amount;
+    }
+  }
+  return t;
+}
+
+/** Years present in the data, most recent first. */
+export function yearsOf(items: Item[]): number[] {
+  return [...new Set(items.map((i) => Number(i.tx.date.slice(0, 4))))].sort((a, b) => b - a);
+}

@@ -44,6 +44,29 @@ this browser's localStorage, and never uploaded anywhere.
 Close the tab mid-way and the page offers to resume the same file with
 every decision intact.
 
+## Tax tab: what the Finanzamt will want
+
+The **Tax** tab joins the two halves of the money picture:
+
+- **Income** comes from the invoice ledger (`src/content/invoices/ledger.ts`),
+  aggregated on the server by `src/lib/income.ts` so the ledger never
+  ships to the browser. Cash basis: an invoice counts in the year
+  `paidAt` lands (legacy entries without `dueAt` count on `issuedAt`;
+  unpaid tracked ones show as "still unpaid, not counted"). German
+  invoices are split into net + 19 % MwSt via `taxMode` on the entry
+  (`entryTaxMode()` infers it from the note when unset — set it on new
+  entries). USD invoices convert at the rate you type in.
+- **Expenses** come from this page: business rows, the health / KSK /
+  pension rows as Sonderausgaben, Finanzamt rows split into income-tax
+  prepayments and Umsatzsteuer-Voranmeldungen by their reference.
+- `src/lib/tax.ts` applies the § 32a EStG tariff (2025 and 2026 encoded,
+  add a year when published) and the Solidaritätszuschlag with its
+  Milderungszone, then subtracts what's prepaid.
+
+It's an estimate for planning cash, not a return: single assessment, no
+church tax, no home-office share, no depreciation, no 70 % rule on
+meals, and Vorsteuer is ignored on the VAT line.
+
 ## Verdicts
 
 | Verdict | Meaning | In the export |

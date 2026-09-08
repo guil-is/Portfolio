@@ -48,6 +48,10 @@ overdue ones, and totals what's outstanding per currency. Entries with no
 invoice issued through the CLI now includes `dueAt`, so new ones track
 automatically.
 
+Each entry also carries `taxMode` (`de-19` when the total includes MwSt,
+`none` for reverse charge / §3a / USD) — the Tax tab on `/for/expenses`
+uses it to split net revenue from VAT collected.
+
 **When a payment lands:** add `paidAt: "YYYY-MM-DD"` to that ledger entry
 (and, for Justice, set `paidAt` in the `hoursLog` period too). It drops off
 the radar.
