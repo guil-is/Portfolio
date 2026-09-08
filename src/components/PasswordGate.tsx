@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 
 // Local pub-sub so same-tab sessionStorage updates trigger re-reads.
@@ -40,6 +41,7 @@ export function PasswordGate({ children, password, storageKey = "odyssey-unlocke
   const unlocked = useSyncExternalStore(subscribe, makeSnapshot(storageKey), getServerSnapshot);
   const [input, setInput] = useState("");
   const [error, setError] = useState(false);
+  const router = useRouter();
 
   if (unlocked) return <>{children}</>;
 
@@ -47,7 +49,12 @@ export function PasswordGate({ children, password, storageKey = "odyssey-unlocke
     e.preventDefault();
     if (input === password) {
       window.sessionStorage.setItem(storageKey, "1");
+      // Session cookie with the same key: a server page can check it and
+      // keep its data out of the payload until the gate is passed
+      // (/for/books does). Then refresh so that page re-renders with it.
+      document.cookie = `${storageKey}=1; path=/; SameSite=Lax`;
       notify();
+      router.refresh();
     } else {
       setError(true);
       setInput("");

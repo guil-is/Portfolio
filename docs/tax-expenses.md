@@ -44,32 +44,43 @@ this browser's localStorage, and never uploaded anywhere.
 Close the tab mid-way and the page offers to resume the same file with
 every decision intact.
 
-## Tax tab: what the Finanzamt will want
+## The books: /for/books
 
-The **Tax** tab joins the two halves of the money picture:
+`/for/books` is the bookkeeping home and the replacement for the yearly
+Google Sheet. One year at a time:
 
 - **Income** comes from the invoice ledger (`src/content/invoices/ledger.ts`),
-  aggregated on the server by `src/lib/income.ts` so the ledger never
-  ships to the browser. Cash basis: an invoice counts in the year
-  `paidAt` lands (legacy entries without `dueAt` count on `issuedAt`;
-  unpaid tracked ones show as "still unpaid, not counted"). German
-  invoices are split into net + 19 % MwSt via `taxMode` on the entry
-  (`entryTaxMode()` infers it from the note when unset — set it on new
-  entries). USD invoices convert at the rate you type in.
-- **Expenses** come from this page: business rows, the health / KSK /
-  pension rows as Sonderausgaben, Finanzamt rows split by their
-  reference into income-tax prepayments for the year, Umsatzsteuer
-  payments, and "other" (a Nachzahlung or anything naming an earlier
-  year, e.g. "EST2024" paid in February 2026 — listed, not counted).
-  Every tax-relevant row is shown under the estimate with its bucket;
-  change a bucket via the dropdown next to the row in All entries.
-- `src/lib/tax.ts` applies the § 32a EStG tariff (2025 and 2026 encoded,
-  add a year when published) and the Solidaritätszuschlag with its
-  Milderungszone, then subtracts what's prepaid.
+  read on the server by `src/lib/income.ts`. Cash basis: an invoice
+  counts in the year `paidAt` lands (legacy entries without `dueAt`
+  count on `issuedAt`; unpaid tracked ones are listed as outstanding).
+  German invoices split into net + 19 % MwSt via `taxMode` on the entry.
+  USD invoices convert at the rate you set. The page is dynamic and only
+  passes ledger data down once the gate's cookie is set (PasswordGate
+  writes `<storageKey>=1` on unlock), so invoice figures never sit in a
+  static payload.
+- **Expenses and tax-relevant rows** live in the books store
+  (`src/lib/expenses/books.ts`, localStorage, one list per year). The
+  expenses page writes every decided business / tax row there and
+  removes rows that turn personal. Rows you add by hand (cash receipts,
+  pre-ledger invoices) live there too.
+- **Tax estimate** (`src/components/TaxEstimate.tsx`, maths in
+  `src/lib/tax.ts`): § 32a tariff (2025, 2026), Solidaritätszuschlag with
+  Milderungszone, Sonderausgaben from the health/KSK/pension rows,
+  Finanzamt rows split into this year's prepayments / VAT / other. Two
+  columns: so far, and the same run-rate projected to 31 December
+  (average month × 12). "Married, filing jointly" switches to the
+  Splittingtarif and takes the partner's taxable income and withheld
+  Lohnsteuer.
+- **For the accountant**: copies the year's rows in the Primanota layout
+  of the old sheet — Date, Income (EUR), Expense (EUR), Client +
+  Reference, USt./VAT %, Country, Invoice nr, Currency, USD to EUR,
+  Income (USD), Category. "Only rows not yet sent" + "Mark these as
+  sent" keep the batches straight (`sentAt` per row, sent invoice
+  numbers per year).
 
-It's an estimate for planning cash, not a return: single assessment, no
-church tax, no home-office share, no depreciation, no 70 % rule on
-meals, and Vorsteuer is ignored on the VAT line.
+It's an estimate for planning cash, not a return: no church tax, no
+home-office share, no depreciation, no 70 % rule on meals, Vorsteuer
+ignored on the VAT line.
 
 ## Verdicts
 

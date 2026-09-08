@@ -69,3 +69,32 @@ export function incomeByYear(): IncomeYear[] {
   }
   return [...years.values()].sort((a, b) => b.year - a.year);
 }
+
+/** One ledger invoice as a books row (what the accountant export needs). */
+export type InvoiceRow = {
+  number: string;
+  client: string;
+  /** Date the money landed (or issue date for legacy entries). */
+  date: string;
+  /** Gross total in `currency`. */
+  total: number;
+  currency: "EUR" | "USD";
+  taxMode: "de-19" | "none";
+  /** Unpaid, tracked — shown but not counted. */
+  outstanding: boolean;
+};
+
+export function invoiceRows(): InvoiceRow[] {
+  return invoiceLedger.map((e) => {
+    const received = receivedOn(e);
+    return {
+      number: e.number,
+      client: e.client,
+      date: received ?? e.dueAt ?? e.issuedAt,
+      total: e.total,
+      currency: e.currency,
+      taxMode: entryTaxMode(e),
+      outstanding: !received,
+    };
+  });
+}

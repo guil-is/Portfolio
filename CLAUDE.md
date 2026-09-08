@@ -58,7 +58,7 @@
 - `/for/expenses` sorts a year of N26 payments into business / personal / tax-relevant / skip, swipe-style for the ones the rules can't decide, and copies the business rows as TSV for the tax sheet. Workflow + verdict table: `docs/tax-expenses.md`.
 - Rules live in `src/lib/expenses/rules.ts` (ordered, first match wins). Parser, classifier, export and persistence sit next to it under `src/lib/expenses/`; the page is `src/components/ExpensesTriage.tsx` + `ExpenseSwipeDeck.tsx`. Headless check after editing rules: `npm run expenses -- <export.csv>`.
 - Bank data never leaves the browser (parsed client-side, kept in localStorage). Keep it that way — no API route, no upload.
-- The page's **Tax** tab estimates the year-end Finanzamt bill: income from the invoice ledger (aggregated server-side in `src/lib/income.ts`, cash basis, `taxMode` per entry) + expenses from the page, through the § 32a tariff in `src/lib/tax.ts`. When issuing an invoice, set `taxMode` on the ledger entry (`de-19` for German clients, `none` otherwise) so the VAT split stays right.
+- `/for/books` is the bookkeeping home (replaces the yearly Google Sheet): per-year books in localStorage (`src/lib/expenses/books.ts`, fed by the expenses page + manual rows), income from the invoice ledger (server-side `src/lib/income.ts`, cash basis, `taxMode` per entry, passed down only after the gate cookie), the Finanzamt estimate (`src/lib/tax.ts`, § 32a tariff, joint filing, run-rate projection) and the accountant's Primanota copy (`src/lib/expenses/accountant.ts`). When issuing an invoice, set `taxMode` on the ledger entry (`de-19` for German clients, `none` otherwise).
 
 # Hours log updates (Justice)
 

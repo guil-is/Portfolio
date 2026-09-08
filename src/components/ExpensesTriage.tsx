@@ -9,6 +9,7 @@ import {
   type ChangeEvent,
   type DragEvent,
 } from "react";
+import Link from "next/link";
 import { Ban, Briefcase, Copy, Download, FileUp, Landmark, RotateCcw, User } from "lucide-react";
 import { parseStatementCsv } from "@/lib/expenses/parse";
 import {
@@ -20,14 +21,10 @@ import {
   pendingItems,
   summarize,
   taxBucket,
-  taxSideTotals,
-  yearsOf,
-  type TaxBucket,
   type DecisionMap,
   type Item,
 } from "@/lib/expenses/triage";
-import type { IncomeYear } from "@/lib/income";
-import { estimateTax } from "@/lib/tax";
+import { syncItemsIntoBooks } from "@/lib/expenses/books";
 import {
   exportColumns,
   exportRows,
@@ -70,7 +67,7 @@ import { ExpenseSwipeDeck, kindLabel, prettyDate, type DecideOptions } from "./E
  */
 
 type Loaded = { parsed: ParseResult; fileName: string; fileKey: string };
-type Tab = "swipe" | "all" | "export" | "tax";
+type Tab = "swipe" | "all" | "export";
 type Snapshot = { decisions: DecisionMap; memory: Record<string, MerchantMemory>; deferred: string[] };
 type Filter = "all" | "pending" | "business" | "personal" | "tax" | "skip";
 
@@ -89,7 +86,7 @@ const VERDICT_LABEL: Record<DecidedVerdict | "pending", string> = {
   pending: "Ask me",
 };
 
-export function ExpensesTriage({ income }: { income: IncomeYear[] }) {
+export function ExpensesTriage() {
   const [loaded, setLoaded] = useState<Loaded | null>(null);
   const [decisions, setDecisions] = useState<DecisionMap>({});
   const [memory, setMemory] = useState<Record<string, MerchantMemory>>(() => loadMemory());
@@ -105,7 +102,6 @@ export function ExpensesTriage({ income }: { income: IncomeYear[] }) {
   const [filter, setFilter] = useState<Filter>("all");
   const [search, setSearch] = useState("");
   const [dragOver, setDragOver] = useState(false);
-  const [taxYear, setTaxYear] = useState<number | null>(null);
   const celebrated = useRef<string | null>(null);
 
   const items = useMemo(
@@ -168,6 +164,14 @@ export function ExpensesTriage({ income }: { income: IncomeYear[] }) {
   useEffect(() => {
     saveMemory(memory);
   }, [memory]);
+
+  // Every decided business / tax row lands in the books (the dashboard
+  // at /for/books reads them); personal, skipped and undecided rows are
+  // taken out again.
+  useEffect(() => {
+    if (!loaded) return;
+    syncItemsIntoBooks(items);
+  }, [loaded, items]);
 
   useEffect(() => {
     savePrefs(prefs);
@@ -426,7 +430,7 @@ export function ExpensesTriage({ income }: { income: IncomeYear[] }) {
         </h1>
         <p className="max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
           Drop the N26 export for the year. The rules sort what they can, you swipe through the rest,
-          then copy the business rows straight into the tax sheet. Nothing leaves this browser.
+          and every business or tax-relevant row lands in the books. Nothing leaves this browser.
         </p>
       </section>
 
@@ -527,6 +531,9 @@ export function ExpensesTriage({ income }: { income: IncomeYear[] }) {
                 {loaded.parsed.incomingCount > 0 ? ` · ${loaded.parsed.incomingCount} incoming ignored` : ""}
               </p>
               <div className="flex gap-4">
+                <Link href="/for/books" className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted">
+                  Books &amp; tax →
+                </Link>
                 <button type="button" onClick={startOver} className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
                   Load another file
                 </button>
@@ -552,7 +559,6 @@ export function ExpensesTriage({ income }: { income: IncomeYear[] }) {
                 ["swipe", `Swipe${pending.length > 0 ? ` · ${pending.length}` : ""}`],
                 ["all", `All entries · ${items.length}`],
                 ["export", "Export"],
-                ["tax", "Tax"],
               ] as [Tab, string][]
             ).map(([key, label]) => (
               <button
@@ -665,18 +671,6 @@ export function ExpensesTriage({ income }: { income: IncomeYear[] }) {
             />
           ) : null}
 
-          {tab === "tax" ? (
-            <TaxPanel
-              items={items}
-              income={income}
-              year={taxYear ?? yearsOf(items)[0] ?? new Date().getFullYear()}
-              setYear={setTaxYear}
-              usdRate={prefs.usdRate}
-              setUsdRate={(r) => setPrefs({ ...prefs, usdRate: r })}
-              pendingCount={summary.pendingCount}
-            />
-          ) : null}
-
           {tab === "export" ? (
             <ExportPanel
               items={items}
@@ -753,6 +747,9 @@ function DonePanel({
         <button type="button" onClick={onReview} className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
           Review all entries
         </button>
+        <Link href="/for/books" className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
+          Open the books
+        </Link>
         {onUndo ? (
           <button type="button" onClick={onUndo} className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
             Undo last
@@ -1059,183 +1056,6 @@ function ExportPanel({
         />
       </div>
     </section>
-  );
-}
-
-function TaxPanel({
-  items,
-  income,
-  year,
-  setYear,
-  usdRate,
-  setUsdRate,
-  pendingCount,
-}: {
-  items: Item[];
-  income: IncomeYear[];
-  year: number;
-  setYear: (y: number) => void;
-  usdRate: number;
-  setUsdRate: (r: number) => void;
-  pendingCount: number;
-}) {
-  const years = [...new Set([...yearsOf(items), ...income.map((i) => i.year)])].sort((a, b) => b - a);
-  const inc = income.find((i) => i.year === year);
-  const side = taxSideTotals(items, year);
-  const usdEur = (inc?.usd ?? 0) * usdRate;
-  const revenue = (inc?.eurNet ?? 0) + usdEur;
-  const est = estimateTax({
-    year,
-    revenue,
-    expenses: side.business,
-    insurance: side.insurance,
-    prepaid: side.incomeTaxPrepaid,
-    vatCollected: inc?.eurVat ?? 0,
-    vatPaid: side.vatPaid,
-  });
-  const outstanding = (inc?.outstandingEurNet ?? 0) + (inc?.outstandingUsd ?? 0) * usdRate;
-  const eur = (n: number) => `€${formatEur(Math.round(n))}`;
-
-  return (
-    <section className="flex flex-col gap-10">
-      <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
-        <div className="flex items-center gap-2">
-          <span className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">Tax year</span>
-          {years.map((y) => (
-            <button
-              key={y}
-              type="button"
-              onClick={() => setYear(y)}
-              className={`rounded-full border px-3 py-1 font-caption text-[10px] font-semibold uppercase tracking-[1px] transition-colors ${
-                y === year ? "border-ink bg-ink text-bg" : "border-rule text-muted hover:border-ink hover:text-ink"
-              }`}
-            >
-              {y}
-            </button>
-          ))}
-        </div>
-        <label className="flex items-center gap-2 text-[0.85rem] text-muted">
-          1 USD =
-          <input
-            type="number"
-            step="0.01"
-            min="0.5"
-            max="1.5"
-            value={usdRate}
-            onChange={(e) => setUsdRate(Number(e.target.value) || usdRate)}
-            className="w-[72px] rounded-[8px] border border-rule bg-bg px-2 py-1 text-[0.85rem] text-ink focus:border-ink focus:outline-none"
-          />
-          EUR
-        </label>
-      </div>
-
-      <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule md:grid-cols-3">
-        <Stat label="Expected income tax bill" value={eur(Math.max(0, est.incomeTaxDue))} sub={est.incomeTaxDue < 0 ? `refund of ${eur(-est.incomeTaxDue)} expected` : `after ${eur(side.incomeTaxPrepaid)} already prepaid`} accent={est.incomeTaxDue <= 0} />
-        <Stat label="VAT still to pay" value={eur(Math.max(0, est.vatDue))} sub={`collected ${eur(inc?.eurVat ?? 0)} · paid ${eur(side.vatPaid)} · before Vorsteuer`} />
-        <Stat label="Profit so far" value={eur(est.profit)} sub={`effective tax rate ${Math.round(est.effectiveRate * 100)} %`} />
-      </div>
-
-      {pendingCount > 0 ? (
-        <p className="rounded-[12px] border border-rule-soft bg-card/40 px-4 py-3 text-[0.85rem] leading-[1.4rem] text-muted">
-          {pendingCount} entr{pendingCount === 1 ? "y is" : "ies are"} still undecided and count as nothing here.
-        </p>
-      ) : null}
-
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <div className="flex flex-col gap-3">
-          <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">Income · from the invoice ledger</p>
-          <ul className="flex flex-col divide-y divide-rule-soft rounded-[14px] border border-rule px-4">
-            <TaxRow label="EUR invoices, net" value={eur(inc?.eurNet ?? 0)} />
-            <TaxRow label="USD invoices" sub={`$${formatEur(inc?.usd ?? 0)} × ${usdRate}`} value={eur(usdEur)} />
-            <TaxRow label="Revenue received" sub={`${inc?.invoices ?? 0} invoices`} value={eur(revenue)} strong />
-            {outstanding > 0 ? <TaxRow label="Still unpaid, not counted" value={eur(outstanding)} /> : null}
-          </ul>
-        </div>
-        <div className="flex flex-col gap-3">
-          <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">Expenses · from this page</p>
-          <ul className="flex flex-col divide-y divide-rule-soft rounded-[14px] border border-rule px-4">
-            <TaxRow label="Business expenses" value={`− ${eur(side.business)}`} />
-            <TaxRow label="Profit" value={eur(est.profit)} strong />
-            <TaxRow label="Health, KSK, pension" sub="Sonderausgaben" value={`− ${eur(est.sonderausgaben)}`} />
-            <TaxRow label="Taxable income" value={eur(est.taxable)} strong />
-          </ul>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">Income tax · § 32a EStG tariff {est.tariffYear}</p>
-        <ul className="flex flex-col divide-y divide-rule-soft rounded-[14px] border border-rule px-4">
-          <TaxRow label="Einkommensteuer" value={eur(est.incomeTax)} />
-          <TaxRow label="Solidaritätszuschlag" value={eur(est.soli)} />
-          <TaxRow label="Prepaid for this year" sub={side.otherTax > 0 ? `${eur(side.otherTax)} of other Finanzamt payments not counted — see below` : undefined} value={`− ${eur(side.incomeTaxPrepaid)}`} />
-          <TaxRow label={est.incomeTaxDue >= 0 ? "Expected bill" : "Expected refund"} value={eur(Math.abs(est.incomeTaxDue))} strong />
-        </ul>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
-          Tax-relevant rows · what counts where
-        </p>
-        <p className="text-[0.85rem] leading-[1.45rem] text-muted">
-          Read off each payment&apos;s reference. Wrong bucket? Change it in All entries — the dropdown next to a tax-relevant row.
-        </p>
-        {(
-          [
-            ["tax", "Income-tax prepayments for this year", "reduce the bill"],
-            ["vat", "Umsatzsteuer paid", "count against VAT collected"],
-            ["health", "Health, KSK, pension", "Sonderausgaben"],
-            ["taxother", "Not counted", "earlier years, or unclear — set them"],
-          ] as [TaxBucket, string, string][]
-        ).map(([bucket, title, hint]) =>
-          side.rows[bucket].length === 0 ? null : (
-            <div key={bucket} className="rounded-[14px] border border-rule px-4">
-              <p className="flex items-baseline justify-between gap-4 border-b border-rule-soft py-2.5 text-[0.85rem]">
-                <span className="text-ink">
-                  {title} <span className="ml-1 text-muted">· {hint}</span>
-                </span>
-                <span className="tabular-nums text-ink">{eur(side.rows[bucket].reduce((t, i) => t + Math.abs(i.tx.amount), 0))}</span>
-              </p>
-              <ul className="flex flex-col divide-y divide-rule-soft">
-                {side.rows[bucket]
-                  .slice()
-                  .sort((a, b) => a.tx.date.localeCompare(b.tx.date))
-                  .map((i) => (
-                    <li key={i.tx.id} className="grid grid-cols-[84px_minmax(0,1fr)_auto] items-baseline gap-3 py-2 text-[0.8rem]">
-                      <span className="font-caption text-[10px] uppercase tracking-[1px] text-muted">{prettyDate(i.tx.date)}</span>
-                      <span className="truncate text-body">
-                        {i.tx.partner}
-                        {i.tx.reference ? <span className="text-muted"> · {i.tx.reference}</span> : null}
-                      </span>
-                      <span className="tabular-nums text-ink">{eur(Math.abs(i.tx.amount))}</span>
-                    </li>
-                  ))}
-              </ul>
-            </div>
-          ),
-        )}
-      </div>
-
-      <ul className="flex flex-col gap-1.5 text-[0.85rem] leading-[1.45rem] text-muted">
-        <li>Estimate, not advice: single assessment, no church tax, no children, no other income.</li>
-        <li>Income counts when the money landed (EÜR). Set the USD rate to what Wise actually gave you across the year.</li>
-        <li>Not in here: the home-office share of rent and utilities, depreciation on hardware over €1,000, the 30 % of client meals the Finanzamt disallows. Your accountant adds those.</li>
-        <li>VAT is settled through the Voranmeldungen. The figure above ignores Vorsteuer on German receipts, so the real balance is lower.</li>
-      </ul>
-    </section>
-  );
-}
-
-function TaxRow({ label, value, sub, strong }: { label: string; value: string; sub?: string; strong?: boolean }) {
-  return (
-    <li className="flex items-baseline justify-between gap-4 py-2.5 text-[0.9rem]">
-      <span className="min-w-0">
-        <span className={strong ? "text-ink" : "text-body"}>{label}</span>
-        {sub ? <span className="ml-2 text-[0.8rem] text-muted">{sub}</span> : null}
-      </span>
-      <span className={`shrink-0 tabular-nums ${strong ? "font-display text-[1.1rem] font-bold text-ink" : "text-ink"}`}>
-        {value}
-      </span>
-    </li>
   );
 }
 

@@ -178,28 +178,9 @@ export function formatEur(n: number, decimalComma = false): string {
   return `${n < 0 ? "-" : ""}${grouped}${decimalComma ? "," : "."}${dec}`;
 }
 
-/** What the tax estimate needs from the sorted expenses of one year. */
-export type TaxSideTotals = {
-  year: number;
-  business: number;
-  /** Health insurance, KSK, pension — Sonderausgaben. */
-  insurance: number;
-  /** Income-tax (and soli) prepayments to the Finanzamt for this year. */
-  incomeTaxPrepaid: number;
-  /** Umsatzsteuer-Voranmeldungen paid. */
-  vatPaid: number;
-  /** Tax-relevant rows that don't change this year's bill. */
-  otherTax: number;
-  entries: number;
-  /** The rows behind each bucket, so the estimate can show its work. */
-  rows: Record<"tax" | "vat" | "health" | "taxother", Item[]>;
-};
-
-export type TaxBucket = keyof TaxSideTotals["rows"];
-
 /** Which bucket a tax-relevant row counts in. Legacy rows still carrying
  * the broad "tax" category are re-read from their reference. */
-export function taxBucket(item: Item): TaxBucket {
+export function taxBucket(item: Item): "tax" | "vat" | "health" | "taxother" {
   const c = item.decision?.category;
   if (c === "vat" || c === "health" || c === "taxother") return c;
   const refined = refineTaxCategory(item.tx, {
@@ -208,37 +189,7 @@ export function taxBucket(item: Item): TaxBucket {
     confidence: 1,
     reason: "",
   });
-  return refined.category === "tax" ? "tax" : (refined.category as TaxBucket);
-}
-
-export function taxSideTotals(items: Item[], year: number): TaxSideTotals {
-  const t: TaxSideTotals = {
-    year,
-    business: 0,
-    insurance: 0,
-    incomeTaxPrepaid: 0,
-    vatPaid: 0,
-    otherTax: 0,
-    entries: 0,
-    rows: { tax: [], vat: [], health: [], taxother: [] },
-  };
-  for (const i of items) {
-    if (!i.tx.date.startsWith(String(year)) || !i.decision) continue;
-    const amount = Math.abs(i.tx.amount);
-    if (i.decision.verdict === "business") {
-      t.business += amount;
-      t.entries++;
-    } else if (i.decision.verdict === "tax") {
-      t.entries++;
-      const bucket = taxBucket(i);
-      t.rows[bucket].push(i);
-      if (bucket === "health") t.insurance += amount;
-      else if (bucket === "vat") t.vatPaid += amount;
-      else if (bucket === "tax") t.incomeTaxPrepaid += amount;
-      else t.otherTax += amount;
-    }
-  }
-  return t;
+  return refined.category === "tax" ? "tax" : (refined.category as "vat" | "health" | "taxother");
 }
 
 /** Years present in the data, most recent first. */

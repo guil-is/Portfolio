@@ -97,12 +97,20 @@ export type TaxInput = {
   vatPaid: number;
   /** Input VAT (Vorsteuer) on expenses, when known. */
   vorsteuer?: number;
+  /** Married, filing jointly (Zusammenveranlagung, Splittingtarif). */
+  joint?: boolean;
+  /** Partner's taxable income for the year (after their own deductions). */
+  spouseIncome?: number;
+  /** Lohnsteuer + Soli already withheld from the partner's salary. */
+  spouseWithheld?: number;
 };
 
 export type TaxEstimate = {
   tariffYear: number;
+  joint: boolean;
   profit: number;
   sonderausgaben: number;
+  /** Household taxable income when joint, else yours. */
   taxable: number;
   incomeTax: number;
   soli: number;
@@ -121,19 +129,24 @@ export function estimateTax(input: TaxInput): TaxEstimate {
   // Basic health/pension cover is (almost) fully deductible as
   // Sonderausgaben; the few percent the Finanzamt trims are ignored here.
   const sonderausgaben = Math.max(0, input.insurance);
-  const taxable = Math.max(0, profit - sonderausgaben);
-  const tax = incomeTax(taxable, input.year);
-  const surcharge = soli(tax, input.year);
+  const own = Math.max(0, profit - sonderausgaben);
+  const joint = Boolean(input.joint);
+  const taxable = joint ? own + Math.max(0, input.spouseIncome ?? 0) : own;
+  // Splittingtarif: tax the household income as two halves.
+  const tax = joint ? 2 * incomeTax(taxable / 2, input.year) : incomeTax(taxable, input.year);
+  const surcharge = joint ? 2 * soli(tax / 2, input.year) : soli(tax, input.year);
   const liability = tax + surcharge;
+  const prepaid = input.prepaid + (joint ? (input.spouseWithheld ?? 0) : 0);
   return {
     tariffYear,
+    joint,
     profit,
     sonderausgaben,
     taxable,
     incomeTax: tax,
     soli: surcharge,
     liability,
-    incomeTaxDue: liability - input.prepaid,
+    incomeTaxDue: liability - prepaid,
     vatDue: input.vatCollected - (input.vorsteuer ?? 0) - input.vatPaid,
     effectiveRate: profit > 0 ? liability / profit : 0,
   };
