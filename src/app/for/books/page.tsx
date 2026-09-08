@@ -3,6 +3,7 @@ import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BooksDashboard } from "@/components/BooksDashboard";
 import { incomeByYear, invoiceRows } from "@/lib/income";
+import { seedBooks, seedEntries } from "@/content/books/seed";
 
 export const metadata = {
   title: "Books | Private",
@@ -32,6 +33,7 @@ export default async function BooksPage() {
         <BooksDashboard
           income={unlocked ? incomeByYear() : []}
           invoices={unlocked ? invoiceRows() : []}
+          seed={unlocked ? Object.keys(seedBooks).flatMap((y) => seedEntries(Number(y))) : []}
           ledgerLoaded={unlocked}
         />
       </PasswordGate>

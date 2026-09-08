@@ -40,7 +40,7 @@ export type BookEntry = {
   original?: number;
   /** EUR per 1 unit of the original currency. */
   rate?: number;
-  source: "n26" | "manual" | "ledger";
+  source: "n26" | "manual" | "ledger" | "seed";
   /** Set when the row has been handed to the accountant. */
   sentAt?: string;
   updatedAt: string;
@@ -84,6 +84,26 @@ export function bookYears(): number[] {
 
 export function loadBook(year: number): BookEntry[] {
   return read<BookEntry[]>(KEY(year)) ?? [];
+}
+
+export function loadAllBooks(): BookEntry[] {
+  return bookYears().flatMap((y) => loadBook(y));
+}
+
+/**
+ * Finanzamt payments booked in OTHER years that name this one — an
+ * "ESt VZ 2025" paid in May 2026 is a 2025 prepayment. Only income-tax
+ * payments; VAT for another year is rare and left to the accountant.
+ */
+export function prepaidElsewhereFor(year: number, all: BookEntry[]): BookEntry[] {
+  return all.filter((e) => {
+    if (e.kind !== "tax" || e.date.startsWith(String(year))) return false;
+    const ref = `${e.party} ${e.reference} ${e.note ?? ""}`.toLowerCase();
+    if (!/finanzamt|finanzkasse|bundeskasse|landeshauptkasse|steuer/.test(ref)) return false;
+    if (/umsatzsteuer|\bust\b|ust-?va|voranmeldung/.test(ref)) return false;
+    const named = [...ref.matchAll(/(?<!\d)(20[0-4]\d)(?!\d)/g)].map((m) => Number(m[1]));
+    return named.includes(year);
+  });
 }
 
 export function saveBook(year: number, entries: BookEntry[]): void {

@@ -6,8 +6,10 @@ import { Copy, Trash2 } from "lucide-react";
 import type { IncomeYear, InvoiceRow } from "@/lib/income";
 import {
   bookYears,
+  loadAllBooks,
   loadBook,
   loadBooksSettings,
+  prepaidElsewhereFor,
   loadSentInvoices,
   newManualEntry,
   saveBook,
@@ -41,10 +43,13 @@ type Filter = "all" | "income" | "expense" | "tax";
 export function BooksDashboard({
   income,
   invoices,
+  seed,
   ledgerLoaded,
 }: {
   income: IncomeYear[];
   invoices: InvoiceRow[];
+  /** Pre-tool years transcribed from the old sheets (src/content/books/seed.ts). */
+  seed: BookEntry[];
   ledgerLoaded: boolean;
 }) {
   const [years, setYears] = useState<number[]>(() => bookYears());
@@ -52,6 +57,7 @@ export function BooksDashboard({
     const all = [...bookYears(), ...income.map((i) => i.year), new Date().getFullYear()];
     return Math.max(...all);
   });
+  const seedYears = useMemo(() => [...new Set(seed.map((e) => Number(e.date.slice(0, 4))))], [seed]);
   const [entries, setEntries] = useState<BookEntry[]>(() => loadBook(year));
   const [sentInvoices, setSentInvoices] = useState<string[]>(() => loadSentInvoices(year));
   const [settings, setSettings] = useState<BooksSettings>(() => loadBooksSettings());
@@ -95,8 +101,8 @@ export function BooksDashboard({
   }
 
   const allYears = useMemo(
-    () => [...new Set([...years, ...income.map((i) => i.year), year])].sort((a, b) => b - a),
-    [years, income, year],
+    () => [...new Set([...years, ...income.map((i) => i.year), ...seedYears, year])].sort((a, b) => b - a),
+    [years, income, seedYears, year],
   );
   const inc = income.find((i) => i.year === year);
 
@@ -127,9 +133,26 @@ export function BooksDashboard({
     [invoices, year, settings.usdRate, sentInvoices],
   );
 
-  const yearEntries = useMemo(
-    () => entries.filter((e) => e.date.startsWith(String(year))),
-    [entries, year],
+  // Seed rows for the year: income always; expenses only until an N26
+  // import for that year exists (the import is the complete record).
+  const yearEntries = useMemo(() => {
+    const own = entries.filter((e) => e.date.startsWith(String(year)));
+    const hasImport = own.some((e) => e.source === "n26");
+    const seeded = seed.filter(
+      (e) => e.date.startsWith(String(year)) && (e.kind === "income" || !hasImport),
+    );
+    return [...own, ...seeded];
+  }, [entries, seed, year]);
+  const seedExpensesHidden = useMemo(
+    () =>
+      entries.some((e) => e.date.startsWith(String(year)) && e.source === "n26") &&
+      seed.some((e) => e.date.startsWith(String(year)) && e.kind !== "income"),
+    [entries, seed, year],
+  );
+  // Finanzamt payments in other years that name this one.
+  const elsewhere = useMemo(
+    () => prepaidElsewhereFor(year, [...entries, ...loadAllBooks().filter((e) => !e.date.startsWith(String(year)))]),
+    [year, entries],
   );
   const allRows = useMemo(
     () => [...ledgerRows, ...yearEntries].sort((a, b) => b.date.localeCompare(a.date)),
@@ -245,7 +268,7 @@ export function BooksDashboard({
       </section>
 
       <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule md:grid-cols-4">
-        <Stat label="Revenue, net" value={`€${formatEur(totals.income)}`} sub={`${ledgerRows.length} invoices`} />
+        <Stat label="Revenue, net" value={`€${formatEur(totals.income)}`} sub={`${allRows.filter((r) => r.kind === "income").length} invoices`} />
         <Stat label="Expenses" value={`€${formatEur(totals.expense)}`} sub={`${yearEntries.filter((e) => e.kind === "expense").length} rows`} />
         <Stat label="Profit" value={`€${formatEur(totals.income - totals.expense)}`} sub="before Sonderausgaben" accent />
         <Stat label="Tax-relevant" value={`€${formatEur(totals.tax)}`} sub={`${yearEntries.filter((e) => e.kind === "tax").length} rows`} />
@@ -273,7 +296,14 @@ export function BooksDashboard({
       </nav>
 
       {tab === "overview" ? (
-        <TaxEstimate year={year} income={inc} entries={yearEntries} settings={settings} setSettings={setSettings} />
+        <>
+          {seedExpensesHidden ? (
+            <p className="mb-8 rounded-[12px] border border-rule-soft bg-card/40 px-4 py-3 text-[0.85rem] leading-[1.4rem] text-muted">
+              This year has an N26 import, so the expense rows transcribed from the old sheet are hidden to avoid double counting. Its income rows still count.
+            </p>
+          ) : null}
+          <TaxEstimate year={year} income={inc} entries={yearEntries} elsewhere={elsewhere} settings={settings} setSettings={setSettings} />
+        </>
       ) : null}
 
       {tab === "entries" ? (
@@ -378,8 +408,8 @@ export function BooksDashboard({
                   </p>
                   <p className="truncate text-[0.8rem] text-muted">{[r.reference, r.note].filter(Boolean).join(" · ") || CATEGORY_LABELS[r.category]}</p>
                 </div>
-                {r.source === "ledger" ? (
-                  <p className="text-[0.8rem] text-faint md:col-start-4">{r.vat === 19 ? "19 % MwSt" : "no VAT"}{r.currency === "USD" ? ` · $${formatEur(r.original ?? 0)}` : ""}</p>
+                {r.source === "ledger" || r.source === "seed" ? (
+                  <p className="text-[0.8rem] text-faint md:col-start-4">{r.kind === "income" ? (r.vat === 19 ? "19 % MwSt" : "no VAT") : CATEGORY_LABELS[r.category]}{r.currency === "USD" ? ` · $${formatEur(r.original ?? 0)}` : ""}</p>
                 ) : r.kind === "income" ? (
                   <span className="hidden md:col-start-4 md:block" />
                 ) : (
@@ -395,7 +425,7 @@ export function BooksDashboard({
                     ))}
                   </select>
                 )}
-                {r.source === "ledger" ? (
+                {r.source === "ledger" || r.source === "seed" ? (
                   <span className="hidden md:col-start-5 md:block" />
                 ) : (
                   <div className="flex gap-1.5 md:col-start-5">
@@ -443,7 +473,7 @@ export function BooksDashboard({
             ) : null}
           </ul>
           <p className="text-[0.8rem] text-muted">
-            N26 rows are edited on the expenses page (verdict, tax bucket); here you set VAT on the receipt and notes. Ledger rows come from the repo.
+            N26 rows are edited on the expenses page (verdict, tax bucket); here you set VAT on the receipt and notes. Ledger and seed rows come from the repo.
           </p>
         </section>
       ) : null}

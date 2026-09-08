@@ -16,16 +16,21 @@ export function TaxEstimate({
   year,
   income,
   entries,
+  elsewhere = [],
   settings,
   setSettings,
 }: {
   year: number;
   income?: IncomeYear;
   entries: BookEntry[];
+  /** Income-tax payments for this year booked in other years. */
+  elsewhere?: BookEntry[];
   settings: BooksSettings;
   setSettings: (s: BooksSettings) => void;
 }) {
   const side = bookTotals(entries, year);
+  const prepaidElsewhere = elsewhere.reduce((t, e) => t + e.amount, 0);
+  const prepaid = side.incomeTaxPrepaid + prepaidElsewhere;
   const usdEur = (income?.usd ?? 0) * settings.usdRate;
   const revenue = (income?.eurNet ?? 0) + usdEur + side.manualIncome;
   const progress = yearProgress(year);
@@ -45,7 +50,7 @@ export function TaxEstimate({
     revenue,
     expenses: side.expenses,
     insurance: side.insurance,
-    prepaid: side.incomeTaxPrepaid,
+    prepaid,
   });
   // Run-rate: revenue, expenses and insurance scale with the year; the
   // partner's figures and prepayments are entered as full-year values.
@@ -54,7 +59,7 @@ export function TaxEstimate({
     revenue: revenue * scale,
     expenses: side.expenses * scale,
     insurance: side.insurance * scale,
-    prepaid: side.incomeTaxPrepaid,
+    prepaid,
     vatCollected: (income?.eurVat ?? 0) * scale,
     vatPaid: side.vatPaid,
   });
@@ -73,7 +78,7 @@ export function TaxEstimate({
               ? `refund of ${eur(-projected.incomeTaxDue)} at this pace`
               : isPartial
                 ? `run-rate over ${monthsRun} months · so far ${eur(Math.max(0, soFar.incomeTaxDue))}`
-                : `after ${eur(side.incomeTaxPrepaid)} prepaid`
+                : `after ${eur(prepaid)} prepaid`
           }
           accent={projected.incomeTaxDue <= 0}
         />
@@ -159,6 +164,9 @@ export function TaxEstimate({
             <Line label={`Einkommensteuer · § 32a tariff ${soFar.tariffYear}${settings.joint ? ", splitting" : ""}`} a={soFar.incomeTax} b={projected.incomeTax} partial={isPartial} eur={eur} />
             <Line label="Solidaritätszuschlag" a={soFar.soli} b={projected.soli} partial={isPartial} eur={eur} />
             <Line label="Prepaid for this year" sub={side.otherTax > 0 ? `${eur(side.otherTax)} of other Finanzamt payments not counted — see below` : undefined} a={-side.incomeTaxPrepaid} b={-side.incomeTaxPrepaid} partial={isPartial} eur={eur} />
+            {prepaidElsewhere > 0 ? (
+              <Line label="Paid for this year in other years" sub={elsewhere.map((e) => `${prettyDate(e.date)} · ${e.reference}`).join(" · ")} a={-prepaidElsewhere} b={-prepaidElsewhere} partial={isPartial} eur={eur} />
+            ) : null}
             {settings.joint ? <Line label="Partner's Lohnsteuer withheld" a={-settings.spouseWithheld} b={-settings.spouseWithheld} partial={isPartial} eur={eur} /> : null}
             <Line label={projected.incomeTaxDue >= 0 ? "Expected bill" : "Expected refund"} a={Math.abs(soFar.incomeTaxDue)} b={Math.abs(projected.incomeTaxDue)} partial={isPartial} eur={eur} strong />
           </tbody>
