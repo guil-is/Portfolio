@@ -40,6 +40,7 @@ import {
   savePrefs,
   saveSession,
   type Prefs,
+  type QueueOrder,
   type SavedSession,
 } from "@/lib/expenses/storage";
 import { contentKey } from "@/lib/expenses/text";
@@ -108,11 +109,16 @@ export function ExpensesTriage() {
   const queue = useMemo(() => {
     const deferredSet = new Set(deferred);
     const fresh = pending.filter((i) => !deferredSet.has(i.tx.id));
+    if (prefs.order === "amount") {
+      fresh.sort(
+        (a, b) => Math.abs(b.tx.amount) - Math.abs(a.tx.amount) || a.tx.date.localeCompare(b.tx.date),
+      );
+    }
     const later = deferred
       .map((id) => pending.find((i) => i.tx.id === id))
       .filter((i): i is Item => !!i);
     return [...fresh, ...later];
-  }, [pending, deferred]);
+  }, [pending, deferred, prefs.order]);
 
   // Persist the session so a closed tab picks up where it left off.
   useEffect(() => {
@@ -503,6 +509,36 @@ export function ExpensesTriage() {
               </button>
             ))}
           </nav>
+
+          {tab === "swipe" && queue.length > 0 ? (
+            <div className="mb-6 flex flex-wrap items-center gap-2">
+              <span className="mr-2 font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
+                Order
+              </span>
+              {(
+                [
+                  ["date", "Oldest first"],
+                  ["amount", "Biggest first"],
+                ] as [QueueOrder, string][]
+              ).map(([key, label]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setPrefs({ ...prefs, order: key })}
+                  className={`rounded-full border px-3 py-1 font-caption text-[10px] font-semibold uppercase tracking-[1px] transition-colors ${
+                    prefs.order === key ? "border-ink bg-ink text-bg" : "border-rule text-muted hover:border-ink hover:text-ink"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+              {prefs.order === "amount" ? (
+                <span className="ml-2 text-[0.8rem] text-muted">
+                  €{formatEur(summary.pending)} still to decide — the big ones go first
+                </span>
+              ) : null}
+            </div>
+          ) : null}
 
           {tab === "swipe" ? (
             queue.length > 0 ? (

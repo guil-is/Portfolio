@@ -21,10 +21,14 @@ export type SavedSession = {
   savedAt: string;
 };
 
+export type QueueOrder = "date" | "amount";
+
 export type Prefs = {
   decimalComma: boolean;
   scope: "business" | "all";
   includeTax: boolean;
+  /** Swipe queue: chronological, or the biggest amounts first. */
+  order: QueueOrder;
 };
 
 function read<T>(key: string): T | null {
@@ -87,6 +91,7 @@ export function loadPrefs(): Prefs {
     decimalComma: false,
     scope: "business",
     includeTax: true,
+    order: "date",
     ...(read<Partial<Prefs>>(PREFS_KEY) ?? {}),
   };
 }
