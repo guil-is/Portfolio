@@ -804,7 +804,7 @@ function EntriesTable({
         {visible.map((i) => (
           <li
             key={i.tx.id}
-            className={`grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-3 border-b border-rule px-4 py-4 last:border-b-0 md:grid-cols-[92px_minmax(0,1fr)_100px_140px_200px] md:items-center ${
+            className={`grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-3 border-b border-rule px-4 py-4 last:border-b-0 md:grid-cols-[92px_minmax(0,1fr)_96px_auto_190px] md:items-center ${
               !i.decision ? "bg-card/30" : ""
             }`}
           >
@@ -826,17 +826,10 @@ function EntriesTable({
                 {i.tx.reference || i.auto.reason}
               </p>
             </div>
-            <select
+            <VerdictButtons
               value={i.decision?.verdict ?? "pending"}
-              onChange={(e) => onVerdict(i, e.target.value as DecidedVerdict | "pending")}
-              className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.8rem] text-ink focus:border-ink focus:outline-none md:col-start-4"
-            >
-              {(["pending", "business", "personal", "tax", "skip"] as const).map((v) => (
-                <option key={v} value={v}>
-                  {VERDICT_LABEL[v]}
-                </option>
-              ))}
-            </select>
+              onChange={(v) => onVerdict(i, v)}
+            />
             {i.decision?.verdict === "business" ? (
               <div className="flex flex-col gap-1.5 md:col-start-5">
                 <select
@@ -873,6 +866,39 @@ function EntriesTable({
         ) : null}
       </ul>
     </section>
+  );
+}
+
+/** One click per verdict; clicking the active one again asks again. */
+function VerdictButtons({
+  value,
+  onChange,
+}: {
+  value: DecidedVerdict | "pending";
+  onChange: (v: DecidedVerdict | "pending") => void;
+}) {
+  const options: { v: DecidedVerdict; label: string; active: string }[] = [
+    { v: "business", label: "Business", active: "border-accent bg-accent text-bg" },
+    { v: "personal", label: "Personal", active: "border-[#d14343] bg-[#d14343] text-white" },
+    { v: "tax", label: "Tax", active: "border-ink bg-ink text-bg" },
+    { v: "skip", label: "Skip", active: "border-ink bg-ink text-bg" },
+  ];
+  return (
+    <div className="flex flex-wrap gap-1 md:col-start-4" role="group" aria-label="Verdict">
+      {options.map((o) => (
+        <button
+          key={o.v}
+          type="button"
+          title={value === o.v ? "Click again to ask me" : VERDICT_LABEL[o.v]}
+          onClick={() => onChange(value === o.v ? "pending" : o.v)}
+          className={`rounded-full border px-2.5 py-1 font-caption text-[9px] font-bold uppercase tracking-[1px] transition-colors ${
+            value === o.v ? o.active : "border-rule text-muted hover:border-ink hover:text-ink"
+          }`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
   );
 }
 
