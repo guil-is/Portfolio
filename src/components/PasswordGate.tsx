@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
+import { useEffect, useState, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 
@@ -42,6 +42,16 @@ export function PasswordGate({ children, password, storageKey = "odyssey-unlocke
   const [input, setInput] = useState("");
   const [error, setError] = useState(false);
   const router = useRouter();
+
+  // A tab unlocked before the cookie existed (or after the cookie was
+  // cleared) still needs it for server-gated pages: set it and refresh
+  // once so the server render carries the data.
+  useEffect(() => {
+    if (!unlocked) return;
+    if (document.cookie.split("; ").includes(`${storageKey}=1`)) return;
+    document.cookie = `${storageKey}=1; path=/; SameSite=Lax`;
+    router.refresh();
+  }, [unlocked, storageKey, router]);
 
   if (unlocked) return <>{children}</>;
 
