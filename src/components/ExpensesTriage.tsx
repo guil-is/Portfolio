@@ -9,7 +9,7 @@ import {
   type ChangeEvent,
   type DragEvent,
 } from "react";
-import { Copy, Download, FileUp, RotateCcw } from "lucide-react";
+import { Ban, Briefcase, Copy, Download, FileUp, Landmark, RotateCcw, User } from "lucide-react";
 import { parseStatementCsv } from "@/lib/expenses/parse";
 import {
   buildItems,
@@ -854,10 +854,12 @@ function EntriesTable({
                   className="rounded-[8px] border border-rule bg-transparent px-2 py-1 text-[0.8rem] text-ink placeholder:text-faint focus:border-ink focus:outline-none"
                 />
               </div>
-            ) : (
+            ) : i.decision?.verdict === "tax" ? (
               <p className="text-[0.8rem] text-faint md:col-start-5">
-                {i.decision ? CATEGORY_LABELS[i.decision.category] : "Swipe to decide"}
+                {CATEGORY_LABELS[i.decision.category]}
               </p>
+            ) : (
+              <span className="hidden md:col-start-5 md:block" />
             )}
           </li>
         ))}
@@ -877,25 +879,26 @@ function VerdictButtons({
   value: DecidedVerdict | "pending";
   onChange: (v: DecidedVerdict | "pending") => void;
 }) {
-  const options: { v: DecidedVerdict; label: string; active: string }[] = [
-    { v: "business", label: "Business", active: "border-accent bg-accent text-bg" },
-    { v: "personal", label: "Personal", active: "border-[#d14343] bg-[#d14343] text-white" },
-    { v: "tax", label: "Tax", active: "border-ink bg-ink text-bg" },
-    { v: "skip", label: "Skip", active: "border-ink bg-ink text-bg" },
+  const options: { v: DecidedVerdict; Icon: typeof Briefcase; active: string }[] = [
+    { v: "business", Icon: Briefcase, active: "border-accent bg-accent text-bg" },
+    { v: "personal", Icon: User, active: "border-[#d14343] bg-[#d14343] text-white" },
+    { v: "tax", Icon: Landmark, active: "border-ink bg-ink text-bg" },
+    { v: "skip", Icon: Ban, active: "border-ink bg-ink text-bg" },
   ];
   return (
-    <div className="flex flex-wrap gap-1 md:col-start-4" role="group" aria-label="Verdict">
-      {options.map((o) => (
+    <div className="flex gap-1.5 md:col-start-4" role="group" aria-label="Verdict">
+      {options.map(({ v, Icon, active }) => (
         <button
-          key={o.v}
+          key={v}
           type="button"
-          title={value === o.v ? "Click again to ask me" : VERDICT_LABEL[o.v]}
-          onClick={() => onChange(value === o.v ? "pending" : o.v)}
-          className={`rounded-full border px-2 py-1 font-caption text-[9px] font-bold uppercase tracking-[0.5px] transition-colors ${
-            value === o.v ? o.active : "border-rule text-muted hover:border-ink hover:text-ink"
+          aria-label={VERDICT_LABEL[v]}
+          title={value === v ? `${VERDICT_LABEL[v]} — click again to ask me` : VERDICT_LABEL[v]}
+          onClick={() => onChange(value === v ? "pending" : v)}
+          className={`inline-flex h-8 w-8 items-center justify-center rounded-full border transition-colors ${
+            value === v ? active : "border-rule text-muted hover:border-ink hover:text-ink"
           }`}
         >
-          {o.label}
+          <Icon className="h-3.5 w-3.5" strokeWidth={2} />
         </button>
       ))}
     </div>
