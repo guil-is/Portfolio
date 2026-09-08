@@ -19,8 +19,12 @@ this browser's localStorage, and never uploaded anywhere.
    - N26 Spaces moves and transfers to yourself are skipped;
    - everything else lands in the swipe queue with a one-line "why I'm
      asking".
-3. **Swipe.** "Order" above the deck switches between oldest first and
-   biggest amounts first (remembered). Right / → = business, left / ← = personal, ↑ or tap = the
+3. **Swipe.** "Order" above the deck: oldest first, biggest amounts
+   first, or by merchant (most repeated first — one swipe clears the
+   whole merchant). The banner under it sweeps every pending card under
+   €5/10/20/50 to personal in one click (undoable). Right / → = business,
+   left / ← = personal, Shift + arrow or Shift + click = this one only
+   (no memory, no siblings), ↑ or tap = the
    card's back (category, note, raw fields, other payments to the same
    merchant, plus "tax-relevant" and "skip" buttons), ↓ = later, U = undo.
    A decision applies to every other pending payment from the same

@@ -21,14 +21,17 @@ export type SavedSession = {
   savedAt: string;
 };
 
-export type QueueOrder = "date" | "amount";
+export type QueueOrder = "date" | "amount" | "merchant";
 
 export type Prefs = {
   decimalComma: boolean;
   scope: "business" | "all";
   includeTax: boolean;
-  /** Swipe queue: chronological, or the biggest amounts first. */
+  /** Swipe queue: chronological, biggest amounts first, or grouped by
+   * merchant with the most repeated merchants first. */
   order: QueueOrder;
+  /** "Sweep" button marks pending cards under this amount as personal. */
+  sweepUnder: number;
 };
 
 function read<T>(key: string): T | null {
@@ -92,6 +95,7 @@ export function loadPrefs(): Prefs {
     scope: "business",
     includeTax: true,
     order: "date",
+    sweepUnder: 10,
     ...(read<Partial<Prefs>>(PREFS_KEY) ?? {}),
   };
 }

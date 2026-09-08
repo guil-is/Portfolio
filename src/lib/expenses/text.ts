@@ -79,7 +79,7 @@ export function merchantKey(partner: string): string {
   const tokens = fold(partner)
     .replace(/[^a-z0-9]+/g, " ")
     .split(" ")
-    .filter((t) => t.length > 0 && !NOISE.has(t) && !/^\d+$/.test(t));
+    .filter((t) => t.length > 1 && !NOISE.has(t) && !/^\d+$/.test(t));
   if (tokens.length === 0) return fold(partner) || "unknown";
   return tokens.slice(0, 2).join(" ");
 }

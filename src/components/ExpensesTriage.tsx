@@ -113,12 +113,37 @@ export function ExpensesTriage() {
       fresh.sort(
         (a, b) => Math.abs(b.tx.amount) - Math.abs(a.tx.amount) || a.tx.date.localeCompare(b.tx.date),
       );
+    } else if (prefs.order === "merchant") {
+      // Most repeated merchant first (then the biggest), cards of one
+      // merchant kept together in date order.
+      const groups = new Map<string, { count: number; total: number }>();
+      for (const i of fresh) {
+        const g = groups.get(i.key) ?? { count: 0, total: 0 };
+        g.count++;
+        g.total += Math.abs(i.tx.amount);
+        groups.set(i.key, g);
+      }
+      fresh.sort((a, b) => {
+        const ga = groups.get(a.key)!;
+        const gb = groups.get(b.key)!;
+        return (
+          gb.count - ga.count ||
+          gb.total - ga.total ||
+          a.key.localeCompare(b.key) ||
+          a.tx.date.localeCompare(b.tx.date)
+        );
+      });
     }
     const later = deferred
       .map((id) => pending.find((i) => i.tx.id === id))
       .filter((i): i is Item => !!i);
     return [...fresh, ...later];
   }, [pending, deferred, prefs.order]);
+
+  const smallPending = useMemo(
+    () => pending.filter((i) => Math.abs(i.tx.amount) < prefs.sweepUnder),
+    [pending, prefs.sweepUnder],
+  );
 
   // Persist the session so a closed tab picks up where it left off.
   useEffect(() => {
@@ -261,6 +286,24 @@ export function ExpensesTriage() {
         });
       }
     }
+  }
+
+  /** Mark every pending card under the threshold as personal in one go. */
+  function sweepSmall() {
+    const small = pending.filter((i) => Math.abs(i.tx.amount) < prefs.sweepUnder);
+    if (small.length === 0) return;
+    pushSnapshot();
+    const decision = makeDecision("personal", "personal");
+    setDecisions((d) => {
+      const next = { ...d };
+      for (const i of small) next[i.tx.id] = decision;
+      return next;
+    });
+    setDeferred((d) => d.filter((id) => !small.some((i) => i.tx.id === id)));
+    setToast({
+      text: `${small.length} card${small.length === 1 ? "" : "s"} under €${prefs.sweepUnder} marked personal`,
+      undo: true,
+    });
   }
 
   function later(item: Item) {
@@ -519,6 +562,7 @@ export function ExpensesTriage() {
                 [
                   ["date", "Oldest first"],
                   ["amount", "Biggest first"],
+                  ["merchant", "By merchant"],
                 ] as [QueueOrder, string][]
               ).map(([key, label]) => (
                 <button
@@ -532,11 +576,40 @@ export function ExpensesTriage() {
                   {label}
                 </button>
               ))}
-              {prefs.order === "amount" ? (
-                <span className="ml-2 text-[0.8rem] text-muted">
-                  €{formatEur(summary.pending)} still to decide — the big ones go first
-                </span>
-              ) : null}
+              <span className="ml-2 text-[0.8rem] text-muted">
+                {prefs.order === "amount"
+                  ? `€${formatEur(summary.pending)} still to decide — the big ones go first`
+                  : prefs.order === "merchant"
+                    ? "Repeat offenders first — one swipe clears the whole merchant"
+                    : ""}
+              </span>
+            </div>
+          ) : null}
+
+          {tab === "swipe" && smallPending.length > 0 ? (
+            <div className="mb-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-[14px] border border-rule-soft bg-card/40 px-4 py-3">
+              <p className="text-[0.85rem] leading-[1.4rem] text-body">
+                {smallPending.length} card{smallPending.length === 1 ? "" : "s"} under{" "}
+                <select
+                  value={prefs.sweepUnder}
+                  onChange={(e) => setPrefs({ ...prefs, sweepUnder: Number(e.target.value) })}
+                  className="rounded-[6px] border border-rule bg-bg px-1.5 py-0.5 text-[0.85rem] text-ink focus:border-ink focus:outline-none"
+                >
+                  {[5, 10, 20, 50].map((n) => (
+                    <option key={n} value={n}>
+                      €{n}
+                    </option>
+                  ))}
+                </select>{" "}
+                — €{formatEur(smallPending.reduce((t, i) => t + Math.abs(i.tx.amount), 0))} in total, mostly coffee.
+              </p>
+              <button
+                type="button"
+                onClick={sweepSmall}
+                className="rounded-full border border-ink px-4 py-1.5 font-caption text-[10px] font-bold uppercase tracking-[1px] text-ink transition-colors hover:bg-ink hover:text-bg"
+              >
+                Mark them all personal
+              </button>
             </div>
           ) : null}
 

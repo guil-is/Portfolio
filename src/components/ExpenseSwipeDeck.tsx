@@ -99,7 +99,7 @@ export function ExpenseSwipeDeck({
   }, [topId]);
 
   const commit = useCallback(
-    (direction: Exclude<Exit, null>) => {
+    (direction: Exclude<Exit, null>, single = false) => {
       if (!top || exit) return;
       if (direction === "down" && queue.length < 2) return;
       setExit(direction);
@@ -107,7 +107,9 @@ export function ExpenseSwipeDeck({
         if (direction === "down") onLater(top);
         else {
           const verdict: DecidedVerdict = direction === "right" ? "business" : "personal";
-          onDecide(top, verdict, { ...optsRef.current });
+          const opts = { ...optsRef.current };
+          if (single) opts.applyToSimilar = false;
+          onDecide(top, verdict, opts);
         }
       }, EXIT_MS);
     },
@@ -140,11 +142,11 @@ export function ExpenseSwipeDeck({
       switch (e.key) {
         case "ArrowRight":
           e.preventDefault();
-          commit("right");
+          commit("right", e.shiftKey);
           break;
         case "ArrowLeft":
           e.preventDefault();
-          commit("left");
+          commit("left", e.shiftKey);
           break;
         case "ArrowUp":
         case "i":
@@ -229,7 +231,7 @@ export function ExpenseSwipeDeck({
         </RoundButton>
         <RoundButton
           label="Personal (←)"
-          onClick={() => commit("left")}
+          onClick={(single) => commit("left", single)}
           tone="no"
           disabled={!top || !!exit}
         >
@@ -246,7 +248,7 @@ export function ExpenseSwipeDeck({
         </RoundButton>
         <RoundButton
           label="Business (→)"
-          onClick={() => commit("right")}
+          onClick={(single) => commit("right", single)}
           tone="yes"
           disabled={!top || !!exit}
         >
@@ -266,7 +268,7 @@ export function ExpenseSwipeDeck({
         <span className="mx-3">·</span>
         <span className="inline-flex items-center gap-1">business <ArrowRight className="h-3 w-3" /></span>
         <span className="mx-3">·</span>
-        <span>↑ info · ↓ later · U undo</span>
+        <span>↑ info · ↓ later · U undo · ⇧ + arrow = this one only</span>
       </p>
     </section>
   );
@@ -283,7 +285,8 @@ function RoundButton({
 }: {
   children: ReactNode;
   label: string;
-  onClick: () => void;
+  /** Receives true when the click carried Shift ("this one only"). */
+  onClick: (shift: boolean) => void;
   disabled?: boolean;
   tone?: "yes" | "no";
   size?: "sm" | "lg";
@@ -303,7 +306,7 @@ function RoundButton({
       type="button"
       aria-label={label}
       title={label}
-      onClick={onClick}
+      onClick={(e) => onClick(e.shiftKey)}
       disabled={disabled}
       className={`inline-flex ${dims} items-center justify-center rounded-full border bg-bg transition-colors disabled:cursor-not-allowed disabled:opacity-30 ${color}`}
     >
@@ -358,6 +361,7 @@ function Card({
 
   const similar = similarPending(items, item);
   const siblings = sameMerchant(items, item);
+  const similarTotal = similar.reduce((t, i) => t + Math.abs(i.tx.amount), 0);
 
   function onPointerDown(e: ReactPointerEvent<HTMLDivElement>) {
     if (depth !== 0 || exit || flipped) return;
@@ -450,7 +454,12 @@ function Card({
             onFlip={onFlip}
           />
         ) : (
-          <CardFront item={item} similarCount={similar.length} siblingsCount={siblings.length} />
+          <CardFront
+            item={item}
+            similarCount={similar.length}
+            similarTotal={similarTotal}
+            siblingsCount={siblings.length}
+          />
         )}
       </div>
     </div>
@@ -460,10 +469,12 @@ function Card({
 function CardFront({
   item,
   similarCount,
+  similarTotal,
   siblingsCount,
 }: {
   item: Item;
   similarCount: number;
+  similarTotal: number;
   siblingsCount: number;
 }) {
   const { tx, auto } = item;
@@ -471,7 +482,7 @@ function CardFront({
     <div className="flex h-full flex-col justify-between p-7">
       <div className="flex items-center justify-between gap-4">
         <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
-          {prettyDate(tx.date)}
+          {prettyDateWithDay(tx.date)}
         </p>
         <span className="inline-flex items-center rounded-[6px] border border-rule-soft bg-card/50 px-2 py-[2px] font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
           {kindLabel(tx.kind, tx.type)}
@@ -481,6 +492,11 @@ function CardFront({
       <div className="flex flex-col gap-3">
         <h2 className="font-display text-[1.75rem] font-bold leading-[1.1] text-ink md:text-[2rem]">
           {tx.partner}
+          {similarCount > 0 ? (
+            <span className="ml-3 inline-flex -translate-y-1 items-center rounded-[6px] border border-rule-soft bg-card/60 px-2 py-[2px] align-middle font-caption text-[11px] font-semibold tracking-[1px] text-muted">
+              ×{similarCount + 1}
+            </span>
+          ) : null}
         </h2>
         <p className="font-display text-[3rem] font-bold leading-none text-ink">
           €{formatEur(Math.abs(tx.amount))}
@@ -505,7 +521,7 @@ function CardFront({
         <p className="text-[0.8rem] leading-[1.3rem] text-muted">
           Suggested: {CATEGORY_LABELS[auto.category]}
           {similarCount > 0
-            ? ` · your answer applies to ${similarCount} more from this merchant`
+            ? ` · your answer applies to ${similarCount} more from this merchant (€${formatEur(similarTotal)})`
             : siblingsCount > 0
               ? ` · ${siblingsCount} other payment${siblingsCount === 1 ? "" : "s"} to this merchant already sorted`
               : ""}
@@ -678,6 +694,13 @@ export function prettyDate(iso: string): string {
   const d = new Date(`${iso}T00:00:00`);
   if (Number.isNaN(d.getTime())) return iso;
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+}
+
+/** "Tue 13 Jan 2026" — the weekday helps recall (weekend → probably personal). */
+export function prettyDateWithDay(iso: string): string {
+  const d = new Date(`${iso}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 }
 
 export function kindLabel(kind: Item["tx"]["kind"], type: string): string {
