@@ -111,6 +111,9 @@ export function ExpenseSwipeDeck({
           if (single) opts.applyToSimilar = false;
           onDecide(top, verdict, opts);
         }
+        // Clear the flown-off state so the same card can come back
+        // visible (undo) or return to the top later (deferred).
+        setExitState({ id: "", exit: null });
       }, EXIT_MS);
     },
     [top, exit, queue.length, onDecide, onLater, setExit],
@@ -122,10 +125,17 @@ export function ExpenseSwipeDeck({
       setExit("down");
       exitTimer.current = window.setTimeout(() => {
         onDecide(top, verdict, { ...optsRef.current });
+        setExitState({ id: "", exit: null });
       }, EXIT_MS);
     },
     [top, exit, onDecide, setExit],
   );
+
+  const undo = useCallback(() => {
+    if (!canUndo || exit) return;
+    setExitState({ id: "", exit: null });
+    onUndo();
+  }, [canUndo, exit, onUndo]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -161,7 +171,7 @@ export function ExpenseSwipeDeck({
         case "u":
         case "Backspace":
           e.preventDefault();
-          if (canUndo) onUndo();
+          undo();
           break;
         case "Escape":
           unflip();
@@ -170,7 +180,7 @@ export function ExpenseSwipeDeck({
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [commit, canUndo, onUndo, toggleFlip, unflip]);
+  }, [commit, undo, toggleFlip, unflip]);
 
   const progress = total === 0 ? 0 : done / total;
 
@@ -223,7 +233,7 @@ export function ExpenseSwipeDeck({
       <div className="flex items-center justify-center gap-3 md:gap-4">
         <RoundButton
           label="Undo (U)"
-          onClick={onUndo}
+          onClick={undo}
           disabled={!canUndo}
           size="sm"
         >
