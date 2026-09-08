@@ -10,7 +10,7 @@ live in Notion, owned by the other two contexts.
 
 Notion brain: https://app.notion.com/p/3ac9754238ea8106b9e9c0bf7b0a0132
 
-_Last reconciled: 2026-09-02._
+_Last reconciled: 2026-09-08._
 
 ## Status
 
@@ -63,10 +63,25 @@ _Last reconciled: 2026-09-02._
   separately, quoted first. September Phase 3 leftovers (site pages, reminder
   emails) stay under Phase 3, already billed.
 
+- **8 Sep call (Lara, Flora at the end):** all print via printdeal.be, Guil
+  supplies files on printdeal's templates, Lara orders (with design check).
+  Backdrop = flat zipper wall 300 x 230. Roll-ups = cardboard 85 x 200.
+  Stickers (80 x 50 labels) and table tents (A5 fold, ~60) are printed by SPA
+  from CSV-fed tools Guil builds. Table tents are back in scope. Floor tape
+  dropped for breadcrumb floor stickers + A4 wall signs. Speaker card tool and
+  speakers admin page demoed and welcomed. Venue visit Tue 16 Sep 16:30 at
+  the library. Lara asked for memorable brand-moment ideas and an aftermovie
+  quote (separate). Reminder emails go out week of 15 Sep once more names
+  confirm (Hoekstra is in).
+
 ## Pending from the client
 
 - Settle the Phase 3 invoice (3,800 EUR), due 2026-09-16.
-- Confirm the Phase 4 deliverables list (on the client page, #deliverables).
+- By 12 Sep: confirm the deliverables list; confirm the venue visit with the
+  library contact; screen ratio for the slide template.
+- By 19 Sep: final badge roles + first guest-list CSV (Lara); site page copy
+  (Flora); speaker photos + reminder-email copy (Claire).
+- By 26 Sep: last partner logos batch.
 
 ## Where to find things
 

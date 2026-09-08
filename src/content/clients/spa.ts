@@ -130,15 +130,19 @@ export const spa: SpaClient = {
       link: { label: "Phase 4 deliverables list", href: "#deliverables" },
     },
     {
-      text: "Send the main-stage backdrop dimensions and the AV partner's file spec, plus the screen ratio for the slide template.",
+      text: "Confirm the venue visit with the library contact: Tuesday September 16, 16:30, meeting at the library entrance.",
       due: "By Friday, September 12",
+    },
+    {
+      text: "Send the final list of badge roles for the name stickers, and a first CSV export of the guest list (first name, surname, organisation, role).",
+      due: "By Friday, September 19",
     },
     {
       text: "Send the copy for the site pages (pitcher, Letter to the Future, programme, press, partner kit), drafts are fine.",
       due: "By Friday, September 19",
     },
     {
-      text: "Share the speaker photos you have so far, and the reminder-email copy in Mailchimp.",
+      text: "Share the speaker photos you have so far, and the reminder-email copy in Mailchimp once the next names are confirmed.",
       due: "By Friday, September 19",
     },
   ],
@@ -238,6 +242,14 @@ export const spa: SpaClient = {
           "The Anchor Partners info pack as a branded Google Doc template your team edits directly, plus winwin.brussels/doc, which turns any shared Google Doc into a branded, paginated PDF.",
       },
       {
+        title: "Speaker roster editor on the site",
+        phase: "Phase 3",
+        status: "done",
+        date: "2026-09-08",
+        detail:
+          "A hidden admin page where your team adds or replaces a speaker (photo, name, role, organisation, website, bio) and the site updates itself. Late confirmations never wait on me.",
+      },
+      {
         title: "Brand assets page",
         phase: "Phase 3",
         status: "done",
@@ -264,14 +276,14 @@ export const spa: SpaClient = {
         phase: "Phase 4",
         status: "upcoming",
         detail:
-          "Print-ready artwork to the AV partner's spec. Your team sends the dimensions and places the print order.",
+          "Print-ready file on printdeal's template for the flat tension-fabric exhibition wall with zipper, 300 x 230 cm, frame included. Lara orders it with the design check (about 30 EUR extra, worth it) and has it delivered to the library. Delivery takes around ten days.",
       },
       {
         title: "Roll-up banners",
         phase: "Phase 4",
         status: "upcoming",
         detail:
-          "Four to six cardboard roll-ups in the one standard size. No date on them, so they work again next year: logo, tagline, website.",
+          "Four to six cardboard roll-ups from printdeal, 85 x 200 cm, so everything comes from one supplier. No date on them, so they work again next year: logo, tagline, website.",
       },
       {
         title: "LinkedIn speaker kit",
@@ -292,14 +304,28 @@ export const spa: SpaClient = {
         phase: "Phase 4",
         status: "upcoming",
         detail:
-          "One colour-coded template covering six roles (team, participant, speaker, roundtable host, moderator, roundtable speaker) plus blanks. Roundtable numbers stay hand-written so late host confirmations don't break the print run.",
+          "A small tool: upload your guest list as a CSV (first name, surname, organisation, role) and download print-ready A4 sheets for 80 x 50 mm label paper, which you print in the office or at the venue the day before. Each role gets its own colour as a border, with the role spelled out inside it, so it stays readable and light on ink. Roles can still change until the CSV is final.",
+      },
+      {
+        title: "Name places (table tents)",
+        phase: "Phase 4",
+        status: "upcoming",
+        detail:
+          "Same idea for the roundtable tables: the CSV fills an A5 fold-in-two card, double-sided, two per A4 sheet, about sixty in total. You print, fold, and cut. Last-minute changes are a reprint, not a design round.",
+      },
+      {
+        title: "Speaking cards",
+        phase: "Phase 4",
+        status: "upcoming",
+        detail:
+          "Artwork for the cards speakers hold on stage, A5 and A6, logo on the back. Print it on a full-page sticker and mount on foam board so it stays flat. Five to ten pieces, made by your team.",
       },
       {
         title: "Venue signage",
         phase: "Phase 4",
         status: "upcoming",
         detail:
-          "Floor-tape navigation lines, arrow floor stickers, and standing signs. Placement planned at the venue walk-through mid-September.",
+          "Breadcrumb floor stickers from printdeal, one design roughly every two metres from the entrance to the rooms (square, around 15 to 20 cm; I confirm the size after the design), plus an A4 wall-sign template for room names and directions that you print last minute as the room plan settles. Placement and quantities decided at the venue visit on September 16.",
       },
       {
         title: "Event slide template",
@@ -310,7 +336,7 @@ export const spa: SpaClient = {
       },
     ],
     note:
-      "Print production stays your cost, as in the agreement; I supply print-ready files. Not listed: the aftermovie (quoted separately) and table tents (parked until we know they're needed).",
+      "Print production stays your cost, as in the agreement; I supply print-ready files and, where useful, a small tool that fills them from your guest list. Not listed: the aftermovie, which I quote separately with a few options.",
   },
 
   payments: [
