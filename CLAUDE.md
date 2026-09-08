@@ -53,6 +53,12 @@
 - Static data (issuer, bank/crypto details, client addresses): `src/content/invoices/config.ts`. Rule of thumb: German client → EUR + 19% MwSt + N26 IBAN; outside the EU → USD + §3a UStG exemption + Wise details.
 - **After issuing**: (1) register the spec in `src/content/invoices/issued.ts` (client-page download + what the Drive archive syncs from); (2) append to `src/content/invoices/ledger.ts` (drives auto-numbering; set `clientSlug` for clients in the registry); (3) archive to Google Drive (`Invoices/Invoices <year>/`): the CLI uploads directly when `GDRIVE_*` creds are set, otherwise pushing `issued.ts` to `main` triggers the `archive-invoices` workflow. Never push PDFs through the Drive connector — it stalls; (4) add the payment follow-up to Google Calendar: all-day event the day after `dueAt`, `💸 Follow up: <client> <number> (<total>)`. Justice invoices also go into the `hoursLog` (below).
 
+# Tax expenses (N26 → Google Sheets)
+
+- `/for/expenses` sorts a year of N26 payments into business / personal / tax-relevant / skip, swipe-style for the ones the rules can't decide, and copies the business rows as TSV for the tax sheet. Workflow + verdict table: `docs/tax-expenses.md`.
+- Rules live in `src/lib/expenses/rules.ts` (ordered, first match wins). Parser, classifier, export and persistence sit next to it under `src/lib/expenses/`; the page is `src/components/ExpensesTriage.tsx` + `ExpenseSwipeDeck.tsx`. Headless check after editing rules: `npm run expenses -- <export.csv>`.
+- Bank data never leaves the browser (parsed client-side, kept in localStorage). Keep it that way — no API route, no upload.
+
 # Hours log updates (Justice)
 
 - Weekly cadence — one period block per invoice cycle. (Switched from bi-weekly on 2026-05-14 at the client's request; periods through May 4–15 stay bi-weekly.)

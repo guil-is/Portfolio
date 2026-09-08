@@ -12,6 +12,7 @@
     "sanity:tidy-n26-business-black": "tsx scripts/sanity/tidy-n26-business-black.ts",
     "invoice": "tsx scripts/make-invoice.ts",
     "invoice:archive": "tsx scripts/archive-invoices.ts",
+    "expenses": "tsx scripts/expenses.ts",
     "gdrive:auth": "tsx scripts/gdrive-auth.ts"
   },
   "dependencies": {
@@ -24,6 +25,7 @@
     "next": "16.2.3",
     "next-sanity": "^12.2.2",
     "next-themes": "^0.4.6",
+    "pdfjs-dist": "^6.3.289",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-photo-album": "^3.6.0",
