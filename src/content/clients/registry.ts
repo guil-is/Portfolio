@@ -156,6 +156,13 @@ export const clientRegistry: ClientEntry[] = [
     "closed",
     { billingPreset: "myosin" },
   ),
+  entry(
+    "code-and-co",
+    "Code & Co.",
+    "Design partner proposal for Kelly Cheesman: weekly retainer (2 days/week) or a one-week sprint. Page live since 31 Aug, call-first close.",
+    "proposal",
+    { contacts: [{ name: "Kelly Cheesman" }] },
+  ),
   entry("odyssey", "Odyssey", "Design partner proposal — didn't convert.", "closed", {
     contacts: [{ name: "Nick DeNuzzo" }],
   }),
