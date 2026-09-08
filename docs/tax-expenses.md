@@ -55,7 +55,7 @@ every decision intact.
 
 Categories (`CATEGORY_LABELS` in `types.ts`): software, fonts/plugins/
 stock, hardware, print & production, office & coworking, phone & internet,
-travel, meals, books & courses, domains & hosting, marketing, bank fees,
+travel, meals, education & events, domains & hosting, marketing, bank fees,
 insurance, professional services, other.
 
 ## Tuning the rules

@@ -51,7 +51,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   telecom: "Phone & internet",
   travel: "Travel & transport",
   meals: "Meals & hospitality",
-  education: "Books & courses",
+  education: "Education & events",
   web: "Domains & hosting",
   marketing: "Marketing & ads",
   fees: "Bank & payment fees",
