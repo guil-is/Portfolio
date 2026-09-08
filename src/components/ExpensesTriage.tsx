@@ -402,7 +402,7 @@ export function ExpensesTriage() {
   const memoryCount = Object.keys(memory).length;
 
   return (
-    <main className="page-fade-in mx-auto w-full max-w-[960px] px-6 pt-10 pb-40 md:px-10 md:pt-16">
+    <main className="page-fade-in mx-auto w-full max-w-[1040px] px-6 pt-10 pb-40 md:px-10 md:pt-16">
       <section className="flex flex-col gap-6 pb-10 md:pb-14">
         <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
           Private · Tax expenses
@@ -804,7 +804,7 @@ function EntriesTable({
         {visible.map((i) => (
           <li
             key={i.tx.id}
-            className={`grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-3 border-b border-rule px-4 py-4 last:border-b-0 md:grid-cols-[92px_minmax(0,1fr)_96px_auto_190px] md:items-center ${
+            className={`grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-3 border-b border-rule px-4 py-4 last:border-b-0 md:grid-cols-[88px_minmax(0,1fr)_92px_auto_176px] md:items-center ${
               !i.decision ? "bg-card/30" : ""
             }`}
           >
@@ -891,7 +891,7 @@ function VerdictButtons({
           type="button"
           title={value === o.v ? "Click again to ask me" : VERDICT_LABEL[o.v]}
           onClick={() => onChange(value === o.v ? "pending" : o.v)}
-          className={`rounded-full border px-2.5 py-1 font-caption text-[9px] font-bold uppercase tracking-[1px] transition-colors ${
+          className={`rounded-full border px-2 py-1 font-caption text-[9px] font-bold uppercase tracking-[0.5px] transition-colors ${
             value === o.v ? o.active : "border-rule text-muted hover:border-ink hover:text-ink"
           }`}
         >
