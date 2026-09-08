@@ -37,9 +37,10 @@ export function TaxEstimate({
   const scale = progress > 0 ? 1 / progress : 1;
   const outstanding = (income?.outstandingEurNet ?? 0) + (income?.outstandingUsd ?? 0) * settings.usdRate;
 
+  const vatCollected = (income?.eurVat ?? 0) + side.manualVat;
   const base = {
     year,
-    vatCollected: income?.eurVat ?? 0,
+    vatCollected,
     vatPaid: side.vatPaid,
     joint: settings.joint,
     spouseIncome: settings.spouseIncome,
@@ -60,7 +61,7 @@ export function TaxEstimate({
     expenses: side.expenses * scale,
     insurance: side.insurance * scale,
     prepaid,
-    vatCollected: (income?.eurVat ?? 0) * scale,
+    vatCollected: vatCollected * scale,
     vatPaid: side.vatPaid,
   });
   const eur = (n: number) => `€${formatEur(Math.round(n))}`;
@@ -85,7 +86,7 @@ export function TaxEstimate({
         <Stat
           label="VAT still to pay"
           value={eur(Math.max(0, soFar.vatDue))}
-          sub={`collected ${eur(income?.eurVat ?? 0)} · paid ${eur(side.vatPaid)} · before Vorsteuer`}
+          sub={`collected ${eur(vatCollected)} · paid ${eur(side.vatPaid)} · before Vorsteuer`}
         />
         <Stat
           label={isPartial ? "Profit, projected" : "Profit"}

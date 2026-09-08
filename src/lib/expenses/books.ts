@@ -249,8 +249,10 @@ export type BookTotals = {
   year: number;
   /** Deductible business expenses. */
   expenses: number;
-  /** Manual income rows (years the ledger doesn't cover). */
+  /** Manual / seed income rows, net (years the ledger doesn't cover). */
   manualIncome: number;
+  /** VAT collected on those rows (19 % ones). */
+  manualVat: number;
   insurance: number;
   incomeTaxPrepaid: number;
   vatPaid: number;
@@ -265,6 +267,7 @@ export function bookTotals(entries: BookEntry[], year: number): BookTotals {
     year,
     expenses: 0,
     manualIncome: 0,
+    manualVat: 0,
     insurance: 0,
     incomeTaxPrepaid: 0,
     vatPaid: 0,
@@ -276,7 +279,11 @@ export function bookTotals(entries: BookEntry[], year: number): BookTotals {
     if (!e.date.startsWith(String(year))) continue;
     t.lastMonth = Math.max(t.lastMonth, Number(e.date.slice(5, 7)));
     if (e.kind === "expense") t.expenses += e.amount;
-    else if (e.kind === "income") t.manualIncome += e.amount;
+    else if (e.kind === "income") {
+      const net = e.vat === 19 ? e.amount / 1.19 : e.amount;
+      t.manualIncome += net;
+      t.manualVat += e.amount - net;
+    }
     else {
       const b = taxBucketOf(e);
       t.rows[b].push(e);

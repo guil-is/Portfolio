@@ -26,6 +26,17 @@ type Tariff = {
 };
 
 const TARIFFS: Record<number, Tariff> = {
+  2024: {
+    zone1: 11_784,
+    zone2: 17_005,
+    zone3: 66_760,
+    zone4: 277_825,
+    y: [922.98, 1_400],
+    z: [181.19, 2_397, 1_025.38],
+    lin42: 10_602.13,
+    lin45: 18_936.88,
+    soliFree: 18_130,
+  },
   2025: {
     zone1: 12_096,
     zone2: 17_443,
