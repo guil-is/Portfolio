@@ -27,6 +27,16 @@ export type Subscription = {
 
 export const subscriptions: Subscription[] = [
   {
+    name: "Adobe Creative Cloud Pro (team)",
+    match: "worldpay",
+    amount: 173.1,
+    interval: "monthly",
+    startedAt: "2026-01-25",
+    category: "software",
+    note: "Annual plan paid monthly, 2 licenses but only 1 in use — drop to 1 at the Jan 25 2027 renewal (or ask Adobe support sooner). Billed via WorldPay.",
+    url: "https://adminconsole.adobe.com/account",
+  },
+  {
     name: "Mobbin",
     match: "mobbin",
     amount: 96,

@@ -51,7 +51,8 @@ export const RULES: Rule[] = [
   r("health-insurance", /\btechniker\b|\btk\b.*kranken|\baok\b|\bbarmer\b|\bdak\b|\bkkh\b|\bhek\b|\bbkk\b|\bikk\b|\bkrankenkasse\b|\bkrankenversicherung\b|\bottonova\b|\bhallesche\b|\bdebeka\b|\bhansemerkur\b|\bsbk\b|\bviactiv\b|\bmobil krankenkasse\b/, "tax", "health", 0.95, "Health insurance — Sonderausgaben, listed separately for the tax advisor", { scope: "any" }),
 
   // ── Software & AI (business) ─────────────────────────────────────────
-  r("adobe", /\badobe\b/, "business", "software", 0.97, "Adobe Creative Cloud"),
+  // Adobe bills the team plan through WorldPay — the bank row never says Adobe.
+  r("adobe", /\badobe\b|\bworld ?pay\b/, "business", "software", 0.97, "Adobe Creative Cloud"),
   r("figma", /\bfigma\b/, "business", "software", 0.97, "Design software"),
   r("notion", /\bnotion\b/, "business", "software", 0.95, "Workspace software"),
   r("anthropic", /\banthropic\b|\bclaude\b/, "business", "software", 0.95, "AI tooling"),
