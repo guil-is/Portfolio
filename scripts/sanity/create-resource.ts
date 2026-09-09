@@ -3,8 +3,10 @@
  * Create, update or delete `resource` documents (the design library at
  * /resources) in Sanity. The write path for the /add-resources skill.
  *
- * Input, one of:
+ * Input, one of (first match wins):
  *
+ *   File:    ITEMS_FILE — path to JSON { batch?, dry_run?, items: [...] }
+ *            (the push-triggered mode: .github/triggers/resources.json)
  *   Bulk:    ITEMS_JSON — JSON array of items (see shapes below)
  *   Single:  TITLE, RESOURCE_URL, CATEGORY (required)
  *            DESCRIPTION, TAGS (comma-separated), RATING (1–5) (optional)
@@ -21,13 +23,16 @@
  * title ("Icons & Illustration"), case-insensitive. `tags` is an array or a
  * comma-separated string, lowercased. `rating` is an integer 1–5.
  *
- * Env:  DRY_RUN (default "true": print the plan, write nothing)
+ * Env:  DRY_RUN — "true" (default) prints the plan and writes nothing.
+ *       When empty and ITEMS_FILE is set, the file's `dry_run` decides
+ *       (missing = true).
  *       SANITY_PROJECT_ID / SANITY_DATASET / SANITY_AUTH_TOKEN
  *
  * Without SANITY_AUTH_TOKEN the script only validates items (dry run,
  * no duplicate check) so a session without the token can sanity-check
  * its JSON before dispatching the "Sanity — Create resource" Action.
  */
+import { readFileSync } from "node:fs";
 import { createClient } from "next-sanity";
 import {
   RESOURCE_CATEGORIES,
@@ -72,13 +77,25 @@ const {
   TAGS,
   RATING,
   ITEMS_JSON,
+  ITEMS_FILE,
   DRY_RUN,
   SANITY_PROJECT_ID,
   SANITY_DATASET,
   SANITY_AUTH_TOKEN,
 } = process.env;
 
-const dryRun = (DRY_RUN ?? "true").toLowerCase() !== "false";
+type TriggerFile = { batch?: string; dry_run?: boolean; items?: unknown };
+
+const triggerFile: TriggerFile | null = ITEMS_FILE
+  ? (JSON.parse(readFileSync(ITEMS_FILE, "utf8")) as TriggerFile)
+  : null;
+
+const dryRunEnv = (DRY_RUN ?? "").trim().toLowerCase();
+const dryRun = dryRunEnv
+  ? dryRunEnv !== "false"
+  : triggerFile
+    ? triggerFile.dry_run !== false
+    : true;
 const hasToken = Boolean(SANITY_PROJECT_ID && SANITY_DATASET && SANITY_AUTH_TOKEN);
 
 if (!hasToken && !dryRun) {
@@ -109,13 +126,22 @@ function splitTags(tags: string[] | string): string[] {
 }
 
 function collectItems(): Item[] {
+  if (triggerFile) {
+    if (!Array.isArray(triggerFile.items)) {
+      throw new Error(`${ITEMS_FILE}: "items" must be a JSON array`);
+    }
+    if (triggerFile.batch) console.log(`Batch: ${triggerFile.batch}\n`);
+    return triggerFile.items as Item[];
+  }
   if (ITEMS_JSON && ITEMS_JSON.trim()) {
     const parsed: unknown = JSON.parse(ITEMS_JSON);
     if (!Array.isArray(parsed)) throw new Error("ITEMS_JSON must be a JSON array");
     return parsed as Item[];
   }
   if (!RESOURCE_URL) {
-    throw new Error("Set ITEMS_JSON (bulk) or RESOURCE_URL + TITLE + CATEGORY (single)");
+    throw new Error(
+      "Set ITEMS_FILE, ITEMS_JSON (bulk) or RESOURCE_URL + TITLE + CATEGORY (single)",
+    );
   }
   return [
     {
@@ -199,7 +225,7 @@ async function main() {
               (p.tags?.length ? `  #${p.tags.join(" #")}` : ""),
       );
     }
-    console.log(`\n${prepared.length} item(s) valid. Dispatch the Action to write.`);
+    console.log(`\n${prepared.length} item(s) valid. Push the trigger file to write.`);
     return;
   }
 

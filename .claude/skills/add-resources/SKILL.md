@@ -60,21 +60,46 @@ ITEMS_JSON='[{"url":"https://...","title":"...","category":"...","description":"
 DRY_RUN=true npx tsx scripts/sanity/create-resource.ts
 ```
 
-## 5. Write through the Action
+## 5. Write through the trigger file
 
-The Sanity token lives only in GitHub secrets, so writes go through the
-workflow. Dispatch it on `main` with `items_json` and `dry_run: "false"`:
+The Sanity token lives only in GitHub secrets, the GitHub App behind
+the MCP tools can't dispatch workflows, and the sandbox can't reach
+Sanity. So the write path is a push: the "Sanity — Create resource"
+Action runs whenever `.github/triggers/resources.json` changes on
+`main`.
 
-- GitHub MCP: `actions_run_trigger` → `run_workflow`,
-  `workflow_id: "sanity-create-resource.yml"`, `ref: "main"`,
-  `inputs: { items_json: <array>, dry_run: "false" }`.
-- Or `gh workflow run sanity-create-resource.yml -f items_json='…' -f dry_run=false`.
+1. Write the file. `batch` is a free label that makes every push a
+   diff, even when the items repeat:
 
-Then wait ~30s and poll: `actions_list` → `list_workflow_runs` for that
-workflow (newest first) until `status: completed`. On `conclusion:
-failure`, pull `get_job_logs` with `failed_only: true`, fix the input,
-re-dispatch. On success, read the job log to confirm the counts the
-script printed.
+   ```json
+   {
+     "batch": "2026-09-09 3 links from Guil",
+     "dry_run": false,
+     "items": [ { "url": "...", "title": "...", "category": "...", "description": "...", "tags": ["free"], "rating": 4 } ]
+   }
+   ```
+
+2. Validate it (no token needed, nothing is written):
+
+   ```bash
+   ITEMS_FILE=.github/triggers/resources.json npx tsx scripts/sanity/create-resource.ts
+   ```
+
+3. Commit only that file, message `resources: add 3 links` (or
+   `resources: re-rank …`, `resources: remove …`), and push to `main`
+   per the CLAUDE.md workflow (commit on the harness branch if one is
+   assigned, then fast-forward `main`).
+
+4. Poll the run: `actions_list` → `list_workflow_runs` with
+   `resource_id: "sanity-create-resource.yml"`, newest first, until
+   `status: completed`. Give it ~60s. On `conclusion: failure`, read
+   `get_job_logs` with `failed_only: true`, fix the file, push a new
+   batch. On success, `list_workflow_jobs` for the run, then
+   `get_job_logs` with that `job_id` and `return_content: true` to
+   confirm the counts the script printed.
+
+A local session with the `gh` CLI can skip the commit:
+`gh workflow run sanity-create-resource.yml -f items_json='…' -f dry_run=false && gh run watch`.
 
 ## 6. Updates and removals
 

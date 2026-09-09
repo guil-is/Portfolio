@@ -19,7 +19,7 @@
 # Design resources library
 
 - Unlisted link directory at `/resources` (noindex, robots-disallowed, no nav link, no password). Entries are Sanity `resource` docs. Workflow + fields: `docs/resources-library.md`.
-- **When Guil drops URLs in a session, run `/add-resources`**: it fetches each page, titles it, writes the one-liner, categorizes, rates (1–5), and writes via the "Sanity — Create resource" Action (`items_json`, upsert by URL, `delete: true` to remove). Never ask him to fill a Studio form. The sandbox can't reach Sanity, so validate with the token-less dry run, then dispatch the workflow on `main` and poll it.
+- **When Guil drops URLs in a session, run `/add-resources`**: it fetches each page, titles it, writes the one-liner, categorizes, rates (1–5), then writes the batch to `.github/triggers/resources.json` and pushes `main`; the "Sanity — Create resource" Action runs on that path (upsert by URL, `delete: true` to remove). Never ask him to fill a Studio form. The sandbox can't reach Sanity and the GitHub App can't dispatch workflows, so: validate with the token-less run (`ITEMS_FILE=… npx tsx scripts/sanity/create-resource.ts`), push, then poll the run with the Actions read tools.
 - Categories live once in `src/lib/resources.ts` and feed both the schema and the page. Append to add one; never rename an existing value.
 
 # Client lifecycle (onboarding → close-out)

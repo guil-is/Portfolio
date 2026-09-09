@@ -1,0 +1,22 @@
+{
+  "batch": "2026-09-09 pipeline test (dry run)",
+  "dry_run": true,
+  "items": [
+    {
+      "url": "https://fonts.google.com",
+      "title": "Google Fonts",
+      "category": "typography",
+      "description": "Free, variable, no login. Still the first stop for a body face.",
+      "tags": ["free", "variable"],
+      "rating": 5
+    },
+    {
+      "url": "https://mobbin.com",
+      "title": "Mobbin",
+      "category": "inspiration",
+      "description": "Real app flows, screen by screen. Better than dribbble for product patterns.",
+      "tags": ["paid", "product"],
+      "rating": 4
+    }
+  ]
+}

@@ -1,9 +1,13 @@
 name: Sanity — Create resource
 
-# Manually triggered workflow to add, update or delete entries in the
-# design resources library (/resources). Fill the single fields for one
-# link, or paste a JSON array into items_json. The /add-resources skill
-# dispatches this with items_json.
+# Adds, updates or deletes entries in the design resources library
+# (/resources). Two trigger modes:
+#   1. Automated: push .github/triggers/resources.json to main — the
+#      /add-resources skill does this (the GitHub App can't dispatch
+#      workflows and the sandbox can't reach Sanity, so a push is the
+#      write path). The file carries { batch, dry_run, items }.
+#   2. Manual: Actions tab → Run workflow → single fields or items_json.
+# See scripts/sanity/create-resource.ts for item shapes.
 
 on:
   workflow_dispatch:
@@ -41,6 +45,9 @@ on:
         required: true
         type: boolean
         default: true
+  push:
+    branches: [main]
+    paths: [".github/triggers/resources.json"]
 
 jobs:
   create:
@@ -69,4 +76,8 @@ jobs:
           RATING: ${{ inputs.rating }}
           ITEMS_JSON: ${{ inputs.items_json }}
           DRY_RUN: ${{ inputs.dry_run }}
+          # On push the inputs above are empty and the trigger file
+          # carries items + dry_run; the script reads it directly so
+          # no shell quoting of JSON is involved.
+          ITEMS_FILE: ${{ github.event_name == 'push' && '.github/triggers/resources.json' || '' }}
         run: npx tsx scripts/sanity/create-resource.ts

@@ -22,10 +22,17 @@ reports back a table. Nothing to fill in.
 The same skill handles "rank X higher", "move X to color", "rewrite the
 line for X", "remove X".
 
-Why the Action: the Sanity write token lives only in GitHub secrets, and the
-sandbox can't reach `api.sanity.io` anyway. The skill validates the JSON
-locally first (the script runs without a token in dry-run mode), then
-dispatches the workflow on `main` and polls the run.
+Why a push: the Sanity write token lives only in GitHub secrets, the GitHub
+App behind Claude's MCP tools can't dispatch workflows, and the sandbox can't
+reach `api.sanity.io`. So the skill writes the batch to
+`.github/triggers/resources.json`, validates it locally (the script runs
+without a token in dry-run mode), commits only that file, pushes `main`, and
+polls the run. The "Sanity — Create resource" Action fires on any push that
+touches the file. The file's `batch` label keeps every push a diff.
+
+```json
+{ "batch": "2026-09-09 3 links", "dry_run": false, "items": [ … ] }
+```
 
 ## Other ways in
 
@@ -34,6 +41,7 @@ dispatches the workflow on `main` and polls the run.
 2. **GitHub Actions by hand**: run "Sanity — Create resource". Fill the single
    fields for one link, or paste a JSON array into `items_json`. Leave
    `dry_run` on for the first run, read the plan, re-run with it off.
+   Locally, `gh workflow run sanity-create-resource.yml -f items_json='…' -f dry_run=false`.
 
 Item shapes for `items_json` (matched on URL, trailing slash ignored):
 
@@ -99,4 +107,6 @@ renders under "Other" rather than disappearing.
 - `sanity/schemas/resource.ts` — document type.
 - `scripts/sanity/create-resource.ts` + `.github/workflows/sanity-create-resource.yml`
   — the write path (create / update / delete, dry-run by default).
+- `.github/triggers/resources.json` — the last batch pushed; changing it on
+  `main` runs the Action.
 - `.claude/skills/add-resources/SKILL.md` — the drop-links skill.
