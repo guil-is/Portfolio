@@ -2,7 +2,15 @@
 
 import type { IncomeYear } from "@/lib/income";
 import { estimateTax, type TaxEstimate as Estimate } from "@/lib/tax";
-import { bookTotals, yearProgress, type BookEntry, type BooksSettings, type TaxBucket } from "@/lib/expenses/books";
+import {
+  bookTotals,
+  yearProgress,
+  EMPTY_YEAR,
+  type BookEntry,
+  type BooksSettings,
+  type TaxBucket,
+  type YearSettings,
+} from "@/lib/expenses/books";
 import { formatEur } from "@/lib/expenses/triage";
 import { prettyDate } from "./ExpenseSwipeDeck";
 
@@ -19,6 +27,7 @@ export function TaxEstimate({
   elsewhere = [],
   settings,
   setSettings,
+  facts,
 }: {
   year: number;
   income?: IncomeYear;
@@ -27,10 +36,19 @@ export function TaxEstimate({
   elsewhere?: BookEntry[];
   settings: BooksSettings;
   setSettings: (s: BooksSettings) => void;
+  /** Defaults for this year from a Bescheid (src/content/books/seed.ts). */
+  facts?: YearSettings;
 }) {
   const side = bookTotals(entries, year);
+  const ys: YearSettings = settings.years[year] ?? facts ?? {
+    ...EMPTY_YEAR,
+    spouseIncome: settings.spouseIncome,
+    spouseWithheld: settings.spouseWithheld,
+  };
+  const setYs = (patch: Partial<YearSettings>) =>
+    setSettings({ ...settings, years: { ...settings.years, [year]: { ...ys, ...patch, source: undefined } } });
   const prepaidElsewhere = elsewhere.reduce((t, e) => t + e.amount, 0);
-  const prepaid = side.incomeTaxPrepaid + prepaidElsewhere;
+  const prepaid = side.incomeTaxPrepaid + prepaidElsewhere + ys.prepaidExtra;
   const usdEur = (income?.usd ?? 0) * settings.usdRate;
   const revenue = (income?.eurNet ?? 0) + usdEur + side.manualIncome;
   const progress = yearProgress(year);
@@ -43,8 +61,9 @@ export function TaxEstimate({
     vatCollected,
     vatPaid: side.vatPaid,
     joint: settings.joint,
-    spouseIncome: settings.spouseIncome,
-    spouseWithheld: settings.spouseWithheld,
+    spouseIncome: ys.spouseIncome,
+    spouseWithheld: ys.spouseWithheld,
+    spouseBenefits: ys.spouseBenefits,
   };
   const soFar = estimateTax({
     ...base,
@@ -118,32 +137,56 @@ export function TaxEstimate({
           />
           Married, filing jointly (Splittingtarif)
         </label>
+        <label className="flex items-center gap-2 text-[0.85rem] text-muted">
+          Vorauszahlungen not in the books
+          <input
+            type="number"
+            step="1"
+            min="0"
+            value={ys.prepaidExtra}
+            onChange={(e) => setYs({ prepaidExtra: Number(e.target.value) || 0 })}
+            className="w-[100px] rounded-[8px] border border-rule bg-bg px-2 py-1 text-[0.85rem] text-ink focus:border-ink focus:outline-none"
+          />
+        </label>
         {settings.joint ? (
           <>
             <label className="flex items-center gap-2 text-[0.85rem] text-muted">
-              Partner&apos;s taxable income
+              Partner&apos;s taxable income {year}
               <input
                 type="number"
                 step="100"
                 min="0"
-                value={settings.spouseIncome}
-                onChange={(e) => setSettings({ ...settings, spouseIncome: Number(e.target.value) || 0 })}
+                value={ys.spouseIncome}
+                onChange={(e) => setYs({ spouseIncome: Number(e.target.value) || 0 })}
                 className="w-[110px] rounded-[8px] border border-rule bg-bg px-2 py-1 text-[0.85rem] text-ink focus:border-ink focus:outline-none"
               />
             </label>
             <label className="flex items-center gap-2 text-[0.85rem] text-muted">
-              Lohnsteuer withheld from their salary
+              Their Lohnsteuer withheld
               <input
                 type="number"
                 step="100"
                 min="0"
-                value={settings.spouseWithheld}
-                onChange={(e) => setSettings({ ...settings, spouseWithheld: Number(e.target.value) || 0 })}
+                value={ys.spouseWithheld}
+                onChange={(e) => setYs({ spouseWithheld: Number(e.target.value) || 0 })}
+                className="w-[110px] rounded-[8px] border border-rule bg-bg px-2 py-1 text-[0.85rem] text-ink focus:border-ink focus:outline-none"
+              />
+            </label>
+            <label className="flex items-center gap-2 text-[0.85rem] text-muted">
+              Their Elterngeld / Krankengeld
+              <input
+                type="number"
+                step="100"
+                min="0"
+                title="Tax-free, but raises the rate on everything else (Progressionsvorbehalt)"
+                value={ys.spouseBenefits}
+                onChange={(e) => setYs({ spouseBenefits: Number(e.target.value) || 0 })}
                 className="w-[110px] rounded-[8px] border border-rule bg-bg px-2 py-1 text-[0.85rem] text-ink focus:border-ink focus:outline-none"
               />
             </label>
           </>
         ) : null}
+        {ys.source ? <span className="text-[0.8rem] text-faint">Prefilled {ys.source}</span> : null}
       </div>
 
       <div className="overflow-x-auto rounded-[14px] border border-rule">
@@ -160,15 +203,17 @@ export function TaxEstimate({
             <Line label="Business expenses" a={-side.expenses} b={-side.expenses * scale} partial={isPartial} eur={eur} />
             <Line label="Profit" a={soFar.profit} b={projected.profit} partial={isPartial} eur={eur} strong />
             <Line label="Health, KSK, pension" sub="Sonderausgaben" a={-side.insurance} b={-side.insurance * scale} partial={isPartial} eur={eur} />
-            {settings.joint ? <Line label="Partner's taxable income" a={settings.spouseIncome} b={settings.spouseIncome} partial={isPartial} eur={eur} /> : null}
+            {settings.joint ? <Line label="Partner's taxable income" a={ys.spouseIncome} b={ys.spouseIncome} partial={isPartial} eur={eur} /> : null}
+            <Line label="Sonderausgaben-Pauschbetrag" a={settings.joint ? -72 : -36} b={settings.joint ? -72 : -36} partial={isPartial} eur={eur} />
             <Line label={settings.joint ? "Household taxable income" : "Taxable income"} a={soFar.taxable} b={projected.taxable} partial={isPartial} eur={eur} strong />
-            <Line label={`Einkommensteuer · § 32a tariff ${soFar.tariffYear}${settings.joint ? ", splitting" : ""}`} a={soFar.incomeTax} b={projected.incomeTax} partial={isPartial} eur={eur} />
+            <Line label={`Einkommensteuer · § 32a tariff ${soFar.tariffYear}${settings.joint ? ", splitting" : ""}${ys.spouseBenefits > 0 ? ", Progressionsvorbehalt" : ""}`} a={soFar.incomeTax} b={projected.incomeTax} partial={isPartial} eur={eur} />
             <Line label="Solidaritätszuschlag" a={soFar.soli} b={projected.soli} partial={isPartial} eur={eur} />
             <Line label="Prepaid for this year" sub={side.otherTax > 0 ? `${eur(side.otherTax)} of other Finanzamt payments not counted — see below` : undefined} a={-side.incomeTaxPrepaid} b={-side.incomeTaxPrepaid} partial={isPartial} eur={eur} />
             {prepaidElsewhere > 0 ? (
               <Line label="Paid for this year in other years" sub={elsewhere.map((e) => `${prettyDate(e.date)} · ${e.reference}`).join(" · ")} a={-prepaidElsewhere} b={-prepaidElsewhere} partial={isPartial} eur={eur} />
             ) : null}
-            {settings.joint ? <Line label="Partner's Lohnsteuer withheld" a={-settings.spouseWithheld} b={-settings.spouseWithheld} partial={isPartial} eur={eur} /> : null}
+            {ys.prepaidExtra > 0 ? <Line label="Vorauszahlungen not in the books" a={-ys.prepaidExtra} b={-ys.prepaidExtra} partial={isPartial} eur={eur} /> : null}
+            {settings.joint ? <Line label="Partner's Lohnsteuer withheld" a={-ys.spouseWithheld} b={-ys.spouseWithheld} partial={isPartial} eur={eur} /> : null}
             <Line label={projected.incomeTaxDue >= 0 ? "Expected bill" : "Expected refund"} a={Math.abs(soFar.incomeTaxDue)} b={Math.abs(projected.incomeTaxDue)} partial={isPartial} eur={eur} strong />
           </tbody>
         </table>

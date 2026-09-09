@@ -64,13 +64,26 @@ Google Sheet. One year at a time:
   removes rows that turn personal. Rows you add by hand (cash receipts,
   pre-ledger invoices) live there too.
 - **Tax estimate** (`src/components/TaxEstimate.tsx`, maths in
-  `src/lib/tax.ts`): § 32a tariff (2025, 2026), Solidaritätszuschlag with
-  Milderungszone, Sonderausgaben from the health/KSK/pension rows,
-  Finanzamt rows split into this year's prepayments / VAT / other. Two
-  columns: so far, and the same run-rate projected to 31 December
-  (average month × 12). "Married, filing jointly" switches to the
-  Splittingtarif and takes the partner's taxable income and withheld
-  Lohnsteuer.
+  `src/lib/tax.ts`): § 32a tariff (2024–2026), Solidaritätszuschlag with
+  Milderungszone, Sonderausgaben from the health/KSK/pension rows plus
+  the Pauschbetrag, Finanzamt rows split into this year's prepayments /
+  VAT / other, and Finanzamt payments booked in other years that name
+  this one. Two columns: so far, and the same run-rate projected to
+  31 December (average month × 12). Joint filing (the default — the
+  2024 Bescheid is a Zusammenveranlagung) uses the Splittingtarif and
+  per-year partner figures: taxable income, withheld Lohnsteuer, and
+  wage-replacement benefits (Progressionsvorbehalt). `seedFacts` in
+  `src/content/books/seed.ts` prefills a year from its Bescheid; typing
+  a value overrides it for that year.
+- **Quick add**: the box under the year row takes "Mobbin 119.88 yearly"
+  or "Bäckerei 4,50 client breakfast 05.09.2026" — merchant, amount,
+  optional note and date — and files it today with the category the
+  rules give that merchant. When the same charge later arrives in an
+  N26 import (same merchant, same amount, within a week), the bank row
+  replaces the manual one and keeps its category and note.
+- **Old years**: `seedBooks` in `src/content/books/seed.ts` holds 2024
+  and 2025 transcribed from the Google Sheets. Income rows always
+  count; seed expense rows hide once an N26 import exists for that year.
 - **For the accountant**: copies the year's rows in the Primanota layout
   of the old sheet — Date, Income (EUR), Expense (EUR), Client +
   Reference, USt./VAT %, Country, Invoice nr, Currency, USD to EUR,

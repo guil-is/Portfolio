@@ -12,12 +12,14 @@ import {
   prepaidElsewhereFor,
   loadSentInvoices,
   newManualEntry,
+  parseQuickAdd,
   saveBook,
   saveBooksSettings,
   saveSentInvoices,
   type BookEntry,
   type BookKind,
   type BooksSettings,
+  type YearSettings,
 } from "@/lib/expenses/books";
 import { accountantRow, accountantTsv, ACCOUNTANT_COLUMNS } from "@/lib/expenses/accountant";
 import { formatEur } from "@/lib/expenses/triage";
@@ -44,12 +46,15 @@ export function BooksDashboard({
   income,
   invoices,
   seed,
+  facts,
   ledgerLoaded,
 }: {
   income: IncomeYear[];
   invoices: InvoiceRow[];
   /** Pre-tool years transcribed from the old sheets (src/content/books/seed.ts). */
   seed: BookEntry[];
+  /** Per-year defaults read off a Bescheid (src/content/books/seed.ts). */
+  facts: Record<number, YearSettings>;
   ledgerLoaded: boolean;
 }) {
   const [years, setYears] = useState<number[]>(() => bookYears());
@@ -67,6 +72,21 @@ export function BooksDashboard({
   const [onlyNew, setOnlyNew] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  const [quick, setQuick] = useState("");
+  const quickPreview = useMemo(() => (quick.trim() ? parseQuickAdd(quick) : null), [quick]);
+
+  function addQuick() {
+    if (!quickPreview) return;
+    const entry = newManualEntry(quickPreview);
+    const y = Number(entry.date.slice(0, 4));
+    if (y === year) updateEntries([...entries, entry].sort((a, b) => a.date.localeCompare(b.date)));
+    else {
+      saveBook(y, [...loadBook(y), entry].sort((a, b) => a.date.localeCompare(b.date)));
+      setYears(bookYears());
+    }
+    setQuick("");
+    setToast(`Added ${entry.party} · €${formatEur(entry.amount)} · ${CATEGORY_LABELS[entry.category]}`);
+  }
 
   function switchYear(y: number) {
     setYear(y);
@@ -265,6 +285,38 @@ export function BooksDashboard({
             Invoice data loads after the gate — reload the page if income shows as zero.
           </p>
         ) : null}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            addQuick();
+          }}
+          className="flex flex-col gap-2"
+        >
+          <div className="flex items-center gap-2 rounded-full border border-rule bg-bg pl-5 pr-1.5 transition-colors focus-within:border-ink">
+            <input
+              type="text"
+              value={quick}
+              onChange={(e) => setQuick(e.target.value)}
+              placeholder="Add an expense: Mobbin 119.88 yearly"
+              aria-label="Quick add an expense"
+              className="h-12 w-full bg-transparent text-[0.95rem] text-ink placeholder:text-faint focus:outline-none"
+            />
+            <button
+              type="submit"
+              disabled={!quickPreview}
+              className="h-9 shrink-0 rounded-full border border-ink bg-ink px-4 font-caption text-[10px] font-bold uppercase tracking-[1px] text-bg transition-colors hover:bg-transparent hover:text-ink disabled:opacity-30 disabled:hover:bg-ink disabled:hover:text-bg"
+            >
+              Add
+            </button>
+          </div>
+          <p className="min-h-[1.2rem] px-5 text-[0.8rem] text-muted">
+            {quickPreview
+              ? `${quickPreview.party} · €${formatEur(quickPreview.amount)} · ${CATEGORY_LABELS[quickPreview.category]} · ${prettyDate(quickPreview.date)}${quickPreview.note ? ` · “${quickPreview.note}”` : ""} — Enter to add`
+              : quick.trim()
+                ? "Type an amount to add it"
+                : "Merchant, amount, optional note or date (12.09.2026). Category comes from the rules; the next N26 import replaces the row with the bank line."}
+          </p>
+        </form>
       </section>
 
       <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule md:grid-cols-4">
@@ -302,7 +354,7 @@ export function BooksDashboard({
               This year has an N26 import, so the expense rows transcribed from the old sheet are hidden to avoid double counting. Its income rows still count.
             </p>
           ) : null}
-          <TaxEstimate year={year} income={inc} entries={yearEntries} elsewhere={elsewhere} settings={settings} setSettings={setSettings} />
+          <TaxEstimate year={year} income={inc} entries={yearEntries} elsewhere={elsewhere} settings={settings} setSettings={setSettings} facts={facts[year]} />
         </>
       ) : null}
 

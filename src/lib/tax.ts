@@ -114,6 +114,10 @@ export type TaxInput = {
   spouseIncome?: number;
   /** Lohnsteuer + Soli already withheld from the partner's salary. */
   spouseWithheld?: number;
+  /** Partner's tax-free wage-replacement benefits (Elterngeld,
+   * Krankengeld, ALG): not taxed, but they raise the rate on the rest
+   * (Progressionsvorbehalt, § 32b EStG). */
+  spouseBenefits?: number;
 };
 
 export type TaxEstimate = {
@@ -142,9 +146,18 @@ export function estimateTax(input: TaxInput): TaxEstimate {
   const sonderausgaben = Math.max(0, input.insurance);
   const own = Math.max(0, profit - sonderausgaben);
   const joint = Boolean(input.joint);
-  const taxable = joint ? own + Math.max(0, input.spouseIncome ?? 0) : own;
+  // Sonderausgaben-Pauschbetrag: €36 per person, always granted.
+  const pauschbetrag = joint ? 72 : 36;
+  const taxable = Math.max(0, (joint ? own + Math.max(0, input.spouseIncome ?? 0) : own) - pauschbetrag);
   // Splittingtarif: tax the household income as two halves.
-  const tax = joint ? 2 * incomeTax(taxable / 2, input.year) : incomeTax(taxable, input.year);
+  const tariff = (z: number) => (joint ? 2 * incomeTax(z / 2, input.year) : incomeTax(z, input.year));
+  const benefits = Math.max(0, input.spouseBenefits ?? 0);
+  // Progressionsvorbehalt: the rate that would apply including the
+  // tax-free benefits, applied to the taxable income alone.
+  const tax =
+    benefits > 0 && taxable > 0
+      ? Math.floor((taxable * tariff(taxable + benefits)) / (taxable + benefits))
+      : tariff(taxable);
   const surcharge = joint ? 2 * soli(tax / 2, input.year) : soli(tax, input.year);
   const liability = tax + surcharge;
   const prepaid = input.prepaid + (joint ? (input.spouseWithheld ?? 0) : 0);

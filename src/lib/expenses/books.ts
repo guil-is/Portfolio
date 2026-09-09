@@ -13,8 +13,9 @@
  * the next export can be "only what's new".
  */
 
-import { refineTaxCategory } from "./classify";
-import type { Category, DecidedVerdict, Transaction } from "./types";
+import { classify, refineTaxCategory } from "./classify";
+import { merchantKey, parseAmount } from "./text";
+import { BUSINESS_CATEGORIES, TAX_CATEGORIES, type Category, type DecidedVerdict, type Transaction } from "./types";
 import type { Item } from "./triage";
 
 export type BookKind = "income" | "expense" | "tax";
@@ -46,13 +47,36 @@ export type BookEntry = {
   updatedAt: string;
 };
 
+/** Figures that differ per tax year (partner's payslips, the Bescheid). */
+export type YearSettings = {
+  /** Partner's taxable income after their own deductions. */
+  spouseIncome: number;
+  /** Lohnsteuer + Soli withheld from the partner's salary. */
+  spouseWithheld: number;
+  /** Partner's wage-replacement benefits (Elterngeld etc.) — Progressionsvorbehalt. */
+  spouseBenefits: number;
+  /** Vorauszahlungen for the year not visible in the books (e.g. from a Bescheid). */
+  prepaidExtra: number;
+  /** Where the defaults came from, shown under the fields. */
+  source?: string;
+};
+
 export type BooksSettings = {
   joint: boolean;
+  /** Legacy single figures; `years` wins when set for the year. */
   spouseIncome: number;
   spouseWithheld: number;
+  years: Record<number, YearSettings>;
   usdRate: number;
   /** "12,99" in exports, for a German-locale sheet. */
   decimalComma: boolean;
+};
+
+export const EMPTY_YEAR: YearSettings = {
+  spouseIncome: 0,
+  spouseWithheld: 0,
+  spouseBenefits: 0,
+  prepaidExtra: 0,
 };
 
 const KEY = (year: number) => `books:v1:${year}`;
@@ -124,9 +148,11 @@ export function saveSentInvoices(year: number, numbers: string[]): void {
 
 export function loadBooksSettings(): BooksSettings {
   return {
-    joint: false,
+    // Married, filing jointly — the 2024 Bescheid is a joint assessment.
+    joint: true,
     spouseIncome: 0,
     spouseWithheld: 0,
+    years: {},
     usdRate: 0.9,
     decimalComma: false,
     ...(read<Partial<BooksSettings>>(SETTINGS_KEY) ?? {}),
@@ -194,6 +220,28 @@ export function syncItemsIntoBooks(items: Item[]): number[] {
       };
       if (!prev || JSON.stringify({ ...prev, updatedAt: "" }) !== JSON.stringify({ ...next, updatedAt: "" })) {
         existing.set(i.tx.id, { ...next, updatedAt: now });
+        dirty = true;
+      }
+    }
+    // A manual row for the same charge (same merchant, same amount, within
+    // a week) is superseded by the bank row — keep its category and note.
+    for (const i of list) {
+      const bank = existing.get(i.tx.id);
+      if (!bank || bank.source !== "n26") continue;
+      for (const m of [...existing.values()]) {
+        if (m.source !== "manual" || m.kind !== bank.kind) continue;
+        if (Math.abs(m.amount - bank.amount) > 0.01) continue;
+        if (merchantKey(m.party) !== merchantKey(bank.party)) continue;
+        if (Math.abs(Date.parse(m.date) - Date.parse(bank.date)) > 7 * 86_400_000) continue;
+        existing.set(bank.id, {
+          ...bank,
+          category: m.category,
+          note: m.note ?? bank.note,
+          vat: m.vat ?? bank.vat,
+          sentAt: m.sentAt ?? bank.sentAt,
+          updatedAt: now,
+        });
+        existing.delete(m.id);
         dirty = true;
       }
     }
@@ -308,4 +356,66 @@ export function yearProgress(year: number, today = new Date()): number {
   const end = Date.UTC(year + 1, 0, 1);
   const now = Date.UTC(y, today.getMonth(), today.getDate());
   return Math.min(1, Math.max(0.02, (now - start) / (end - start)));
+}
+
+/**
+ * "Mobbin 119.88 yearly design library" → a manual expense dated today:
+ * the first number is the amount, the words before it the merchant, the
+ * rest a note. Category comes from the merchant rules, so "Mobbin" lands
+ * in software without asking. Returns null when there's no amount.
+ */
+export function parseQuickAdd(
+  text: string,
+  today = new Date().toISOString().slice(0, 10),
+): Omit<BookEntry, "id" | "source" | "updatedAt"> | null {
+  const tokens = text.trim().split(/\s+/).filter(Boolean);
+  const idx = tokens.findIndex((t) => /^[€$]?-?\d[\d.,]*€?$/.test(t));
+  if (idx < 0) return null;
+  const amount = parseAmount(tokens[idx].replace(/[€$]/g, ""));
+  if (amount === null || amount === 0) return null;
+  const party = tokens.slice(0, idx).join(" ") || "Unknown";
+  let rest = tokens.slice(idx + 1);
+  let date = today;
+  const dateTok = rest.find((t) => /^\d{4}-\d{2}-\d{2}$/.test(t) || /^\d{1,2}\.\d{1,2}\.(\d{2}|\d{4})$/.test(t));
+  if (dateTok) {
+    rest = rest.filter((t) => t !== dateTok);
+    const m = dateTok.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2}|\d{4})$/);
+    date = m
+      ? `${m[3].length === 2 ? "20" + m[3] : m[3]}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}`
+      : dateTok;
+  }
+  const note = rest.join(" ") || undefined;
+  const guess = classify({
+    id: "quick",
+    date,
+    partner: party,
+    reference: note ?? "",
+    type: "",
+    kind: "card",
+    amount: -Math.abs(amount),
+    currency: "EUR",
+    raw: {},
+    source: "csv",
+  });
+  const kind: BookKind = guess.verdict === "tax" ? "tax" : "expense";
+  // You're adding it as a work expense, so a "personal" verdict only
+  // means the rules had no business category: food rules → meals.
+  const category: Category =
+    kind === "tax"
+      ? guess.category
+      : guess.ruleId === "restaurants" || guess.ruleId === "delivery"
+        ? "meals"
+        : guess.category === "personal" || guess.category === "internal"
+          ? "other"
+          : guess.category;
+  return {
+    date,
+    kind,
+    amount: Math.abs(amount),
+    party,
+    reference: "",
+    note,
+    category: TAX_CATEGORIES.includes(category) || BUSINESS_CATEGORIES.includes(category) ? category : "other",
+    currency: "EUR",
+  };
 }

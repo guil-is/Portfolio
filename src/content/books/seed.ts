@@ -14,7 +14,7 @@
  * income rows always count because the invoice ledger starts in 2026.
  */
 
-import type { BookEntry } from "@/lib/expenses/books";
+import type { BookEntry, YearSettings } from "@/lib/expenses/books";
 
 type Seed = Omit<BookEntry, "id" | "source" | "updatedAt">;
 
@@ -266,3 +266,26 @@ export function seedEntries(year: number): BookEntry[] {
     updatedAt: "",
   }));
 }
+
+/**
+ * Per-year figures that don't come from bank rows — read off the
+ * Steuerbescheid once it arrives. The dashboard uses them as defaults
+ * for that year until you type your own.
+ *
+ * 2024 (Bescheid of 4 Feb 2026, joint assessment): partner's Einkünfte
+ * 16,739 less their Vorsorgeaufwendungen 2,993 → 13,746 taxable;
+ * Lohnsteuer withheld 2,413; wage-replacement benefits 5,620
+ * (Progressionsvorbehalt); Vorauszahlungen paid during 2024: 1,696.
+ * The Finanzamt set your freelance profit at 68,017 and the household
+ * zvE at 73,106 → 13,475 tax, 152 credit for haushaltsnahe
+ * Dienstleistungen, 13,323 assessed.
+ */
+export const seedFacts: Record<number, YearSettings> = {
+  2024: {
+    spouseIncome: 13746,
+    spouseWithheld: 2413,
+    spouseBenefits: 5620,
+    prepaidExtra: 1696,
+    source: "from the 2024 Bescheid of 4 Feb 2026",
+  },
+};
