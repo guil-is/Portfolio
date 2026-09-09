@@ -1,0 +1,40 @@
+name: Sanity — Deploy schema
+
+# Publishes the Studio schema to Sanity so the remote MCP server
+# (mcp.sanity.io, the "Sanity" connector in claude.ai / Claude Code)
+# knows the document types and field options, e.g. the `resource`
+# category list. Runs when schema files change on main, when the
+# trigger file is pushed, or manually. Nothing on the site depends on it.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "sanity/**"
+      - "sanity.config.ts"
+      - "sanity.cli.ts"
+      - "src/lib/resources.ts"
+      - ".github/triggers/deploy-schema.json"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy schema
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          # sanity.config.ts reads the Next public vars; map the secrets in.
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+        run: npx sanity schemas deploy --verbose

@@ -34,6 +34,29 @@ touches the file. The file's `batch` label keeps every push a diff.
 { "batch": "2026-09-09 3 links", "dry_run": false, "items": [ … ] }
 ```
 
+## Sanity connector (claude.ai and Claude Code)
+
+The direct path, no push and no Action. Sanity's remote MCP server at
+`https://mcp.sanity.io` (OAuth, sign in with the Sanity account) lets Claude
+query, create, patch, publish and delete documents. Once it is added as a
+custom connector in claude.ai it also shows up in Claude Code web sessions.
+
+- claude.ai: Settings → Connectors → Add custom connector → name "Sanity",
+  URL `https://mcp.sanity.io` → Connect, sign in. Then create a Project with
+  the instructions in `docs/resources-claude-ai-project.md` and drop links
+  into its chats.
+- Claude Code (local): `claude mcp add Sanity -t http https://mcp.sanity.io --scope user`.
+- Created documents are drafts. Every write ends with a publish or the page
+  never shows it. The skill and the Project instructions both say so.
+- The server reads the **deployed** schema. The "Sanity — Deploy schema"
+  Action runs `sanity schemas deploy` whenever `sanity/**`, `sanity.config.ts`
+  or `src/lib/resources.ts` change on `main` (or on a push of
+  `.github/triggers/deploy-schema.json`, or by hand). So a new category
+  reaches the connector with the same push that adds it to the code.
+
+`/add-resources` prefers the connector when it is present and falls back to
+the trigger file below.
+
 ## Other ways in
 
 1. **Studio**: guil.is/studio → **Resources** → new document → publish. The
@@ -110,3 +133,7 @@ renders under "Other" rather than disappearing.
 - `.github/triggers/resources.json` — the last batch pushed; changing it on
   `main` runs the Action.
 - `.claude/skills/add-resources/SKILL.md` — the drop-links skill.
+- `docs/resources-claude-ai-project.md` — paste-ready instructions for a
+  claude.ai Project with the Sanity connector.
+- `.github/workflows/sanity-deploy-schema.yml` — keeps the deployed schema
+  (what the connector sees) in step with the code.

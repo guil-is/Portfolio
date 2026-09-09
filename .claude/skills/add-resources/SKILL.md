@@ -1,6 +1,6 @@
 ---
 name: add-resources
-description: Add links to the design resources library at /resources with zero manual work — fetch each page, title it, write the why-line, categorize, rate, then write to Sanity through the "Sanity — Create resource" Action. Use whenever Guil drops one or more URLs and says add / save / resource / library, or asks to re-rank, re-categorize, describe, or remove entries.
+description: Add links to the design resources library at /resources with zero manual work — fetch each page, title it, write the why-line, categorize, rate, then write to Sanity through the Sanity connector when it is present, else through the "Sanity — Create resource" Action. Use whenever Guil drops one or more URLs and says add / save / resource / library, or asks to re-rank, re-categorize, describe, or remove entries.
 ---
 
 # Add resources
@@ -63,23 +63,43 @@ reaches the video page directly.
   - 2 · situational: right tool for a narrow job
   - 1 · niche: kept for reference
 
-## 4. Validate locally
+## 4. Write: Sanity connector first
 
-Build the JSON array and run the script without a token. It checks
-shape, categories and ratings, nothing is written:
+Check the tool list for the Sanity MCP (tools named `mcp__Sanity__*` or
+similar, from the remote server at mcp.sanity.io). When it is present,
+write directly and skip step 5 entirely:
 
-```bash
-ITEMS_JSON='[{"url":"https://...","title":"...","category":"...","description":"...","tags":["free"],"rating":4}]' \
-DRY_RUN=true npx tsx scripts/sanity/create-resource.ts
+1. Duplicate check: query `*[_type == "resource" && url == $url]`, also
+   with and without a trailing slash and `www.`.
+2. New URL: create the document (shape below), then **publish** it.
+   Created documents are drafts and the site renders published documents
+   only. Verify with a query that the published id exists.
+3. Known URL: patch only the fields that change, then publish.
+4. Removal: unpublish, then delete.
+
+```json
+{ "_type": "resource", "title": "…", "url": "https://…", "category": "typography",
+  "description": "…", "tags": ["free"], "rating": 4 }
 ```
 
-## 5. Write through the trigger file
+Only ever touch `resource` documents. `category` must be a value from
+`src/lib/resources.ts`; the deployed schema (see "Sanity — Deploy schema"
+Action) carries the same list, so `get_schema` shows it too.
 
-The Sanity token lives only in GitHub secrets, the GitHub App behind
-the MCP tools can't dispatch workflows, and the sandbox can't reach
-Sanity. So the write path is a push: the "Sanity — Create resource"
-Action runs whenever `.github/triggers/resources.json` changes on
-`main`.
+## 5. Write: trigger file (no connector)
+
+Validate the batch first. It checks shape, categories and ratings, no
+token needed, nothing is written:
+
+```bash
+ITEMS_FILE=.github/triggers/resources.json npx tsx scripts/sanity/create-resource.ts
+```
+
+The Sanity token lives only in GitHub secrets, the GitHub App behind the
+MCP tools can't dispatch workflows, and the remote sandbox can't reach
+Sanity. So the fallback write path is a push: the "Sanity — Create
+resource" Action runs whenever `.github/triggers/resources.json` changes
+on `main`.
 
 1. Write the file. `batch` is a free label that makes every push a
    diff, even when the items repeat:
@@ -92,18 +112,12 @@ Action runs whenever `.github/triggers/resources.json` changes on
    }
    ```
 
-2. Validate it (no token needed, nothing is written):
-
-   ```bash
-   ITEMS_FILE=.github/triggers/resources.json npx tsx scripts/sanity/create-resource.ts
-   ```
-
-3. Commit only that file, message `resources: add 3 links` (or
+2. Commit only that file, message `resources: add 3 links` (or
    `resources: re-rank …`, `resources: remove …`), and push to `main`
    per the CLAUDE.md workflow (commit on the harness branch if one is
    assigned, then fast-forward `main`).
 
-4. Poll the run: `actions_list` → `list_workflow_runs` with
+3. Poll the run: `actions_list` → `list_workflow_runs` with
    `resource_id: "sanity-create-resource.yml"`, newest first, until
    `status: completed`. Give it ~60s. On `conclusion: failure`, read
    `get_job_logs` with `failed_only: true`, fix the file, push a new
@@ -116,9 +130,10 @@ A local session with the `gh` CLI can skip the commit:
 
 ## 6. Updates and removals
 
-Same flow. A known URL is patched with only the fields you send, so
-re-ranking is `{ "url": "...", "rating": 5 }` and re-categorizing is
-`{ "url": "...", "category": "color" }`. Removing is
+Same flow on either path. With the connector: patch the one field, publish.
+With the trigger file: a known URL is patched with only the fields you
+send, so re-ranking is `{ "url": "...", "rating": 5 }` and
+re-categorizing is `{ "url": "...", "category": "color" }`. Removing is
 `{ "url": "...", "delete": true }`. Send `null` to clear description,
 tags or rating. "Remove X" from Guil is explicit; do it without asking.
 
