@@ -21,6 +21,7 @@ export const RESOURCE_CATEGORIES = [
   { value: "ai", title: "AI tools" },
   { value: "tools-plugins", title: "Tools & Plugins" },
   { value: "reading", title: "Reading & Learning" },
+  { value: "reference", title: "Reference & Directories" },
   { value: "other", title: "Other" },
 ] as const;
 

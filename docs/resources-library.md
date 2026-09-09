@@ -91,7 +91,7 @@ Defined once in `src/lib/resources.ts` (`RESOURCE_CATEGORIES`) and imported by
 both the Studio schema and the page, in this render order:
 
 typography · color · icons-illustration · inspiration · ui-kits ·
-mockups-stock · motion-video · ai · tools-plugins · reading · other
+mockups-stock · motion-video · ai · tools-plugins · reading · reference · other
 
 To add one, append to the list. Never change an existing `value`: documents
 store it verbatim. A document whose value no longer exists in the list
