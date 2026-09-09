@@ -179,10 +179,19 @@ export function BooksDashboard({
       seed.some((e) => e.date.startsWith(String(year)) && e.kind !== "income"),
     [entries, seed, year],
   );
-  // Subscriptions: every year's business rows, so yearly plans are seen twice.
+  // Subscriptions: every year's rows (stored years, this tab's rows for
+  // the current year, and the seed years), so yearly plans are seen twice.
   const subs = useMemo(
-    () => trackSubscriptions([...loadAllBooks(), ...entries, ...seed.filter((e) => e.keep)], registry),
-    [entries, seed, registry],
+    () =>
+      trackSubscriptions(
+        [
+          ...loadAllBooks().filter((e) => !e.date.startsWith(String(year))),
+          ...entries,
+          ...seed,
+        ],
+        registry,
+      ),
+    [entries, seed, registry, year],
   );
   const today = new Date().toISOString().slice(0, 10);
   const soon = subs.filter((s) => s.nextRenewal <= addDaysIso(today, 30));
@@ -563,7 +572,7 @@ export function BooksDashboard({
                   <div className="min-w-0">
                     <p className="truncate text-[0.95rem] font-medium text-ink">
                       {s.url ? <a href={s.url} target="_blank" rel="noreferrer" className="hover:underline">{s.name}</a> : s.name}
-                      <span className="ml-2 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-faint">{s.source}{s.charges > 1 ? ` · ${s.charges} charges` : ""}</span>
+                      <span className="ml-2 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-faint">{s.source}{s.charges > 1 ? ` · ${s.charges} charges` : ""}{s.unseen ? " · not seen in the books" : ""}</span>
                     </p>
                     <p className="truncate text-[0.8rem] text-muted">{[CATEGORY_LABELS[s.category], s.note].filter(Boolean).join(" · ")}</p>
                   </div>

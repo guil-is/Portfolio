@@ -33,6 +33,8 @@ export type TrackedSubscription = {
   url?: string;
   nextAmount?: number;
   endsAt?: string;
+  /** Registry plan with no matching charge in the books (yet, or any more). */
+  unseen?: boolean;
 };
 
 const DAY = 86_400_000;
@@ -65,8 +67,10 @@ export function nextRenewalFrom(from: string, interval: "monthly" | "yearly", to
 
 export function detectSubscriptions(entries: BookEntry[], today: string): TrackedSubscription[] {
   const groups = new Map<string, BookEntry[]>();
+  const seen = new Set<string>();
   for (const e of entries) {
-    if (e.kind !== "expense") continue;
+    if (e.kind !== "expense" || seen.has(e.id)) continue;
+    seen.add(e.id);
     const k = merchantKey(e.party);
     const list = groups.get(k) ?? [];
     list.push(e);
@@ -74,29 +78,37 @@ export function detectSubscriptions(entries: BookEntry[], today: string): Tracke
   }
   const out: TrackedSubscription[] = [];
   for (const [key, list] of groups) {
-    const sorted = [...list].sort((a, b) => a.date.localeCompare(b.date));
+    // Same-day duplicates (a sheet row next to the bank row) collapse.
+    const byDay = new Map<string, BookEntry>();
+    for (const e of [...list].sort((a, b) => a.date.localeCompare(b.date))) {
+      byDay.set(`${e.date}|${e.amount.toFixed(2)}`, e);
+    }
+    const sorted = [...byDay.values()].sort((a, b) => a.date.localeCompare(b.date));
     if (sorted.length < 2) continue;
-    const gaps = sorted.slice(1).map((e, i) => (Date.parse(e.date) - Date.parse(sorted[i].date)) / DAY);
+    // Judge cadence on the charges priced like the latest one — a yearly
+    // plan that became monthly, or an old aggregate row, shouldn't hide it.
+    const latest = sorted[sorted.length - 1];
+    const cluster = sorted.filter((e) => Math.abs(e.amount - latest.amount) <= latest.amount * 0.15);
+    if (cluster.length < 2) continue;
+    const gaps = cluster.slice(1).map((e, i) => (Date.parse(e.date) - Date.parse(cluster[i].date)) / DAY);
     const median = [...gaps].sort((a, b) => a - b)[Math.floor(gaps.length / 2)];
     let interval: "monthly" | "yearly" | null = null;
-    if (sorted.length >= 3 && median >= 25 && median <= 36) interval = "monthly";
+    if (cluster.length >= 3 && median >= 25 && median <= 36) interval = "monthly";
     else if (median >= 330 && median <= 400) interval = "yearly";
     if (!interval) continue;
-    const amounts = sorted.map((e) => e.amount).sort((a, b) => a - b);
-    const mid = amounts[Math.floor(amounts.length / 2)];
-    const steady = amounts.every((a) => Math.abs(a - mid) <= mid * 0.15);
-    if (!steady) continue;
-    const last = sorted[sorted.length - 1];
+    // Lapsed plans (no charge for well over an interval) stay out.
+    const sinceLast = (Date.parse(today) - Date.parse(latest.date)) / DAY;
+    if (sinceLast > (interval === "monthly" ? 45 : 400)) continue;
     out.push({
       key,
-      name: last.party,
-      amount: last.amount,
+      name: latest.party,
+      amount: latest.amount,
       interval,
-      category: last.category,
-      lastCharge: last.date,
-      nextRenewal: nextRenewalFrom(last.date, interval, addDays(today, 1)),
-      yearly: interval === "monthly" ? last.amount * 12 : last.amount,
-      charges: sorted.length,
+      category: latest.category,
+      lastCharge: latest.date,
+      nextRenewal: nextRenewalFrom(latest.date, interval, addDays(today, 1)),
+      yearly: interval === "monthly" ? latest.amount * 12 : latest.amount,
+      charges: cluster.length,
       source: "detected",
     });
   }
@@ -133,6 +145,7 @@ export function trackSubscriptions(
       url: r.url,
       nextAmount: r.nextAmount,
       endsAt: r.endsAt,
+      unseen: !seen && !entries.some((e) => e.kind === "expense" && merchantKey(e.party) === key),
     });
   }
   out.push(...detected.values());
