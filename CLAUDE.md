@@ -16,6 +16,11 @@
 - `src/content/projects.ts` is legacy: it only backfills images/bodies for older pre-CMS projects. Don't add new projects to it.
 - Full workflow + field reference: `docs/adding-a-project.md`.
 
+# Design resources library
+
+- Unlisted link directory at `/resources` (noindex, robots-disallowed, no nav link, no password). Entries are Sanity `resource` docs, added in `/studio` → Resources, or via the "Sanity — Create resource" Action (single or bulk JSON). Workflow + fields: `docs/resources-library.md`.
+- Categories live once in `src/lib/resources.ts` and feed both the schema and the page. Append to add one; never rename an existing value.
+
 # Client lifecycle (onboarding → close-out)
 
 - **The protocol for all client admin is `docs/client-lifecycle.md`** — read it before any client-related task (new lead, proposal, agreement, payment, close-out). Skills: `/new-client` (onboarding stages), `/client-sweep` (weekly status/drift check).

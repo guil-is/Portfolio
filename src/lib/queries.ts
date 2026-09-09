@@ -330,3 +330,23 @@ export async function getSiteSettings(): Promise<SanitySettings | null> {
     }`,
   );
 }
+
+// ---- Resources (design library at /resources) ----
+
+export type SanityResource = {
+  _id: string;
+  title: string;
+  url: string;
+  /** One of RESOURCE_CATEGORIES in src/lib/resources.ts. */
+  category: string;
+  description?: string;
+  tags?: string[];
+};
+
+export async function getAllResources(): Promise<SanityResource[]> {
+  return sanityClient.fetch(
+    `*[_type == "resource" && defined(url)] | order(lower(title) asc) {
+      _id, title, url, category, description, tags
+    }`,
+  );
+}

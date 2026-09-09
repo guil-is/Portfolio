@@ -38,6 +38,8 @@ export default defineConfig({
             S.documentTypeListItem("person").title("People"),
             // Testimonials
             S.documentTypeListItem("testimonial").title("Testimonials"),
+            // Design resources library (/resources)
+            S.documentTypeListItem("resource").title("Resources"),
             S.divider(),
             // Signed agreement audit log
             S.documentTypeListItem("signedAgreement").title(

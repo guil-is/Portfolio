@@ -1,0 +1,66 @@
+name: Sanity — Create resource
+
+# Manually triggered workflow to add entries to the design resources
+# library (/resources). Fill the single fields for one link, or paste a
+# JSON array into items_json to add many at once.
+
+on:
+  workflow_dispatch:
+    inputs:
+      title:
+        description: "Title (single mode), e.g. 'Google Fonts'"
+        required: false
+        type: string
+      url:
+        description: "URL (single mode), e.g. https://fonts.google.com"
+        required: false
+        type: string
+      category:
+        description: "Category value or title (single mode), e.g. 'typography' or 'Icons & Illustration'"
+        required: false
+        type: string
+      description:
+        description: "One line on why it's here (optional)"
+        required: false
+        type: string
+      tags:
+        description: "Comma-separated tags (optional), e.g. 'free, variable'"
+        required: false
+        type: string
+      items_json:
+        description: "Bulk mode: JSON array of {title,url,category,description?,tags?}. Overrides the single fields."
+        required: false
+        type: string
+      dry_run:
+        description: "When true, log the plan without mutating"
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create resource(s)
+        env:
+          SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+          SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          TITLE: ${{ inputs.title }}
+          RESOURCE_URL: ${{ inputs.url }}
+          CATEGORY: ${{ inputs.category }}
+          DESCRIPTION: ${{ inputs.description }}
+          TAGS: ${{ inputs.tags }}
+          ITEMS_JSON: ${{ inputs.items_json }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: npx tsx scripts/sanity/create-resource.ts
