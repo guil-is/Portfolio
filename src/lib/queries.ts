@@ -341,12 +341,15 @@ export type SanityResource = {
   category: string;
   description?: string;
   tags?: string[];
+  /** 1–5, 5 = essential. Sorts within its category on /resources. */
+  rating?: number;
 };
 
 export async function getAllResources(): Promise<SanityResource[]> {
   return sanityClient.fetch(
-    `*[_type == "resource" && defined(url)] | order(lower(title) asc) {
-      _id, title, url, category, description, tags
+    `*[_type == "resource" && defined(url)]
+      | order(coalesce(rating, 0) desc, lower(title) asc) {
+      _id, title, url, category, description, tags, rating
     }`,
   );
 }

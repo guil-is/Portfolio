@@ -1,26 +1,32 @@
 #!/usr/bin/env tsx
 /**
- * Create `resource` documents (the design library at /resources) in Sanity.
+ * Create, update or delete `resource` documents (the design library at
+ * /resources) in Sanity. The write path for the /add-resources skill.
  *
- * Two modes, picked by which env vars are set:
+ * Input, one of:
  *
- *   Single:  TITLE, RESOURCE_URL, CATEGORY  (required)
- *            DESCRIPTION, TAGS (comma-separated)  (optional)
- *   Bulk:    ITEMS_JSON — a JSON array of
- *            { title, url, category, description?, tags?: string[] | string }
+ *   Bulk:    ITEMS_JSON — JSON array of items (see shapes below)
+ *   Single:  TITLE, RESOURCE_URL, CATEGORY (required)
+ *            DESCRIPTION, TAGS (comma-separated), RATING (1–5) (optional)
  *
- * Shared:    DRY_RUN (default "true": log the plan without writing)
- *            SANITY_PROJECT_ID / SANITY_DATASET / SANITY_AUTH_TOKEN
+ * Item shapes (matched on url, trailing slash ignored):
  *
- * CATEGORY accepts either the stored value ("icons-illustration") or the
- * display title ("Icons & Illustration"), case-insensitive. The list lives
- * in src/lib/resources.ts.
+ *   { url, title, category, description?, tags?, rating? }   new url → create
+ *   { url, category?, rating?, description?, ... }          known url → patch
+ *                                                           only the given fields
+ *   { url, delete: true }                                    known url → delete
  *
- * Idempotent: a resource whose URL already exists (ignoring a trailing
- * slash) is skipped, never duplicated.
+ * A field set to null is unset on update (description, tags, rating).
+ * `category` takes the stored value ("icons-illustration") or the display
+ * title ("Icons & Illustration"), case-insensitive. `tags` is an array or a
+ * comma-separated string, lowercased. `rating` is an integer 1–5.
  *
- * Run from the GitHub Actions tab ("Sanity — Create resource"); the local
- * sandbox can't reach api.sanity.io (see scripts/sanity/README.md).
+ * Env:  DRY_RUN (default "true": print the plan, write nothing)
+ *       SANITY_PROJECT_ID / SANITY_DATASET / SANITY_AUTH_TOKEN
+ *
+ * Without SANITY_AUTH_TOKEN the script only validates items (dry run,
+ * no duplicate check) so a session without the token can sanity-check
+ * its JSON before dispatching the "Sanity — Create resource" Action.
  */
 import { createClient } from "next-sanity";
 import {
@@ -29,20 +35,33 @@ import {
 } from "../../src/lib/resources";
 
 type Item = {
-  title: string;
   url: string;
-  category: string;
-  description?: string;
-  tags?: string[] | string;
+  title?: string;
+  category?: string;
+  description?: string | null;
+  tags?: string[] | string | null;
+  rating?: number | string | null;
+  delete?: boolean;
 };
 
-type ResourceDoc = {
-  _type: "resource";
-  title: string;
+type Existing = {
+  _id: string;
   url: string;
-  category: string;
+  title?: string;
+  category?: string;
   description?: string;
   tags?: string[];
+  rating?: number;
+};
+
+type Prepared = {
+  url: string;
+  title?: string;
+  category?: string;
+  description?: string | null;
+  tags?: string[] | null;
+  rating?: number | null;
+  delete: boolean;
 };
 
 const {
@@ -51,6 +70,7 @@ const {
   CATEGORY,
   DESCRIPTION,
   TAGS,
+  RATING,
   ITEMS_JSON,
   DRY_RUN,
   SANITY_PROJECT_ID,
@@ -58,12 +78,15 @@ const {
   SANITY_AUTH_TOKEN,
 } = process.env;
 
-if (!SANITY_PROJECT_ID || !SANITY_DATASET || !SANITY_AUTH_TOKEN) {
-  console.error("Missing SANITY_* env vars");
+const dryRun = (DRY_RUN ?? "true").toLowerCase() !== "false";
+const hasToken = Boolean(SANITY_PROJECT_ID && SANITY_DATASET && SANITY_AUTH_TOKEN);
+
+if (!hasToken && !dryRun) {
+  console.error("Missing SANITY_* env vars — a real run needs them.");
   process.exit(1);
 }
 
-const dryRun = (DRY_RUN ?? "true").toLowerCase() !== "false";
+const validCategories = RESOURCE_CATEGORIES.map((c) => c.value).join(", ");
 
 function resolveCategory(input: string): string | null {
   const needle = input.trim().toLowerCase();
@@ -78,105 +101,214 @@ function normalizeUrl(url: string): string {
   return url.trim().replace(/\/+$/, "");
 }
 
-function splitTags(tags: Item["tags"]): string[] {
-  if (!tags) return [];
+function splitTags(tags: string[] | string): string[] {
   const list = Array.isArray(tags) ? tags : tags.split(",");
-  return list.map((t) => t.trim().toLowerCase()).filter(Boolean);
+  return Array.from(
+    new Set(list.map((t) => t.trim().toLowerCase()).filter(Boolean)),
+  );
 }
 
 function collectItems(): Item[] {
   if (ITEMS_JSON && ITEMS_JSON.trim()) {
     const parsed: unknown = JSON.parse(ITEMS_JSON);
-    if (!Array.isArray(parsed)) {
-      throw new Error("ITEMS_JSON must be a JSON array");
-    }
+    if (!Array.isArray(parsed)) throw new Error("ITEMS_JSON must be a JSON array");
     return parsed as Item[];
   }
-  if (!TITLE || !RESOURCE_URL || !CATEGORY) {
-    throw new Error(
-      "Single mode needs TITLE, RESOURCE_URL and CATEGORY (or set ITEMS_JSON for bulk)",
-    );
+  if (!RESOURCE_URL) {
+    throw new Error("Set ITEMS_JSON (bulk) or RESOURCE_URL + TITLE + CATEGORY (single)");
   }
   return [
     {
-      title: TITLE,
       url: RESOURCE_URL,
+      title: TITLE,
       category: CATEGORY,
       description: DESCRIPTION,
       tags: TAGS,
+      rating: RATING,
     },
   ];
 }
 
-const client = createClient({
-  projectId: SANITY_PROJECT_ID,
-  dataset: SANITY_DATASET,
-  apiVersion: "2024-01-01",
-  token: SANITY_AUTH_TOKEN,
-  useCdn: false,
-});
+function prepare(item: Item, i: number): Prepared {
+  const label = `Item ${i + 1}${item.title ? ` (${item.title})` : ""}`;
+  const url = item.url ? normalizeUrl(item.url) : "";
+  if (!/^https?:\/\//i.test(url)) {
+    throw new Error(`${label}: url must start with http(s)://`);
+  }
+  const out: Prepared = { url, delete: item.delete === true };
+  if (out.delete) return out;
 
-async function main() {
-  const items = collectItems();
-  const validCategories = RESOURCE_CATEGORIES.map((c) => c.value).join(", ");
-
-  // Validate everything before touching the dataset.
-  const prepared = items.map((item, i) => {
+  if (item.title !== undefined) {
     const title = item.title?.trim();
-    const url = item.url ? normalizeUrl(item.url) : "";
-    if (!title) throw new Error(`Item ${i + 1}: missing title`);
-    if (!/^https?:\/\//i.test(url)) {
-      throw new Error(`Item ${i + 1} (${title}): url must start with http(s)://`);
-    }
+    if (!title) throw new Error(`${label}: title is empty`);
+    out.title = title;
+  }
+  if (item.category !== undefined) {
     const category = resolveCategory(item.category ?? "");
     if (!category) {
       throw new Error(
-        `Item ${i + 1} (${title}): unknown category "${item.category}". One of: ${validCategories}`,
+        `${label}: unknown category "${item.category}". One of: ${validCategories}`,
       );
     }
-    const description = item.description?.trim();
-    const tags = splitTags(item.tags);
-    return { title, url, category, description, tags };
+    out.category = category;
+  }
+  if (item.description !== undefined) {
+    out.description =
+      item.description === null ? null : item.description.trim() || null;
+  }
+  if (item.tags !== undefined) {
+    out.tags = item.tags === null ? null : splitTags(item.tags);
+    if (out.tags && out.tags.length === 0) out.tags = null;
+  }
+  if (item.rating !== undefined) {
+    if (item.rating === null || item.rating === "") {
+      out.rating = null;
+    } else {
+      const n = Number(item.rating);
+      if (!Number.isInteger(n) || n < 1 || n > 5) {
+        throw new Error(`${label}: rating must be an integer 1–5`);
+      }
+      out.rating = n;
+    }
+  }
+  return out;
+}
+
+function sameTags(a?: string[], b?: string[] | null): boolean {
+  const x = a ?? [];
+  const y = b ?? [];
+  return x.length === y.length && x.every((t, i) => t === y[i]);
+}
+
+async function main() {
+  const prepared = collectItems().map(prepare);
+  const seen = new Set<string>();
+  for (const p of prepared) {
+    if (seen.has(p.url)) throw new Error(`Duplicate url in input: ${p.url}`);
+    seen.add(p.url);
+  }
+
+  if (!hasToken) {
+    console.log("No SANITY_AUTH_TOKEN: validating only, duplicate check skipped.\n");
+    for (const p of prepared) {
+      console.log(
+        p.delete
+          ? `- delete  ${p.url}`
+          : `· valid   ${p.title ?? "(existing)"}  [${p.category ?? "—"}]  ${p.url}` +
+              (p.rating ? `  ${p.rating}/5` : "") +
+              (p.tags?.length ? `  #${p.tags.join(" #")}` : ""),
+      );
+    }
+    console.log(`\n${prepared.length} item(s) valid. Dispatch the Action to write.`);
+    return;
+  }
+
+  const client = createClient({
+    projectId: SANITY_PROJECT_ID,
+    dataset: SANITY_DATASET,
+    apiVersion: "2024-01-01",
+    token: SANITY_AUTH_TOKEN,
+    useCdn: false,
+    perspective: "published",
   });
 
-  const existing = await client.fetch<{ url: string }[]>(
-    `*[_type == "resource" && defined(url)]{ url }`,
+  const existing = await client.fetch<Existing[]>(
+    `*[_type == "resource" && defined(url)]{ _id, url, title, category, description, tags, rating }`,
   );
-  const known = new Set(existing.map((e) => normalizeUrl(e.url)));
+  const byUrl = new Map(existing.map((e) => [normalizeUrl(e.url), e]));
 
-  let created = 0;
-  let skipped = 0;
+  const counts = { created: 0, updated: 0, deleted: 0, unchanged: 0, missing: 0 };
+  const tag = (verb: string) => (dryRun ? `· plan ${verb}` : `${verb}`);
 
   for (const p of prepared) {
-    if (known.has(p.url)) {
-      console.log(`– skip  ${p.title} — already in the library (${p.url})`);
-      skipped += 1;
+    const found = byUrl.get(p.url);
+
+    if (p.delete) {
+      if (!found) {
+        console.log(`? missing ${p.url} — nothing to delete`);
+        counts.missing += 1;
+        continue;
+      }
+      console.log(`${tag("- delete")}  ${found.title ?? p.url}  (${found._id})`);
+      if (!dryRun) await client.delete(found._id);
+      counts.deleted += 1;
       continue;
     }
 
-    const doc: ResourceDoc = {
-      _type: "resource",
-      title: p.title,
-      url: p.url,
-      category: p.category,
-    };
-    if (p.description) doc.description = p.description;
-    if (p.tags.length) doc.tags = p.tags;
+    if (!found) {
+      if (!p.title || !p.category) {
+        throw new Error(
+          `${p.url} is new, so it needs a title and a category to be created`,
+        );
+      }
+      const doc: {
+        _type: "resource";
+        title: string;
+        url: string;
+        category: string;
+        description?: string;
+        tags?: string[];
+        rating?: number;
+      } = { _type: "resource", title: p.title, url: p.url, category: p.category };
+      if (p.description) doc.description = p.description;
+      if (p.tags?.length) doc.tags = p.tags;
+      if (p.rating) doc.rating = p.rating;
 
-    console.log(
-      `${dryRun ? "· plan " : "+ create"} ${p.title}  [${p.category}]  ${p.url}` +
-        (p.tags.length ? `  #${p.tags.join(" #")}` : ""),
-    );
-    if (!dryRun) {
-      const res = await client.create(doc);
-      console.log(`         → ${res._id}`);
+      console.log(
+        `${tag("+ create")}  ${p.title}  [${p.category}]  ${p.url}` +
+          (p.rating ? `  ${p.rating}/5` : "") +
+          (p.tags?.length ? `  #${p.tags.join(" #")}` : ""),
+      );
+      if (!dryRun) {
+        const res = await client.create(doc);
+        console.log(`           → ${res._id}`);
+      }
+      counts.created += 1;
+      continue;
     }
-    known.add(p.url);
-    created += 1;
+
+    // Known url: patch only what changed.
+    const set: Record<string, string | string[] | number> = {};
+    const unset: string[] = [];
+    if (p.title !== undefined && p.title !== found.title) set.title = p.title;
+    if (p.category !== undefined && p.category !== found.category) set.category = p.category;
+    if (p.description !== undefined) {
+      if (p.description === null) {
+        if (found.description !== undefined) unset.push("description");
+      } else if (p.description !== found.description) set.description = p.description;
+    }
+    if (p.tags !== undefined) {
+      if (p.tags === null) {
+        if (found.tags?.length) unset.push("tags");
+      } else if (!sameTags(found.tags, p.tags)) set.tags = p.tags;
+    }
+    if (p.rating !== undefined) {
+      if (p.rating === null) {
+        if (found.rating !== undefined) unset.push("rating");
+      } else if (p.rating !== found.rating) set.rating = p.rating;
+    }
+
+    const changed = [...Object.keys(set), ...unset.map((k) => `-${k}`)];
+    if (changed.length === 0) {
+      console.log(`= same    ${found.title ?? p.url}`);
+      counts.unchanged += 1;
+      continue;
+    }
+    console.log(`${tag("~ update")}  ${found.title ?? p.url}  (${changed.join(", ")})`);
+    if (!dryRun) {
+      let patch = client.patch(found._id).set(set);
+      if (unset.length) patch = patch.unset(unset);
+      await patch.commit();
+    }
+    counts.updated += 1;
   }
 
   console.log(
-    `\n${dryRun ? "DRY RUN — nothing written. " : ""}${created} ${dryRun ? "to create" : "created"}, ${skipped} skipped.`,
+    `\n${dryRun ? "DRY RUN — nothing written. " : ""}` +
+      `${counts.created} created, ${counts.updated} updated, ${counts.deleted} deleted, ` +
+      `${counts.unchanged} unchanged` +
+      (counts.missing ? `, ${counts.missing} not found` : "") +
+      ".",
   );
 }
 

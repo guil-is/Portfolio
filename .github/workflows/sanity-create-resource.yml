@@ -1,8 +1,9 @@
 name: Sanity — Create resource
 
-# Manually triggered workflow to add entries to the design resources
-# library (/resources). Fill the single fields for one link, or paste a
-# JSON array into items_json to add many at once.
+# Manually triggered workflow to add, update or delete entries in the
+# design resources library (/resources). Fill the single fields for one
+# link, or paste a JSON array into items_json. The /add-resources skill
+# dispatches this with items_json.
 
 on:
   workflow_dispatch:
@@ -27,8 +28,12 @@ on:
         description: "Comma-separated tags (optional), e.g. 'free, variable'"
         required: false
         type: string
+      rating:
+        description: "1–5, 5 = essential (optional)"
+        required: false
+        type: string
       items_json:
-        description: "Bulk mode: JSON array of {title,url,category,description?,tags?}. Overrides the single fields."
+        description: "Bulk mode: JSON array of {url,title,category,description?,tags?,rating?} to create/update, or {url,delete:true}. Overrides the single fields."
         required: false
         type: string
       dry_run:
@@ -51,7 +56,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Create resource(s)
+      - name: Create / update / delete resource(s)
         env:
           SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
           SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
@@ -61,6 +66,7 @@ jobs:
           CATEGORY: ${{ inputs.category }}
           DESCRIPTION: ${{ inputs.description }}
           TAGS: ${{ inputs.tags }}
+          RATING: ${{ inputs.rating }}
           ITEMS_JSON: ${{ inputs.items_json }}
           DRY_RUN: ${{ inputs.dry_run }}
         run: npx tsx scripts/sanity/create-resource.ts

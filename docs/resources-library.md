@@ -11,28 +11,60 @@ and rabbit holes, grouped by category, with search and filter pills.
   body in `<PasswordGate storageKey="resources-unlocked">` like the `/for/*`
   pages.
 
-## Adding a resource
+## Drop links
 
-Entries live in **Sanity** (`resource` doc type). Two ways in:
+The default way in. Paste URLs into a Claude Code session, optionally with a
+note ("essential", "for icons", "meh but keep"). The `/add-resources` skill
+fetches each page, names it, writes the one-liner, picks the category, rates
+it, and writes to Sanity through the "Sanity — Create resource" Action. It
+reports back a table. Nothing to fill in.
 
-1. **Studio** (default): guil.is/studio → **Resources** → new document →
-   publish. The page revalidates within ~60s.
-2. **GitHub Actions**: run "Sanity — Create resource". Fill the single fields
-   for one link, or paste a JSON array into `items_json` to add many at once.
-   Leave `dry_run` on for the first run, read the plan, re-run with it off.
-   Existing URLs are skipped, never duplicated. Script:
-   `scripts/sanity/create-resource.ts`.
+The same skill handles "rank X higher", "move X to color", "rewrite the
+line for X", "remove X".
 
-Bulk JSON shape:
+Why the Action: the Sanity write token lives only in GitHub secrets, and the
+sandbox can't reach `api.sanity.io` anyway. The skill validates the JSON
+locally first (the script runs without a token in dry-run mode), then
+dispatches the workflow on `main` and polls the run.
+
+## Other ways in
+
+1. **Studio**: guil.is/studio → **Resources** → new document → publish. The
+   page revalidates within ~60s.
+2. **GitHub Actions by hand**: run "Sanity — Create resource". Fill the single
+   fields for one link, or paste a JSON array into `items_json`. Leave
+   `dry_run` on for the first run, read the plan, re-run with it off.
+
+Item shapes for `items_json` (matched on URL, trailing slash ignored):
 
 ```json
 [
-  { "title": "Google Fonts", "url": "https://fonts.google.com", "category": "typography", "description": "Free, variable, no login.", "tags": ["free", "variable"] },
-  { "title": "Mobbin", "url": "https://mobbin.com", "category": "Inspiration" }
+  { "url": "https://fonts.google.com", "title": "Google Fonts", "category": "typography", "description": "Free, variable, no login.", "tags": ["free", "variable"], "rating": 5 },
+  { "url": "https://mobbin.com", "rating": 4 },
+  { "url": "https://example.com/old-tool", "delete": true }
 ]
 ```
 
-`category` takes the stored value or the display title, case-insensitive.
+- New URL: needs `title` + `category`, creates the document.
+- Known URL: patches only the fields present. `null` clears `description`,
+  `tags` or `rating`.
+- `delete: true`: removes the document.
+- `category` takes the stored value or the display title, case-insensitive.
+
+Script: `scripts/sanity/create-resource.ts`.
+
+## Rating
+
+`rating` is the rank, an integer 1–5. It sorts entries inside their category
+(highest first, then A–Z) and renders as five dots on the row.
+
+| | |
+| --- | --- |
+| 5 | essential: best in class, reach for it weekly |
+| 4 | strong: regular use, clearly above the alternatives |
+| 3 | solid: good, one of several (default when unsure) |
+| 2 | situational: right tool for a narrow job |
+| 1 | niche: kept for reference |
 
 ## Fields
 
@@ -43,6 +75,7 @@ Bulk JSON shape:
 | **Category** | Required, one of the list below. Drives grouping + filter pills. |
 | **Why it's here** | Optional one-liner under the title. |
 | **Tags** | Optional, free-form, lowercase. Rendered as `#tag` and searchable. |
+| **Rating** | Optional 1–5. Sorts within the category, shown as dots. See above. |
 
 ## Categories
 
@@ -64,3 +97,6 @@ renders under "Other" rather than disappearing.
 - `src/lib/resources.ts` — taxonomy + helpers.
 - `src/lib/queries.ts` — `getAllResources()`.
 - `sanity/schemas/resource.ts` — document type.
+- `scripts/sanity/create-resource.ts` + `.github/workflows/sanity-create-resource.yml`
+  — the write path (create / update / delete, dry-run by default).
+- `.claude/skills/add-resources/SKILL.md` — the drop-links skill.

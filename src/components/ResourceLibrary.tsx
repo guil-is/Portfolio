@@ -21,6 +21,11 @@ function normalizeCategory(value: string): string {
   return isResourceCategory(value) ? value : "other";
 }
 
+// Highest rated first inside a category, then alphabetical.
+function byRatingThenTitle(a: SanityResource, b: SanityResource): number {
+  return (b.rating ?? 0) - (a.rating ?? 0) || a.title.localeCompare(b.title);
+}
+
 export function ResourceLibrary({ resources }: Props) {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -93,7 +98,7 @@ export function ResourceLibrary({ resources }: Props) {
       (c) => ({
         value: c.value,
         title: c.title,
-        items: byCategory.get(c.value) ?? [],
+        items: [...(byCategory.get(c.value) ?? [])].sort(byRatingThenTitle),
       }),
     );
   }, [filtered]);
@@ -265,14 +270,38 @@ function ResourceRow({ resource }: { resource: SanityResource }) {
           ) : null}
         </div>
 
-        <span
-          aria-hidden
-          className="mt-1 shrink-0 translate-x-[-4px] text-ink opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
-        >
-          ↗
-        </span>
+        <div className="mt-0.5 flex shrink-0 items-center gap-3">
+          <RatingDots rating={resource.rating} />
+          <span
+            aria-hidden
+            className="translate-x-[-4px] text-ink opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
+          >
+            ↗
+          </span>
+        </div>
       </a>
     </li>
+  );
+}
+
+// Five dots, filled up to the rating. Hidden when unrated.
+function RatingDots({ rating }: { rating?: number }) {
+  if (!rating || rating < 1) return null;
+  const value = Math.min(5, Math.round(rating));
+  return (
+    <span
+      role="img"
+      aria-label={`Rated ${value} of 5`}
+      title={`${value}/5`}
+      className="flex items-center gap-[3px]"
+    >
+      {Array.from({ length: 5 }, (_, i) => (
+        <span
+          key={i}
+          className={`h-[5px] w-[5px] rounded-full ${i < value ? "bg-ink" : "bg-rule"}`}
+        />
+      ))}
+    </span>
   );
 }
 
