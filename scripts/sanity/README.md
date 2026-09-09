@@ -14,6 +14,7 @@ Add three **repository secrets** in GitHub
 | `SANITY_PROJECT_ID`  | `ilcq8ood`                                     |
 | `SANITY_DATASET`     | `production`                                   |
 | `SANITY_AUTH_TOKEN`  | Write token from sanity.io/manage → API → Tokens → Editor |
+| `SANITY_DEPLOY_TOKEN` | Token with the **Deploy Studio** permission, same place. Only the "Sanity — Deploy schema" workflow uses it (`sanity schemas deploy` needs the `deploySchema` grant, which Editor lacks). |
 
 The token must have **Editor** permission (or higher). Keep it out of
 `.env.local` on machines you don't trust; the secret lives only on

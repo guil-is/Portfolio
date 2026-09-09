@@ -5,6 +5,11 @@ name: Sanity — Deploy schema
 # knows the document types and field options, e.g. the `resource`
 # category list. Runs when schema files change on main, when the
 # trigger file is pushed, or manually. Nothing on the site depends on it.
+#
+# Needs a token with the "Deploy Studio" permission (grants
+# sanity.project/deploySchema). The Editor token in SANITY_AUTH_TOKEN is
+# refused, so add SANITY_DEPLOY_TOKEN as a repository secret:
+# sanity.io/manage → project → API → Tokens → Add token → Deploy Studio.
 
 on:
   workflow_dispatch:
@@ -33,7 +38,7 @@ jobs:
 
       - name: Deploy schema
         env:
-          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_DEPLOY_TOKEN || secrets.SANITY_AUTH_TOKEN }}
           # sanity.config.ts reads the Next public vars; map the secrets in.
           NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
           NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.SANITY_DATASET }}

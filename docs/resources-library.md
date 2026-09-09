@@ -52,7 +52,9 @@ custom connector in claude.ai it also shows up in Claude Code web sessions.
   Action runs `sanity schemas deploy` whenever `sanity/**`, `sanity.config.ts`
   or `src/lib/resources.ts` change on `main` (or on a push of
   `.github/triggers/deploy-schema.json`, or by hand). So a new category
-  reaches the connector with the same push that adds it to the code.
+  reaches the connector with the same push that adds it to the code. It
+  needs the `SANITY_DEPLOY_TOKEN` repository secret (a token with the
+  "Deploy Studio" permission; the Editor token is refused).
 
 `/add-resources` prefers the connector when it is present and falls back to
 the trigger file below.
