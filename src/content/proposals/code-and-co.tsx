@@ -152,7 +152,8 @@ export const codeAndCo: Proposal = {
         // TODO copy: draft terms joined into one card body, plus the
         // draft's working-model line restored.
         body: "Priorities set weekly with Kelly. Async by default, Berlin time. Invoiced monthly, from my German freelance business. Rolling engagement, one month notice either side. Extra days billed on top, agreed in advance.",
-        response: "Available from September 9, 2026",
+        // TODO copy: de-dated 9 Sep while the decision slips (travel).
+        response: "Available now",
       },
       {
         // TODO copy: sprint card body written for this proposal.
@@ -162,7 +163,8 @@ export const codeAndCo: Proposal = {
         per: "",
         cadence: "One full week, one project",
         body: "We pick one project. Five days, full focus. You get a working first version and a plan for the rest.",
-        response: "Available September 14–18, 2026",
+        // TODO copy: de-dated 9 Sep — the 14-18 Sep slot was going stale.
+        response: "Week agreed on the intro call",
       },
     ],
   },
@@ -170,7 +172,8 @@ export const codeAndCo: Proposal = {
   nextStep: {
     // TODO copy: intro-call closer in the Odyssey style.
     heading: "Ready to move?",
-    body: "Next step is a 30-minute intro call. We talk through Target Portal, AI KPI tracking and how the retainer works. If it fits, send me the paperwork and a first priority. I can start on the 9th. hi@guil.is, or Telegram.",
+    // TODO copy: "start on the 9th" de-dated 9 Sep.
+    body: "Next step is a 30-minute intro call. We talk through Target Portal, AI KPI tracking and how the retainer works. If it fits, send me the paperwork and a first priority. I can start within a week. hi@guil.is, or Telegram.",
     ctaHref: "https://cal.com/guil-is",
     ctaLabel: "Schedule an intro call",
     // Call-first close: no accept button on first touch.

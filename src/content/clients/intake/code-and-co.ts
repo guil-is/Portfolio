@@ -32,7 +32,8 @@ export const codeAndCoIntake: ClientIntake = {
     ],
     budget:
       "EUR 950 per day (1,900 per week, invoiced monthly) or EUR 5,200 for a one-week sprint",
-    startDate: "Retainer from 9 September 2026; sprint slot 14–18 September 2026",
+    startDate:
+      "Retainer available now; sprint week to be agreed on the intro call (proposal de-dated 9 Sep)",
   },
 
   // Proposal is call-first (no accept button): the intro call at
@@ -47,6 +48,6 @@ export const codeAndCoIntake: ClientIntake = {
     "2026-09-09: decision slipping a few days — Dan and team traveling to London, then US. Dan has not opened the proposal page yet; Kelly has flagged it to him as very important.",
     "2026-09-09: strong fit signal from Kelly: staffing is a top concern, hired 3 analysts and a new ops lead last week, next step is sorting product capacity.",
     "Stance: prioritizing retainer-type work over one-offs, but not turning this down if it moves slowly.",
-    "Sprint window (14–18 Sep) is at risk of going stale while they travel — refresh the proposal dates when Dan re-engages.",
+    "2026-09-09: proposal de-dated so nothing goes stale during their travel — retainer now 'Available now', sprint week 'agreed on the intro call', closer 'start within a week' (was 'on the 9th').",
   ],
 };
