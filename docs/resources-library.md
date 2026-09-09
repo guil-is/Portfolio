@@ -129,7 +129,11 @@ renders under "Other" rather than disappearing.
 
 - `src/app/resources/page.tsx` — server page, fetch + hero + noindex metadata.
 - `src/components/ResourceLibrary.tsx` — client list: search (`/` focuses,
-  Esc clears), category pills, grouped rows, empty states.
+  Esc clears), category pills, grouped rows, empty states. Two views,
+  toggled at the right of the pills and remembered per browser
+  (`localStorage` key `resources-view`): **table** (default, one line per
+  entry: favicon, name, why, two tags, rating) and **list** (name, domain,
+  full line, all tags).
 - `src/lib/resources.ts` — taxonomy + helpers.
 - `src/lib/queries.ts` — `getAllResources()`.
 - `sanity/schemas/resource.ts` — document type.
