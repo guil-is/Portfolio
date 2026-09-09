@@ -59,7 +59,7 @@ _Last reviewed: 2026-09-09, tools handed over._
 - [x] Reminder emails: waiting on one or two more big names, then sending week of 15 Sep. Hoekstra confirmed. I'm on standby for tweaks.
 - [x] Handover email sent same evening to Lara, Claire, Flora: /speakers-admin (add, edit, reorder, remove speakers and pitchers, publish), /speaker-announcement (WinWin account), /speaker-card (speakers self-serve). Cards carry no website link on purpose. Client page rows marked delivered with links.
 - [ ] Lara wants "crazy ideas" for memorable brand moments on the day (her list: temporary tattoos, plantable forget-me-not postcard with a message to your neighbour, edible logo in the Prosecco). Come back with two or three.
-- [ ] Aftermovie: quote drafted 9 Sep (Gmail draft "WINWIN - Aftermovie options", three tiers: edit-only 1,400 / shoot+edit 1,900 + travel / plus speaker series 3,900 + travel; add-ons; go-by date 10 Oct). Review numbers, add the TEDx + DWeb links, send. Time-sensitive: SPA is choosing between Roman and me.
+- [ ] Aftermovie: quote drafted 9 Sep (Gmail draft "WINWIN - Aftermovie options", three tiers priced at the GovHack industry-standard level, not the TEDx/Logos level: edit-only 3,200 / shoot+edit 5,600 + travel / plus speaker series 7,400 + travel; add-ons (extra clip 450, revision 300, second operator 1,650, photos 600, raw footage 300); go-by date 10 Oct). Review numbers, add the TEDx + DWeb links, send. Time-sensitive: SPA is choosing between Roman and me.
 
 ## 9–10 Sep, before Brussels
 
