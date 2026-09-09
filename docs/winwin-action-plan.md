@@ -9,7 +9,7 @@ notes in the Notion brain. Tick items here as they ship, and flip the
 matching row's `status` in `src/content/clients/spa.ts` so the client
 page agrees. Client-facing state stays in `winwin-status.md`.
 
-_Last reviewed: 2026-09-08, after the call with Lara (transcript + her order doc)._
+_Last reviewed: 2026-09-09, tools handed over._
 
 ## Fixed dates
 
@@ -57,6 +57,7 @@ _Last reviewed: 2026-09-08, after the call with Lara (transcript + her order doc
 - [x] Speaking cards: A5 + A6 logo cards, 5–10, SPA prints. My tip: full-page sticker on foam board.
 - [x] Signage: floor tape dropped (too costly). Breadcrumb floor stickers every ~2 m, one design, square rather than 20 x 10 (logo is square). Plus A4 wall signs for rooms, printed last minute. Venue is a labyrinth (palace + library, five floors, roof terrace link), breakout plan can change a week out. Venue map idea parked until the visit.
 - [x] Reminder emails: waiting on one or two more big names, then sending week of 15 Sep. Hoekstra confirmed. I'm on standby for tweaks.
+- [x] Handover email sent same evening to Lara, Claire, Flora: /speakers-admin (add, edit, reorder, remove speakers and pitchers, publish), /speaker-announcement (WinWin account), /speaker-card (speakers self-serve). Cards carry no website link on purpose. Client page rows marked delivered with links.
 - [ ] Lara wants "crazy ideas" for memorable brand moments on the day (her list: temporary tattoos, plantable forget-me-not postcard with a message to your neighbour, edible logo in the Prosecco). Come back with two or three.
 - [ ] Aftermovie: send a quote with tiers and examples of previous work.
 
@@ -88,7 +89,7 @@ _Last reviewed: 2026-09-08, after the call with Lara (transcript + her order doc
 - [ ] Partner comms kit: graphics + copy blocks on the /partner page.
 - [ ] Countdown visuals: pre-render the set (e.g. 4 weeks, 2 weeks, 1 week, tomorrow, today) so Flora posts them without me.
 - [ ] Press section on the site if Flora's copy is in; otherwise doc-rendered.
-- [ ] 23 Sep: INV-20620 still not landed → message Lara.
+- [ ] 23 Sep: INV-26020 still not landed → message Lara.
 
 ## 29–30 Sep, handover
 

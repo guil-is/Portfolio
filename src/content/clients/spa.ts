@@ -246,6 +246,7 @@ export const spa: SpaClient = {
         phase: "Phase 3",
         status: "done",
         date: "2026-09-08",
+        link: { label: "winwin.brussels/speakers-admin", href: "https://winwin.brussels/speakers-admin" },
         detail:
           "A hidden admin page where your team adds or replaces a speaker (photo, name, role, organisation, website, bio) and the site updates itself. Late confirmations never wait on me.",
       },
@@ -286,11 +287,20 @@ export const spa: SpaClient = {
           "Four to six cardboard roll-ups from printdeal, 85 x 200 cm, so everything comes from one supplier. No date on them, so they work again next year: logo, tagline, website.",
       },
       {
-        title: "LinkedIn speaker kit",
+        title: "LinkedIn speaker cards",
         phase: "Phase 4",
-        status: "in_progress",
+        status: "done",
+        date: "2026-09-08",
         detail:
-          "A self-serve page on the site: your team or the speaker enters name, role and photo, and downloads a LinkedIn-ready card in seconds, as a personal \"stay tuned\" post or an announcement from the WinWin account. Countdown visuals to follow. Claire collects the speaker photos.",
+          "Two self-serve pages on the site: one for announcements from the WinWin account, one you send to a confirmed speaker so they make their own \"I'm speaking at WinWin 2026\" card. Name, role, photo, download, plus a ready-made post text. No website link on the cards, so nobody outside the invite list lands on the RSVP form. Claire collects the speaker photos.",
+        link: { label: "winwin.brussels/speaker-announcement", href: "https://winwin.brussels/speaker-announcement" },
+      },
+      {
+        title: "Countdown visuals for LinkedIn",
+        phase: "Phase 4",
+        status: "upcoming",
+        detail:
+          "A pre-rendered set (four weeks, two weeks, one week, tomorrow, today) in the brand, so Flora posts them on schedule without a design round each time.",
       },
       {
         title: "Partner comms kit",
