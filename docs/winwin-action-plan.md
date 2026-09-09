@@ -59,7 +59,7 @@ _Last reviewed: 2026-09-09, tools handed over._
 - [x] Reminder emails: waiting on one or two more big names, then sending week of 15 Sep. Hoekstra confirmed. I'm on standby for tweaks.
 - [x] Handover email sent same evening to Lara, Claire, Flora: /speakers-admin (add, edit, reorder, remove speakers and pitchers, publish), /speaker-announcement (WinWin account), /speaker-card (speakers self-serve). Cards carry no website link on purpose. Client page rows marked delivered with links.
 - [ ] Lara wants "crazy ideas" for memorable brand moments on the day (her list: temporary tattoos, plantable forget-me-not postcard with a message to your neighbour, edible logo in the Prosecco). Come back with two or three.
-- [ ] Aftermovie: send a quote with tiers and examples of previous work.
+- [ ] Aftermovie: quote drafted 9 Sep (Gmail draft "WINWIN - Aftermovie options", three tiers: edit-only 1,400 / shoot+edit 1,900 + travel / plus speaker series 3,900 + travel; add-ons; go-by date 10 Oct). Review numbers, add the TEDx + DWeb links, send. Time-sensitive: SPA is choosing between Roman and me.
 
 ## 9–10 Sep, before Brussels
 
@@ -68,7 +68,7 @@ _Last reviewed: 2026-09-09, tools handed over._
 - [ ] Backdrop file on printdeal's "zipper horizontal 300" template. Send to Lara to order.
 - [ ] Roll-up files on the printdeal cardboard 85 x 200 template.
 - [ ] Speaking card artwork, A5 + A6.
-- [ ] Brand-moment ideas back to Lara. Aftermovie quote out.
+- [ ] Brand-moment ideas back to Lara. Aftermovie quote out (draft ready).
 - [ ] Doc-rendered pages: decide Google Doc renderer vs a simple visual editor. Whichever is easier for Flora, ship the shell.
 
 ## 10–17 Sep, Brussels (working days between meetings)
