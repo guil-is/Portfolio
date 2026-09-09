@@ -1,117 +1,19 @@
 {
-  "batch": "2026-09-09 9 tools from 'These Websites Give Designers an Unfair Advantage'",
+  "batch": "2026-09-09 mobbin",
   "dry_run": false,
   "items": [
     {
-      "url": "https://www.producthunt.com",
-      "title": "Product Hunt",
-      "category": "reference",
-      "description": "Launch feed for new tools. Filter to design, sort by top rated, skip the hype cycle.",
-      "tags": [
-        "free",
-        "reference",
-        "discovery"
-      ],
-      "rating": 2
-    },
-    {
-      "url": "https://www.fontbrief.com",
-      "title": "Fontbrief",
-      "category": "typography",
-      "description": "Search type by personality, not name: warm or cold, loud or discreet. 400 curated faces.",
-      "tags": [
-        "free",
-        "font",
-        "reference"
-      ],
-      "rating": 3
-    },
-    {
-      "url": "https://palitra.app",
-      "title": "Palitra",
-      "category": "color",
-      "description": "Type a word, get palettes pulled from matching images. Fast read on a niche's color norms.",
-      "tags": [
-        "free",
-        "color",
-        "generator"
-      ],
-      "rating": 2
-    },
-    {
-      "url": "https://mediacheatsheet.com",
-      "title": "Media Cheat Sheet",
-      "category": "reference",
-      "description": "Every platform's image and video sizes on one page, kept current. Stop googling story dimensions.",
-      "tags": [
-        "free",
-        "reference",
-        "social"
-      ],
-      "rating": 3
-    },
-    {
-      "url": "https://www.streamlinehq.com",
-      "title": "Streamline",
-      "category": "icons-illustration",
-      "description": "Vast icon and illustration sets in matched styles. Free tier is decent, Pro is where the depth is.",
+      "url": "https://mobbin.com",
+      "title": "Mobbin",
+      "category": "inspiration",
+      "description": "Real app flows, screen by screen, searchable by pattern. Better than Dribbble for product decisions.",
       "tags": [
         "freemium",
-        "icons",
-        "figma",
-        "plugin"
-      ],
-      "rating": 4
-    },
-    {
-      "url": "https://brandingstyleguides.com",
-      "title": "Branding Style Guides",
-      "category": "inspiration",
-      "description": "Archive of real brand manuals, Apple to Citroën. See how the big ones structure a system.",
-      "tags": [
-        "free",
-        "brand",
+        "product",
+        "inspiration",
         "reference"
       ],
-      "rating": 4
-    },
-    {
-      "url": "https://designspells.com",
-      "title": "Design Spells",
-      "category": "inspiration",
-      "description": "Micro-interactions, easter eggs and 404s that make software feel alive. Delight, catalogued.",
-      "tags": [
-        "free",
-        "inspiration",
-        "product",
-        "motion"
-      ],
-      "rating": 4
-    },
-    {
-      "url": "https://growth.design/psychology",
-      "title": "Growth.Design Psychology",
-      "category": "reading",
-      "description": "Cognitive biases and UX principles, each tied to a case study. The why behind the patterns.",
-      "tags": [
-        "free",
-        "reference",
-        "product",
-        "psychology"
-      ],
-      "rating": 4
-    },
-    {
-      "url": "https://www.toools.design",
-      "title": "toools.design",
-      "category": "reference",
-      "description": "Directory of every design resource you half remember, tagged free or paid. The meta-library.",
-      "tags": [
-        "free",
-        "reference",
-        "directory"
-      ],
-      "rating": 3
+      "rating": 5
     }
   ]
 }
