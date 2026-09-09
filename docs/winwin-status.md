@@ -69,7 +69,7 @@ _Last reconciled: 2026-09-08._
   Stickers (80 x 50 labels) and table tents (A5 fold, ~60) are printed by SPA
   from CSV-fed tools Guil builds. Table tents are back in scope. Floor tape
   dropped for breadcrumb floor stickers + A4 wall signs. Speaker card tool and
-  speakers admin page demoed and welcomed. Venue visit Tue 16 Sep 16:30 at
+  speakers admin page demoed and welcomed. Venue visit Tue 15 Sep 16:30 at
   the library. Lara asked for memorable brand-moment ideas and an aftermovie
   quote (separate). Reminder emails go out week of 15 Sep once more names
   confirm (Hoekstra is in).

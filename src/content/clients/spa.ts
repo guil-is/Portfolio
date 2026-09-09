@@ -126,24 +126,24 @@ export const spa: SpaClient = {
     },
     {
       text: "Confirm the Phase 4 deliverables list, or flag anything to change, so that work can start.",
-      due: "By Friday, September 12",
+      due: "By Friday, September 11",
       link: { label: "Phase 4 deliverables list", href: "#deliverables" },
     },
     {
       text: "Confirm the venue visit with the library contact: Tuesday September 16, 16:30, meeting at the library entrance.",
-      due: "By Friday, September 12",
+      due: "By Friday, September 11",
     },
     {
       text: "Send the final list of badge roles for the name stickers, and a first CSV export of the guest list (first name, surname, organisation, role).",
-      due: "By Friday, September 19",
+      due: "By Friday, September 18",
     },
     {
       text: "Send the copy for the site pages (pitcher, Letter to the Future, programme, press, partner kit), drafts are fine.",
-      due: "By Friday, September 19",
+      due: "By Friday, September 18",
     },
     {
       text: "Share the speaker photos you have so far, and the reminder-email copy in Mailchimp once the next names are confirmed.",
-      due: "By Friday, September 19",
+      due: "By Friday, September 18",
     },
   ],
 

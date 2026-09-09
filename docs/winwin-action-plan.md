@@ -17,8 +17,8 @@ _Last reviewed: 2026-09-09, tools handed over._
 | --- | --- |
 | 3–7 Sep | Off (flagged to Lara). |
 | 11–17 Sep | Brussels, arriving Thu 11. Working trip. Leg: seven stitches (Corfu, 6 Sep), standing desk only for now, walking fine by the visit. |
-| Mon 15 Sep | Commons Hub meeting (afternoon). |
-| Tue 16 Sep, 16:30 | Venue visit with Lara. Meet at the library entrance (KBR, Mont des Arts). Lara confirms with the venue contact who opens the palace side. |
+| Mon 14 Sep | Commons Hub meeting (afternoon). |
+| Tue 15 Sep, 16:30 | Venue visit with Lara. Meet at the library entrance (KBR, Mont des Arts). Lara confirms with the venue contact who opens the palace side. |
 | 16 Sep | Phase 3 invoice INV-26020 due. Finance pays without confirming: check the account. |
 | 30 Sep | Everything delivered. Phase 4 invoice goes out. |
 | ~20 Oct | Speaker confirmations land. SPA handles announcements with the card tool; programme page updates itself from their doc. |
@@ -28,12 +28,12 @@ _Last reviewed: 2026-09-09, tools handed over._
 
 | By | From | What |
 | --- | --- | --- |
-| 12 Sep | Lara | Confirmation of the deliverables list (the Phase 4 start). Venue visit confirmed with the library contact. |
-| 12 Sep | Lara | Screen ratio for the slide template (ask the AV partner). Backdrop specs are settled: printdeal zipper wall 300 x 230. |
-| 19 Sep | Lara | Final badge roles + first CSV export of the guest list (first name, surname, organisation, role). |
-| 19 Sep | Flora | Copy for the five site pages (pitcher, letter to the future, programme, press, partner) in Word, even if drafts. Comms plan locks week of 15 Sep. |
-| 19 Sep | Claire | Speaker photos received so far. Reminder-email copy in Mailchimp once one or two more names confirm (Hoekstra is in). |
-| 26 Sep | Claire | Last partner logos batch. Later ones are a five-minute favour, not scheduled work. |
+| 11 Sep | Lara | Confirmation of the deliverables list (the Phase 4 start). Venue visit confirmed with the library contact. |
+| 11 Sep | Lara | Screen ratio for the slide template (ask the AV partner). Backdrop specs are settled: printdeal zipper wall 300 x 230. |
+| 18 Sep | Lara | Final badge roles + first CSV export of the guest list (first name, surname, organisation, role). |
+| 18 Sep | Flora | Copy for the five site pages (pitcher, letter to the future, programme, press, partner) in Word, even if drafts. Comms plan locks week of 15 Sep. |
+| 18 Sep | Claire | Speaker photos received so far. Reminder-email copy in Mailchimp once one or two more names confirm (Hoekstra is in). |
+| 25 Sep | Claire | Last partner logos batch. Later ones are a five-minute favour, not scheduled work. |
 
 ## Standing, every week in September
 
@@ -71,14 +71,14 @@ _Last reviewed: 2026-09-09, tools handed over._
 - [ ] Brand-moment ideas back to Lara. Aftermovie quote out.
 - [ ] Doc-rendered pages: decide Google Doc renderer vs a simple visual editor. Whichever is easier for Flora, ship the shell.
 
-## 11–17 Sep, Brussels (working days between meetings)
+## 10–17 Sep, Brussels (working days between meetings)
 
 - [ ] Floor sticker design first, so the visit can settle size and count. Confirm the square format to Lara for her order doc.
-- [ ] Tue 16, 16:30: walk the venue with Lara. Photos and measurements: sticker path from entrance to every room, wall-sign spots, backdrop wall. Decide whether a mini venue map earns its place.
-- [ ] 16 Sep: check the account for INV-26020.
+- [ ] Tue 15, 16:30: walk the venue with Lara. Photos and measurements: sticker path from entrance to every room, wall-sign spots, backdrop wall. Decide whether a mini venue map earns its place.
+- [ ] 16 Sep (Wed): check the account for INV-26020.
 - [ ] A4 room-sign template right after the visit.
 - [ ] Reminder-email tweaks when Claire's Mailchimp duplicate is ready (week of 15 Sep).
-- [ ] Site pages: build as Flora's copy lands. Any page without copy by the 19th ships as a doc-rendered page they fill themselves.
+- [ ] Site pages: build as Flora's copy lands. Any page without copy by the 18th ships as a doc-rendered page they fill themselves.
 
 ## 18–26 Sep, production week
 
