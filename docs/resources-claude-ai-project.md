@@ -56,15 +56,22 @@ values: `typography`, `color`, `icons-illustration`, `inspiration`,
 
 ## Writing to Sanity
 
+Workspace name is `guil-portfolio`. Use the published perspective for
+checks.
+
 - Duplicate check first: query `*[_type == "resource" && url == $url]`
   (also try the URL with and without a trailing slash and `www.`).
-- New: create the document, then publish it. Created documents are drafts
-  and the site renders published documents only. Verify with a query that
-  the published id exists.
-- Known URL: patch only the fields that change, then publish.
-- "Remove X": unpublish and delete the document. Do it without asking.
+- New: create the document (type `resource`, fields in content), then
+  publish the returned draft id. Created documents are drafts and the site
+  renders published documents only. Verify with a published query.
+- Known URL: patch the published id with only the fields that change.
+  Patches land on a draft, so publish afterwards.
+- "Remove X": there is no delete tool. Unpublish the published id, then
+  discard the draft. Do it without asking.
 - "Rank X higher", "move X to color", "rewrite the line for X": patch that
   one field, publish.
+- Never create a document without publishing it, and never leave a draft
+  behind. One published document per URL.
 
 ## Report
 

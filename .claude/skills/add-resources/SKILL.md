@@ -65,17 +65,24 @@ reaches the video page directly.
 
 ## 4. Write: Sanity connector first
 
-Check the tool list for the Sanity MCP (tools named `mcp__Sanity__*` or
-similar, from the remote server at mcp.sanity.io). When it is present,
-write directly and skip step 5 entirely:
+Check the tool list for the Sanity MCP (tools named `mcp__Sanity__*`,
+remote server mcp.sanity.io, OAuth as Guil). When present, write
+directly and skip step 5. Project `ilcq8ood`, dataset `production`,
+workspace `guil-portfolio`. Verified end to end on 2026-09-09.
 
-1. Duplicate check: query `*[_type == "resource" && url == $url]`, also
-   with and without a trailing slash and `www.`.
-2. New URL: create the document (shape below), then **publish** it.
-   Created documents are drafts and the site renders published documents
-   only. Verify with a query that the published id exists.
-3. Known URL: patch only the fields that change, then publish.
-4. Removal: unpublish, then delete.
+1. Duplicate check: `query_documents`, perspective `published`,
+   `*[_type == "resource" && url == $url]`, also with and without a
+   trailing slash and `www.`.
+2. New URL: `create_documents` with `type: "resource"` and the fields in
+   `content` (shape below). It returns a `drafts.<id>`. Then
+   `publish_documents` with that id. The site renders published
+   documents only, so a create without a publish is invisible.
+3. Known URL: `patch_documents` on the published id with `set` for the
+   changed fields (or `unset`). Patches land on a draft, so follow with
+   `publish_documents`.
+4. Removal: there is no delete tool. `unpublish_documents` on the
+   published id, then `discard_drafts` on `drafts.<id>`.
+5. Confirm with one `published` query before reporting.
 
 ```json
 { "_type": "resource", "title": "…", "url": "https://…", "category": "typography",
@@ -83,8 +90,9 @@ write directly and skip step 5 entirely:
 ```
 
 Only ever touch `resource` documents. `category` must be a value from
-`src/lib/resources.ts`; the deployed schema (see "Sanity — Deploy schema"
-Action) carries the same list, so `get_schema` shows it too.
+`src/lib/resources.ts`. `get_schema` only knows `resource` once the
+"Sanity — Deploy schema" Action has run with a Deploy Studio token; until
+then the list in this file and in `src/lib/resources.ts` is the truth.
 
 ## 5. Write: trigger file (no connector)
 

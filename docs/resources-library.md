@@ -47,7 +47,10 @@ custom connector in claude.ai it also shows up in Claude Code web sessions.
   into its chats.
 - Claude Code (local): `claude mcp add Sanity -t http https://mcp.sanity.io --scope user`.
 - Created documents are drafts. Every write ends with a publish or the page
-  never shows it. The skill and the Project instructions both say so.
+  never shows it. Patches land on a draft too. Removal is unpublish, then
+  discard the draft (the connector has no delete). Verified end to end on
+  2026-09-09 from a Claude Code web session: create, publish, read back,
+  unpublish, discard.
 - The server reads the **deployed** schema. The "Sanity — Deploy schema"
   Action runs `sanity schemas deploy` whenever `sanity/**`, `sanity.config.ts`
   or `src/lib/resources.ts` change on `main` (or on a push of
