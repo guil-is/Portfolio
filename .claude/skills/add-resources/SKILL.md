@@ -18,6 +18,19 @@ anything below is unclear.
   canonical page (a tool's home, not a blog post about it, unless the
   post itself is the resource).
 
+## 1b. Videos, articles, roundups
+
+A YouTube video, newsletter or "10 tools I use" post is a container, not
+a resource. Extract the tool list first: the description and chapter
+list, then the transcript or body. Each tool then goes through steps
+2–3 on its own URL. Don't add the container itself unless Guil says to.
+
+Remote sessions sit behind an egress allowlist: youtube.com, transcript
+mirrors and most tool homepages are denied (403 on CONNECT). When the
+host is blocked, don't route around it. Ask Guil to paste the tool
+names or the description, then continue. In a local session WebFetch
+reaches the video page directly.
+
 ## 2. Research each link
 
 - `WebFetch` the URL. Ask for: what it is, who makes it, pricing or free
