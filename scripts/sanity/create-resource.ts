@@ -36,6 +36,15 @@ type Item = {
   tags?: string[] | string;
 };
 
+type ResourceDoc = {
+  _type: "resource";
+  title: string;
+  url: string;
+  category: string;
+  description?: string;
+  tags?: string[];
+};
+
 const {
   TITLE,
   RESOURCE_URL,
@@ -145,7 +154,7 @@ async function main() {
       continue;
     }
 
-    const doc: Record<string, unknown> = {
+    const doc: ResourceDoc = {
       _type: "resource",
       title: p.title,
       url: p.url,
