@@ -13,6 +13,7 @@ import {
   loadSentInvoices,
   newManualEntry,
   parseQuickAdd,
+  sameCharge,
   saveBook,
   saveBooksSettings,
   saveSentInvoices,
@@ -30,6 +31,8 @@ import {
   type Category,
 } from "@/lib/expenses/types";
 import { TaxEstimate } from "./TaxEstimate";
+import { trackSubscriptions } from "@/lib/expenses/subscriptions";
+import type { Subscription } from "@/content/books/subscriptions";
 import { prettyDate } from "./ExpenseSwipeDeck";
 
 /**
@@ -39,7 +42,7 @@ import { prettyDate } from "./ExpenseSwipeDeck";
  * the copy for the accountant's Primanota.
  */
 
-type Tab = "overview" | "entries" | "accountant";
+type Tab = "overview" | "entries" | "subscriptions" | "accountant";
 type Filter = "all" | "income" | "expense" | "tax";
 
 export function BooksDashboard({
@@ -47,6 +50,7 @@ export function BooksDashboard({
   invoices,
   seed,
   facts,
+  registry,
   ledgerLoaded,
 }: {
   income: IncomeYear[];
@@ -55,6 +59,8 @@ export function BooksDashboard({
   seed: BookEntry[];
   /** Per-year defaults read off a Bescheid (src/content/books/seed.ts). */
   facts: Record<number, YearSettings>;
+  /** Known subscriptions (src/content/books/subscriptions.ts). */
+  registry: Subscription[];
   ledgerLoaded: boolean;
 }) {
   const [years, setYears] = useState<number[]>(() => bookYears());
@@ -159,7 +165,11 @@ export function BooksDashboard({
     const own = entries.filter((e) => e.date.startsWith(String(year)));
     const hasImport = own.some((e) => e.source === "n26");
     const seeded = seed.filter(
-      (e) => e.date.startsWith(String(year)) && (e.kind === "income" || !hasImport),
+      (e) =>
+        e.date.startsWith(String(year)) &&
+        (e.kind === "income" || !hasImport || e.keep) &&
+        // A row added from chat steps aside once the bank or a quick-add has it.
+        !(e.keep && own.some((o) => sameCharge(o, e))),
     );
     return [...own, ...seeded];
   }, [entries, seed, year]);
@@ -169,6 +179,13 @@ export function BooksDashboard({
       seed.some((e) => e.date.startsWith(String(year)) && e.kind !== "income"),
     [entries, seed, year],
   );
+  // Subscriptions: every year's business rows, so yearly plans are seen twice.
+  const subs = useMemo(
+    () => trackSubscriptions([...loadAllBooks(), ...entries, ...seed.filter((e) => e.keep)], registry),
+    [entries, seed, registry],
+  );
+  const today = new Date().toISOString().slice(0, 10);
+  const soon = subs.filter((s) => s.nextRenewal <= addDaysIso(today, 30));
   // Finanzamt payments in other years that name this one.
   const elsewhere = useMemo(
     () => prepaidElsewhereFor(year, [...entries, ...loadAllBooks().filter((e) => !e.date.startsWith(String(year)))]),
@@ -331,6 +348,7 @@ export function BooksDashboard({
           [
             ["overview", "Tax estimate"],
             ["entries", `Entries · ${allRows.length}`],
+            ["subscriptions", `Subscriptions · ${subs.length}${soon.length > 0 ? ` · ${soon.length} due soon` : ""}`],
             ["accountant", `For the accountant${exportRowsList.length > 0 ? ` · ${exportRowsList.length} new` : ""}`],
           ] as [Tab, string][]
         ).map(([key, label]) => (
@@ -530,6 +548,47 @@ export function BooksDashboard({
         </section>
       ) : null}
 
+      {tab === "subscriptions" ? (
+        <section className="flex flex-col gap-8">
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule md:grid-cols-3">
+            <Stat label="Recurring per year" value={`€${formatEur(subs.reduce((t, s) => t + s.yearly, 0))}`} sub={`${subs.length} subscriptions`} />
+            <Stat label="Per month" value={`€${formatEur(subs.reduce((t, s) => t + s.yearly, 0) / 12)}`} sub="at current prices" />
+            <Stat label="Renewing in 30 days" value={`€${formatEur(soon.reduce((t, s) => t + (s.interval === "yearly" ? s.yearly : s.amount), 0))}`} sub={soon.map((s) => s.name).join(", ") || "nothing"} accent={soon.length === 0} />
+          </div>
+          <ul className="flex flex-col overflow-hidden rounded-[14px] border border-rule">
+            {subs.map((s) => {
+              const days = Math.round((Date.parse(s.nextRenewal) - Date.parse(today)) / 86_400_000);
+              return (
+                <li key={s.key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-2 border-b border-rule px-4 py-3 last:border-b-0 md:grid-cols-[minmax(0,1fr)_120px_110px_150px_120px] md:items-center">
+                  <div className="min-w-0">
+                    <p className="truncate text-[0.95rem] font-medium text-ink">
+                      {s.url ? <a href={s.url} target="_blank" rel="noreferrer" className="hover:underline">{s.name}</a> : s.name}
+                      <span className="ml-2 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-faint">{s.source}{s.charges > 1 ? ` · ${s.charges} charges` : ""}</span>
+                    </p>
+                    <p className="truncate text-[0.8rem] text-muted">{[CATEGORY_LABELS[s.category], s.note].filter(Boolean).join(" · ")}</p>
+                  </div>
+                  <p className="justify-self-end font-display text-[1rem] font-bold text-ink md:col-start-2">
+                    €{formatEur(s.amount)}<span className="ml-1 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-faint">/{s.interval === "monthly" ? "mo" : "yr"}</span>
+                  </p>
+                  <p className="text-[0.8rem] text-muted md:col-start-3">
+                    €{formatEur(s.interval === "monthly" ? s.amount * 12 : s.amount)}/yr
+                    {s.nextAmount !== undefined && s.nextAmount !== s.amount ? ` → €${formatEur(s.interval === "monthly" ? s.nextAmount * 12 : s.nextAmount)} next term` : ""}
+                  </p>
+                  <p className={`text-[0.8rem] md:col-start-4 ${days <= 30 ? "text-ink" : "text-muted"}`}>
+                    {prettyDate(s.nextRenewal)}{days <= 30 ? ` · in ${days} day${days === 1 ? "" : "s"}` : ""}
+                  </p>
+                  <p className="text-[0.8rem] text-faint md:col-start-5">{s.lastCharge ? `last ${prettyDate(s.lastCharge)}` : "not charged yet"}</p>
+                </li>
+              );
+            })}
+            {subs.length === 0 ? <li className="px-4 py-10 text-center text-[0.9rem] text-muted">No recurring charges found yet — import a year of N26 and they appear here.</li> : null}
+          </ul>
+          <p className="text-[0.8rem] leading-[1.4rem] text-muted">
+            Detected from the books: a merchant charged at a steady cadence (3+ monthly or 2 yearly charges within 15 % of each other). Known plans with a price step or a planned cancellation live in <code>src/content/books/subscriptions.ts</code> and override the detection.
+          </p>
+        </section>
+      ) : null}
+
       {tab === "accountant" ? (
         <section className="flex flex-col gap-8">
           <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
@@ -609,4 +668,8 @@ function Stat({ label, value, sub, accent }: { label: string; value: string; sub
       <p className="text-[0.75rem] leading-[1.1rem] text-muted">{sub}</p>
     </div>
   );
+}
+
+function addDaysIso(iso: string, days: number): string {
+  return new Date(Date.parse(iso) + days * 86_400_000).toISOString().slice(0, 10);
 }

@@ -81,6 +81,17 @@ Google Sheet. One year at a time:
   rules give that merchant. When the same charge later arrives in an
   N26 import (same merchant, same amount, within a week), the bank row
   replaces the manual one and keeps its category and note.
+- **Added from chat**: `src/content/books/added.ts` — a work expense
+  mentioned in a session ("just got Mobbin") goes in as a row there and
+  counts like a manual row. It steps aside automatically once the same
+  charge (merchant, amount, within a week) exists as a bank or quick-add
+  row.
+- **Subscriptions** tab: recurring charges detected from the books
+  (3+ monthly or 2 yearly charges of a merchant, amounts within 15 %)
+  merged with `src/content/books/subscriptions.ts` — the registry for
+  plans with a price step (`nextAmount`), a planned end (`endsAt`), or
+  ones the books haven't seen twice yet. Shows cadence, price, next
+  renewal, yearly cost, and what renews in the next 30 days.
 - **Old years**: `seedBooks` in `src/content/books/seed.ts` holds 2024
   and 2025 transcribed from the Google Sheets. Income rows always
   count; seed expense rows hide once an N26 import exists for that year.

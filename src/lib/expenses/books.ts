@@ -42,6 +42,9 @@ export type BookEntry = {
   /** EUR per 1 unit of the original currency. */
   rate?: number;
   source: "n26" | "manual" | "ledger" | "seed";
+  /** Seed row that counts even when an import exists for its year
+   * (rows added from chat) — unless a bank/manual row matches it. */
+  keep?: boolean;
   /** Set when the row has been handed to the accountant. */
   sentAt?: string;
   updatedAt: string;
@@ -418,4 +421,14 @@ export function parseQuickAdd(
     category: TAX_CATEGORIES.includes(category) || BUSINESS_CATEGORIES.includes(category) ? category : "other",
     currency: "EUR",
   };
+}
+
+/** Same charge: same merchant, same amount (±1 ct), within a week. */
+export function sameCharge(a: BookEntry, b: BookEntry): boolean {
+  return (
+    a.kind === b.kind &&
+    Math.abs(a.amount - b.amount) <= 0.01 &&
+    merchantKey(a.party) === merchantKey(b.party) &&
+    Math.abs(Date.parse(a.date) - Date.parse(b.date)) <= 7 * 86_400_000
+  );
 }
