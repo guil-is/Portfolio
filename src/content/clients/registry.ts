@@ -159,9 +159,15 @@ export const clientRegistry: ClientEntry[] = [
   entry(
     "code-and-co",
     "Code & Co.",
-    "Design partner proposal for Kelly Cheesman: weekly retainer (2 days/week) or a one-week sprint. Page live since 31 Aug, call-first close.",
+    "Design partner proposal: weekly retainer (2 days/week at 950 EUR/day) or a one-week sprint (5,200 EUR), call-first close. Awaiting Dan — team traveling until mid-Sept, Kelly chasing.",
     "proposal",
-    { contacts: [{ name: "Kelly Cheesman" }] },
+    {
+      contacts: [
+        { name: "Kelly Cheesman", role: "Champion" },
+        { name: "Dan", role: "Decision-maker" },
+        { name: "Lucas", role: "Decision-maker" },
+      ],
+    },
   ),
   entry("odyssey", "Odyssey", "Design partner proposal — didn't convert.", "closed", {
     contacts: [{ name: "Nick DeNuzzo" }],

@@ -1,8 +1,10 @@
 /**
- * Intake record for Code & Co. (codeandco.com) — backfilled by the
- * 2026-09-08 client sweep. The proposal page shipped 31 Aug before an
- * intake file existed, so this is reconstructed from the proposal data
- * (src/content/proposals/code-and-co.tsx). Fill the gaps as facts land.
+ * Intake record for Code & Co. (codeandco.com) — a due diligence
+ * consultancy serving private equity funds. Backfilled by the
+ * 2026-09-08 client sweep (the proposal page shipped before an intake
+ * file existed), then kept current from the Telegram thread. Kelly
+ * Cheesman is the inside champion; Dan and Lucas are the C-level
+ * decision-makers. Proposal live at /for/code-and-co.
  */
 
 import type { ClientIntake } from "../intake";
@@ -10,7 +12,15 @@ import type { ClientIntake } from "../intake";
 export const codeAndCoIntake: ClientIntake = {
   slug: "code-and-co",
   name: "Code & Co.",
-  contacts: [{ name: "Kelly Cheesman" }],
+  source: "Existing relationship with Kelly Cheesman (Telegram)",
+  contacts: [
+    {
+      name: "Kelly Cheesman",
+      role: "Champion; would set weekly priorities on the retainer",
+    },
+    { name: "Dan", role: "C-level decision-maker; proposal is with him" },
+    { name: "Lucas", role: "C-level decision-maker" },
+  ],
 
   engagement: {
     kind: "retainer",
@@ -32,5 +42,11 @@ export const codeAndCoIntake: ClientIntake = {
   notes: [
     "Proposal live at /for/code-and-co since 2026-08-31 (last copy edit 1 Sep).",
     "German freelance business invoices; tax mode depends on where Code & Co. is established — collect the legal entity before the agreement.",
+    "2026-09-07: Dan has not booked a call yet.",
+    "2026-09-08: sent Kelly the booking link (guil.is/available) to pass to Dan.",
+    "2026-09-09: decision slipping a few days — Dan and team traveling to London, then US. Dan has not opened the proposal page yet; Kelly has flagged it to him as very important.",
+    "2026-09-09: strong fit signal from Kelly: staffing is a top concern, hired 3 analysts and a new ops lead last week, next step is sorting product capacity.",
+    "Stance: prioritizing retainer-type work over one-offs, but not turning this down if it moves slowly.",
+    "Sprint window (14–18 Sep) is at risk of going stale while they travel — refresh the proposal dates when Dan re-engages.",
   ],
 };
