@@ -230,7 +230,7 @@ export const spaAftermovie: Proposal = {
   showApproach: false,
 
   nextStep: {
-    heading: "Let's lock the date",
+    heading: "Questions?",
     body: "Tell me on WhatsApp which package you'd like, or ask anything first. I'll confirm 3 November with a one-page addendum to our agreement.",
     ctaHref: "https://wa.me/4917676241374?text=Hi%20Guil%2C%20about%20the%20WinWin%20video%3A",
     ctaLabel: "Message me on WhatsApp",
