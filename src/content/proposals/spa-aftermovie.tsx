@@ -37,7 +37,7 @@ export const spaAftermovie: Proposal = {
 
   hero: {
     eyebrow: "Proposal",
-    title: "WinWin 2026 on film",
+    title: "WinWin 2026 video content creation",
     blurb:
       "A two-minute aftermovie for the comms push, with every talk recorded in full if you want them. Two ways to shoot it, depending on the look you want.",
   },
@@ -156,7 +156,7 @@ export const spaAftermovie: Proposal = {
       {
         label: "Lighter budget",
         title: "Lightweight",
-        lead: "Me alone with iPhones and the compact kit I own. Guerrilla style: fewer angles, less polish in low light, the same edit. Aftermovie only; add the talk recordings if you want them.",
+        lead: "Me alone with iPhones and the compact kit I own. Guerrilla style: less polish, same edit. Aftermovie only; add the talk recordings if you want them.",
         includes: [
           "Shoot day, solo, my own kit · 700",
           "Aftermovie edit and post · 1,500",
@@ -164,7 +164,7 @@ export const spaAftermovie: Proposal = {
           "Travel Berlin–Brussels · 150",
         ],
         prices: [{ label: "Package", amount: "2,500 EUR" }],
-        priceNote: "Good for LinkedIn and the site. Not the one for a big screen. Talk recordings: 600 on top.",
+        priceNote: "Talk recordings: 600 on top.",
         timeline: "Aftermovie by 10 November.",
       },
     ],
