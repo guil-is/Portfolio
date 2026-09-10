@@ -41,7 +41,7 @@ export const RULES: Rule[] = [
   // ── Internal / ignore ────────────────────────────────────────────────
   r("self", /\b(guilherme|guil)\b.*\bmaueler\b|\bmaueler\b/, "skip", "internal", 1, "Transfer to yourself"),
   r("wise-topup", /\bwise\b.*(top ?up|guilherme|maueler)|\btransferwise\b.*(top ?up|maueler)/, "skip", "internal", 0.95, "Top-up of your own Wise account", { scope: "any" }),
-  r("n26-space", /\bspaces?\b.*(transfer|umbuchung)|(to|from) space/, "skip", "internal", 1, "Move between N26 Spaces", { scope: "any" }),
+  r("n26-space", /\bspaces?\b.*(transfer|umbuchung)|(to|from) space|\bmain account\b|\bhauptkonto\b/, "skip", "internal", 1, "Move between N26 Spaces", { scope: "any" }),
 
   // ── Tax-relevant but not a business expense ──────────────────────────
   r("finanzamt", /\bfinanzamt\b|\bbundeskasse\b|\blandeshauptkasse\b|\bfinanzkasse\b|\bkasse\.hamburg\b|\bzentralkasse\b/, "tax", "tax", 0.97, "Tax payment to the Finanzamt", { scope: "any" }),
