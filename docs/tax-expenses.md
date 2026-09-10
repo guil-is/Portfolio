@@ -91,7 +91,20 @@ Google Sheet. One year at a time:
   merged with `src/content/books/subscriptions.ts` — the registry for
   plans with a price step (`nextAmount`), a planned end (`endsAt`), or
   ones the books haven't seen twice yet. Shows cadence, price, next
-  renewal, yearly cost, and what renews in the next 30 days.
+  renewal, yearly cost and share of the total, and what renews in the
+  next 30 days. Sort by next renewal, most expensive, most needed or
+  name; filter by cadence, category, "not seen in the books" and
+  ignored. Every row links to the merchant's billing page (registry
+  `url`, then `knownSites` in `subscriptions.ts`, then a web search).
+  Per plan you rate Essential / Useful / Could cut (the "Could cut"
+  tile sums what you'd save) or hide a false detection with the eye
+  button; both live in localStorage (`books:v1:subs-meta`). A registry
+  entry can carry a default `rating`.
+- **Colours**: green = money in and credits (revenue, profit, prepaid
+  tax), red = money out (expenses, tax due, subscriptions), amber =
+  things to watch (tax-relevant rows, VAT still to pay, renewals
+  inside 30 days, price steps, plans not seen in the books). Tokens
+  `--color-up` / `--color-down` / `--color-warn` in `globals.css`.
 - **Old years**: `seedBooks` in `src/content/books/seed.ts` holds 2024
   and 2025 transcribed from the Google Sheets. Income rows always
   count; seed expense rows hide once an N26 import exists for that year.

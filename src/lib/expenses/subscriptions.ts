@@ -12,10 +12,10 @@
  * renewal, yearly cost.
  */
 
-import type { BookEntry } from "./books";
+import type { BookEntry, SubMeta, SubRating } from "./books";
 import { merchantKey } from "./text";
 import type { Category } from "./types";
-import type { Subscription } from "@/content/books/subscriptions";
+import { knownSites, type Subscription } from "@/content/books/subscriptions";
 
 export type TrackedSubscription = {
   key: string;
@@ -35,7 +35,50 @@ export type TrackedSubscription = {
   endsAt?: string;
   /** Registry plan with no matching charge in the books (yet, or any more). */
   unseen?: boolean;
+  rating?: SubRating;
+  /** Hidden on the tab as "not a subscription". */
+  ignored?: boolean;
 };
+
+export const RATING_LABELS: Record<SubRating, string> = {
+  3: "Essential",
+  2: "Useful",
+  1: "Could cut",
+};
+
+/** Somewhere to click for a plan: registry url, then the known-sites table, then a search. */
+export function websiteFor(s: Pick<TrackedSubscription, "key" | "name" | "url">): string {
+  if (s.url) return s.url;
+  const known = knownSites[s.key] ?? knownSites[s.key.split(" ")[0]];
+  if (known) return known;
+  return `https://duckduckgo.com/?q=${encodeURIComponent(`${s.name} subscription`)}`;
+}
+
+/** Your decisions from the tab (rating, ignored) laid over the tracked list. */
+export function applySubsMeta(subs: TrackedSubscription[], meta: Record<string, SubMeta>): TrackedSubscription[] {
+  return subs.map((s) => {
+    const m = meta[s.key];
+    if (!m) return s;
+    return { ...s, rating: m.rating ?? s.rating, ignored: m.ignored ?? false };
+  });
+}
+
+export type SubSort = "renewal" | "cost" | "rating" | "name";
+
+export function sortSubscriptions(subs: TrackedSubscription[], by: SubSort): TrackedSubscription[] {
+  const list = [...subs];
+  switch (by) {
+    case "cost":
+      return list.sort((a, b) => b.yearly - a.yearly || a.name.localeCompare(b.name));
+    case "rating":
+      // Essential first; unrated after the rated so they stand out at the bottom.
+      return list.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0) || b.yearly - a.yearly);
+    case "name":
+      return list.sort((a, b) => a.name.localeCompare(b.name));
+    default:
+      return list.sort((a, b) => a.nextRenewal.localeCompare(b.nextRenewal) || b.yearly - a.yearly);
+  }
+}
 
 const DAY = 86_400_000;
 
@@ -145,6 +188,7 @@ export function trackSubscriptions(
       url: r.url,
       nextAmount: r.nextAmount,
       endsAt: r.endsAt,
+      rating: r.rating,
       unseen: !seen && !entries.some((e) => e.kind === "expense" && merchantKey(e.party) === key),
     });
   }

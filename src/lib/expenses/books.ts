@@ -85,6 +85,25 @@ export const EMPTY_YEAR: YearSettings = {
 const KEY = (year: number) => `books:v1:${year}`;
 const YEARS_KEY = "books:v1:years";
 const SETTINGS_KEY = "books:v1:settings";
+const SUBS_META_KEY = "books:v1:subs-meta";
+
+/** How much a subscription earns its keep. 3 = essential, 1 = could cut. */
+export type SubRating = 1 | 2 | 3;
+
+/** What you decide about a subscription on the tab, keyed by merchant key. */
+export type SubMeta = {
+  rating?: SubRating;
+  /** Not a subscription after all (a detected false positive) — hidden. */
+  ignored?: boolean;
+};
+
+export function loadSubsMeta(): Record<string, SubMeta> {
+  return read<Record<string, SubMeta>>(SUBS_META_KEY) ?? {};
+}
+
+export function saveSubsMeta(meta: Record<string, SubMeta>): void {
+  write(SUBS_META_KEY, meta);
+}
 
 function read<T>(key: string): T | null {
   if (typeof window === "undefined") return null;

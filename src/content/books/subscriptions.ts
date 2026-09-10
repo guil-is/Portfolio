@@ -7,6 +7,7 @@
  */
 
 import type { Category } from "@/lib/expenses/types";
+import type { SubRating } from "@/lib/expenses/books";
 
 export type Subscription = {
   name: string;
@@ -23,6 +24,53 @@ export type Subscription = {
   url?: string;
   /** Set when you cancel — it drops out of the forecast after this date. */
   endsAt?: string;
+  /** Default usefulness (3 essential · 2 useful · 1 could cut); the tab's own rating wins. */
+  rating?: SubRating;
+};
+
+/**
+ * Websites for merchants the bank names but the registry doesn't — so
+ * every row on the tab has somewhere to click. Keys are merchant keys
+ * (`merchantKey()` in text.ts: folded, first two meaningful words).
+ */
+export const knownSites: Record<string, string> = {
+  adobe: "https://account.adobe.com/plans",
+  worldpay: "https://adminconsole.adobe.com/account",
+  figma: "https://www.figma.com/settings",
+  notion: "https://www.notion.so/my-account",
+  anthropic: "https://claude.ai/settings/billing",
+  claude: "https://claude.ai/settings/billing",
+  openai: "https://chatgpt.com/#settings/Subscription",
+  chatgpt: "https://chatgpt.com/#settings/Subscription",
+  midjourney: "https://www.midjourney.com/account",
+  vercel: "https://vercel.com/account/billing",
+  github: "https://github.com/settings/billing",
+  google: "https://one.google.com/storage",
+  apple: "https://apps.apple.com/account/subscriptions",
+  spotify: "https://www.spotify.com/account/subscription/",
+  dropbox: "https://www.dropbox.com/account/plan",
+  linear: "https://linear.app/settings/billing",
+  loom: "https://www.loom.com/settings/billing",
+  zoom: "https://zoom.us/billing",
+  framer: "https://www.framer.com/account/",
+  webflow: "https://webflow.com/dashboard/account/billing",
+  mobbin: "https://mobbin.com/settings/billing",
+  envato: "https://elements.envato.com/account/subscription",
+  "opus clip": "https://www.opus.pro/settings",
+  tactiq: "https://app.tactiq.io/settings/billing",
+  iconscout: "https://iconscout.com/account/subscription",
+  cleanmymac: "https://my.macpaw.com/",
+  congstar: "https://www.congstar.de/meincongstar/",
+  setapp: "https://my.setapp.com/",
+  "1password": "https://my.1password.com/billing",
+  canva: "https://www.canva.com/settings/billing-and-teams",
+  higgsfield: "https://higgsfield.ai/settings",
+  krea: "https://www.krea.ai/settings",
+  magnific: "https://magnific.ai/settings",
+  runway: "https://app.runwayml.com/settings/billing",
+  elevenlabs: "https://elevenlabs.io/app/subscription",
+  freepik: "https://www.freepik.com/profile/my_subscriptions",
+  "google one": "https://one.google.com/storage",
 };
 
 export const subscriptions: Subscription[] = [
@@ -33,6 +81,7 @@ export const subscriptions: Subscription[] = [
     interval: "monthly",
     startedAt: "2026-01-25",
     category: "software",
+    rating: 3,
     note: "Annual plan paid monthly, 2 licenses but only 1 in use — drop to 1 at the Jan 25 2027 renewal (or ask Adobe support sooner). Billed via WorldPay.",
     url: "https://adminconsole.adobe.com/account",
   },
@@ -93,6 +142,7 @@ export const subscriptions: Subscription[] = [
     interval: "yearly",
     startedAt: "2025-05-09",
     category: "software",
+    rating: 3,
     note: "Yearly since May 2025; the old tracker had it monthly at $65",
   },
   {

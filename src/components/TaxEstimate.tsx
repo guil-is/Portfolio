@@ -13,6 +13,7 @@ import {
 } from "@/lib/expenses/books";
 import { formatEur } from "@/lib/expenses/triage";
 import { prettyDate } from "./ExpenseSwipeDeck";
+import { Stat, signTone, TONE_TEXT, type Tone } from "./Stat";
 
 /**
  * The year-end Finanzamt estimate: income from the ledger, expenses and
@@ -100,17 +101,19 @@ export function TaxEstimate({
                 ? `run-rate over ${monthsRun} months · so far ${eur(Math.max(0, soFar.incomeTaxDue))}`
                 : `after ${eur(prepaid)} prepaid`
           }
-          accent={projected.incomeTaxDue <= 0}
+          tone={projected.incomeTaxDue <= 0 ? "up" : "down"}
         />
         <Stat
           label="VAT still to pay"
           value={eur(Math.max(0, soFar.vatDue))}
           sub={`collected ${eur(vatCollected)} · paid ${eur(side.vatPaid)} · before Vorsteuer`}
+          tone={soFar.vatDue > 0 ? "warn" : "ink"}
         />
         <Stat
           label={isPartial ? "Profit, projected" : "Profit"}
           value={eur(projected.profit)}
           sub={`${isPartial ? `so far ${eur(soFar.profit)} · ` : ""}effective rate ${Math.round(projected.effectiveRate * 100)} %`}
+          tone={signTone(projected.profit)}
         />
       </div>
 
@@ -199,22 +202,22 @@ export function TaxEstimate({
             </tr>
           </thead>
           <tbody>
-            <Line label="Revenue received" sub={`${income?.invoices ?? 0} invoices${outstanding > 0 ? ` · ${eur(outstanding)} still unpaid, not counted` : ""}`} a={revenue} b={revenue * scale} partial={isPartial} eur={eur} />
-            <Line label="Business expenses" a={-side.expenses} b={-side.expenses * scale} partial={isPartial} eur={eur} />
-            <Line label="Profit" a={soFar.profit} b={projected.profit} partial={isPartial} eur={eur} strong />
+            <Line label="Revenue received" sub={`${income?.invoices ?? 0} invoices${outstanding > 0 ? ` · ${eur(outstanding)} still unpaid, not counted` : ""}`} a={revenue} b={revenue * scale} partial={isPartial} eur={eur} tone="up" />
+            <Line label="Business expenses" a={-side.expenses} b={-side.expenses * scale} partial={isPartial} eur={eur} tone="down" />
+            <Line label="Profit" a={soFar.profit} b={projected.profit} partial={isPartial} eur={eur} strong tone={signTone(projected.profit)} />
             <Line label="Health, KSK, pension" sub="Sonderausgaben" a={-side.insurance} b={-side.insurance * scale} partial={isPartial} eur={eur} />
             {settings.joint ? <Line label="Partner's taxable income" a={ys.spouseIncome} b={ys.spouseIncome} partial={isPartial} eur={eur} /> : null}
             <Line label="Sonderausgaben-Pauschbetrag" a={settings.joint ? -72 : -36} b={settings.joint ? -72 : -36} partial={isPartial} eur={eur} />
             <Line label={settings.joint ? "Household taxable income" : "Taxable income"} a={soFar.taxable} b={projected.taxable} partial={isPartial} eur={eur} strong />
-            <Line label={`Einkommensteuer · § 32a tariff ${soFar.tariffYear}${settings.joint ? ", splitting" : ""}${ys.spouseBenefits > 0 ? ", Progressionsvorbehalt" : ""}`} a={soFar.incomeTax} b={projected.incomeTax} partial={isPartial} eur={eur} />
-            <Line label="Solidaritätszuschlag" a={soFar.soli} b={projected.soli} partial={isPartial} eur={eur} />
-            <Line label="Prepaid for this year" sub={side.otherTax > 0 ? `${eur(side.otherTax)} of other Finanzamt payments not counted — see below` : undefined} a={-side.incomeTaxPrepaid} b={-side.incomeTaxPrepaid} partial={isPartial} eur={eur} />
+            <Line tone="down" label={`Einkommensteuer · § 32a tariff ${soFar.tariffYear}${settings.joint ? ", splitting" : ""}${ys.spouseBenefits > 0 ? ", Progressionsvorbehalt" : ""}`} a={soFar.incomeTax} b={projected.incomeTax} partial={isPartial} eur={eur} />
+            <Line label="Solidaritätszuschlag" tone="down" a={soFar.soli} b={projected.soli} partial={isPartial} eur={eur} />
+            <Line label="Prepaid for this year" tone="up" sub={side.otherTax > 0 ? `${eur(side.otherTax)} of other Finanzamt payments not counted — see below` : undefined} a={-side.incomeTaxPrepaid} b={-side.incomeTaxPrepaid} partial={isPartial} eur={eur} />
             {prepaidElsewhere > 0 ? (
-              <Line label="Paid for this year in other years" sub={elsewhere.map((e) => `${prettyDate(e.date)} · ${e.reference}`).join(" · ")} a={-prepaidElsewhere} b={-prepaidElsewhere} partial={isPartial} eur={eur} />
+              <Line label="Paid for this year in other years" tone="up" sub={elsewhere.map((e) => `${prettyDate(e.date)} · ${e.reference}`).join(" · ")} a={-prepaidElsewhere} b={-prepaidElsewhere} partial={isPartial} eur={eur} />
             ) : null}
-            {ys.prepaidExtra > 0 ? <Line label="Vorauszahlungen not in the books" a={-ys.prepaidExtra} b={-ys.prepaidExtra} partial={isPartial} eur={eur} /> : null}
-            {settings.joint ? <Line label="Partner's Lohnsteuer withheld" a={-ys.spouseWithheld} b={-ys.spouseWithheld} partial={isPartial} eur={eur} /> : null}
-            <Line label={projected.incomeTaxDue >= 0 ? "Expected bill" : "Expected refund"} a={Math.abs(soFar.incomeTaxDue)} b={Math.abs(projected.incomeTaxDue)} partial={isPartial} eur={eur} strong />
+            {ys.prepaidExtra > 0 ? <Line label="Vorauszahlungen not in the books" tone="up" a={-ys.prepaidExtra} b={-ys.prepaidExtra} partial={isPartial} eur={eur} /> : null}
+            {settings.joint ? <Line label="Partner's Lohnsteuer withheld" tone="up" a={-ys.spouseWithheld} b={-ys.spouseWithheld} partial={isPartial} eur={eur} /> : null}
+            <Line label={projected.incomeTaxDue >= 0 ? "Expected bill" : "Expected refund"} a={Math.abs(soFar.incomeTaxDue)} b={Math.abs(projected.incomeTaxDue)} partial={isPartial} eur={eur} strong tone={projected.incomeTaxDue >= 0 ? "down" : "up"} />
           </tbody>
         </table>
       </div>
@@ -243,6 +246,7 @@ function Line({
   partial,
   eur,
   strong,
+  tone,
 }: {
   label: string;
   sub?: string;
@@ -251,9 +255,11 @@ function Line({
   partial: boolean;
   eur: (n: number) => string;
   strong?: boolean;
+  /** Colour for the figures: up = money in / credits, down = money out. */
+  tone?: Tone;
 }) {
   const fmt = (n: number) => (n < 0 ? `− ${eur(-n)}` : eur(n));
-  const cls = strong ? "font-display text-[1.05rem] font-bold text-ink" : "text-ink";
+  const cls = `${strong ? "font-display text-[1.05rem] font-bold" : ""} ${TONE_TEXT[tone ?? "ink"]}`;
   return (
     <tr className="border-b border-rule-soft last:border-b-0">
       <td className="px-4 py-2.5">
@@ -263,16 +269,6 @@ function Line({
       <td className={`px-4 py-2.5 text-right tabular-nums ${cls}`}>{fmt(a)}</td>
       {partial ? <td className={`px-4 py-2.5 text-right tabular-nums ${cls}`}>{fmt(b)}</td> : null}
     </tr>
-  );
-}
-
-function Stat({ label, value, sub, accent }: { label: string; value: string; sub: string; accent?: boolean }) {
-  return (
-    <div className="flex flex-col gap-1 bg-bg px-5 py-5">
-      <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">{label}</p>
-      <p className={`font-display text-[1.5rem] font-bold leading-tight ${accent ? "text-accent" : "text-ink"}`}>{value}</p>
-      <p className="text-[0.75rem] leading-[1.1rem] text-muted">{sub}</p>
-    </div>
   );
 }
 
@@ -296,7 +292,7 @@ function TaxRows({ side, eur }: { side: ReturnType<typeof bookTotals>; eur: (n: 
               <span className="text-ink">
                 {title} <span className="ml-1 text-muted">· {hint}</span>
               </span>
-              <span className="tabular-nums text-ink">{eur(side.rows[bucket].reduce((t, e) => t + e.amount, 0))}</span>
+              <span className={`tabular-nums ${bucket === "tax" ? "text-up" : bucket === "taxother" ? "text-muted" : "text-warn"}`}>{eur(side.rows[bucket].reduce((t, e) => t + e.amount, 0))}</span>
             </p>
             <ul className="flex flex-col divide-y divide-rule-soft">
               {side.rows[bucket].map((e) => (
