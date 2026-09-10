@@ -60,6 +60,8 @@ export type YearSettings = {
   spouseBenefits: number;
   /** Vorauszahlungen for the year not visible in the books (e.g. from a Bescheid). */
   prepaidExtra: number;
+  /** Income-tax prepayments the Finanzamt set for the year (Vorauszahlungsbescheid), by due date. */
+  scheduled?: { due: string; amount: number }[];
   /** Where the defaults came from, shown under the fields. */
   source?: string;
 };
@@ -74,6 +76,20 @@ export type BooksSettings = {
   /** "12,99" in exports, for a German-locale sheet. */
   decimalComma: boolean;
 };
+
+/**
+ * Instalments of a Vorauszahlungsbescheid not yet covered by what was
+ * paid, in due-date order (payments cover the earliest instalments first).
+ */
+export function unpaidInstalments(schedule: { due: string; amount: number }[], paid: number): { due: string; amount: number }[] {
+  let covered = paid;
+  const out: { due: string; amount: number }[] = [];
+  for (const s of [...schedule].sort((a, b) => a.due.localeCompare(b.due))) {
+    if (covered >= s.amount - 0.01) covered -= s.amount;
+    else out.push(s);
+  }
+  return out;
+}
 
 export const EMPTY_YEAR: YearSettings = {
   spouseIncome: 0,

@@ -4,6 +4,7 @@ import type { IncomeYear } from "@/lib/income";
 import { estimateTax, type TaxEstimate as Estimate } from "@/lib/tax";
 import {
   bookTotals,
+  unpaidInstalments,
   yearProgress,
   EMPTY_YEAR,
   type BookEntry,
@@ -50,6 +51,12 @@ export function TaxEstimate({
     setSettings({ ...settings, years: { ...settings.years, [year]: { ...ys, ...patch, source: undefined } } });
   const prepaidElsewhere = elsewhere.reduce((t, e) => t + e.amount, 0);
   const prepaid = side.incomeTaxPrepaid + prepaidElsewhere + ys.prepaidExtra;
+  // What the Finanzamt set for the year (Vorauszahlungsbescheid), minus
+  // what's been paid, in due-date order: the rest is still owed this year.
+  const today = new Date().toISOString().slice(0, 10);
+  const unpaid = unpaidInstalments(facts?.scheduled ?? ys.scheduled ?? [], side.incomeTaxPrepaid + ys.prepaidExtra);
+  const stillDue = unpaid.reduce((t, s) => t + s.amount, 0);
+  const overdue = unpaid.filter((s) => s.due < today);
   const usdEur = (income?.usd ?? 0) * settings.usdRate;
   const revenue = (income?.eurNet ?? 0) + usdEur + side.manualIncome;
   const progress = yearProgress(year);
@@ -80,7 +87,7 @@ export function TaxEstimate({
     revenue: revenue * scale,
     expenses: side.expenses * scale,
     insurance: side.insurance * scale,
-    prepaid,
+    prepaid: prepaid + stillDue,
     vatCollected: vatCollected * scale,
     vatPaid: side.vatPaid,
   });
@@ -88,8 +95,19 @@ export function TaxEstimate({
   const monthsRun = Math.max(1, Math.round(progress * 12));
   const isPartial = progress < 1;
 
+  const dueLabel = (d: { due: string; amount: number }) =>
+    `${prettyDate(d.due)} ${eur(d.amount)}${d.due < today ? " · overdue" : d.due === today ? " · due today" : ""}`;
+
   return (
     <section className="flex flex-col gap-10">
+      {overdue.length > 0 ? (
+        <p className="rounded-[12px] border border-down/50 bg-down/5 px-4 py-3 text-[0.85rem] leading-[1.4rem] text-ink">
+          <span className="font-medium text-down">
+            {eur(overdue.reduce((t, s) => t + s.amount, 0))} of Vorauszahlungen past due
+          </span>{" "}
+          and not in the books: {overdue.map((d) => `${prettyDate(d.due)} ${eur(d.amount)}`).join(", ")}. The Finanzamt adds a 1 % Säumniszuschlag per month started, so pay it now with the Steuernummer and “ESt-VZ” in the reference. If you did pay it from another account, add the row in Entries.
+        </p>
+      ) : null}
       <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule md:grid-cols-3">
         <Stat
           label={isPartial ? "Expected bill at year end" : "Expected bill"}
@@ -99,7 +117,7 @@ export function TaxEstimate({
               ? `refund of ${eur(-projected.incomeTaxDue)} at this pace`
               : isPartial
                 ? `run-rate over ${monthsRun} months · so far ${eur(Math.max(0, soFar.incomeTaxDue))}`
-                : `after ${eur(prepaid)} prepaid`
+                : `after ${eur(prepaid + stillDue)} prepaid`
           }
           tone={projected.incomeTaxDue <= 0 ? "up" : "down"}
         />
@@ -216,6 +234,17 @@ export function TaxEstimate({
               <Line label="Paid for this year in other years" tone="up" sub={elsewhere.map((e) => `${prettyDate(e.date)} · ${e.reference}`).join(" · ")} a={-prepaidElsewhere} b={-prepaidElsewhere} partial={isPartial} eur={eur} />
             ) : null}
             {ys.prepaidExtra > 0 ? <Line label="Vorauszahlungen not in the books" tone="up" a={-ys.prepaidExtra} b={-ys.prepaidExtra} partial={isPartial} eur={eur} /> : null}
+            {stillDue > 0 ? (
+              <Line
+                label="Vorauszahlungen still to pay this year"
+                tone={overdue.length > 0 ? "warn" : "up"}
+                sub={`set by the Finanzamt: ${unpaid.map(dueLabel).join(" · ")} — counted in the projection`}
+                a={0}
+                b={-stillDue}
+                partial={isPartial}
+                eur={eur}
+              />
+            ) : null}
             {settings.joint ? <Line label="Partner's Lohnsteuer withheld" tone="up" a={-ys.spouseWithheld} b={-ys.spouseWithheld} partial={isPartial} eur={eur} /> : null}
             <Line label={projected.incomeTaxDue >= 0 ? "Expected bill" : "Expected refund"} a={Math.abs(soFar.incomeTaxDue)} b={Math.abs(projected.incomeTaxDue)} partial={isPartial} eur={eur} strong tone={projected.incomeTaxDue >= 0 ? "down" : "up"} />
           </tbody>

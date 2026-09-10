@@ -288,4 +288,32 @@ export const seedFacts: Record<number, YearSettings> = {
     prepaidExtra: 1696,
     source: "from the 2024 Bescheid of 4 Feb 2026",
   },
+  // Vorauszahlungsbescheid of 24 Feb 2026: €1,440 per quarter for 2026
+  // and "2027 und weitere Jahre", Soli 0. Update when a new one arrives.
+  2026: {
+    spouseIncome: 0,
+    spouseWithheld: 0,
+    spouseBenefits: 0,
+    prepaidExtra: 0,
+    scheduled: [
+      { due: "2026-03-10", amount: 1440 },
+      { due: "2026-06-10", amount: 1440 },
+      { due: "2026-09-10", amount: 1440 },
+      { due: "2026-12-10", amount: 1440 },
+    ],
+    source: "schedule from the Vorauszahlungsbescheid of 24 Feb 2026",
+  },
+  2027: {
+    spouseIncome: 0,
+    spouseWithheld: 0,
+    spouseBenefits: 0,
+    prepaidExtra: 0,
+    scheduled: [
+      { due: "2027-03-10", amount: 1440 },
+      { due: "2027-06-10", amount: 1440 },
+      { due: "2027-09-10", amount: 1440 },
+      { due: "2027-12-10", amount: 1440 },
+    ],
+    source: "schedule from the Vorauszahlungsbescheid of 24 Feb 2026",
+  },
 };
