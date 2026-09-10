@@ -144,12 +144,9 @@ function ReferenceTile({
 }) {
   const { item } = resolved;
   const meta = (
-    <div className="mt-3 flex flex-wrap items-baseline gap-x-3">
+    <div className="mt-3">
       <p className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-ink">
         {item.title}
-      </p>
-      <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
-        {platformLabel(item.url)}
       </p>
     </div>
   );
