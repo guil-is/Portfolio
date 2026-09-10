@@ -196,7 +196,8 @@ export function BooksDashboard({
     [entries, seed, registry, year],
   );
   const today = new Date().toISOString().slice(0, 10);
-  const soon = subs.filter((s) => s.nextRenewal <= addDaysIso(today, 30));
+  // Yearly renewals only — monthly plans are always "due soon".
+  const soon = subs.filter((s) => s.interval === "yearly" && s.nextRenewal <= addDaysIso(today, 30));
   // Finanzamt payments in other years that name this one.
   const elsewhere = useMemo(
     () => prepaidElsewhereFor(year, [...entries, ...loadAllBooks().filter((e) => !e.date.startsWith(String(year)))]),
@@ -354,12 +355,12 @@ export function BooksDashboard({
         <Stat label="Tax-relevant" value={`€${formatEur(totals.tax)}`} sub={`${yearEntries.filter((e) => e.kind === "tax").length} rows · Finanzamt, health, KSK`} tone="warn" />
       </div>
 
-      <nav className="mt-12 mb-10 flex gap-6 border-b border-rule">
+      <nav className="mt-12 mb-10 flex gap-6 overflow-x-auto border-b border-rule [scrollbar-width:none]">
         {(
           [
             ["overview", "Tax estimate"],
             ["entries", `Entries · ${allRows.length}`],
-            ["subscriptions", `Subscriptions · ${subs.length}${soon.length > 0 ? ` · ${soon.length} due soon` : ""}`],
+            ["subscriptions", `Subscriptions · ${subs.length}${soon.length > 0 ? ` · ${soon.length} yearly renewing` : ""}`],
             ["accountant", `For the accountant${exportRowsList.length > 0 ? ` · ${exportRowsList.length} new` : ""}`],
           ] as [Tab, string][]
         ).map(([key, label]) => (
@@ -367,7 +368,7 @@ export function BooksDashboard({
             key={key}
             type="button"
             onClick={() => setTab(key)}
-            className={`-mb-px border-b-2 pb-3 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] transition-colors ${
+            className={`-mb-px shrink-0 whitespace-nowrap border-b-2 pb-3 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] transition-colors ${
               tab === key ? "border-ink text-ink" : "border-transparent text-muted hover:text-ink"
             }`}
           >

@@ -13,13 +13,15 @@
  */
 
 import type { BookEntry, SubMeta, SubRating } from "./books";
-import { merchantKey } from "./text";
+import { merchantKey, prettyMerchant } from "./text";
 import type { Category } from "./types";
 import { knownSites, type Subscription } from "@/content/books/subscriptions";
 
 export type TrackedSubscription = {
   key: string;
   name: string;
+  /** What the bank calls it, when that differs from `name`. */
+  raw?: string;
   amount: number;
   interval: "monthly" | "yearly";
   category: Category;
@@ -142,9 +144,11 @@ export function detectSubscriptions(entries: BookEntry[], today: string): Tracke
     // Lapsed plans (no charge for well over an interval) stay out.
     const sinceLast = (Date.parse(today) - Date.parse(latest.date)) / DAY;
     if (sinceLast > (interval === "monthly" ? 45 : 400)) continue;
+    const name = prettyMerchant(latest.party);
     out.push({
       key,
-      name: latest.party,
+      name,
+      raw: name === latest.party ? undefined : latest.party,
       amount: latest.amount,
       interval,
       category: latest.category,
@@ -178,6 +182,7 @@ export function trackSubscriptions(
     out.push({
       key,
       name: r.name,
+      raw: seen?.raw ?? (seen && seen.name !== r.name ? seen.name : undefined),
       amount: r.amount,
       interval: r.interval,
       category: r.category,
@@ -196,4 +201,25 @@ export function trackSubscriptions(
   }
   out.push(...detected.values());
   return out.sort((a, b) => a.nextRenewal.localeCompare(b.nextRenewal));
+}
+
+export type RenewalBucket = "week" | "month" | "quarter" | "later";
+
+export const RENEWAL_BUCKET_LABELS: Record<RenewalBucket, string> = {
+  week: "This week",
+  month: "This month",
+  quarter: "Next 3 months",
+  later: "Later",
+};
+
+export function renewalBucket(days: number): RenewalBucket {
+  if (days <= 7) return "week";
+  if (days <= 30) return "month";
+  if (days <= 90) return "quarter";
+  return "later";
+}
+
+/** Days from `today` to the next renewal. */
+export function daysUntil(iso: string, today: string): number {
+  return Math.round((Date.parse(iso) - Date.parse(today)) / DAY);
 }

@@ -167,14 +167,6 @@ export const subscriptions: Subscription[] = [
     note: "Yearly since May 2025; the old tracker had it monthly at $65",
   },
   {
-    name: "Google One",
-    match: "google one",
-    amount: 29.99,
-    interval: "yearly",
-    startedAt: "2025-05-06",
-    category: "software",
-  },
-  {
     name: "IconScout",
     match: "iconscout",
     amount: 103,

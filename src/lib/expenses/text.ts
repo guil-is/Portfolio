@@ -170,3 +170,58 @@ export function parseDate(raw: string): string | null {
 export const DATE_RE = /\b(\d{4}-\d{2}-\d{2}|\d{1,2}[./]\d{1,2}[./]\d{2,4})\b/;
 export const AMOUNT_RE =
   /(?:^|\s)([-+−]?\s?(?:€\s?)?\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})\s?(?:€|EUR)?)(?=\s|$)/;
+
+const BRAND_CASE: Record<string, string> = {
+  openai: "OpenAI",
+  chatgpt: "ChatGPT",
+  elevenlabs: "ElevenLabs",
+  github: "GitHub",
+  icloud: "iCloud",
+  iconscout: "IconScout",
+  cleanmymac: "CleanMyMac",
+  opencollective: "Open Collective",
+  midjourney: "Midjourney",
+  linkedin: "LinkedIn",
+  youtube: "YouTube",
+  paypal: "PayPal",
+  myfonts: "MyFonts",
+  n26: "N26",
+  ai: "AI",
+  io: "IO",
+  tv: "TV",
+};
+
+const PROCESSOR_PREFIX = /^(paypal|pp|google|paddle\.net|paddle|apple\.com\/bill|sq|sp|amzn|amazon|stripe|klarna|worldpay|fastspring|2co|gumroad|lemon squeezy)\s*\*\s*/i;
+const LEGAL_SUFFIX = /\b(inc\.?|llc\.?|ltd\.?|limited|gmbh(?:\s*&\s*co\.?\s*kg)?|ag|ug|s\.?a\.?r\.?l\.?|s\.?a\.?|b\.?v\.?|corp\.?|corporation|pte\.?|plc|oy|ab|s\.?r\.?o\.?)\b\.?/gi;
+const TRAILING_NOISE = /\b(subscr(?:iption)?|monthly|yearly|payment|abo|renewal)\b.*$/i;
+
+/**
+ * Bank descriptor → something you'd say out loud. "OPENAI *CHATGPT SUBSCR"
+ * → "OpenAI ChatGPT", "PADDLE.NET* LORDICON" → "Lordicon", "congstar -
+ * eine Marke der Telekom Deutschland GmbH" → "congstar". Falls back to
+ * the raw string when nothing survives.
+ */
+export function prettyMerchant(raw: string): string {
+  let s = raw.trim();
+  s = s.replace(PROCESSOR_PREFIX, "");
+  s = s.replace(/\*/g, " ");
+  s = s.replace(/\s+[-–—]\s+eine marke der.*$/i, "");
+  s = s.replace(TRAILING_NOISE, "");
+  s = s.replace(LEGAL_SUFFIX, "");
+  s = s.replace(/\.(io|com|net|ai|app|co|de|org|dev)\b(\/\S*)?/gi, "");
+  s = s.replace(/[.,\s]+$/, "").replace(/\s{2,}/g, " ").trim();
+  // "ADOBE ADOBE" after the star is gone.
+  s = s.replace(/^(\S+)(\s+\1)+$/i, "$1");
+  if (!s) return raw.trim();
+  const shouty = s === s.toUpperCase();
+  return s
+    .split(" ")
+    .map((w) => {
+      const k = w.toLowerCase();
+      if (BRAND_CASE[k]) return BRAND_CASE[k];
+      if (!shouty) return w;
+      if (/\d/.test(w) && w.length <= 4) return w;
+      return w.charAt(0) + w.slice(1).toLowerCase();
+    })
+    .join(" ");
+}

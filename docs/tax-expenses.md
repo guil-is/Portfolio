@@ -90,16 +90,22 @@ Google Sheet. One year at a time:
   (3+ monthly or 2 yearly charges of a merchant, amounts within 15 %)
   merged with `src/content/books/subscriptions.ts` — the registry for
   plans with a price step (`nextAmount`), a planned end (`endsAt`), or
-  ones the books haven't seen twice yet. Shows cadence, price, next
-  renewal, yearly cost and share of the total, and what renews in the
-  next 30 days. Sort by next renewal, most expensive, most needed or
-  name; filter by cadence, category, "not seen in the books" and
-  ignored. Every row links to the merchant's billing page (registry
-  `url`, then `knownSites` in `subscriptions.ts`, then a web search).
-  Per plan you rate Essential / Useful / Could cut (the "Could cut"
-  tile sums what you'd save) or hide a false detection with the eye
-  button; both live in localStorage (`books:v1:subs-meta`). A registry
-  entry can carry a default `rating`.
+  ones the books haven't seen twice yet. Bank descriptors are cleaned
+  for display (`prettyMerchant()` in `text.ts`: "OPENAI *CHATGPT
+  SUBSCR" → "OpenAI ChatGPT"; the raw name stays in the caption).
+  Summary strip: per year, next 30 days, could cut, unrated (the last
+  two are filters). Search box, category select and a sort menu (next
+  renewal, most expensive, most needed, name); chips for monthly,
+  yearly, unrated, could cut, not in the books, hidden. Rows group by
+  renewal window (this week / this month / next 3 months / later) or
+  by rating, with a subtotal per group. Only yearly renewals get a
+  colour — monthly ones are always "soon". Every row links to the
+  merchant's billing page (registry `url`, then `knownSites` in
+  `subscriptions.ts`, then a web search). Per plan you rate Essential
+  / Useful / Cut or hide a false detection; both live in localStorage
+  (`books:v1:subs-meta`). A registry entry can carry a default
+  `rating`; omit `startedAt` when the day is unknown and the last bank
+  charge is used.
 - **Colours**: green = money in and credits (revenue, profit, prepaid
   tax), red = money out (expenses, tax due, subscriptions), amber =
   things to watch (tax-relevant rows, VAT still to pay, renewals
