@@ -38,8 +38,10 @@ export function buildItems(
   return transactions.map((tx) => {
     const auto = classify(tx, memory);
     const key = itemKey(tx);
-    const pinned = tx.id in saved;
-    let decision: Decision | undefined = saved[tx.id] ?? undefined;
+    // A move between your own accounts is never an expense — a swipe on it
+    // (from before the row was recognised) doesn't pin it.
+    const pinned = tx.id in saved && auto.ruleId !== "kind-internal";
+    let decision: Decision | undefined = pinned ? (saved[tx.id] ?? undefined) : undefined;
     if (!pinned && auto.verdict !== "unsure" && auto.confidence >= AUTO_THRESHOLD) {
       decision = {
         verdict: auto.verdict,

@@ -13,6 +13,7 @@
  */
 
 import { RULES, type Rule } from "./rules";
+import { isOwnAccountPartner } from "./parse";
 import { fold, merchantKey } from "./text";
 import type {
   Classification,
@@ -130,7 +131,7 @@ function classifyRaw(
   tx: Transaction,
   memory: Record<string, MerchantMemory> = {},
 ): Classification {
-  if (tx.kind === "internal") {
+  if (tx.kind === "internal" || isOwnAccountPartner(tx.partner)) {
     return {
       verdict: "skip",
       category: "internal",

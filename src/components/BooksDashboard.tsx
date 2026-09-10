@@ -17,6 +17,7 @@ import {
   saveBook,
   saveBooksSettings,
   saveSentInvoices,
+  syncItemsIntoBooks,
   type BookEntry,
   type BookKind,
   type BooksSettings,
@@ -74,7 +75,14 @@ export function BooksDashboard({
     return Math.max(...all);
   });
   const seedYears = useMemo(() => [...new Set(seed.map((e) => Number(e.date.slice(0, 4))))], [seed]);
-  const [entries, setEntries] = useState<BookEntry[]>(() => loadBook(year));
+  // Reconcile the expenses session into the books before reading them, so
+  // a rule change (a row that's now an internal move) shows here without
+  // a visit to the expenses page.
+  const [entries, setEntries] = useState<BookEntry[]>(() => {
+    const session = loadSession();
+    if (session) syncItemsIntoBooks(buildItems(session.parsed.transactions, loadMemory(), session.decisions));
+    return loadBook(year);
+  });
   const [sentInvoices, setSentInvoices] = useState<string[]>(() => loadSentInvoices(year));
   const [settings, setSettings] = useState<BooksSettings>(() => loadBooksSettings());
   const [tab, setTab] = useState<Tab>("overview");

@@ -161,14 +161,22 @@ function sniffColumns(
   return map;
 }
 
+/**
+ * N26 labels the other side of a Space move "Main Account" — whatever the
+ * reference says (an "Einkommensteuer" note is still your own money).
+ * Checked at classify time too, so sessions parsed before this rule and
+ * merchant memory can't turn such a row into an expense.
+ */
+export function isOwnAccountPartner(partner: string): boolean {
+  return /^(main account|hauptkonto)$/.test(fold(partner));
+}
+
 export function detectKind(type: string, partner: string, reference: string): TransactionKind {
   const t = fold(type);
   const all = fold(`${partner} ${reference}`);
   if (/space|savings|sub ?account|unterkonto|pocket/.test(t)) return "internal";
   if (/^(to|from) space|spaces? transfer|umbuchung space/.test(all)) return "internal";
-  // N26 labels the other side of a Space move "Main Account" — whatever
-  // the reference says (an "Einkommensteuer" note is still your own money).
-  if (/^(main account|hauptkonto)$/.test(fold(partner))) return "internal";
+  if (isOwnAccountPartner(partner)) return "internal";
   if (/atm|withdrawal|cash|bargeld|abhebung|geldautomat/.test(t)) return "atm";
   if (/fee|gebuhr|entgelt|membership/.test(t)) return "fee";
   if (/presentment|mastercard|card|karte|pos|purchase|kartenzahlung/.test(t)) return "card";
