@@ -8,13 +8,15 @@ import type { Proposal } from "./types";
  * event videographer (Roman Piola). Two tiers: a professional shoot
  * (rented cameras, assistant operator) and a lightweight one (Guil alone
  * with iPhones and his own kit, guerrilla style like the DWeb Camp shoot
- * for Logos), same deliverables in both.
+ * for Logos). Professional includes the full talk recordings; Lightweight
+ * is the aftermovie only, talks as a priced add-on.
  *
- * Pricing follows the GovHack 2024 media package (industry-standard
- * day rates), scaled to a one-day event in EUR, then trimmed on 10 Sep
- * so it passes SPA's budget: no prep line, talk recordings included at no
- * extra charge, travel folded in at 150 (tickets only, Guil has a place to
- * stay in Brussels).
+ * Pricing started from the GovHack 2024 media package, then was checked
+ * against 2026 market rates on 10 Sep (DE aftermovie packages 1,200 to
+ * 4,490 net, NL/DE shoot days 800 to 1,500, assistant 250 to 450, UK
+ * highlight edits 400 to 960, social clips 150 to 250 each) and brought in
+ * line: edit and post trimmed, add-ons at market. Travel folded in at 150
+ * (tickets only, Guil has a place to stay in Brussels).
  *
  * Kept deliberately short: the WinWin team should be able to decide
  * from one read. Hero, three reference videos, what you get, how it
@@ -37,7 +39,7 @@ export const spaAftermovie: Proposal = {
     eyebrow: "Proposal",
     title: "WinWin 2026 on film",
     blurb:
-      "A two-minute aftermovie for the comms push, and every talk recorded in full. Two ways to shoot it, depending on the look you want.",
+      "A two-minute aftermovie for the comms push, with every talk recorded in full if you want them. Two ways to shoot it, depending on the look you want.",
   },
 
   brief: {
@@ -78,7 +80,7 @@ export const spaAftermovie: Proposal = {
         ],
       },
       {
-        label: "Every talk, in full",
+        label: "Every talk, in full (Professional, or as an add-on)",
         list: [
           "A locked-off camera on the stage, fed from the AV desk. Clean speech, not room sound.",
           "Each talk trimmed, branded with a title card and lower third, exported as its own file. Ready for the site or YouTube.",
@@ -88,14 +90,14 @@ export const spaAftermovie: Proposal = {
       {
         label: "On the day",
         list: [
-          "One camera locked on the stage for every talk, another in my hands for everything else.",
+          "One camera in my hands for everything else. With the talk recordings, a second one locked on the stage.",
           "Run-of-show check the week before.",
         ],
       },
     ],
     provides: {
       label: "From the venue",
-      body: "A line out from the AV desk, a fixed camera spot with a clear view of the lectern, and the run-of-show a week ahead. All three can be settled at the venue visit.",
+      body: "The run-of-show a week ahead. For the talk recordings, also a line out from the AV desk and a fixed camera spot with a clear view of the lectern. All of it can be settled at the venue visit.",
     },
   },
 
@@ -140,31 +142,30 @@ export const spaAftermovie: Proposal = {
         lead: "Rented cinema cameras, an assistant camera operator, proper audio. The look you'd expect from a broadcast crew.",
         includes: [
           "Shoot day, me plus an assistant operator · 1,200",
-          "Camera and audio rental · 550",
-          "Aftermovie edit and post · 2,800",
+          "Camera and audio rental · 450",
+          "Aftermovie edit and post · 1,900",
           "Talk recordings, up to eight · included",
-          "File handling, admin, revisions · 400",
+          "File handling, admin, revisions · 250",
           "Travel Berlin–Brussels · 150",
         ],
-        prices: [{ label: "Package", amount: "5,100 EUR" }],
-        priceNote: "Travel included. I have a place to stay in Brussels.",
+        prices: [{ label: "Package", amount: "3,950 EUR" }],
+        priceNote: "Talks and travel included. I have a place to stay in Brussels.",
         timeline: "Aftermovie by 10 November, talks by 17 November.",
         recommended: true,
       },
       {
         label: "Lighter budget",
         title: "Lightweight",
-        lead: "Me alone with iPhones and the compact kit I own. Guerrilla style: fewer angles, less polish in low light, the same edit.",
+        lead: "Me alone with iPhones and the compact kit I own. Guerrilla style: fewer angles, less polish in low light, the same edit. Aftermovie only; add the talk recordings if you want them.",
         includes: [
-          "Shoot day, solo, my own kit · 900",
-          "Aftermovie edit and post · 2,400",
-          "Talk recordings, up to eight · included",
-          "File handling, admin, revisions · 300",
+          "Shoot day, solo, my own kit · 700",
+          "Aftermovie edit and post · 1,500",
+          "File handling, admin, revisions · 150",
           "Travel Berlin–Brussels · 150",
         ],
-        prices: [{ label: "Package", amount: "3,750 EUR" }],
-        priceNote: "Good for LinkedIn and the site. Not the one for a big screen.",
-        timeline: "Same delivery dates.",
+        prices: [{ label: "Package", amount: "2,500 EUR" }],
+        priceNote: "Good for LinkedIn and the site. Not the one for a big screen. Talk recordings: 900 on top.",
+        timeline: "Aftermovie by 10 November.",
       },
     ],
   },
@@ -175,14 +176,19 @@ export const spaAftermovie: Proposal = {
       label: "Add-ons, either package",
       items: [
         {
+          title: "Talk recordings, up to eight",
+          detail: "Lightweight only. Locked-off camera on the AV feed, each talk trimmed, branded and exported. Included in Professional.",
+          price: "900 EUR",
+        },
+        {
           title: "Next-morning teaser",
           detail: "15 to 20 seconds on LinkedIn while the day is still fresh.",
-          price: "500 EUR",
+          price: "400 EUR",
         },
         {
           title: "Speaker clips",
           detail: "Vertical, 30 to 45 seconds, captioned. One per speaker to share.",
-          price: "450 EUR each",
+          price: "200 EUR each",
         },
         {
           title: "Event photos",
@@ -192,22 +198,22 @@ export const spaAftermovie: Proposal = {
         {
           title: "Extra camera operator",
           detail: "Covers the breakout rooms while the main stage runs.",
-          price: "1,650 EUR + travel",
+          price: "900 EUR + travel",
         },
         {
           title: "Extra talk",
-          detail: "Beyond the eight included.",
-          price: "175 EUR each",
+          detail: "Beyond the eight.",
+          price: "120 EUR each",
         },
         {
           title: "Extra revision round",
           detail: "Beyond the two included.",
-          price: "300 EUR",
+          price: "250 EUR",
         },
         {
           title: "Raw footage",
           detail: "Every clip, organised and labelled, on a drive or a download link.",
-          price: "300 EUR",
+          price: "250 EUR",
         },
       ],
     },
