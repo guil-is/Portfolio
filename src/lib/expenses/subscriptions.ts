@@ -40,6 +40,10 @@ export type TrackedSubscription = {
   rating?: SubRating;
   /** Hidden on the tab as "not a subscription". */
   ignored?: boolean;
+  /** ISO date it was cancelled (tab action or registry `endsAt`). Out of the totals. */
+  cancelledAt?: string;
+  /** A charge landed after the cancel date — the cancellation didn't take, or you're back. */
+  chargedAfterCancel?: boolean;
 };
 
 export const RATING_LABELS: Record<SubRating, string> = {
@@ -60,8 +64,14 @@ export function websiteFor(s: Pick<TrackedSubscription, "key" | "name" | "url">)
 export function applySubsMeta(subs: TrackedSubscription[], meta: Record<string, SubMeta>): TrackedSubscription[] {
   return subs.map((s) => {
     const m = meta[s.key];
-    if (!m) return s;
-    return { ...s, rating: m.rating ?? s.rating, ignored: m.ignored ?? false };
+    const cancelledAt = m?.cancelledAt === undefined ? s.cancelledAt : (m.cancelledAt ?? undefined);
+    return {
+      ...s,
+      rating: m?.rating ?? s.rating,
+      ignored: m?.ignored ?? false,
+      cancelledAt,
+      chargedAfterCancel: Boolean(cancelledAt && s.lastCharge && s.lastCharge > cancelledAt),
+    };
   });
 }
 
@@ -173,7 +183,6 @@ export function trackSubscriptions(
     const key = merchantKey(r.match);
     const seen = detected.get(key);
     detected.delete(key);
-    if (r.endsAt && r.endsAt <= today) continue;
     // No known start: step from the last bank charge (or today, so it shows up at all).
     const startedAt = r.startedAt ?? seen?.lastCharge ?? today;
     const next = nextRenewalFrom(startedAt, r.interval, addDays(today, 1));
@@ -186,7 +195,7 @@ export function trackSubscriptions(
       amount: r.amount,
       interval: r.interval,
       category: r.category,
-      lastCharge: seen?.lastCharge ?? (startedAt <= today ? startedAt : undefined),
+      lastCharge: seen?.lastCharge ?? (r.startedAt && r.startedAt <= today ? r.startedAt : undefined),
       nextRenewal: next,
       yearly: r.interval === "monthly" ? priceAtNext * 12 : priceAtNext,
       charges: seen?.charges ?? (r.startedAt && r.startedAt <= today ? 1 : 0),
@@ -196,6 +205,7 @@ export function trackSubscriptions(
       nextAmount: r.nextAmount,
       endsAt: r.endsAt,
       rating: r.rating,
+      cancelledAt: r.endsAt,
       unseen: !seen && !entries.some((e) => e.kind === "expense" && merchantKey(e.party) === key),
     });
   }

@@ -14,7 +14,7 @@ export const TONE_TEXT: Record<Tone, string> = {
 
 export function Stat({ label, value, sub, tone = "ink" }: { label: string; value: string; sub: string; tone?: Tone }) {
   return (
-    <div className="flex flex-col gap-1 bg-bg px-5 py-5">
+    <div className="flex h-full w-full flex-col gap-1 bg-bg px-5 py-5">
       <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">{label}</p>
       <p className={`font-display text-[1.5rem] font-bold leading-tight tabular-nums ${TONE_TEXT[tone]}`}>{value}</p>
       <p className="text-[0.75rem] leading-[1.1rem] text-muted">{sub}</p>

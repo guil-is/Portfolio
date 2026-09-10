@@ -102,8 +102,11 @@ Google Sheet. One year at a time:
   colour — monthly ones are always "soon". Every row links to the
   merchant's billing page (registry `url`, then `knownSites` in
   `subscriptions.ts`, then a web search). Per plan you rate Essential
-  / Useful / Cut or hide a false detection; both live in localStorage
-  (`books:v1:subs-meta`). A registry entry can carry a default
+  / Useful / Cut, mark it cancelled (the ⊘ button: dated, out of the
+  totals, listed under the Cancelled chip with what it saves, and
+  flagged "charged after cancelling" if the bank charges it again;
+  the arrow marks it resubscribed) or hide a false detection; all
+  three live in localStorage (`books:v1:subs-meta`). A registry entry can carry a default
   `rating`; omit `startedAt` when the day is unknown and the last bank
   charge is used.
 - **Colours**: green = money in and credits (revenue, profit, prepaid

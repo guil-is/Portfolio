@@ -22,7 +22,7 @@ export type Subscription = {
   nextAmount?: number;
   note?: string;
   url?: string;
-  /** Set when you cancel — it drops out of the forecast after this date. */
+  /** Set when you cancel — shown as cancelled from this date, out of the totals; the tab flags any later charge. */
   endsAt?: string;
   /** Default usefulness (3 essential · 2 useful · 1 could cut); the tab's own rating wins. */
   rating?: SubRating;
@@ -96,6 +96,17 @@ export const subscriptions: Subscription[] = [
     note: "Cancelled 10 Sep 2026",
     endsAt: "2026-09-10",
     url: "https://account.adobe.com/plans",
+  },
+  {
+    name: "ElevenLabs",
+    match: "elevenlabs",
+    amount: 4.34,
+    interval: "monthly",
+    category: "software",
+    rating: 1,
+    note: "Cancelled 10 Sep 2026",
+    endsAt: "2026-09-10",
+    url: "https://elevenlabs.io/app/subscription",
   },
   {
     name: "iCloud+ 2 TB",

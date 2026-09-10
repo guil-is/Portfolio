@@ -95,6 +95,8 @@ export type SubMeta = {
   rating?: SubRating;
   /** Not a subscription after all (a detected false positive) — hidden. */
   ignored?: boolean;
+  /** ISO date you cancelled it. `null` = resubscribed (overrides a registry `endsAt`). */
+  cancelledAt?: string | null;
 };
 
 export function loadSubsMeta(): Record<string, SubMeta> {
