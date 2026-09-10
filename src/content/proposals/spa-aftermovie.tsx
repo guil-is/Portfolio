@@ -5,8 +5,10 @@ import type { Proposal } from "./types";
  * video. Separate from the design agreement at /for/spa, quoted on its
  * own because it is video production, not design scope. Lara asked for
  * it on the 1 Sep and 8 Sep calls; SPA is choosing between Guil and an
- * event videographer (Roman Piola), so the edit-only option exists to
- * keep the brand in the edit either way.
+ * event videographer (Roman Piola). Two tiers: a professional shoot
+ * (rented cameras, assistant operator) and a lightweight one (Guil alone
+ * with iPhones and his own kit, guerrilla style like the DWeb Camp shoot
+ * for Logos), same deliverables in both.
  *
  * Pricing follows the GovHack 2024 media package (industry-standard
  * day rates), scaled to a one-day event in EUR, then trimmed on 10 Sep
@@ -35,7 +37,7 @@ export const spaAftermovie: Proposal = {
     eyebrow: "Proposal",
     title: "WinWin 2026 on film",
     blurb:
-      "A two-minute aftermovie for the comms push, and every talk recorded in full. Two ways to do it, depending on who holds the camera.",
+      "A two-minute aftermovie for the comms push, and every talk recorded in full. Two ways to shoot it, depending on the look you want.",
   },
 
   brief: {
@@ -86,7 +88,7 @@ export const spaAftermovie: Proposal = {
       {
         label: "On the day",
         list: [
-          "Two cameras, one operator: the stage camera runs on every talk while I shoot everything else.",
+          "One camera locked on the stage for every talk, another in my hands for everything else.",
           "Run-of-show check the week before.",
         ],
       },
@@ -134,11 +136,11 @@ export const spaAftermovie: Proposal = {
     options: [
       {
         label: "",
-        title: "Shoot and edit",
-        lead: "I film the day and deliver both.",
+        title: "Professional",
+        lead: "Rented cinema cameras, an assistant camera operator, proper audio. The look you'd expect from a broadcast crew.",
         includes: [
-          "Shoot day, two cameras · 1,200",
-          "Equipment · 550",
+          "Shoot day, me plus an assistant operator · 1,200",
+          "Camera and audio rental · 550",
           "Aftermovie edit and post · 2,800",
           "Talk recordings, up to eight · included",
           "File handling, admin, revisions · 400",
@@ -150,18 +152,19 @@ export const spaAftermovie: Proposal = {
         recommended: true,
       },
       {
-        label: "If Roman shoots",
-        title: "Edit only",
-        lead: "Your videographer films, I keep the brand in the edit.",
+        label: "Lighter budget",
+        title: "Lightweight",
+        lead: "Me alone with iPhones and the compact kit I own. Guerrilla style: fewer angles, less polish in low light, the same edit.",
         includes: [
-          "Brief and shot list for the videographer · 500",
-          "Aftermovie edit and post · 2,800",
+          "Shoot day, solo, my own kit · 900",
+          "Aftermovie edit and post · 2,400",
           "Talk recordings, up to eight · included",
-          "File handling, admin, revisions · 400",
+          "File handling, admin, revisions · 300",
+          "Travel Berlin–Brussels · 150",
         ],
-        prices: [{ label: "Fee", amount: "3,700 EUR" }],
-        priceNote: "Roman runs the stage camera on the AV feed. I brief him directly.",
-        timeline: "Same delivery dates, counted from receiving the footage.",
+        prices: [{ label: "Package", amount: "3,750 EUR" }],
+        priceNote: "Good for LinkedIn and the site. Not the one for a big screen.",
+        timeline: "Same delivery dates.",
       },
     ],
   },
