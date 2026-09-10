@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Ban, ExternalLink, EyeOff, RotateCcw, Search } from "lucide-react";
 import { formatEur } from "@/lib/expenses/triage";
 import { CATEGORY_LABELS, type Category } from "@/lib/expenses/types";
@@ -29,7 +30,7 @@ import { Stat } from "./Stat";
  * Ratings and "not a subscription" live in localStorage.
  */
 
-type View = "all" | "monthly" | "yearly" | "unrated" | "cut" | "unseen" | "cancelled" | "ignored";
+type View = "all" | "monthly" | "yearly" | "unrated" | "cut" | "unseen" | "personal" | "undecided" | "cancelled" | "ignored";
 
 const SORTS: [SubSort, string][] = [
   ["renewal", "Next renewal"],
@@ -64,7 +65,13 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
   }
 
   const all = useMemo(() => applySubsMeta(tracked, meta), [tracked, meta]);
-  const active = all.filter((s) => !s.ignored && !s.cancelledAt);
+  // Totals and groups are about business plans; personal and undecided
+  // charges are shown so nothing recurring hides, but don't count.
+  const live = all.filter((s) => !s.ignored && !s.cancelledAt);
+  const active = live.filter((s) => s.verdict === "business");
+  const personal = live.filter((s) => s.verdict === "personal");
+  const undecided = live.filter((s) => s.verdict === "undecided");
+  const personalYearly = personal.reduce((t, s) => t + s.yearly, 0);
   const cancelled = all.filter((s) => !s.ignored && s.cancelledAt);
   const ignored = all.filter((s) => s.ignored);
   const cancelledThisYear = cancelled.filter((s) => s.cancelledAt!.startsWith(today.slice(0, 4)));
@@ -87,23 +94,28 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
   const visible = sortSubscriptions(
     all
       .filter((s) => {
-        const live = !s.ignored && !s.cancelledAt;
+        const on = !s.ignored && !s.cancelledAt;
+        const biz = on && s.verdict === "business";
         switch (view) {
           case "ignored":
             return s.ignored;
           case "cancelled":
             return !s.ignored && Boolean(s.cancelledAt);
+          case "personal":
+            return on && s.verdict === "personal";
+          case "undecided":
+            return on && s.verdict === "undecided";
           case "monthly":
           case "yearly":
-            return live && s.interval === view;
+            return biz && s.interval === view;
           case "unrated":
-            return live && !s.rating;
+            return biz && !s.rating;
           case "cut":
-            return live && s.rating === 1;
+            return biz && s.rating === 1;
           case "unseen":
-            return live && s.unseen;
+            return biz && s.unseen;
           default:
-            return live;
+            return on;
         }
       })
       .filter((s) => category === "all" || s.category === category)
@@ -154,6 +166,8 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
     ["unrated", "Unrated", unrated.length],
     ["cut", "Could cut", cut.length],
     ["unseen", "Not in the books", unseen.length],
+    ["undecided", "Undecided", undecided.length],
+    ["personal", "Personal", personal.length],
     ["cancelled", "Cancelled", cancelled.length],
     ["ignored", "Hidden", ignored.length],
   ];
@@ -161,7 +175,7 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
   return (
     <section className="flex flex-col gap-8">
       <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule md:grid-cols-5">
-        <Stat label="Per year" value={`€${formatEur(yearly)}`} sub={`${active.length} plans · €${formatEur(yearly / 12)} a month`} tone="down" />
+        <Stat label="Per year, business" value={`€${formatEur(yearly)}`} sub={`${active.length} plans · €${formatEur(yearly / 12)} a month${personal.length > 0 ? ` · personal €${formatEur(personalYearly)}/yr on top` : ""}`} tone="down" />
         <Stat
           label="Next 30 days"
           value={`€${formatEur(soonTotal)}`}
@@ -243,7 +257,7 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
           {chips
             .filter(([key, , n]) => key === "all" || key === "monthly" || key === "yearly" || (n ?? 0) > 0)
             .map(([key, label, n]) => (
-              <button key={key} type="button" onClick={() => (key === "all" ? setView("all") : toggle(key))} className={chip(view === key)}>
+              <button key={key} type="button" onClick={() => (key === "all" ? setView("all") : toggle(key))} className={`${chip(view === key)} ${key === "undecided" && view !== key ? "border-warn/60 text-warn" : ""}`}>
                 {label}
                 {n !== null ? <span className="ml-1.5 opacity-60">{n}</span> : null}
               </button>
@@ -285,7 +299,7 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
       </div>
 
       <p className="text-[0.8rem] leading-[1.4rem] text-muted">
-        Detected from the books: a merchant charged at a steady cadence (3+ monthly or 2 yearly charges within 15 % of each other). Known plans with a price step or a cancellation live in <code>src/content/books/subscriptions.ts</code> and override the detection. Ratings, cancellations and hidden rows stay in this browser. A cancelled plan that gets charged again is flagged — either the cancellation didn&apos;t take or you resubscribed; press the arrow to track it again.
+        Detected from every bank row in the books and the expenses session: a merchant charged at a steady cadence (monthly or yearly, amounts within 15 % of each other; two charges show as “confirm”). Personal and undecided charges are listed so nothing recurring hides, but only business plans count in the totals — decide the undecided ones on the expenses page. Known plans with a price step or a cancellation live in <code>src/content/books/subscriptions.ts</code> and override the detection. Ratings, cancellations and hidden rows stay in this browser. A cancelled plan that gets charged again is flagged — either the cancellation didn&apos;t take or you resubscribed; press the arrow to track it again.
       </p>
     </section>
   );
@@ -330,6 +344,10 @@ function Row({
           </a>
           {s.chargedAfterCancel ? (
             <span className="shrink-0 rounded-full bg-down/15 px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-down">charged again</span>
+          ) : s.verdict === "undecided" && !cancelled ? (
+            <Link href="/for/expenses" className="shrink-0 rounded-full bg-warn/15 px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-warn hover:underline">undecided · triage</Link>
+          ) : s.verdict === "personal" && !cancelled ? (
+            <span className="shrink-0 rounded-full bg-card px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-muted">personal</span>
           ) : cancelled ? (
             <span className="shrink-0 rounded-full bg-card px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-muted">cancelled</span>
           ) : s.unseen ? (
@@ -338,6 +356,11 @@ function Row({
         </p>
         <p className="truncate text-[0.8rem] text-muted">
           {CATEGORY_LABELS[s.category]}
+          {s.source === "detected" ? (
+            <span className={`ml-2 font-caption text-[9px] font-semibold uppercase tracking-[1px] ${s.tentative ? "text-warn" : "text-faint"}`}>
+              {s.charges} charges{s.tentative ? " · confirm" : ""}
+            </span>
+          ) : null}
           {s.raw ? <span className="text-faint"> · {s.raw}</span> : null}
           {s.note ? <span> · {s.note}</span> : null}
         </p>
@@ -362,12 +385,12 @@ function Row({
           <span className="ml-1 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-faint">/{s.interval === "monthly" ? "mo" : "yr"}</span>
         </p>
         <p className={`text-[0.75rem] tabular-nums ${cancelled ? "text-up" : stepUp ? "text-warn" : stepDown ? "text-up" : "text-muted"}`} title={s.nextAmount !== undefined && s.nextAmount !== s.amount ? `€${formatEur(s.nextAmount)} from the next term` : undefined}>
-          {cancelled ? `saves €${formatEur(s.yearly)}/yr` : `${stepUp ? "↑ " : stepDown ? "↓ " : ""}€${formatEur(s.yearly)}/yr · ${share} %`}
+          {cancelled ? `saves €${formatEur(s.yearly)}/yr` : `${stepUp ? "↑ " : stepDown ? "↓ " : ""}€${formatEur(s.yearly)}/yr${s.verdict === "business" ? ` · ${share} %` : ""}`}
         </p>
       </div>
 
       <div className="col-span-2 flex items-center gap-2 md:col-span-1 md:col-start-5" role="radiogroup" aria-label={`How needed is ${s.name}`}>
-        <span className="inline-flex overflow-hidden rounded-full border border-rule">
+        <span className={`inline-flex overflow-hidden rounded-full border border-rule ${s.verdict !== "business" ? "invisible" : ""}`}>
           {RATINGS.map((r) => (
             <button
               key={r}

@@ -86,9 +86,18 @@ Google Sheet. One year at a time:
   counts like a manual row. It steps aside automatically once the same
   charge (merchant, amount, within a week) exists as a bank or quick-add
   row.
-- **Subscriptions** tab: recurring charges detected from the books
-  (3+ monthly or 2 yearly charges of a merchant, amounts within 15 %)
-  merged with `src/content/books/subscriptions.ts` — the registry for
+- **Subscriptions** tab: recurring charges detected from every bank
+  row — the books plus the expenses session's rows that never reached
+  the books (personal, undecided) — 2+ monthly or 2 yearly charges of
+  a merchant, amounts within 15 %; two monthly charges show as
+  "confirm". Rows are keyed by the cleaned name (`subscriptionKey()`:
+  "ATLASSIAN PTY LTD" and "Atlassian" are one plan) and tagged
+  business / personal / undecided from the triage verdict; only
+  business plans count in the totals, personal ones show their own
+  yearly figure, undecided ones carry a "triage" badge that links to
+  the expenses page (a merchant the rules don't know sits undecided
+  and would otherwise be invisible — add a rule when that happens).
+  Merged with `src/content/books/subscriptions.ts` — the registry for
   plans with a price step (`nextAmount`), a planned end (`endsAt`), or
   ones the books haven't seen twice yet. Bank descriptors are cleaned
   for display (`prettyMerchant()` in `text.ts`: "OPENAI *CHATGPT
@@ -114,17 +123,33 @@ Google Sheet. One year at a time:
   things to watch (tax-relevant rows, VAT still to pay, renewals
   inside 30 days, price steps, plans not seen in the books). Tokens
   `--color-up` / `--color-down` / `--color-warn` in `globals.css`.
-- **Backups**: everything above lives in this browser's localStorage,
-  so a cleared cache or another device starts empty. The strip under
-  the year picker has **Back up** (downloads
-  `books-backup-<date>.json`: every `books:v1:*` and `expenses:*` key,
-  envelope in `src/lib/expenses/backup.ts`) and **Restore** (merges a
-  backup in: book rows by id with the newest `updatedAt` winning,
-  ratings and merchant memory by key, settings taken from the file).
-  It turns amber when the last backup is over 30 days old or there has
-  never been one. Keep the file in Drive or iCloud. The same envelope
-  is the payload for an encrypted sync later — extend `entries`, don't
-  reshape it.
+- **Encrypted sync**: everything above lives in this browser's
+  localStorage; the strip under the year picker keeps it on every
+  device. You pick a passphrase once per device. The browser derives
+  two keys from it (PBKDF2 310k → HKDF: an AES-GCM key and a bearer
+  token, `src/lib/expenses/crypto.ts`), gzips the backup envelope,
+  encrypts it, and PUTs the ciphertext to `/api/books-sync`, which
+  stores it as the Sanity document `booksSync-main` (schema
+  `sanity/schemas/booksSync.ts`, written with the same
+  `SANITY_AUTH_TOKEN` the agreement signing uses). Sanity and the route
+  only ever see ciphertext; the first PUT claims the vault by storing
+  sha256(token), so a wrong passphrase is a 403 and can't overwrite it.
+  The engine (`src/lib/expenses/sync.ts`, driven by `SyncBar` on
+  /for/books and the invisible `SyncAgent` on /for/expenses) pushes
+  when the local envelope changes (checked every 4 s, 1.5 s quiet),
+  pulls on load, on focus and every minute, merges like Restore
+  (newest row wins), and retries on a 409 if another device pushed in
+  between. A pull that brought changes reloads the page. Device state
+  (keys, last revision) is `books:v1:sync`; "Forget on this device"
+  clears it, the books stay. Nobody can recover the passphrase — a
+  vault you can't open is gone; enter a new passphrase only after
+  deleting the `booksSync-main` document in Studio. Local dev has no
+  token, so the strip says sync isn't configured; production has it.
+- **Backup file**: still there under the strip's "Backup file"
+  disclosure. **Back up** downloads `books-backup-<date>.json` (every
+  `books:v1:*` and `expenses:*` key except the sync state, envelope in
+  `src/lib/expenses/backup.ts`); **Restore** merges one in. The sync
+  ships the same envelope — extend `entries`, don't reshape it.
 - **Old years**: `seedBooks` in `src/content/books/seed.ts` holds 2024
   and 2025 transcribed from the Google Sheets. Income rows always
   count; seed expense rows hide once an N26 import exists for that year.

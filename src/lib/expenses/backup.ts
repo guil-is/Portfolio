@@ -15,7 +15,8 @@ export const BACKUP_VERSION = 1;
 /** Every localStorage key the two pages own starts with one of these. */
 const PREFIXES = ["books:v1:", "expenses:"];
 const LAST_BACKUP_KEY = "books:v1:last-backup";
-const IDLE_KEYS = new Set([LAST_BACKUP_KEY]);
+/** Device-local bookkeeping that must never travel: backup time, sync keys. */
+const IDLE_KEYS = new Set([LAST_BACKUP_KEY, "books:v1:sync"]);
 
 export type Backup = {
   format: typeof BACKUP_FORMAT;

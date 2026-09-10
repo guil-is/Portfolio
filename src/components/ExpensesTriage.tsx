@@ -58,6 +58,7 @@ import {
   type ParseResult,
 } from "@/lib/expenses/types";
 import { ExpenseSwipeDeck, kindLabel, prettyDate, type DecideOptions } from "./ExpenseSwipeDeck";
+import { SyncAgent } from "./SyncBar";
 
 /**
  * /for/expenses — turns an N26 export into the expenses list for the tax
@@ -421,6 +422,7 @@ export function ExpensesTriage() {
 
   return (
     <main className="page-fade-in mx-auto w-full max-w-[1040px] px-6 pt-10 pb-40 md:px-10 md:pt-16">
+      <SyncAgent />
       <section className="flex flex-col gap-6 pb-10 md:pb-14">
         <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
           Private · Tax expenses

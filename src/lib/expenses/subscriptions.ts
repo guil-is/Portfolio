@@ -14,6 +14,21 @@
 
 import type { BookEntry, SubMeta, SubRating } from "./books";
 import { merchantKey, prettyMerchant } from "./text";
+
+/** How the charge was triaged. Only business plans count in the totals. */
+export type SubVerdict = "business" | "personal" | "undecided";
+
+/** A book row, or a bank row that never reached the books (personal, undecided). */
+export type SubSource = BookEntry & { verdict?: SubVerdict };
+
+/**
+ * Merchant key for subscriptions: the cleaned name ("PAYPAL *MYFONTS" →
+ * "myfonts", "ATLASSIAN PTY LTD" → "atlassian"), so one plan billed under
+ * slightly different descriptors still lands on one row.
+ */
+export function subscriptionKey(party: string): string {
+  return merchantKey(prettyMerchant(party));
+}
 import type { Category } from "./types";
 import { knownSites, type Subscription } from "@/content/books/subscriptions";
 
@@ -38,6 +53,9 @@ export type TrackedSubscription = {
   /** Registry plan with no matching charge in the books (yet, or any more). */
   unseen?: boolean;
   rating?: SubRating;
+  verdict: SubVerdict;
+  /** Only two charges seen so far — probably monthly, confirm. */
+  tentative?: boolean;
   /** Hidden on the tab as "not a subscription". */
   ignored?: boolean;
   /** ISO date it was cancelled (tab action or registry `endsAt`). Out of the totals. */
@@ -120,13 +138,13 @@ export function nextRenewalFrom(from: string, interval: "monthly" | "yearly", to
   return next;
 }
 
-export function detectSubscriptions(entries: BookEntry[], today: string): TrackedSubscription[] {
-  const groups = new Map<string, BookEntry[]>();
+export function detectSubscriptions(entries: SubSource[], today: string): TrackedSubscription[] {
+  const groups = new Map<string, SubSource[]>();
   const seen = new Set<string>();
   for (const e of entries) {
     if (e.kind !== "expense" || seen.has(e.id)) continue;
     seen.add(e.id);
-    const k = merchantKey(e.party);
+    const k = subscriptionKey(e.party);
     const list = groups.get(k) ?? [];
     list.push(e);
     groups.set(k, list);
@@ -134,7 +152,7 @@ export function detectSubscriptions(entries: BookEntry[], today: string): Tracke
   const out: TrackedSubscription[] = [];
   for (const [key, list] of groups) {
     // Same-day duplicates (a sheet row next to the bank row) collapse.
-    const byDay = new Map<string, BookEntry>();
+    const byDay = new Map<string, SubSource>();
     for (const e of [...list].sort((a, b) => a.date.localeCompare(b.date))) {
       byDay.set(`${e.date}|${e.amount.toFixed(2)}`, e);
     }
@@ -148,13 +166,19 @@ export function detectSubscriptions(entries: BookEntry[], today: string): Tracke
     const gaps = cluster.slice(1).map((e, i) => (Date.parse(e.date) - Date.parse(cluster[i].date)) / DAY);
     const median = [...gaps].sort((a, b) => a - b)[Math.floor(gaps.length / 2)];
     let interval: "monthly" | "yearly" | null = null;
-    if (cluster.length >= 3 && median >= 25 && median <= 36) interval = "monthly";
+    if (median >= 25 && median <= 36) interval = "monthly";
     else if (median >= 330 && median <= 400) interval = "yearly";
     if (!interval) continue;
     // Lapsed plans (no charge for well over an interval) stay out.
     const sinceLast = (Date.parse(today) - Date.parse(latest.date)) / DAY;
     if (sinceLast > (interval === "monthly" ? 45 : 400)) continue;
     const name = prettyMerchant(latest.party);
+    // A plan is business if any charge was booked as business.
+    const verdict: SubVerdict = cluster.some((e) => (e.verdict ?? "business") === "business")
+      ? "business"
+      : cluster.some((e) => e.verdict === "personal")
+        ? "personal"
+        : "undecided";
     out.push({
       key,
       name,
@@ -167,20 +191,22 @@ export function detectSubscriptions(entries: BookEntry[], today: string): Tracke
       yearly: interval === "monthly" ? latest.amount * 12 : latest.amount,
       charges: cluster.length,
       source: "detected",
+      verdict,
+      tentative: interval === "monthly" && cluster.length < 3,
     });
   }
   return out;
 }
 
 export function trackSubscriptions(
-  entries: BookEntry[],
+  entries: SubSource[],
   registry: Subscription[],
   today = new Date().toISOString().slice(0, 10),
 ): TrackedSubscription[] {
   const detected = new Map(detectSubscriptions(entries, today).map((s) => [s.key, s]));
   const out: TrackedSubscription[] = [];
   for (const r of registry) {
-    const key = merchantKey(r.match);
+    const key = subscriptionKey(r.match);
     const seen = detected.get(key);
     detected.delete(key);
     // No known start: step from the last bank charge (or today, so it shows up at all).
@@ -206,7 +232,8 @@ export function trackSubscriptions(
       endsAt: r.endsAt,
       rating: r.rating,
       cancelledAt: r.endsAt,
-      unseen: !seen && !entries.some((e) => e.kind === "expense" && merchantKey(e.party) === key),
+      verdict: "business",
+      unseen: !seen && !entries.some((e) => e.kind === "expense" && subscriptionKey(e.party) === key),
     });
   }
   out.push(...detected.values());

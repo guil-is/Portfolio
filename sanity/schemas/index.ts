@@ -6,6 +6,7 @@ import { signedAgreement } from "./signedAgreement";
 import { proposalVisit } from "./proposalVisit";
 import { testimonial } from "./testimonial";
 import { resource } from "./resource";
+import { booksSync } from "./booksSync";
 
 export const schemaTypes = [
   client,
@@ -16,4 +17,5 @@ export const schemaTypes = [
   proposalVisit,
   testimonial,
   resource,
+  booksSync,
 ];

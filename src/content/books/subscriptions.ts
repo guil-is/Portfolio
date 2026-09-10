@@ -51,6 +51,7 @@ export const knownSites: Record<string, string> = {
   dropbox: "https://www.dropbox.com/account/plan",
   linear: "https://linear.app/settings/billing",
   loom: "https://www.loom.com/settings/billing",
+  atlassian: "https://admin.atlassian.com/",
   zoom: "https://zoom.us/billing",
   framer: "https://www.framer.com/account/",
   webflow: "https://webflow.com/dashboard/account/billing",
@@ -107,6 +108,16 @@ export const subscriptions: Subscription[] = [
     note: "Cancelled 10 Sep 2026",
     endsAt: "2026-09-10",
     url: "https://elevenlabs.io/app/subscription",
+  },
+  {
+    // The bank says ATLASSIAN; USD 24/month, so the EUR amount moves with the rate.
+    name: "Loom Business + AI",
+    match: "atlassian",
+    amount: 21.6,
+    interval: "monthly",
+    category: "software",
+    note: "USD 24 a month via Atlassian, bills on the 17th",
+    url: "https://admin.atlassian.com/",
   },
   {
     name: "iCloud+ 2 TB",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { Copy, Trash2 } from "lucide-react";
 import type { IncomeYear, InvoiceRow } from "@/lib/income";
@@ -32,9 +32,11 @@ import {
 } from "@/lib/expenses/types";
 import { TaxEstimate } from "./TaxEstimate";
 import { SubscriptionsTab } from "./SubscriptionsTab";
-import { BackupBar } from "./BackupBar";
+import { SyncBar } from "./SyncBar";
 import { Stat, signTone } from "./Stat";
-import { trackSubscriptions } from "@/lib/expenses/subscriptions";
+import { trackSubscriptions, type SubSource } from "@/lib/expenses/subscriptions";
+import { loadMemory, loadSession } from "@/lib/expenses/storage";
+import { buildItems } from "@/lib/expenses/triage";
 import type { Subscription } from "@/content/books/subscriptions";
 import { prettyDate } from "./ExpenseSwipeDeck";
 
@@ -83,6 +85,7 @@ export function BooksDashboard({
   const [adding, setAdding] = useState(false);
   const [quick, setQuick] = useState("");
   const quickPreview = useMemo(() => (quick.trim() ? parseQuickAdd(quick) : null), [quick]);
+  const reloadSoon = useCallback(() => window.setTimeout(() => window.location.reload(), 600), []);
 
   function addQuick() {
     if (!quickPreview) return;
@@ -183,22 +186,36 @@ export function BooksDashboard({
     [entries, seed, year],
   );
   // Subscriptions: every year's rows (stored years, this tab's rows for
-  // the current year, and the seed years), so yearly plans are seen twice.
-  const subs = useMemo(
-    () =>
-      trackSubscriptions(
-        [
-          ...loadAllBooks().filter((e) => !e.date.startsWith(String(year))),
-          ...entries,
-          ...seed,
-        ],
-        registry,
-      ),
-    [entries, seed, registry, year],
-  );
+  // the current year, the seed years) plus the bank rows in the expenses
+  // session that never reached the books — personal and undecided
+  // charges recur too, and a plan the rules don't know sits undecided.
+  const subs = useMemo(() => {
+    const booked = new Set([...loadAllBooks(), ...entries].map((e) => e.id));
+    const session = loadSession();
+    const outside: SubSource[] = session
+      ? buildItems(session.parsed.transactions, loadMemory(), session.decisions)
+          .filter((i) => !booked.has(i.tx.id) && i.tx.amount < 0 && i.tx.kind !== "internal" && i.decision?.verdict !== "skip")
+          .map((i) => ({
+            id: i.tx.id,
+            date: i.tx.date,
+            kind: "expense" as const,
+            amount: Math.abs(i.tx.amount),
+            party: i.tx.partner,
+            reference: i.tx.reference,
+            category: i.decision?.category ?? "other",
+            source: "n26" as const,
+            updatedAt: "",
+            verdict: i.decision?.verdict === "personal" ? "personal" : i.decision?.verdict === "business" ? "business" : "undecided",
+          }))
+      : [];
+    return trackSubscriptions(
+      [...loadAllBooks().filter((e) => !e.date.startsWith(String(year))), ...entries, ...seed, ...outside],
+      registry,
+    );
+  }, [entries, seed, registry, year]);
   const today = new Date().toISOString().slice(0, 10);
   // Yearly renewals only — monthly plans are always "due soon".
-  const soon = subs.filter((s) => s.interval === "yearly" && s.nextRenewal <= addDaysIso(today, 30));
+  const soon = subs.filter((s) => s.verdict === "business" && !s.cancelledAt && s.interval === "yearly" && s.nextRenewal <= addDaysIso(today, 30));
   // Finanzamt payments in other years that name this one.
   const elsewhere = useMemo(
     () => prepaidElsewhereFor(year, [...entries, ...loadAllBooks().filter((e) => !e.date.startsWith(String(year)))]),
@@ -310,7 +327,7 @@ export function BooksDashboard({
             Import an N26 export →
           </Link>
         </div>
-        <BackupBar onToast={setToast} onRestored={() => window.setTimeout(() => window.location.reload(), 600)} />
+        <SyncBar onToast={setToast} onRestored={reloadSoon} />
         {!ledgerLoaded ? (
           <p className="rounded-[12px] border border-rule-soft bg-card/40 px-4 py-3 text-[0.85rem] leading-[1.4rem] text-muted">
             Invoice data loads after the gate — reload the page if income shows as zero.
@@ -362,7 +379,7 @@ export function BooksDashboard({
           [
             ["overview", "Tax estimate"],
             ["entries", `Entries · ${allRows.length}`],
-            ["subscriptions", `Subscriptions · ${subs.length}${soon.length > 0 ? ` · ${soon.length} yearly renewing` : ""}`],
+            ["subscriptions", `Subscriptions · ${subs.filter((s) => s.verdict === "business" && !s.cancelledAt).length}${soon.length > 0 ? ` · ${soon.length} yearly renewing` : ""}`],
             ["accountant", `For the accountant${exportRowsList.length > 0 ? ` · ${exportRowsList.length} new` : ""}`],
           ] as [Tab, string][]
         ).map(([key, label]) => (

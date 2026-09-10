@@ -192,7 +192,7 @@ const BRAND_CASE: Record<string, string> = {
 };
 
 const PROCESSOR_PREFIX = /^(paypal|pp|google|paddle\.net|paddle|apple\.com\/bill|sq|sp|amzn|amazon|stripe|klarna|worldpay|fastspring|2co|gumroad|lemon squeezy)\s*\*\s*/i;
-const LEGAL_SUFFIX = /\b(inc\.?|llc\.?|ltd\.?|limited|gmbh(?:\s*&\s*co\.?\s*kg)?|ag|ug|s\.?a\.?r\.?l\.?|s\.?a\.?|b\.?v\.?|corp\.?|corporation|pte\.?|plc|oy|ab|s\.?r\.?o\.?)\b\.?/gi;
+const LEGAL_SUFFIX = /\b(inc\.?|llc\.?|ltd\.?|limited|pty\.?|gmbh(?:\s*&\s*co\.?\s*kg)?|ag|ug|s\.?a\.?r\.?l\.?|s\.?a\.?|b\.?v\.?|corp\.?|corporation|pte\.?|plc|oy|ab|s\.?r\.?o\.?)\b\.?/gi;
 const TRAILING_NOISE = /\b(subscr(?:iption)?|monthly|yearly|payment|abo|renewal)\b.*$/i;
 
 /**

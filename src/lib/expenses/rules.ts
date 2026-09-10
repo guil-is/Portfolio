@@ -60,6 +60,7 @@ export const RULES: Rule[] = [
   r("openai", /\bopenai\b|\bchatgpt\b/, "business", "software", 0.95, "AI tooling"),
   r("ai-tools", /\bmidjourney\b|\brunway\b|\bhiggsfield\b|\bkrea\b|\bmagnific\b|\bfreepik\b|\bleonardo\b|\bideogram\b|\bkling\b|\bluma\b|\bpika\b|\bhailuo\b|\bminimax\b|\belevenlabs\b|\breplicate\b|\bfal\.ai\b|\btopaz\b|\bheygen\b|\bsynthesia\b|\bperplexity\b|\bgemini\b|\bstability\b|\bhugging ?face\b|\bsuno\b|\budio\b|\bveo\b/, "business", "software", 0.93, "AI tooling"),
   r("lalal", /\blalal\b/, "business", "software", 0.95, "Audio stem separation"),
+  r("atlassian", /\batlassian\b/, "business", "software", 0.93, "Loom (billed by Atlassian)"),
   r("video-tools", /\bdescript\b|\briverside\b|\bveed\b|\bkapwing\b|\bopus ?clip\b|\bsubmagic\b|\bframe\.?io\b|\bscreen studio\b|\brotato\b|\bcleanshot\b|\bloom\b/, "business", "software", 0.92, "Video / screen tooling"),
   r("motion-tools", /\baescripts\b|\baeplugins\b|\bmaxon\b|\bred giant\b|\bboris ?fx\b|\bcavalry\b|\brive\b|\blottie\b|\bspline\b|\bmocha\b|\bcinema ?4d\b|\bblender\b/, "business", "software", 0.95, "Motion design software"),
   r("design-tools", /\bcanva\b|\baffinity\b|\bserif\b|\bprocreate\b|\bsketch\b|\bzeplin\b|\binvision\b|\bmiro\b|\bmural\b|\bpitch\.com\b|\bgamma\b|\breadymag\b|\bframer\b|\bwebflow\b|\brelume\b|\b21st\b|\bmobbin\b/, "business", "software", 0.94, "Design software"),
