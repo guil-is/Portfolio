@@ -12,8 +12,12 @@ import type { Proposal } from "./types";
  * day rates), scaled to a one-day event in EUR. Travel is tickets only:
  * Guil has a place to stay in Brussels.
  *
- * TODO: add the TEDxBerlin 2026 and DWeb Camp 2026 videos to the
- * "Previous event work" media row once the links are to hand.
+ * Kept deliberately short: the WinWin team should be able to decide
+ * from one read. Hero, three reference videos, what you get, how it
+ * runs, two cards, add-ons, one closing line.
+ *
+ * TODO: swap in the GovHack aftermovie (only the daily recaps are in the
+ * repo) and add the TEDxBerlin 2026 aftermovie once it's on YouTube.
  */
 
 const CLIENT_NAME = "WinWin 2026";
@@ -30,48 +34,26 @@ export const spaAftermovie: Proposal = {
   hero: {
     eyebrow: "Proposal",
     title: "WinWin 2026 on film",
-    titleContinuation:
-      "An aftermovie for the comms push, and every talk recorded in full.",
-    blurb: [
-      "The real communication push happens after 3 November, and video is what carries it. One package covers the two things worth having: a two-minute aftermovie in the WinWin identity, and each main-stage talk recorded and edited so speakers, partners and press can watch or share them.",
-      "I already know the brand from the inside, so the edit looks like the rest of WinWin rather than a generic event recap.",
-    ],
+    blurb:
+      "A two-minute aftermovie for the comms push, and every talk recorded in full. One package, two ways to do it, depending on who holds the camera.",
   },
 
   brief: {
-    heading: "The day",
-    intro:
-      "One day, one stage, roundtables in the breakout rooms. Around 150 invited guests at the Albert Rooftop and the Royal Library. Commissioners on the programme, confirmations landing late. Low buzz before, a real push after.",
+    heading: "",
     blocks: [
-      {
-        label: "What the video has to do",
-        list: [
-          "Give the post-event comms push its centrepiece: a short film people watch to the end and partners are proud to repost.",
-          "Make every talk available in full, at a quality the speaker's own team would publish.",
-          "Look like WinWin: the lockup, the motion system, the palette, running through titles and transitions.",
-          "Arrive fast. The aftermovie lands within the week, while the event is still a conversation.",
-        ],
-      },
       {
         label: "Previous event work",
         items: [
           {
-            title: "GovHack at ETHDenver · Day 1 recap",
+            title: "Arbitrum GovHack 2024, ETHDenver",
+            // TODO: replace with the aftermovie; this is the Day 1 recap.
             url: "https://www.youtube.com/watch?v=nBc6CW_c_UE",
-            caption: "Three-day hackathon: daily recaps, full session recordings, interviews.",
+            caption: "Three-day hackathon. Aftermovie, daily recaps, every session recorded.",
           },
           {
-            title: "GovHack at ETHDenver · Day 2 recap",
-            url: "https://www.youtube.com/watch?v=OzW7ZPcuOq0",
-          },
-          {
-            title: "GovHack at ETHDenver · Day 3 recap",
-            url: "https://www.youtube.com/watch?v=DzYbD9FVOz0",
-          },
-          {
-            title: "GovHack at ETHDenver · Stakeholder interview",
-            url: "https://www.youtube.com/watch?v=9eRc01Rj7Mc",
-            caption: "One of three edited interviews from the same event.",
+            title: "The DAOist GGG 2022, Berlin",
+            url: "https://youtu.be/LF0QYO7P_Cg",
+            caption: "Conference aftermovie.",
           },
         ],
       },
@@ -84,32 +66,30 @@ export const spaAftermovie: Proposal = {
       {
         label: "The aftermovie",
         list: [
-          "About two minutes. 16:9 for the site, a 4:5 cut for LinkedIn.",
-          "Titles, lockup and motion in the WinWin identity. Licensed music. Sound mix and colour grade.",
-          "Two revision rounds on consolidated feedback.",
-          "First cut within five working days of the event.",
+          "About two minutes, in the WinWin identity: lockup, motion system, titles. 16:9 for the site, 4:5 for LinkedIn.",
+          "Licensed music, sound mix, colour grade. Two revision rounds.",
+          "First cut five working days after the event.",
         ],
       },
       {
-        label: "The talk recordings",
+        label: "Every talk, in full",
         list: [
-          "Every main-stage talk recorded in full from a locked-off camera, with a clean audio feed from the AV desk. Broadcast-quality speech, not room sound.",
-          "Each talk trimmed, synced, given a branded title card and lower third, and exported as its own file. Ready for the site or YouTube.",
-          "Up to eight talks included. Extra talks at 175 EUR each.",
-          "Delivered within ten working days of the event.",
+          "A locked-off camera on the stage, fed from the AV desk. Clean speech, not room sound.",
+          "Each talk trimmed, branded with a title card and lower third, exported as its own file. Ready for the site or YouTube.",
+          "Up to eight talks. Delivered ten working days after the event.",
         ],
       },
       {
         label: "On the day",
         list: [
-          "Me on site from doors to close. The stage camera runs continuously while I shoot the aftermovie material with a second camera, gimbal and audio.",
-          "A creative brief and a run-of-show check the week before, so nothing on the day is left to chance.",
+          "Two cameras, one operator: the stage camera runs on every talk while I shoot everything else.",
+          "Brief and run-of-show check the week before.",
         ],
       },
     ],
     provides: {
-      label: "What I need from the venue",
-      body: "A line out from the AV desk (XLR or mini-jack) for the stage camera. A fixed spot with a clear view of the lectern and screen. The run-of-show a week ahead. We can settle all three at the venue visit.",
+      label: "From the venue",
+      body: "A line out from the AV desk, a fixed camera spot with a clear view of the lectern, and the run-of-show a week ahead. All three can be settled at the venue visit.",
     },
   },
 
@@ -119,60 +99,51 @@ export const spaAftermovie: Proposal = {
       {
         label: "By 10 October",
         title: "Go-ahead",
-        body: "Holds 3 November in my calendar.",
+        body: "Holds 3 November.",
         kind: "start",
       },
       {
         label: "Week of 26 October",
-        title: "Brief and run-of-show check",
-        body: "Shot list agreed, AV feed and camera spot confirmed with the venue.",
+        title: "Brief and run-of-show",
+        body: "AV feed and camera spot confirmed.",
       },
       {
         label: "3 November",
         title: "Shoot day",
-        body: "Stage camera on every talk, second camera on everything else.",
       },
       {
         label: "By 10 November",
         title: "Aftermovie first cut",
-        body: "Then two revision rounds on consolidated feedback.",
+        body: "Then two revision rounds.",
       },
       {
         label: "By 17 November",
-        title: "Talk recordings delivered",
-        body: "Each talk as its own file, branded and ready to publish.",
+        title: "All talks delivered",
         kind: "end",
       },
     ],
-    note: {
-      label: "Add-ons",
-      body: "A next-morning teaser, vertical speaker clips, event photos, a second operator for the breakout rooms, or a raw-footage handover. Priced under the quote.",
-    },
   },
 
   quote: {
     heading: "The quote",
-    subheading: "Net, VAT reverse charge as on the rest of the project.",
+    subheading: "Net. VAT reverse charge, as on the rest of the project.",
     options: [
       {
         label: "",
         title: "Shoot and edit",
-        lead: "I film the day and deliver both the aftermovie and the talk recordings.",
+        lead: "I film the day and deliver both.",
         includes: [
           "Creative direction and prep · 700",
           "Shoot day, two cameras · 1,200",
           "Equipment · 550",
           "Aftermovie edit and post · 2,800",
-          "Talk recordings, up to eight, edited and exported · 1,400",
+          "Talk recordings, up to eight · 1,400",
           "File handling, admin, revisions · 400",
         ],
-        prices: [
-          { label: "Package", amount: "7,050 EUR" },
-          { label: "Travel, at cost", amount: "≈ 150–250 EUR" },
-        ],
+        prices: [{ label: "Package", amount: "7,050 EUR" }],
         priceNote:
-          "Travel is the Berlin–Brussels ticket only. I have a place to stay in Brussels.",
-        timeline: "Aftermovie by 10 November, talk recordings by 17 November.",
+          "Plus travel at cost: the Berlin–Brussels ticket, roughly 150 to 250 EUR. I have a place to stay.",
+        timeline: "Aftermovie by 10 November, talks by 17 November.",
         recommended: true,
       },
       {
@@ -180,19 +151,17 @@ export const spaAftermovie: Proposal = {
         title: "Edit only",
         lead: "Your videographer films, I keep the brand in the edit.",
         includes: [
-          "Creative brief and shot list for the videographer · 500",
+          "Brief and shot list for the videographer · 500",
           "Aftermovie edit and post · 2,800",
-          "Talk recordings, up to eight, edited and exported · 1,400",
+          "Talk recordings, up to eight · 1,400",
           "File handling, admin, revisions · 400",
         ],
         prices: [{ label: "Fee", amount: "5,100 EUR" }],
         priceNote:
-          "The videographer runs the stage camera on the AV feed. I'm happy to coordinate that with him directly.",
+          "Roman runs the stage camera on the AV feed. I brief him directly.",
         timeline: "Same delivery dates, counted from receiving the footage.",
       },
     ],
-    footnote:
-      "Either way, the brand runs through every frame: I built it, so the titles, lockup and motion come from the same system as the site and the invitation.",
   },
 
   terms: {
@@ -202,25 +171,24 @@ export const spaAftermovie: Proposal = {
       ["Vertical speaker clip, 30–45 seconds, captioned", "450 EUR each"],
       ["Event photos, 40–60 treated stills the next morning", "600 EUR"],
       ["Second camera operator for the breakout rooms", "1,650 EUR + travel"],
-      ["Raw footage handover, organised and labelled", "300 EUR"],
-      ["Extra talk recording beyond eight", "175 EUR each"],
+      ["Extra talk beyond eight", "175 EUR each"],
       ["Extra revision round", "300 EUR"],
+      ["Raw footage handover, organised and labelled", "300 EUR"],
     ],
     items: [
       "Invoiced on delivery, payable within 14 days, like the rest of the project.",
-      "Go-ahead by 10 October holds the date. After that, subject to availability.",
-      "Music is licensed for online use. Speakers appear on the recordings by SPA's arrangement with them.",
-      "Print, venue AV and third-party costs are not included.",
+      "A go-ahead by 10 October holds the date.",
+      "Venue AV and third-party costs are not included.",
     ],
   },
 
   showApproach: false,
 
   nextStep: {
-    heading: "Ready to book 3 November?",
-    body: "Reply with the option you'd like and I'll confirm the date and send a one-page addendum to our agreement. The venue visit on the 15th is a good moment to check the AV feed and the camera spot.",
+    heading: "Which one?",
+    body: "Tell me which option and I'll confirm the date with a one-page addendum to our agreement. The venue visit on the 15th is a good moment to check the AV feed and the camera spot.",
     ctaHref: "mailto:hello@guil.is?subject=WinWin%202026%20video",
-    ctaLabel: "Confirm by email",
+    ctaLabel: "Reply by email",
     showPortfolioLink: false,
   },
 
