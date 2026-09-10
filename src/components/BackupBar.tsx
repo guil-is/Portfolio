@@ -58,9 +58,9 @@ export function BackupBar({ onRestored, onToast }: { onRestored: () => void; onT
   const btn = "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-caption text-[10px] font-semibold uppercase tracking-[1px] transition-colors";
 
   return (
-    <div className={`flex flex-wrap items-center gap-x-3 gap-y-2 rounded-[12px] border px-4 py-2.5 text-[0.8rem] ${stale ? "border-warn/50 bg-warn/5 text-ink" : "border-rule-soft bg-card/40 text-muted"}`}>
-      <span className="mr-auto">
-        Books live in this browser.{" "}
+    <div className={`flex flex-wrap items-center gap-x-3 gap-y-2 text-[0.75rem] ${stale ? "text-ink" : "text-muted"}`}>
+      <span className="mr-auto basis-full">
+        {" "}
         {last ? (
           <>
             Last backup {prettyDate(last.slice(0, 10))}

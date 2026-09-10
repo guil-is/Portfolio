@@ -302,9 +302,14 @@ export function BooksDashboard({
         <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
           Private · Books
         </p>
-        <h1 className="intro-rise font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:text-[4rem]">
-          Books
-        </h1>
+        <div className="flex items-start justify-between gap-4">
+          <h1 className="intro-rise font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:text-[4rem]">
+            Books
+          </h1>
+          <div className="pt-2 md:pt-4">
+            <SyncBar onToast={setToast} onRestored={reloadSoon} />
+          </div>
+        </div>
         <p className="max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
           Income from the invoice ledger, expenses from the N26 imports, the Finanzamt estimate, and the copy
           for the accountant.
@@ -327,7 +332,6 @@ export function BooksDashboard({
             Import an N26 export →
           </Link>
         </div>
-        <SyncBar onToast={setToast} onRestored={reloadSoon} />
         {!ledgerLoaded ? (
           <p className="rounded-[12px] border border-rule-soft bg-card/40 px-4 py-3 text-[0.85rem] leading-[1.4rem] text-muted">
             Invoice data loads after the gate — reload the page if income shows as zero.
