@@ -170,7 +170,7 @@ ignored on the VAT line.
 | --- | --- | --- |
 | business | Deductible expense, with a category | yes |
 | personal | Private spend | only in "everything" mode |
-| tax | Not an expense, but the tax advisor wants it (Finanzamt, health insurance, KSK, pension) | when "append tax-relevant rows" is on |
+| tax | Not an expense, but the tax advisor wants it (Finanzamt, health insurance, KSK, pension). Finanzamt rows get a bucket from the reference: a VAT word → VAT; a named earlier year or "Nachzahlung" → not counted; "EST"/"Vorauszahlung" → this year's prepayment; a bare tax number paid within 12 days before or 7 after 10 Mar / Jun / Sep / Dec → this year's prepayment (the § 37 quarterly dates); anything else → not counted until you set it in Entries | when "append tax-relevant rows" is on |
 | skip | Internal move, reversal | never |
 
 Categories (`CATEGORY_LABELS` in `types.ts`): software, fonts/plugins/

@@ -113,11 +113,30 @@ export function refineTaxCategory(tx: Transaction, c: Classification): Classific
   if (INCOME_TAX_REF.test(ref)) {
     return { ...c, category: "tax", reason: "Income-tax prepayment (Vorauszahlung)" };
   }
+  // No year, no word: quarterly Vorauszahlungen fall due on 10 Mar / Jun /
+  // Sep / Dec, and a Finanzamt payment landing around one of those dates
+  // with a bare tax number is almost always that quarter's prepayment.
+  if (yearsNamed.length === 0 && nearQuarterlyDueDate(tx.date)) {
+    return { ...c, category: "tax", reason: "Income-tax prepayment — paid around a quarterly due date (10 Mar / Jun / Sep / Dec)" };
+  }
   return {
     ...c,
     category: "taxother",
     reason: "Finanzamt payment — the reference doesn't say whether it's income tax or VAT. Set it in All entries.",
   };
+}
+
+/** Within 12 days before or 7 days after a § 37 EStG quarterly due date. */
+function nearQuarterlyDueDate(iso: string): boolean {
+  const d = new Date(`${iso}T00:00:00Z`);
+  for (const month of [2, 5, 8, 11]) {
+    for (const y of [d.getUTCFullYear() - 1, d.getUTCFullYear(), d.getUTCFullYear() + 1]) {
+      const due = Date.UTC(y, month, 10);
+      const diff = (d.getTime() - due) / 86_400_000;
+      if (diff >= -12 && diff <= 7) return true;
+    }
+  }
+  return false;
 }
 
 export function classify(
