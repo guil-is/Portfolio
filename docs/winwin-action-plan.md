@@ -59,7 +59,7 @@ _Last reviewed: 2026-09-10._
 - [x] Reminder emails: waiting on one or two more big names, then sending week of 15 Sep. Hoekstra confirmed. I'm on standby for tweaks.
 - [x] Handover email sent same evening to Lara, Claire, Flora: /speakers-admin (add, edit, reorder, remove speakers and pitchers, publish), /speaker-announcement (WinWin account), /speaker-card (speakers self-serve). Cards carry no website link on purpose. Client page rows marked delivered with links.
 - [ ] Lara wants "crazy ideas" for memorable brand moments on the day (her list: temporary tattoos, plantable forget-me-not postcard with a message to your neighbour, edible logo in the Prosecco). Come back with two or three.
-- [ ] Aftermovie: proposal page live at guil.is/for/spa-aftermovie (password winwin), built 10 Sep from `src/content/proposals/spa-aftermovie.tsx`. Shoot + edit 7,050 + travel (tickets only) or edit-only 5,100 if Roman shoots; 2-min aftermovie + up to 8 talks recorded off the AV feed; add-ons priced. Go-by date 10 Oct. TODO before sending: add TEDx + DWeb links to the media row. Send Lara the link (Gmail draft is the cover note). Time-sensitive: SPA is choosing between Roman and me.
+- [ ] Aftermovie: proposal page live at guil.is/for/spa-aftermovie (password winwin), built 10 Sep from `src/content/proposals/spa-aftermovie.tsx`. Shoot + edit 7,050 + travel (tickets only) or edit-only 5,100 if Roman shoots; 2-min aftermovie + up to 8 talks recorded off the AV feed; add-ons priced. Go-by date 10 Oct. Send Lara the link (Gmail draft is the cover note). Time-sensitive: SPA is choosing between Roman and me.
 
 ## 9–10 Sep, before Brussels
 

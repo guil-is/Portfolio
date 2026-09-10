@@ -16,8 +16,6 @@ import type { Proposal } from "./types";
  * from one read. Hero, three reference videos, what you get, how it
  * runs, two cards, add-ons, one closing line.
  *
- * TODO: swap in the GovHack aftermovie (only the daily recaps are in the
- * repo) and add the TEDxBerlin 2026 aftermovie once it's on YouTube.
  */
 
 const CLIENT_NAME = "WinWin 2026";
@@ -46,14 +44,18 @@ export const spaAftermovie: Proposal = {
         items: [
           {
             title: "Arbitrum GovHack 2024, ETHDenver",
-            // TODO: replace with the aftermovie; this is the Day 1 recap.
-            url: "https://www.youtube.com/watch?v=nBc6CW_c_UE",
+            url: "https://www.youtube.com/watch?v=-0Bt-wQt8sE",
             caption: "Three-day hackathon. Aftermovie, daily recaps, every session recorded.",
           },
           {
             title: "The DAOist GGG 2022, Berlin",
             url: "https://youtu.be/LF0QYO7P_Cg",
             caption: "Conference aftermovie.",
+          },
+          {
+            title: "TEDxBerlin 2026",
+            url: "https://www.youtube.com/watch?v=C7ZcG00r6d8",
+            caption: "Aftermovie, one day.",
           },
         ],
       },
