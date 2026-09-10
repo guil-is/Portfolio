@@ -15,8 +15,8 @@ export type Subscription = {
   match: string;
   amount: number;
   interval: "monthly" | "yearly";
-  /** ISO date the current term started (renews every interval from here). */
-  startedAt: string;
+  /** ISO date the current term started (renews every interval from here). Omit when unknown — the last bank charge is used. */
+  startedAt?: string;
   category: Category;
   /** Price after the current term, when known. */
   nextAmount?: number;
@@ -77,13 +77,34 @@ export const subscriptions: Subscription[] = [
   {
     name: "Adobe Creative Cloud Pro (team)",
     match: "worldpay",
-    amount: 173.1,
+    amount: 86.55,
     interval: "monthly",
     startedAt: "2026-01-25",
     category: "software",
     rating: 3,
-    note: "Annual plan paid monthly, 2 licenses but only 1 in use — drop to 1 at the Jan 25 2027 renewal (or ask Adobe support sooner). Billed via WorldPay.",
+    note: "1 license since Sep 2026 (was €173.10 for 2 seats, one never used). Annual plan paid monthly, renews 25 Jan. Billed via WorldPay.",
     url: "https://adminconsole.adobe.com/account",
+  },
+  {
+    // Bank descriptor "ADOBE *ADOBE" — the individual Stock plan, not Creative Cloud.
+    name: "Adobe Stock",
+    match: "adobe adobe",
+    amount: 29.99,
+    interval: "monthly",
+    category: "assets",
+    rating: 1,
+    note: "Cancelled 10 Sep 2026",
+    endsAt: "2026-09-10",
+    url: "https://account.adobe.com/plans",
+  },
+  {
+    name: "iCloud+ 2 TB",
+    match: "apple.com/bill",
+    amount: 9.99,
+    interval: "monthly",
+    category: "software",
+    note: "Apple storage — the APPLE.COM/BILL row at €9.99",
+    url: "https://apps.apple.com/account/subscriptions",
   },
   {
     name: "Mobbin",

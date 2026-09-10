@@ -170,19 +170,21 @@ export function trackSubscriptions(
     const seen = detected.get(key);
     detected.delete(key);
     if (r.endsAt && r.endsAt <= today) continue;
-    const next = nextRenewalFrom(r.startedAt, r.interval, addDays(today, 1));
+    // No known start: step from the last bank charge (or today, so it shows up at all).
+    const startedAt = r.startedAt ?? seen?.lastCharge ?? today;
+    const next = nextRenewalFrom(startedAt, r.interval, addDays(today, 1));
     // Once the first term is over, the forecast uses the stepped price.
-    const priceAtNext = r.nextAmount !== undefined && next !== r.startedAt ? r.nextAmount : r.amount;
+    const priceAtNext = r.nextAmount !== undefined && next !== startedAt ? r.nextAmount : r.amount;
     out.push({
       key,
       name: r.name,
       amount: r.amount,
       interval: r.interval,
       category: r.category,
-      lastCharge: seen?.lastCharge ?? (r.startedAt <= today ? r.startedAt : undefined),
+      lastCharge: seen?.lastCharge ?? (startedAt <= today ? startedAt : undefined),
       nextRenewal: next,
       yearly: r.interval === "monthly" ? priceAtNext * 12 : priceAtNext,
-      charges: seen?.charges ?? (r.startedAt <= today ? 1 : 0),
+      charges: seen?.charges ?? (r.startedAt && r.startedAt <= today ? 1 : 0),
       source: "registry",
       note: r.note,
       url: r.url,
