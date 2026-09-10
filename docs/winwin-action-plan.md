@@ -9,7 +9,7 @@ notes in the Notion brain. Tick items here as they ship, and flip the
 matching row's `status` in `src/content/clients/spa.ts` so the client
 page agrees. Client-facing state stays in `winwin-status.md`.
 
-_Last reviewed: 2026-09-09, tools handed over._
+_Last reviewed: 2026-09-10._
 
 ## Fixed dates
 
@@ -59,7 +59,7 @@ _Last reviewed: 2026-09-09, tools handed over._
 - [x] Reminder emails: waiting on one or two more big names, then sending week of 15 Sep. Hoekstra confirmed. I'm on standby for tweaks.
 - [x] Handover email sent same evening to Lara, Claire, Flora: /speakers-admin (add, edit, reorder, remove speakers and pitchers, publish), /speaker-announcement (WinWin account), /speaker-card (speakers self-serve). Cards carry no website link on purpose. Client page rows marked delivered with links.
 - [ ] Lara wants "crazy ideas" for memorable brand moments on the day (her list: temporary tattoos, plantable forget-me-not postcard with a message to your neighbour, edible logo in the Prosecco). Come back with two or three.
-- [ ] Aftermovie: quote drafted 9 Sep (Gmail draft "WINWIN - Aftermovie options", three tiers priced at the GovHack industry-standard level, not the TEDx/Logos level: edit-only 3,200 / shoot+edit 5,600 + travel / plus speaker series 7,400 + travel; add-ons (extra clip 450, revision 300, second operator 1,650, photos 600, raw footage 300); go-by date 10 Oct). Review numbers, add the TEDx + DWeb links, send. Time-sensitive: SPA is choosing between Roman and me.
+- [ ] Aftermovie: quote drafted 9 Sep, reshaped 10 Sep (Gmail draft "WINWIN - Aftermovie options"). One package at industry-standard rates: 2-min aftermovie + all main-stage talks recorded in full (locked-off stage cam on the AV desk feed, up to 8 talks edited and exported separately) = 7,050 + travel; edit-only variant if Roman shoots = 5,100; add-ons: teaser 500, speaker clips 450 each, photos 600, second operator 1,650, raw 300. Go-by date 10 Oct. Add the TEDx + DWeb links, send. Time-sensitive: SPA is choosing between Roman and me.
 
 ## 9–10 Sep, before Brussels
 
