@@ -84,7 +84,7 @@ export const spaAftermovie: Proposal = {
         list: [
           "A locked-off camera on the stage, fed from the AV desk. Clean speech, not room sound.",
           "Each talk trimmed, branded with a title card and lower third, exported as its own file. Ready for the site or YouTube.",
-          "Up to eight talks. Delivered ten working days after the event.",
+          "Up to five talks. Delivered ten working days after the event.",
         ],
       },
       {
@@ -144,7 +144,7 @@ export const spaAftermovie: Proposal = {
           "Shoot day, me plus an assistant operator · 1,200",
           "Camera and audio rental · 450",
           "Aftermovie edit and post · 1,900",
-          "Talk recordings, up to eight · included",
+          "Talk recordings, up to five · included",
           "File handling, admin, revisions · 250",
           "Travel Berlin–Brussels · 150",
         ],
@@ -164,7 +164,7 @@ export const spaAftermovie: Proposal = {
           "Travel Berlin–Brussels · 150",
         ],
         prices: [{ label: "Package", amount: "2,500 EUR" }],
-        priceNote: "Good for LinkedIn and the site. Not the one for a big screen. Talk recordings: 900 on top.",
+        priceNote: "Good for LinkedIn and the site. Not the one for a big screen. Talk recordings: 600 on top.",
         timeline: "Aftermovie by 10 November.",
       },
     ],
@@ -176,9 +176,9 @@ export const spaAftermovie: Proposal = {
       label: "Add-ons, either package",
       items: [
         {
-          title: "Talk recordings, up to eight",
+          title: "Talk recordings, up to five",
           detail: "Lightweight only. Locked-off camera on the AV feed, each talk trimmed, branded and exported. Included in Professional.",
-          price: "900 EUR",
+          price: "600 EUR",
         },
         {
           title: "Next-morning teaser",
@@ -202,7 +202,7 @@ export const spaAftermovie: Proposal = {
         },
         {
           title: "Extra talk",
-          detail: "Beyond the eight.",
+          detail: "Beyond the five.",
           price: "120 EUR each",
         },
         {
@@ -222,6 +222,8 @@ export const spaAftermovie: Proposal = {
       "Invoiced on delivery, payable within 14 days, like the rest of the project.",
       "A go-ahead by 10 October holds the date.",
       "Venue AV and third-party costs are not included.",
+      "Footage of the Commission President and other protected guests is published only with their office's approval. I prepare a short filming plan for the cabinet after the venue visit; delivery dates move if that approval takes longer.",
+      "The shoot day is charged as quoted even if a security or protocol team restricts filming on the day.",
     ],
   },
 
