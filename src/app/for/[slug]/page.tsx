@@ -28,6 +28,8 @@ import {
 } from "@/components/CaseStudyHorizontalScroll";
 import { RotatingShot } from "@/components/RotatingShot";
 import { VisitTracker } from "@/components/VisitTracker";
+import { ProposalEditor } from "@/components/ProposalEditor";
+import { collectLeaves } from "@/lib/proposal-edit";
 import { getGalleryMedia, getMediaAspect } from "@/lib/gallery";
 import {
   getAllProposalSlugs,
@@ -91,6 +93,8 @@ export default async function ProposalPage({ params }: RouteProps) {
   const { slug } = await params;
   const proposal = getProposal(slug);
   if (!proposal) notFound();
+  // Every visible string, for the owner edit mode (ProposalEditor).
+  const leaves = collectLeaves(proposal);
 
   return (
     <>
@@ -113,7 +117,7 @@ export default async function ProposalPage({ params }: RouteProps) {
 
       <PasswordGate password={proposal.password} storageKey={`for-${proposal.slug}-unlocked`}>
         <VisitTracker slug={proposal.slug} />
-        <main className="page-fade-in pb-40">
+        <main data-proposal-root className="page-fade-in pb-40">
           <Header proposal={proposal} />
 
           {proposal.caseStudies?.map((cs) => (
@@ -144,6 +148,7 @@ export default async function ProposalPage({ params }: RouteProps) {
 
           <NextStep data={proposal.nextStep} slug={proposal.slug} />
         </main>
+        <ProposalEditor slug={proposal.slug} leaves={leaves} />
       </PasswordGate>
     </>
   );

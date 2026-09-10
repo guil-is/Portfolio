@@ -37,6 +37,7 @@
   - Client dashboards (agreement + progress) — data in `src/content/clients/<slug>.ts`, rendered by the shared `ClientPage` component (`/for/e2c` is the reference). A thin `page.tsx` composes `ClientPageData` from the content file. Older clients (spa, justice, logos, huit, myosin, tedxberlin) still have bespoke components; fold them into `ClientPage` when next touched, don't copy them for new clients.
 - All pages are gated by `<PasswordGate>` and must pass a unique `storageKey` (`for-<slug>-unlocked`) so unlocking one doesn't unlock another.
 - All pages must return `robots: { index: false, follow: false }` in `generateMetadata`.
+- Proposal pages have an owner edit mode (`?edit`, passphrase `PROPOSAL_EDIT_SECRET`): copy edits on the page are committed straight to `main` through `/api/proposal-edit` (literal replacement in the data file, `src/lib/proposal-edit.ts`). **Pull `main` before editing a proposal file in a session**, Guil may have committed from the page. Setup + flow: `docs/editing-proposals.md`.
 - Any page with a signable agreement (`<AgreementSignature>`) must have its client registered in `src/content/clients/signable.ts`, or signing returns "Unknown client". The `clientSlug` prop is typed to that map, so `tsc` fails if you forget. To surface a client on the `/for/clients` dashboard, also add it to `registry.ts`.
 
 # WinWin cross-context memory
