@@ -151,12 +151,27 @@ export type Quote = {
   footnote?: string;
 };
 
+export type AddOn = {
+  /** What it is, in plain words ("Next-morning teaser"). */
+  title: string;
+  /** Optional one-line detail under the title. */
+  detail?: string;
+  /** Price as displayed ("500 EUR", "450 EUR each"). */
+  price: string;
+};
+
 export type Terms = {
   heading?: string;
+  /** Priced extras, rendered as rows: title + detail left, price right.
+   * Renders before `items`. */
+  addons?: { label?: string; items: AddOn[] };
+  /** Small label above `items`; useful when add-ons render above them. */
+  itemsLabel?: string;
   /** Bulleted list of terms (Odyssey/Myosin style). */
   items?: string[];
   /** Label/value rows rendered with DefinitionList — scannable
-   * rate-card style terms. Use instead of (or alongside) `items`. */
+   * rate-card style terms for SHORT labels ("Rate", "Payment"). Use
+   * `addons` for sentence-length rows with a price. */
   kv?: Array<[ReactNode, ReactNode]>;
 };
 

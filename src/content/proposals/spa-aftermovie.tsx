@@ -171,15 +171,47 @@ export const spaAftermovie: Proposal = {
 
   terms: {
     heading: "Add-ons and terms",
-    kv: [
-      ["Teaser on LinkedIn the next morning, 15–20 seconds", "500 EUR"],
-      ["Vertical speaker clip, 30–45 seconds, captioned", "450 EUR each"],
-      ["Event photos, 40–60 treated stills the next morning", "600 EUR"],
-      ["Second camera operator for the breakout rooms", "1,650 EUR + travel"],
-      ["Extra talk beyond eight", "175 EUR each"],
-      ["Extra revision round", "300 EUR"],
-      ["Raw footage handover, organised and labelled", "300 EUR"],
-    ],
+    addons: {
+      label: "Add-ons, either package",
+      items: [
+        {
+          title: "Next-morning teaser",
+          detail: "15 to 20 seconds on LinkedIn while the day is still fresh.",
+          price: "500 EUR",
+        },
+        {
+          title: "Speaker clips",
+          detail: "Vertical, 30 to 45 seconds, captioned. One per speaker to share.",
+          price: "450 EUR each",
+        },
+        {
+          title: "Event photos",
+          detail: "40 to 60 treated stills, delivered the next morning.",
+          price: "600 EUR",
+        },
+        {
+          title: "Extra camera operator",
+          detail: "Covers the breakout rooms while the main stage runs.",
+          price: "1,650 EUR + travel",
+        },
+        {
+          title: "Extra talk",
+          detail: "Beyond the eight included.",
+          price: "175 EUR each",
+        },
+        {
+          title: "Extra revision round",
+          detail: "Beyond the two included.",
+          price: "300 EUR",
+        },
+        {
+          title: "Raw footage",
+          detail: "Every clip, organised and labelled, on a drive or a download link.",
+          price: "300 EUR",
+        },
+      ],
+    },
+    itemsLabel: "Terms",
     items: [
       "Invoiced on delivery, payable within 14 days, like the rest of the project.",
       "A go-ahead by 10 October holds the date.",

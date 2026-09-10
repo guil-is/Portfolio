@@ -1128,11 +1128,47 @@ function QuoteCard({ option }: { option: QuoteOption }) {
 // Terms — simple bulleted list.
 // ---------------------------------------------------------------------
 function TermsSection({ data }: { data: Terms }) {
+  const subLabel =
+    "mb-5 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted";
   return (
     <section className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
       <SectionLabel>{data.heading ?? "Terms"}</SectionLabel>
-      <div className="mx-auto w-full max-w-[960px]">
-        {data.items ? <BulletList items={data.items} /> : null}
+      <div className="mx-auto flex w-full max-w-[960px] flex-col gap-14">
+        {data.addons ? (
+          <div>
+            {data.addons.label ? (
+              <p className={subLabel}>{data.addons.label}</p>
+            ) : null}
+            <ul className="border-t border-rule-soft">
+              {data.addons.items.map((a) => (
+                <li
+                  key={a.title}
+                  className="flex items-baseline justify-between gap-6 border-b border-rule-soft py-4"
+                >
+                  <div className="min-w-0">
+                    <p className="text-[1rem] leading-[1.6rem] text-ink">
+                      {a.title}
+                    </p>
+                    {a.detail ? (
+                      <p className="text-[0.9rem] leading-[1.5rem] text-muted">
+                        {a.detail}
+                      </p>
+                    ) : null}
+                  </div>
+                  <p className="shrink-0 whitespace-nowrap font-display text-[1.125rem] font-bold tabular-nums leading-none text-ink">
+                    {a.price}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+        {data.items ? (
+          <div>
+            {data.itemsLabel ? <p className={subLabel}>{data.itemsLabel}</p> : null}
+            <BulletList items={data.items} />
+          </div>
+        ) : null}
         {data.kv ? <DefinitionList rows={data.kv} /> : null}
       </div>
     </section>
