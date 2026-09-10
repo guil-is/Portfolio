@@ -9,8 +9,10 @@ import type { Proposal } from "./types";
  * keep the brand in the edit either way.
  *
  * Pricing follows the GovHack 2024 media package (industry-standard
- * day rates), scaled to a one-day event in EUR. Travel is tickets only:
- * Guil has a place to stay in Brussels.
+ * day rates), scaled to a one-day event in EUR, then trimmed on 10 Sep
+ * so it passes SPA's budget: no prep line, talk recordings moved to the
+ * add-ons, travel folded in at 150 (tickets only, Guil has a place to
+ * stay in Brussels).
  *
  * Kept deliberately short: the WinWin team should be able to decide
  * from one read. Hero, three reference videos, what you get, how it
@@ -33,7 +35,7 @@ export const spaAftermovie: Proposal = {
     eyebrow: "Proposal",
     title: "WinWin 2026 on film",
     blurb:
-      "A two-minute aftermovie for the comms push, and every talk recorded in full. One package, two ways to do it, depending on who holds the camera.",
+      "A two-minute aftermovie for the comms push, in the WinWin identity. Two ways to do it, depending on who holds the camera.",
   },
 
   brief: {
@@ -74,24 +76,16 @@ export const spaAftermovie: Proposal = {
         ],
       },
       {
-        label: "Every talk, in full",
-        list: [
-          "A locked-off camera on the stage, fed from the AV desk. Clean speech, not room sound.",
-          "Each talk trimmed, branded with a title card and lower third, exported as its own file. Ready for the site or YouTube.",
-          "Up to eight talks. Delivered ten working days after the event.",
-        ],
-      },
-      {
         label: "On the day",
         list: [
-          "Two cameras, one operator: the stage camera runs on every talk while I shoot everything else.",
-          "Brief and run-of-show check the week before.",
+          "Me on site from doors to close, with two cameras, a gimbal and audio.",
+          "Run-of-show check the week before, so I know where to be when.",
         ],
       },
     ],
     provides: {
       label: "From the venue",
-      body: "A line out from the AV desk, a fixed camera spot with a clear view of the lectern, and the run-of-show a week ahead. All three can be settled at the venue visit.",
+      body: "A line out from the AV desk for clean speech, and the run-of-show a week ahead. Both can be settled at the venue visit.",
     },
   },
 
@@ -106,8 +100,8 @@ export const spaAftermovie: Proposal = {
       },
       {
         label: "Week of 26 October",
-        title: "Brief and run-of-show",
-        body: "AV feed and camera spot confirmed.",
+        title: "Run-of-show check",
+        body: "AV feed confirmed.",
       },
       {
         label: "3 November",
@@ -115,12 +109,12 @@ export const spaAftermovie: Proposal = {
       },
       {
         label: "By 10 November",
-        title: "Aftermovie first cut",
+        title: "First cut",
         body: "Then two revision rounds.",
       },
       {
-        label: "By 17 November",
-        title: "All talks delivered",
+        label: "Mid November",
+        title: "Final aftermovie",
         kind: "end",
       },
     ],
@@ -133,19 +127,17 @@ export const spaAftermovie: Proposal = {
       {
         label: "",
         title: "Shoot and edit",
-        lead: "I film the day and deliver both.",
+        lead: "I film the day and edit.",
         includes: [
-          "Creative direction and prep · 700",
           "Shoot day, two cameras · 1,200",
           "Equipment · 550",
           "Aftermovie edit and post · 2,800",
-          "Talk recordings, up to eight · 1,400",
           "File handling, admin, revisions · 400",
+          "Travel Berlin–Brussels · 150",
         ],
-        prices: [{ label: "Package", amount: "7,050 EUR" }],
-        priceNote:
-          "Plus travel at cost: the Berlin–Brussels ticket, roughly 150 to 250 EUR. I have a place to stay.",
-        timeline: "Aftermovie by 10 November, talks by 17 November.",
+        prices: [{ label: "Package", amount: "5,100 EUR" }],
+        priceNote: "Travel included. I have a place to stay in Brussels.",
+        timeline: "First cut by 10 November.",
         recommended: true,
       },
       {
@@ -155,13 +147,11 @@ export const spaAftermovie: Proposal = {
         includes: [
           "Brief and shot list for the videographer · 500",
           "Aftermovie edit and post · 2,800",
-          "Talk recordings, up to eight · 1,400",
           "File handling, admin, revisions · 400",
         ],
-        prices: [{ label: "Fee", amount: "5,100 EUR" }],
-        priceNote:
-          "Roman runs the stage camera on the AV feed. I brief him directly.",
-        timeline: "Same delivery dates, counted from receiving the footage.",
+        prices: [{ label: "Fee", amount: "3,700 EUR" }],
+        priceNote: "I brief Roman directly so the footage cuts the way the edit needs.",
+        timeline: "First cut five working days after receiving the footage.",
       },
     ],
   },
@@ -169,6 +159,7 @@ export const spaAftermovie: Proposal = {
   terms: {
     heading: "Add-ons and terms",
     kv: [
+      ["Every main-stage talk recorded in full, up to eight, each edited and exported separately", "1,400 EUR"],
       ["Teaser on LinkedIn the next morning, 15–20 seconds", "500 EUR"],
       ["Vertical speaker clip, 30–45 seconds, captioned", "450 EUR each"],
       ["Event photos, 40–60 treated stills the next morning", "600 EUR"],
@@ -188,9 +179,9 @@ export const spaAftermovie: Proposal = {
 
   nextStep: {
     heading: "Which one?",
-    body: "Tell me which option and I'll confirm the date with a one-page addendum to our agreement. The venue visit on the 15th is a good moment to check the AV feed and the camera spot.",
-    ctaHref: "mailto:hello@guil.is?subject=WinWin%202026%20video",
-    ctaLabel: "Reply by email",
+    body: "Send me a message on WhatsApp with the option you'd like and I'll confirm the date with a one-page addendum to our agreement.",
+    ctaHref: "https://wa.me/4917676241374?text=Hi%20Guil%2C%20about%20the%20WinWin%20video%3A",
+    ctaLabel: "Message me on WhatsApp",
     showPortfolioLink: false,
   },
 
