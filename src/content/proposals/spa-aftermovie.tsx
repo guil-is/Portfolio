@@ -226,6 +226,7 @@ export const spaAftermovie: Proposal = {
     body: "Send me a message on WhatsApp with the option you'd like and I'll confirm the date with a one-page addendum to our agreement.",
     ctaHref: "https://wa.me/4917676241374?text=Hi%20Guil%2C%20about%20the%20WinWin%20video%3A",
     ctaLabel: "Message me on WhatsApp",
+    showAccept: false,
     showPortfolioLink: false,
   },
 
