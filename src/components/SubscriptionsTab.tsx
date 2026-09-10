@@ -22,7 +22,7 @@ import { prettyDate } from "./ExpenseSwipeDeck";
 import { Stat } from "./Stat";
 
 /**
- * Subscriptions tab on /for/books. Layout borrowed from the recurring
+ * Subscriptions tab on /books. Layout borrowed from the recurring
  * views in Rocket Money / Monarch / Copilot: a summary strip, a search
  * box with filter chips and a sort menu, then rows grouped by when they
  * renew (or by how much you need them), each with a cleaned-up merchant

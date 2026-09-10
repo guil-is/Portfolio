@@ -13,6 +13,8 @@ export default function robots(): MetadataRoute.Robots {
           "/odyssey/",
           "/for",
           "/for/",
+          "/books",
+          "/books/",
           "/resources",
           "/resources/",
         ],

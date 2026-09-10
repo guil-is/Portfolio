@@ -61,7 +61,7 @@ export function PasswordGate({ children, password, storageKey = "odyssey-unlocke
       window.sessionStorage.setItem(storageKey, "1");
       // Session cookie with the same key: a server page can check it and
       // keep its data out of the payload until the gate is passed
-      // (/for/books does). Then refresh so that page re-renders with it.
+      // (/books does). Then refresh so that page re-renders with it.
       document.cookie = `${storageKey}=1; path=/; SameSite=Lax`;
       notify();
       router.refresh();

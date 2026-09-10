@@ -1,7 +1,7 @@
 /**
  * Known work subscriptions — the ones the books can't fully describe
  * on their own (a price that steps up after the first year, a plan you
- * intend to cancel). The Subscriptions tab on /for/books merges these
+ * intend to cancel). The Subscriptions tab on /books merges these
  * with what it detects from recurring charges in the books; an entry
  * here wins on name, price, cadence and next renewal.
  */

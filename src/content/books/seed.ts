@@ -1,6 +1,6 @@
 /**
  * Book rows that predate the tools — transcribed from the yearly Google
- * Sheet so /for/books can show those years. Read on the server and
+ * Sheet so /books can show those years. Read on the server and
  * passed down after the gate, like the ledger.
  *
  * 2024: from the "2024" sheet — 26 invoices with the sheet's USD rates

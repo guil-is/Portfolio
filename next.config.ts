@@ -31,6 +31,12 @@ const nextConfig: NextConfig = {
         destination: "/for/odyssey",
         permanent: true,
       },
+      // The books moved up a level — shorter to type, same gate.
+      {
+        source: "/for/books",
+        destination: "/books",
+        permanent: true,
+      },
     ];
   },
 };

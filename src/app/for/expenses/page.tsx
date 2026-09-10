@@ -15,7 +15,7 @@ export const metadata = {
 
 // Owner-only tool: N26 export in, books rows out. The bank data is
 // parsed in the browser and kept in localStorage — no upload, no API.
-// The tax estimate and the accountant export live on /for/books.
+// The tax estimate and the accountant export live on /books.
 export default function ExpensesPage() {
   return (
     <>

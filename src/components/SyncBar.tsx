@@ -8,7 +8,7 @@ import { forgetSync, loadSyncState, setUpSync, syncOnce, SyncError, type SyncSta
 import { BackupBar } from "./BackupBar";
 
 /**
- * Sync strip for /for/books, plus a headless <SyncAgent /> for the
+ * Sync strip for /books, plus a headless <SyncAgent /> for the
  * expenses page. Pushes whenever the local envelope changes (checked
  * every few seconds, debounced), pulls on load, on focus and every
  * minute. Nothing runs until a passphrase has been entered on this

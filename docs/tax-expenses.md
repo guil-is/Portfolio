@@ -44,9 +44,9 @@ this browser's localStorage, and never uploaded anywhere.
 Close the tab mid-way and the page offers to resume the same file with
 every decision intact.
 
-## The books: /for/books
+## The books: /books
 
-`/for/books` is the bookkeeping home and the replacement for the yearly
+`/books` is the bookkeeping home and the replacement for the yearly
 Google Sheet. One year at a time:
 
 - **Income** comes from the invoice ledger (`src/content/invoices/ledger.ts`),
@@ -135,7 +135,7 @@ Google Sheet. One year at a time:
   only ever see ciphertext; the first PUT claims the vault by storing
   sha256(token), so a wrong passphrase is a 403 and can't overwrite it.
   The engine (`src/lib/expenses/sync.ts`, driven by `SyncBar` on
-  /for/books and the invisible `SyncAgent` on /for/expenses) pushes
+  /books and the invisible `SyncAgent` on /for/expenses) pushes
   when the local envelope changes (checked every 4 s, 1.5 s quiet),
   pulls on load, on focus and every minute, merges like Restore
   (newest row wins), and retries on a 409 if another device pushed in

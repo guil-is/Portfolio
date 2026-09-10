@@ -167,7 +167,7 @@ export function ExpensesTriage() {
   }, [memory]);
 
   // Every decided business / tax row lands in the books (the dashboard
-  // at /for/books reads them); personal, skipped and undecided rows are
+  // at /books reads them); personal, skipped and undecided rows are
   // taken out again.
   useEffect(() => {
     if (!loaded) return;
@@ -533,7 +533,7 @@ export function ExpensesTriage() {
                 {loaded.parsed.incomingCount > 0 ? ` · ${loaded.parsed.incomingCount} incoming ignored` : ""}
               </p>
               <div className="flex gap-4">
-                <Link href="/for/books" className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted">
+                <Link href="/books" className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted">
                   Books &amp; tax →
                 </Link>
                 <button type="button" onClick={startOver} className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
@@ -749,7 +749,7 @@ function DonePanel({
         <button type="button" onClick={onReview} className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
           Review all entries
         </button>
-        <Link href="/for/books" className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
+        <Link href="/books" className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
           Open the books
         </Link>
         {onUndo ? (

@@ -42,7 +42,7 @@ import type { Subscription } from "@/content/books/subscriptions";
 import { prettyDate } from "./ExpenseSwipeDeck";
 
 /**
- * /for/books — the bookkeeping home. One year at a time: income from
+ * /books — the bookkeeping home. One year at a time: income from
  * the invoice ledger, expenses and tax-relevant rows from the books
  * (fed by /for/expenses or typed in here), the Finanzamt estimate, and
  * the copy for the accountant's Primanota.
