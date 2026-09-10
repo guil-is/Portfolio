@@ -39,7 +39,7 @@ export const spaAftermovie: Proposal = {
     eyebrow: "Proposal",
     title: "WinWin 2026 video content creation",
     blurb:
-      "A two-minute aftermovie for the comms push, with every talk recorded in full if you want them. Two ways to shoot it, depending on the look you want.",
+      "A two-minute aftermovie for the comms push, with every talk recorded in full if you want them. Two budget options.",
   },
 
   brief: {
