@@ -114,6 +114,17 @@ Google Sheet. One year at a time:
   things to watch (tax-relevant rows, VAT still to pay, renewals
   inside 30 days, price steps, plans not seen in the books). Tokens
   `--color-up` / `--color-down` / `--color-warn` in `globals.css`.
+- **Backups**: everything above lives in this browser's localStorage,
+  so a cleared cache or another device starts empty. The strip under
+  the year picker has **Back up** (downloads
+  `books-backup-<date>.json`: every `books:v1:*` and `expenses:*` key,
+  envelope in `src/lib/expenses/backup.ts`) and **Restore** (merges a
+  backup in: book rows by id with the newest `updatedAt` winning,
+  ratings and merchant memory by key, settings taken from the file).
+  It turns amber when the last backup is over 30 days old or there has
+  never been one. Keep the file in Drive or iCloud. The same envelope
+  is the payload for an encrypted sync later — extend `entries`, don't
+  reshape it.
 - **Old years**: `seedBooks` in `src/content/books/seed.ts` holds 2024
   and 2025 transcribed from the Google Sheets. Income rows always
   count; seed expense rows hide once an N26 import exists for that year.
