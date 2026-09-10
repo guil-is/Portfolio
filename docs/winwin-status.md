@@ -57,7 +57,7 @@ _Last reconciled: 2026-09-08._
   Phase 1-2 one, with the client-page link). Downloadable from the client page;
   PDF archived to Drive (Invoices 2026). Expect ~3 weeks: SPA finance pays
   without confirmation.
-- Aftermovie (separate from the design fee): proposal at guil.is/for/spa-aftermovie, 10 Sep. Shoot + edit 5,100 EUR all-in (travel folded in), or edit-only 3,700 if their videographer shoots; talk recordings as a 1,400 add-on. Not yet sent / not yet accepted.
+- Aftermovie (separate from the design fee): proposal at guil.is/for/spa-aftermovie, 10 Sep. Shoot + edit 5,100 EUR all-in (travel folded in), or edit-only 3,700 if their videographer shoots; talk recordings (up to 8) included. Not yet sent / not yet accepted.
 - Phase 4 stays at 2,800 (Guil's call, 2 Sep): no re-quote. Next step is
   sending Lara the deliverables list from the 1 Sep call so scope is locked in
   writing before work starts, per the SOW. Anything beyond that list is billed

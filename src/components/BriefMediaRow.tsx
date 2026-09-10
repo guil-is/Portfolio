@@ -90,7 +90,7 @@ export function BriefMediaRow({ items }: { items: BriefMediaItem[] }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:items-start">
         {resolved.map((r, i) => (
           <ReferenceTile
             key={r.item.url}
