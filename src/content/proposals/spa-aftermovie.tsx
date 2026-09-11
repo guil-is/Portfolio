@@ -61,16 +61,6 @@ export const spaAftermovie: Proposal = {
           },
         ],
       },
-      {
-        label: "A session recording",
-        items: [
-          {
-            title: "GovHack 2024, grants panel",
-            url: "https://www.youtube.com/watch?v=Z97ds9L_DHA",
-            caption: "What each WinWin talk would look like as its own file.",
-          },
-        ],
-      },
     ],
   },
 
@@ -97,7 +87,7 @@ export const spaAftermovie: Proposal = {
         label: "On the day",
         list: [
           "Main stage and the room. Breakout rooms as b-roll only, no audio, unless you ask.",
-          "Run-of-show check the week before.",
+          "Run-of-show check at the venue the morning before.",
         ],
       },
     ],
@@ -117,9 +107,9 @@ export const spaAftermovie: Proposal = {
         kind: "start",
       },
       {
-        label: "Week of 26 October",
+        label: "2 November",
         title: "Run-of-show check",
-        body: "AV feed and camera spot confirmed.",
+        body: "Morning, at the venue. AV feed and camera spot confirmed.",
       },
       {
         label: "3 November",
@@ -154,9 +144,9 @@ export const spaAftermovie: Proposal = {
           "Shoot day, me plus an assistant operator · 1,200",
           "Camera and audio rental · 450",
           "Aftermovie, teaser and talks, edit and post · 2,100",
-          "Travel Berlin–Brussels · 150",
+          "Travel Berlin–Brussels · 200",
         ],
-        prices: [{ label: "Package", amount: "3,900 EUR" }],
+        prices: [{ label: "Package", amount: "3,950 EUR" }],
         priceNote: "Two angles on stage, clean sound, holds up on a big screen.",
         timeline: "Teaser 5 November, aftermovie 10 November, talks 17 November.",
         recommended: true,
@@ -168,9 +158,9 @@ export const spaAftermovie: Proposal = {
         includes: [
           "Shoot day, solo, my own kit · 700",
           "Aftermovie, teaser and talks, edit and post · 2,100",
-          "Travel Berlin–Brussels · 150",
+          "Travel Berlin–Brussels · 200",
         ],
-        prices: [{ label: "Package", amount: "2,950 EUR" }],
+        prices: [{ label: "Package", amount: "3,000 EUR" }],
         priceNote: "One angle on stage, less polish in low light. Fine for LinkedIn and the site.",
         timeline: "Same dates.",
       },
