@@ -80,14 +80,14 @@ export const spaAftermovie: Proposal = {
         list: [
           "A locked-off camera on the stage, audio from the AV desk. Lav mic as fallback.",
           "Each session trimmed, title card and lower third, slides cut in where speakers share them, its own file. Ready for the site, YouTube, and the speakers themselves.",
-          "All stage sessions, no cap. Delivered ten working days after the event.",
+          "All stage sessions. Delivered ten working days after the event.",
         ],
       },
       {
         label: "On the day",
         list: [
-          "The stage during the talks, the room in between. Breakout rooms as b-roll only, no audio, unless you ask.",
-          "Run-of-show check at the venue the morning before.",
+          "The stage during the talks, the main room in between. Breakout rooms as b-roll only, no audio, unless you ask.",
+          "Run-of-show check at the venue the day before.",
         ],
       },
     ],
@@ -98,7 +98,7 @@ export const spaAftermovie: Proposal = {
   },
 
   timeline: {
-    heading: "How it runs",
+    heading: "timeline",
     milestones: [
       {
         label: "By 10 October",
@@ -163,7 +163,7 @@ export const spaAftermovie: Proposal = {
           "Travel Berlin–Brussels · 200",
         ],
         prices: [{ label: "Package", amount: "3,800 EUR" }],
-        priceNote: "Phone image: sharp, but flat depth of field and grainier in low light.",
+        priceNote: "Phone image: sharp, but \"fake\" depth of field and grainier in low light.",
         timeline: "Same dates.",
       },
     ],
