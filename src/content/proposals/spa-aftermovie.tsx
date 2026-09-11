@@ -55,9 +55,9 @@ export const spaAftermovie: Proposal = {
             caption: "Conference aftermovie.",
           },
           {
-            title: "TEDxBerlin 2026",
-            url: "https://www.youtube.com/watch?v=C7ZcG00r6d8",
-            caption: "Aftermovie, one day.",
+            title: "Regen Village 2024, Brussels",
+            url: "https://www.youtube.com/watch?v=FSCi_173Alw",
+            caption: "Five days at the Commons Hub. Aftermovie.",
           },
         ],
       },
