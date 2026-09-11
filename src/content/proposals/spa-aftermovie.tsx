@@ -133,7 +133,7 @@ export const spaAftermovie: Proposal = {
   },
 
   quote: {
-    heading: "The quote",
+    heading: "Budget Options",
     subheading: "Net. VAT reverse charge, as on the rest of the project. Same deliverables in both; the difference is crew and kit.",
     options: [
       {
