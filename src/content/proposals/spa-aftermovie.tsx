@@ -74,7 +74,7 @@ export const spaAftermovie: Proposal = {
       {
         label: "The aftermovie",
         list: [
-          "About two minutes, in the WinWin identity: lockup, motion system, titles. 16:9 for the site, 4:5 for LinkedIn.",
+          "About two minutes, in the WinWin identity, 16:9 format.",
           "Licensed music, sound mix, colour grade. Two revision rounds.",
           "First cut five working days after the event.",
         ],
