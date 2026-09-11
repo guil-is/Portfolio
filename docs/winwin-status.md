@@ -57,7 +57,7 @@ _Last reconciled: 2026-09-08._
   Phase 1-2 one, with the client-page link). Downloadable from the client page;
   PDF archived to Drive (Invoices 2026). Expect ~3 weeks: SPA finance pays
   without confirmation.
-- Aftermovie (separate from the design fee): proposal at guil.is/for/spa-aftermovie, 10 Sep. Repriced 10 Sep after a market check: Professional 3,950 EUR all-in (rented cameras + assistant operator, up to 5 talk recordings included), or Lightweight 2,500 (solo, iPhones + own kit, aftermovie only; talk recordings +600). Terms cover cabinet approval of footage with VDL / protected guests and a shoot day charged even if filming is restricted on the day; filming plan for the cabinet only after they sign. Not yet sent / not yet accepted.
+- Aftermovie (separate from the design fee): proposal at guil.is/for/spa-aftermovie, 10 Sep. v2 11 Sep: same deliverables in both tiers (2-min aftermovie 16:9 + vertical, 48-hour teaser, every stage session recorded, no cap). Professional 3,900 EUR (rented cameras + assistant on the stage camera) or Lightweight 2,950 (solo, iPhones + own kit, stage camera unattended); edit line identical (2,100). Half on go-ahead, half on delivery. Terms: SPA owns the films (web + social), portfolio use only with written OK, filming notice/opt-out on WinWin's side, cabinet approval for protected guests, day stands if protocol limits filming. Filming plan for the cabinet only after they sign. Not yet sent / not yet accepted.
 - Phase 4 stays at 2,800 (Guil's call, 2 Sep): no re-quote. Next step is
   sending Lara the deliverables list from the 1 Sep call so scope is locked in
   writing before work starts, per the SOW. Anything beyond that list is billed
