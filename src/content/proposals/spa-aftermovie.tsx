@@ -86,7 +86,7 @@ export const spaAftermovie: Proposal = {
       {
         label: "On the day",
         list: [
-          "Main stage and the room. Breakout rooms as b-roll only, no audio, unless you ask.",
+          "The stage during the talks, the room in between. Breakout rooms as b-roll only, no audio, unless you ask.",
           "Run-of-show check at the venue the morning before.",
         ],
       },
@@ -139,7 +139,7 @@ export const spaAftermovie: Proposal = {
       {
         label: "",
         title: "Professional",
-        lead: "Rented cinema cameras and proper audio. An assistant runs the stage camera and sound while I cover the room.",
+        lead: "Rented cinema cameras and proper audio. Two angles on the stage during the talks, an assistant on the second camera. The room in between.",
         includes: [
           "Shoot day, me plus an assistant operator · 1,200",
           "Camera and audio rental · 450",
@@ -154,7 +154,7 @@ export const spaAftermovie: Proposal = {
       {
         label: "Lighter budget",
         title: "Lightweight",
-        lead: "Me alone with iPhones and my own compact kit. The stage camera runs unattended while I cover the room.",
+        lead: "Me alone, iPhones and my own compact kit. One camera on the stage during the talks. The room in between.",
         includes: [
           "Shoot day, solo, my own kit · 700",
           "Aftermovie, teaser and talks, edit and post · 2,100",
