@@ -10,6 +10,7 @@ import type { YearPicture } from "@/lib/expenses/estimate";
 import { daysUntil, nextRenewalFrom, type TrackedSubscription } from "@/lib/expenses/subscriptions";
 import type { IncomeMonth, Receivable } from "@/lib/income";
 import { inEur, isAsset, type Account } from "./accounts";
+import { daysSince, EXPECTED_KIND_LABELS, type Expected } from "./expected";
 
 const DAY = 86_400_000;
 
@@ -30,8 +31,10 @@ export type Kpis = {
   taxReserve: number;
   /** Assets minus debts, every kind. */
   netWorth: number;
-  /** Unpaid tracked invoices, in EUR. */
+  /** Everything owed to you, in EUR: unpaid invoices + open expected money. */
   owedToYou: number;
+  owedInvoices: number;
+  owedExpected: number;
   /** Instalments still to pay + projected year-end income-tax bill + VAT still to pay. */
   taxOwed: number;
   /** Cash minus tax owed. */
@@ -49,16 +52,20 @@ export function kpis(input: {
   usdRate: number;
   picture: YearPicture;
   receivables: Receivable[];
+  expected?: Expected[];
   /** Every book row, all years. */
   entries: BookEntry[];
   today: string;
 }): Kpis {
   const { accounts, usdRate, picture, receivables, entries, today } = input;
+  const expected = (input.expected ?? []).filter((e) => e.status === "open");
   const assets = accounts.filter((a) => isAsset(a.kind));
   const cash = assets.reduce((t, a) => t + inEur(a, usdRate), 0);
   const taxReserve = assets.filter((a) => a.kind === "tax").reduce((t, a) => t + inEur(a, usdRate), 0);
   const debts = accounts.filter((a) => !isAsset(a.kind)).reduce((t, a) => t + inEur(a, usdRate), 0);
-  const owedToYou = receivables.reduce((t, r) => t + (r.currency === "USD" ? r.total * usdRate : r.total), 0);
+  const owedInvoices = receivables.reduce((t, r) => t + (r.currency === "USD" ? r.total * usdRate : r.total), 0);
+  const owedExpected = expected.reduce((t, e) => t + (e.currency === "USD" ? e.amount * usdRate : e.amount), 0);
+  const owedToYou = owedInvoices + owedExpected;
   const taxOwed = picture.stillDue + Math.max(0, picture.projected.incomeTaxDue) + Math.max(0, picture.soFar.vatDue);
   const burn = monthlyBurn(entries, today);
   const free = cash - taxOwed;
@@ -68,6 +75,8 @@ export function kpis(input: {
     taxReserve,
     netWorth: cash - debts,
     owedToYou,
+    owedInvoices,
+    owedExpected,
     taxOwed,
     free,
     burn,
@@ -123,7 +132,7 @@ export function cashflowMonths(input: { incomeMonths: IncomeMonth[]; entries: Bo
 
 /* ---------- what's coming ---------- */
 
-export type UpcomingKind = "tax" | "invoice" | "subscription";
+export type UpcomingKind = "tax" | "invoice" | "subscription" | "expected";
 
 export type UpcomingItem = {
   id: string;
@@ -138,12 +147,16 @@ export type UpcomingItem = {
   /** Subscriptions only — the list rolls monthly plans up per month. */
   interval?: "monthly" | "yearly";
   personal?: boolean;
+  /** Expected money: uncertain, entered by hand. `refId` is the record to close. */
+  expected?: boolean;
+  refId?: string;
 };
 
 export function upcomingItems(input: {
   picture: YearPicture;
   subs: TrackedSubscription[];
   receivables: Receivable[];
+  expected?: Expected[];
   usdRate: number;
   today: string;
   horizonDays?: number;
@@ -151,6 +164,21 @@ export function upcomingItems(input: {
   const { picture, subs, receivables, usdRate, today } = input;
   const horizon = addDays(today, input.horizonDays ?? 90);
   const out: UpcomingItem[] = [];
+  for (const e of input.expected ?? []) {
+    if (e.status !== "open" || e.expectedBy > horizon) continue;
+    const late = e.expectedBy < today;
+    out.push({
+      id: `exp-${e.id}`,
+      refId: e.id,
+      date: e.expectedBy,
+      label: `${e.from} · ${e.label}`,
+      detail: `${EXPECTED_KIND_LABELS[e.kind].toLowerCase()} · filed ${daysSince(e.filedAt, today)} days ago${e.reference ? ` · ${e.reference}` : ""}${late ? " · later than expected" : " · expected, not certain"}`,
+      amount: e.currency === "USD" ? e.amount * usdRate : e.amount,
+      kind: "expected",
+      expected: true,
+      overdue: late,
+    });
+  }
   for (const s of picture.unpaid) {
     if (s.due > horizon) continue;
     out.push({
@@ -216,6 +244,7 @@ export function attentionItems(input: {
   picture: YearPicture;
   receivables: Receivable[];
   subs: TrackedSubscription[];
+  expected?: Expected[];
   kpis: Kpis;
   syncOn: boolean;
   joint: boolean;
@@ -255,6 +284,28 @@ export function attentionItems(input: {
       });
     } else if (d <= 7) {
       items.push({ id: `inv-due-${r.number}`, severity: "info", title: `${r.client} · ${r.number} due in ${d} day${d === 1 ? "" : "s"} (${amt})`, href: r.clientSlug ? `/for/${r.clientSlug}` : "/for/clients" });
+    }
+  }
+  for (const e of input.expected ?? []) {
+    if (e.status !== "open") continue;
+    const amt = e.currency === "USD" ? `$${e.amount.toLocaleString("en")}` : eur(e.amount);
+    const waited = daysSince(e.filedAt, today);
+    if (e.expectedBy < today) {
+      items.push({
+        id: `exp-late-${e.id}`,
+        severity: "warning",
+        title: `${e.from} still owes ${amt} · ${e.label}`,
+        detail: `expected by ${prettyDay(e.expectedBy)}, filed ${waited} days ago — chase them${e.reference ? ` with ${e.reference}` : ""}, or mark it received / refused in the 90-day list`,
+        href: "#upcoming",
+      });
+    } else if (waited >= 21) {
+      items.push({
+        id: `exp-quiet-${e.id}`,
+        severity: "info",
+        title: `${e.label} · ${amt} from ${e.from}: ${waited} days without news`,
+        detail: `expected by ${prettyDay(e.expectedBy)} — a short chase now saves a long one later`,
+        href: "#upcoming",
+      });
     }
   }
   for (const s of subs) {

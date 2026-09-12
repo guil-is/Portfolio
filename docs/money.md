@@ -31,6 +31,14 @@ by category as single-hue bars, recurring items grouped by month, and
 - **Quick actions** — Update balances (every account becomes a field,
   Enter hops to the next, Save stamps them all as checked today), Add
   expense (the quick-add box on /books), Import bank export.
+- **Expecting money** — money on its way that isn't an invoice: an
+  insurance claim, a refund, a deposit coming back, a tax refund, money
+  you lent. Kind, from whom, what, amount, filed on, expected by (the
+  default is a typical wait for that kind), reference. It counts in
+  "Owed to you", sits in the 90-day list with an "expected" badge, and
+  nags after three weeks of silence or once the expected date passes.
+  Close it from the list: ✓ received, ✕ refused. Stored in
+  `books:v1:expected`, so it follows the sync.
 - **Free to spend** — every asset balance in EUR, minus what the
   Finanzamt still gets this year. Negative means the tax bill is bigger
   than the cash. Until a balance has been entered it shows a prompt
@@ -74,6 +82,7 @@ by category as single-hue bars, recurring items grouped by month, and
 | --- | --- |
 | Balances | `books:v1:accounts` in localStorage (`src/lib/money/accounts.ts`) — carried by the encrypted sync and the backup file like every other `books:v1:*` key |
 | Tax owed, projection | `yearPicture()` in `src/lib/expenses/estimate.ts` — the same maths as the estimate tab on `/books` |
+| Expected money | `src/lib/money/expected.ts`, entered on the page, closed by hand |
 | Income by month, open invoices | `incomeByMonth()` and `receivables()` in `src/lib/income.ts`, from the invoice ledger, read server-side and only passed down once the gate cookie is present |
 | Subscriptions | `trackSubscriptions()` over the books + the expenses session, with the tab's ratings and cancellations applied |
 | Everything else | `src/lib/money/overview.ts` — `kpis`, `cashflowMonths`, `upcomingItems`, `attentionItems`; pure functions, easy to unit-test |

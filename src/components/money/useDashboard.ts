@@ -18,6 +18,7 @@ import { loadMemory, loadSession } from "@/lib/expenses/storage";
 import { loadSyncState } from "@/lib/expenses/sync";
 import { buildItems } from "@/lib/expenses/triage";
 import { isAsset, loadAccounts, saveAccounts, type Account } from "@/lib/money/accounts";
+import { loadExpected, saveExpected, type Expected } from "@/lib/money/expected";
 import { changeSince, loadHistory, recordSnapshot, type Snapshot } from "@/lib/money/history";
 import { attentionItems, cashflowMonths, categoryBreakdown, kpis, upcomingItems, upcomingWindow } from "@/lib/money/overview";
 import { loadSnoozed, saveSnoozed, snoozeUntil } from "@/lib/money/snooze";
@@ -55,6 +56,21 @@ export function useDashboard({ income, incomeMonths, receivables, seed, facts, r
   });
   const [settings] = useState(() => loadBooksSettings());
   const [accounts, setAccounts] = useState<Account[]>(() => loadAccounts());
+  const [expected, setExpected] = useState<Expected[]>(() => loadExpected());
+  const addExpected = useCallback((e: Expected) => {
+    setExpected((cur) => {
+      const next = [...cur, e];
+      saveExpected(next);
+      return next;
+    });
+  }, []);
+  const closeExpected = useCallback((id: string, status: "received" | "rejected", today: string) => {
+    setExpected((cur) => {
+      const next = cur.map((e) => (e.id === id ? { ...e, status, closedAt: today } : e));
+      saveExpected(next);
+      return next;
+    });
+  }, []);
   const [toast, setToast] = useState<string | null>(null);
   const reloadSoon = useCallback(() => window.setTimeout(() => window.location.reload(), 600), []);
   // Read each render (cheap): the sync control's toast re-renders us after enable/disable.
@@ -93,10 +109,10 @@ export function useDashboard({ income, incomeMonths, receivables, seed, facts, r
         .at(-1),
     [books, session],
   );
-  const k = useMemo(() => kpis({ accounts, usdRate, picture, receivables, entries: merged, today }), [accounts, usdRate, picture, receivables, merged, today]);
+  const k = useMemo(() => kpis({ accounts, usdRate, picture, receivables, expected, entries: merged, today }), [accounts, usdRate, picture, receivables, expected, merged, today]);
   const attention = useMemo(
-    () => attentionItems({ picture, receivables, subs, kpis: k, syncOn, joint: settings.joint, undecided, lastBankRow, today }),
-    [picture, receivables, subs, k, syncOn, settings.joint, undecided, lastBankRow, today],
+    () => attentionItems({ picture, receivables, subs, expected, kpis: k, syncOn, joint: settings.joint, undecided, lastBankRow, today }),
+    [picture, receivables, subs, expected, k, syncOn, settings.joint, undecided, lastBankRow, today],
   );
   const [period, setPeriod] = useState<CashflowPeriod>("12m");
   const flowCount = period === "6m" ? 6 : period === "ytd" ? Number(today.slice(5, 7)) : 12;
@@ -107,7 +123,7 @@ export function useDashboard({ income, incomeMonths, receivables, seed, facts, r
     return { income, expenses, net: income - expenses, avg: flow.length ? (income - expenses) / flow.length : 0 };
   }, [flow]);
   const categories = useMemo(() => categoryBreakdown(merged, today), [merged, today]);
-  const upcoming = useMemo(() => upcomingItems({ picture, subs, receivables, usdRate, today }), [picture, subs, receivables, usdRate, today]);
+  const upcoming = useMemo(() => upcomingItems({ picture, subs, receivables, expected, usdRate, today }), [picture, subs, receivables, expected, usdRate, today]);
   const window30 = useMemo(() => upcomingWindow(upcoming, today, 30), [upcoming, today]);
 
   // Net worth history: one snapshot per day, refreshed when balances change.
@@ -162,6 +178,9 @@ export function useDashboard({ income, incomeMonths, receivables, seed, facts, r
     hidden,
     accounts,
     changeAccounts,
+    expected,
+    addExpected,
+    closeExpected,
     toast,
     setToast,
     reloadSoon,

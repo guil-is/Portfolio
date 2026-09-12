@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState, type FormEvent, type KeyboardEvent } from "react";
-import { ArrowUpRight, Check, ChevronDown, PenLine, Plus, Trash2, Upload, X } from "lucide-react";
+import { useCallback, useState, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
+import { ArrowUpRight, Check, ChevronDown, HandCoins, PenLine, Plus, Trash2, Upload, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
@@ -15,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { KIND_LABELS, KIND_ORDER, inEur, isAsset, newAccountId, type Account, type AccountKind } from "@/lib/money/accounts";
+import { defaultExpectedBy, EXPECTED_KIND_LABELS, EXPECTED_KINDS, newExpectedId, type Expected, type ExpectedKind } from "@/lib/money/expected";
 import type { Snapshot } from "@/lib/money/history";
 import { dayLabel, monthTitle, upcomingRows, type AttentionItem, type CategorySlice, type Severity, type UpcomingItem } from "@/lib/money/overview";
 import { FinanceShell } from "@/components/finance/FinanceShell";
@@ -56,6 +58,7 @@ export function FinancialDashboard(props: DashboardProps) {
           <Button variant={balances.updating ? "default" : "outline"} size="sm" onClick={balances.updating ? balances.save : balances.start}>
             <PenLine /> {balances.updating ? "Save balances" : "Update balances"}
           </Button>
+          <ExpectingMoney today={d.today} onAdd={d.addExpected} onToast={d.setToast} />
           <Button variant="outline" size="sm" asChild>
             <Link href="/books"><Plus /> Add expense</Link>
           </Button>
@@ -100,7 +103,7 @@ export function FinancialDashboard(props: DashboardProps) {
                         <Amount value={k.taxOwed} className="font-medium text-foreground" /> the Finanzamt still gets this year
                         {k.owedToYou > 0 ? (
                           <>
-                            . Another <Amount value={k.owedToYou} className="font-medium text-foreground" /> is invoiced and not in yet
+                            . Another <Amount value={k.owedToYou} className="font-medium text-foreground" /> is {k.owedExpected > 0 && k.owedInvoices > 0 ? "invoiced or expected" : k.owedExpected > 0 ? "expected" : "invoiced"} and not in yet
                           </>
                         ) : null}
                         .
@@ -250,10 +253,10 @@ export function FinancialDashboard(props: DashboardProps) {
 
           {/* ---------- upcoming + accounts ---------- */}
           <section className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-            <Card className="fd-rise gap-4 lg:col-span-7" style={rise(9)}>
+            <Card id="upcoming" className="fd-rise scroll-mt-6 gap-4 lg:col-span-7" style={rise(9)}>
               <CardHeader>
                 <CardTitle>Next 90 days</CardTitle>
-                <CardDescription>Finanzamt · invoices · renewals</CardDescription>
+                <CardDescription>Finanzamt · invoices · renewals · money you expect</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-5">
                 <div className="grid grid-cols-3 gap-3 rounded-xl bg-fd-muted/60 p-4">
@@ -261,7 +264,7 @@ export function FinancialDashboard(props: DashboardProps) {
                   <Mini label="Out · next 30 days" value={d.window30.out} tone="down" />
                   <Mini label="Net" value={d.window30.net} tone={d.window30.net < 0 ? "down" : undefined} signed />
                 </div>
-                <FdUpcoming items={d.upcoming} cashNow={k.cash} />
+                <FdUpcoming items={d.upcoming} cashNow={k.cash} onClose={(id, status) => d.closeExpected(id, status, d.today)} />
               </CardContent>
             </Card>
             <Card id="accounts" className="fd-rise scroll-mt-6 gap-4 lg:col-span-5" style={rise(10)}>
@@ -410,7 +413,7 @@ function AttentionRow({ it }: { it: AttentionItem }) {
 
 /* ---------- upcoming ---------- */
 
-function FdUpcoming({ items, cashNow }: { items: UpcomingItem[]; cashNow: number }) {
+function FdUpcoming({ items, cashNow, onClose }: { items: UpcomingItem[]; cashNow: number; onClose: (id: string, status: "received" | "rejected") => void }) {
   if (items.length === 0) return <p className="text-sm text-fd-muted-foreground">Nothing known for the next three months.</p>;
   const groups = new Map<string, UpcomingItem[]>();
   for (const it of items) groups.set(it.date.slice(0, 7), [...(groups.get(it.date.slice(0, 7)) ?? []), it]);
@@ -427,7 +430,27 @@ function FdUpcoming({ items, cashNow }: { items: UpcomingItem[]; cashNow: number
             </div>
             <ul className="divide-y overflow-hidden rounded-xl border">
               {upcomingRows(month, rows).map((r) => (
-                <li key={r.kind === "one" ? r.item.id : `plans-${r.month}`}>{r.kind === "one" ? <FdItemRow it={r.item} /> : <FdPlansRow items={r.items} />}</li>
+                <li key={r.kind === "one" ? r.item.id : `plans-${r.month}`}>
+                  {r.kind === "one" ? (
+                    <FdItemRow
+                      it={r.item}
+                      actions={
+                        r.item.expected && r.item.refId ? (
+                          <span className="flex shrink-0 items-center gap-0.5">
+                            <Button type="button" variant="ghost" size="icon-sm" title="It landed — mark received" aria-label="Mark received" onClick={() => onClose(r.item.refId!, "received")} className="text-fd-muted-foreground/70 hover:text-fd-up">
+                              <Check />
+                            </Button>
+                            <Button type="button" variant="ghost" size="icon-sm" title="Refused or written off" aria-label="Mark refused" onClick={() => onClose(r.item.refId!, "rejected")} className="text-fd-muted-foreground/70 hover:text-fd-down">
+                              <X />
+                            </Button>
+                          </span>
+                        ) : undefined
+                      }
+                    />
+                  ) : (
+                    <FdPlansRow items={r.items} />
+                  )}
+                </li>
               ))}
             </ul>
           </div>
@@ -449,22 +472,154 @@ function FdUpcoming({ items, cashNow }: { items: UpcomingItem[]; cashNow: number
 
 const ROW = "flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-fd-accent";
 
-function FdItemRow({ it }: { it: UpcomingItem }) {
+function FdItemRow({ it, actions }: { it: UpcomingItem; actions?: ReactNode }) {
   const inner = (
     <>
       <span className="w-14 shrink-0 text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">{dayLabel(it.date)}</span>
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-2">
           <span className="truncate text-sm">{it.label}</span>
-          {it.overdue ? <Badge className="border-transparent bg-fd-down/12 text-fd-down">overdue</Badge> : null}
+          {it.expected ? (
+            <Badge className={cn("border-transparent", it.overdue ? "bg-fd-warn/15 text-fd-warn" : "bg-fd-muted text-fd-muted-foreground")}>{it.overdue ? "late" : "expected"}</Badge>
+          ) : it.overdue ? (
+            <Badge className="border-transparent bg-fd-down/12 text-fd-down">overdue</Badge>
+          ) : null}
           {it.personal ? <Badge variant="outline" className="text-fd-muted-foreground">personal</Badge> : null}
         </span>
         {it.detail ? <span className="block truncate text-xs text-fd-muted-foreground">{it.detail}</span> : null}
       </span>
       <Amount value={it.amount} signed className={cn("shrink-0 text-sm font-medium", it.amount < 0 ? "text-fd-down" : "text-fd-up")} />
+      {actions}
     </>
   );
   return it.href ? <Link href={it.href} className={ROW}>{inner}</Link> : <div className={ROW}>{inner}</div>;
+}
+
+/* ---------- expecting money ---------- */
+
+function ExpectingMoney({ today, onAdd, onToast }: { today: string; onAdd: (e: Expected) => void; onToast: (msg: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [kind, setKind] = useState<ExpectedKind>("claim");
+  const [filedAt, setFiledAt] = useState(today);
+  const [expectedBy, setExpectedBy] = useState(() => defaultExpectedBy(today, "claim"));
+  const [touched, setTouched] = useState(false);
+
+  function changeKind(k: ExpectedKind) {
+    setKind(k);
+    if (!touched) setExpectedBy(defaultExpectedBy(filedAt, k));
+  }
+  function changeFiled(v: string) {
+    setFiledAt(v);
+    if (!touched && v) setExpectedBy(defaultExpectedBy(v, kind));
+  }
+  function submit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const f = new FormData(e.currentTarget);
+    const amount = Number(String(f.get("amount")).replace(/\s/g, "").replace(",", "."));
+    const label = String(f.get("label")).trim();
+    const from = String(f.get("from")).trim();
+    if (!label || !from || !Number.isFinite(amount) || amount <= 0) return;
+    const currency = String(f.get("currency")) as "EUR" | "USD";
+    onAdd({
+      id: newExpectedId(),
+      kind,
+      label,
+      from,
+      amount,
+      currency,
+      filedAt: filedAt || today,
+      expectedBy: expectedBy || defaultExpectedBy(filedAt || today, kind),
+      reference: String(f.get("reference")).trim() || undefined,
+      note: String(f.get("note")).trim() || undefined,
+      status: "open",
+    });
+    onToast(`Expecting ${currency === "USD" ? "$" : "€"}${amount.toLocaleString("en", { minimumFractionDigits: 2 })} from ${from}`);
+    setOpen(false);
+    setKind("claim");
+    setFiledAt(today);
+    setExpectedBy(defaultExpectedBy(today, "claim"));
+    setTouched(false);
+  }
+
+  const lbl = "flex-col items-start gap-1.5 text-xs text-fd-muted-foreground";
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm"><HandCoins /> Expecting money</Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-[min(92vw,420px)]">
+        <form onSubmit={submit} className="flex flex-col gap-3">
+          <p className="text-sm leading-5">
+            <span className="font-medium">Money on its way that isn&apos;t an invoice.</span>{" "}
+            <span className="text-fd-muted-foreground">A claim, a refund, a deposit, a tax refund. It counts as owed to you until you mark it received.</span>
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <Label className={lbl}>
+              Kind
+              <NativeSelect value={kind} onChange={(e) => changeKind(e.target.value as ExpectedKind)} className="h-8 w-full text-sm">
+                {EXPECTED_KINDS.map((k) => (
+                  <NativeSelectOption key={k} value={k}>{EXPECTED_KIND_LABELS[k]}</NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </Label>
+            <Label className={lbl}>
+              From
+              <Input name="from" required autoFocus placeholder="Allianz Travel" className="h-8 text-sm" />
+            </Label>
+          </div>
+          <Label className={lbl}>
+            What
+            <Input name="label" required placeholder="Emergency dentist, Lisbon" className="h-8 text-sm" />
+          </Label>
+          <div className="grid grid-cols-[1fr_auto] gap-3">
+            <Label className={lbl}>
+              Amount
+              <Input name="amount" type="text" inputMode="decimal" required placeholder="1815.00" className="h-8 text-sm" />
+            </Label>
+            <Label className={lbl}>
+              Currency
+              <NativeSelect name="currency" defaultValue="EUR" className="h-8 text-sm">
+                <NativeSelectOption value="EUR">EUR</NativeSelectOption>
+                <NativeSelectOption value="USD">USD</NativeSelectOption>
+              </NativeSelect>
+            </Label>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Label className={lbl}>
+              Filed on
+              <Input type="date" value={filedAt} max={today} onChange={(e) => changeFiled(e.target.value)} className="h-8 text-sm" />
+            </Label>
+            <Label className={lbl}>
+              Expected by
+              <Input
+                type="date"
+                value={expectedBy}
+                onChange={(e) => {
+                  setTouched(true);
+                  setExpectedBy(e.target.value);
+                }}
+                className="h-8 text-sm"
+              />
+            </Label>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Label className={lbl}>
+              Reference
+              <Input name="reference" placeholder="Claim no." className="h-8 text-sm" />
+            </Label>
+            <Label className={lbl}>
+              Note
+              <Input name="note" placeholder="optional" className="h-8 text-sm" />
+            </Label>
+          </div>
+          <div className="flex justify-end gap-2 pt-1">
+            <Button type="button" variant="ghost" size="sm" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button type="submit" size="sm"><HandCoins /> Track it</Button>
+          </div>
+        </form>
+      </PopoverContent>
+    </Popover>
+  );
 }
 
 function FdPlansRow({ items }: { items: UpcomingItem[] }) {
@@ -715,7 +870,7 @@ function HowMade({ usdRate }: { usdRate: number }) {
           <li><span className="font-medium text-foreground">Free to spend</span> = every asset balance in EUR (USD at {usdRate}) − tax owed. Debts are in net worth only.</li>
           <li><span className="font-medium text-foreground">Net worth trend</span> = one snapshot a day whenever the page opens with balances or a balance changes. It rides along in the sync.</li>
           <li><span className="font-medium text-foreground">Tax owed</span> = Vorauszahlungen still unpaid this year + the projected year-end bill on top of them + VAT collected and not yet paid. Same maths as the estimate on /books.</li>
-          <li><span className="font-medium text-foreground">Owed to you</span> = invoices in the ledger with a due date and no paid date.</li>
+          <li><span className="font-medium text-foreground">Owed to you</span> = invoices in the ledger with a due date and no paid date, plus money you told the page to expect (claims, refunds, deposits) until you mark it received. Incoming bank rows never reach the books, so closing those is by hand.</li>
           <li><span className="font-medium text-foreground">Monthly burn</span> and <span className="font-medium text-foreground">Where the money goes</span> = business expenses (+ health/KSK/pension for burn) over the last three full months in the books.</li>
           <li><span className="font-medium text-foreground">Cash flow</span> = invoices by the month the money landed (VAT stripped) vs business expenses by the month they were paid.</li>
           <li><span className="font-medium text-foreground">Next 90 days</span> = instalments from the Vorauszahlungsbescheid, invoice due dates, and renewals stepped from each plan&apos;s last charge. Monthly plans roll up per month; personal ones are tagged.</li>
