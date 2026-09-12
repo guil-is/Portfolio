@@ -1,31 +1,34 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import {
-  clientRegistry,
-  currentClients,
-  pastClients,
-  stageLabel,
-  type ClientEntry,
-} from "@/content/clients/registry";
+import { clientRegistry, currentClients, pastClients, stageLabel, type ClientEntry } from "@/content/clients/registry";
+import type { Receivable } from "@/lib/income";
+import { daysUntil } from "@/lib/expenses/subscriptions";
 import { OWNER_FLAG_KEY } from "@/components/VisitTracker";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
+import { FinanceShell } from "./finance/FinanceShell";
+import { Kpi, rise } from "./finance/Kpi";
+import { Amount } from "./money/Privacy";
 
-// Master dashboard for every private /for/ page. Once this page is unlocked
-// (via its own PasswordGate), it writes each client page's unlock flag into
-// sessionStorage, so navigating to any of them from here skips the per-page
-// password. Same-tab navigation only — sessionStorage is per-tab, so a card
-// opened in a brand-new tab would still prompt.
-//
-// It also marks this browser as the owner's (localStorage, so it survives
-// the session): VisitTracker skips flagged browsers, keeping Guil's own
-// page-checking out of the visit log and the first-visit emails.
-export function ClientsDashboard() {
+/**
+ * Clients — every private client page in one place, plus what they
+ * still owe. Once unlocked, it writes each client page's unlock flag
+ * into sessionStorage, so opening any of them from here skips the
+ * per-page password (same tab only). It also marks this browser as the
+ * owner's, so VisitTracker keeps Guil's own checks out of the visit log.
+ */
+export function ClientsDashboard({ receivables, ledgerLoaded }: { receivables: Receivable[]; ledgerLoaded: boolean }) {
+  const [toast, setToast] = useState<string | null>(null);
+  const reloadSoon = useCallback(() => window.setTimeout(() => window.location.reload(), 600), []);
+  const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
+
   useEffect(() => {
-    for (const c of clientRegistry) {
-      window.sessionStorage.setItem(c.storageKey, "1");
-    }
+    for (const c of clientRegistry) window.sessionStorage.setItem(c.storageKey, "1");
     try {
       window.localStorage.setItem(OWNER_FLAG_KEY, "1");
     } catch {
@@ -33,57 +36,100 @@ export function ClientsDashboard() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!toast) return;
+    const t = window.setTimeout(() => setToast(null), 4000);
+    return () => window.clearTimeout(t);
+  }, [toast]);
+
   const current = currentClients();
   const past = pastClients();
+  const eur = receivables.filter((r) => r.currency === "EUR").reduce((t, r) => t + r.total, 0);
+  const usd = receivables.filter((r) => r.currency === "USD").reduce((t, r) => t + r.total, 0);
+  const overdue = receivables.filter((r) => r.dueAt < today);
 
   return (
-    <main className="page-fade-in mx-auto w-full max-w-[880px] px-6 pt-10 pb-40 md:px-10 md:pt-16">
-      <section className="flex flex-col gap-6 pb-10 md:pb-14">
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
-          Private · Client index
-        </p>
-        <h1 className="intro-rise font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:text-[4rem]">
-          Clients
-        </h1>
-        <p className="max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
-          Every private client page in one place. Open any of them from here
-          without re-entering a password.
-        </p>
+    <FinanceShell
+      active="clients"
+      title="Clients"
+      subtitle={`${current.length} current · ${past.length} past · open any page from here without its password`}
+      toast={toast}
+      onToast={setToast}
+      onRestored={reloadSoon}
+    >
+      {!ledgerLoaded ? (
+        <p className="rounded-xl border border-dashed px-4 py-3 text-sm text-fd-muted-foreground">Invoice data loads after the gate — reload the page if the open invoices show as empty.</p>
+      ) : null}
+
+      <section className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div className="grid grid-cols-2 gap-4 lg:col-span-5 lg:grid-cols-1">
+          <Kpi label="Owed to you" value={receivables.length === 0 ? <span className="text-fd-muted-foreground">—</span> : <><Amount value={eur} />{usd > 0 ? <span className="text-base font-medium text-fd-muted-foreground"> + <Amount value={usd} currency="USD" /></span> : null}</>} tone={receivables.length > 0 ? "up" : undefined} style={rise(1)}>
+            {receivables.length === 0 ? "no open invoices" : `${receivables.length} open invoice${receivables.length === 1 ? "" : "s"}`}
+          </Kpi>
+          <Kpi label="Overdue" value={overdue.length === 0 ? <span className="text-fd-muted-foreground">0</span> : String(overdue.length)} tone={overdue.length > 0 ? "down" : undefined} style={rise(2)}>
+            {overdue.length === 0 ? "everyone is on time" : overdue.map((r) => r.client).join(", ")}
+          </Kpi>
+        </div>
+        <Card className="fd-rise gap-3 lg:col-span-7" style={rise(3)}>
+          <CardHeader>
+            <CardTitle>Open invoices</CardTitle>
+            <CardDescription>By due date · click through to the client page</CardDescription>
+          </CardHeader>
+          <CardContent className="px-3">
+            {receivables.length === 0 ? (
+              <p className="px-3 py-4 text-sm text-fd-muted-foreground">Nothing outstanding.</p>
+            ) : (
+              <ul className="flex flex-col">
+                {receivables.map((r) => {
+                  const d = daysUntil(r.dueAt, today);
+                  const inner = (
+                    <>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-center gap-2">
+                          <span className="truncate text-sm font-medium">{r.client}</span>
+                          <span className="shrink-0 text-xs text-fd-muted-foreground">{r.number}</span>
+                          {d < 0 ? <Badge className="border-transparent bg-fd-down/12 text-fd-down">{-d} d overdue</Badge> : null}
+                        </span>
+                        <span className="block text-xs text-fd-muted-foreground">{d < 0 ? `was due ${prettyDay(r.dueAt)}` : d === 0 ? "due today" : `due ${prettyDay(r.dueAt)} · in ${d} day${d === 1 ? "" : "s"}`}</span>
+                      </span>
+                      <Amount value={r.total} decimals={2} currency={r.currency} className={cn("shrink-0 text-sm font-semibold", d < 0 && "text-fd-down")} />
+                      <ArrowUpRight className="size-4 shrink-0 text-fd-muted-foreground/50 transition-colors group-hover:text-foreground" aria-hidden />
+                    </>
+                  );
+                  const cls = "group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-fd-accent";
+                  return <li key={r.number}>{r.clientSlug ? <Link href={`/for/${r.clientSlug}`} className={cls}>{inner}</Link> : <div className={cls}>{inner}</div>}</li>;
+                })}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
       </section>
 
-      <div className="flex flex-col gap-16">
-        {current.length > 0 ? (
-          <ClientGroup label="Current" clients={current} />
-        ) : null}
-        {past.length > 0 ? (
-          <ClientGroup label="Past" clients={past} />
-        ) : null}
-      </div>
-    </main>
+      <ClientGroup label="Current" clients={current} index={4} />
+      <ClientGroup label="Past" clients={past} index={5} muted />
+      <Separator className="mt-6 opacity-0" />
+    </FinanceShell>
   );
 }
 
-function ClientGroup({
-  label,
-  clients,
-}: {
-  label: string;
-  clients: ClientEntry[];
-}) {
+function prettyDay(iso: string): string {
+  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+}
+
+function ClientGroup({ label, clients, index, muted }: { label: string; clients: ClientEntry[]; index: number; muted?: boolean }) {
+  if (clients.length === 0) return null;
   return (
-    <section className="flex flex-col gap-6">
-      <div className="flex items-baseline justify-between">
-        <h2 className="font-display text-[1.5rem] font-bold leading-tight text-ink md:text-[1.875rem]">
-          {label}
-        </h2>
-        <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
+    <section className="fd-rise flex flex-col gap-3" style={rise(index)}>
+      <div className="flex items-baseline justify-between px-1">
+        <h2 className="text-lg font-semibold tracking-tight">{label}</h2>
+        <p className="text-xs text-fd-muted-foreground">
           {clients.length} {clients.length === 1 ? "client" : "clients"}
         </p>
       </div>
-      <ul className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule sm:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {clients.map((c) => (
           <li key={c.slug}>
-            <ClientCard client={c} />
+            <ClientCard client={c} muted={muted} />
           </li>
         ))}
       </ul>
@@ -91,36 +137,23 @@ function ClientGroup({
   );
 }
 
-function ClientCard({ client }: { client: ClientEntry }) {
+function ClientCard({ client, muted }: { client: ClientEntry; muted?: boolean }) {
+  const stage = stageLabel(client);
   return (
-    <Link
-      href={client.href}
-      className="group flex h-full min-h-[132px] flex-col justify-between gap-6 bg-bg px-5 py-5 transition-colors hover:bg-card md:px-6 md:py-6"
-    >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-          <h3 className="font-display text-[1.25rem] font-bold leading-tight text-ink md:text-[1.4rem]">
-            {client.name}
-          </h3>
-          {stageLabel(client) ? (
-            <span className="inline-flex items-center rounded-[6px] border border-rule-soft bg-card/50 px-2 py-[2px] font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
-              {stageLabel(client)}
-            </span>
-          ) : null}
-        </div>
-        <span
-          aria-hidden
-          className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-rule text-muted transition-colors group-hover:border-ink group-hover:text-ink"
-        >
-          <ArrowUpRight
-            className="h-4 w-4 transition-transform duration-500 group-hover:-rotate-45"
-            strokeWidth={2}
-          />
-        </span>
-      </div>
-      <p className="text-[0.9rem] leading-[1.5rem] text-muted">
-        {client.summary}
-      </p>
+    <Link href={client.href} className="group block h-full rounded-2xl focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none">
+      <Card className={cn("h-full gap-4 py-5 transition-[box-shadow,transform] group-hover:-translate-y-0.5 group-hover:shadow-md", muted && "bg-fd-card/60")}>
+        <CardHeader className="px-5">
+          <CardTitle className="flex flex-wrap items-center gap-x-2 gap-y-1 text-base">
+            <span>{client.name}</span>
+            {stage ? <Badge variant="secondary" className="font-medium capitalize">{stage}</Badge> : null}
+          </CardTitle>
+          <CardDescription className="line-clamp-3 leading-5">{client.summary}</CardDescription>
+        </CardHeader>
+        <CardContent className="mt-auto flex items-center justify-between px-5 text-xs text-fd-muted-foreground">
+          <span className="truncate">{client.href}</span>
+          <ArrowUpRight className="size-4 shrink-0 transition-colors group-hover:text-foreground" aria-hidden />
+        </CardContent>
+      </Card>
     </Link>
   );
 }

@@ -1,8 +1,10 @@
 # Tax expenses from the N26 export
 
 One page turns a year of N26 payments into the expenses list for the
-Google Sheets tax doc: **guil.is/for/expenses** (password in
-`src/app/for/expenses/page.tsx`, `for-expenses-unlocked` storage key).
+Google Sheets tax doc: the **Bank import** tab on **guil.is/books**
+(`/books?tab=import`; the old `/for/expenses` URL redirects there;
+password in `src/app/money/data.ts`, `for-expenses-unlocked` storage
+key).
 Everything runs in the browser. The bank file is parsed locally, kept in
 this browser's localStorage, and never uploaded anywhere.
 

@@ -345,7 +345,7 @@ function Row({
           {s.chargedAfterCancel ? (
             <span className="shrink-0 rounded-full bg-down/15 px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-down">charged again</span>
           ) : s.verdict === "undecided" && !cancelled ? (
-            <Link href="/for/expenses" className="shrink-0 rounded-full bg-warn/15 px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-warn hover:underline">undecided · triage</Link>
+            <Link href="/books?tab=import" className="shrink-0 rounded-full bg-warn/15 px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-warn hover:underline">undecided · triage</Link>
           ) : s.verdict === "personal" && !cancelled ? (
             <span className="shrink-0 rounded-full bg-card px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-muted">personal</span>
           ) : cancelled ? (

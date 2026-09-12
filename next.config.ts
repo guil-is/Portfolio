@@ -38,6 +38,11 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/for/expenses",
+        destination: "/books?tab=import",
+        permanent: false,
+      },
+      {
         source: "/money/v2",
         destination: "/money",
         permanent: false,

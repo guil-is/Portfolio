@@ -650,18 +650,27 @@ html.page-leaving body {
   .fd-portal * {
     border-color: var(--color-border);
   }
-  /* The v2 chart reads the site's chart tokens; point them at the fd pair. */
+  /* Site components rendered inside the shell (Books tabs, the triage,
+     the chart) read the site's tokens; point those at the fd palette so
+     they look native here without a rewrite. */
   .fd {
     --color-viz-in: var(--chart-1);
     --color-viz-out: var(--chart-2);
     --color-rule: var(--border);
+    --color-rule-soft: var(--border);
     --color-muted: var(--fd-muted-foreground);
+    --color-faint: color-mix(in oklab, var(--fd-muted-foreground) 55%, var(--fd-card));
     --color-ink: var(--foreground);
     --color-body: var(--foreground);
     --color-bg: var(--fd-card);
+    --color-card: var(--fd-muted);
+    --color-accent: var(--primary);
     --color-up: var(--fd-up);
     --color-down: var(--fd-down);
     --color-warn: var(--fd-warn);
+    --shadow-card: var(--shadow-fd);
+    --font-display: var(--font-fd);
+    --font-caption: var(--font-fd);
   }
 }
 

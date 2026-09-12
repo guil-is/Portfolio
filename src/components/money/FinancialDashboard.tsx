@@ -1,28 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState, type CSSProperties, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
-import {
-  ArrowUpRight,
-  BookOpen,
-  Check,
-  ChevronDown,
-  Cloud,
-  CloudOff,
-  Eye,
-  EyeOff,
-  Info,
-  LayoutDashboard,
-  PenLine,
-  Plus,
-  Receipt,
-  RefreshCw,
-  Trash2,
-  Upload,
-  Users,
-  X,
-  type LucideIcon,
-} from "lucide-react";
+import { useCallback, useState, type FormEvent, type KeyboardEvent } from "react";
+import { ArrowUpRight, Check, ChevronDown, PenLine, Plus, Trash2, Upload, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,14 +13,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { KIND_LABELS, KIND_ORDER, inEur, isAsset, newAccountId, type Account, type AccountKind } from "@/lib/money/accounts";
 import type { Snapshot } from "@/lib/money/history";
 import { dayLabel, monthTitle, upcomingRows, type AttentionItem, type CategorySlice, type Severity, type UpcomingItem } from "@/lib/money/overview";
-import { useSync } from "../SyncBar";
+import { FinanceShell } from "@/components/finance/FinanceShell";
+import { InfoTip, Kpi, Mini, rise } from "@/components/finance/Kpi";
 import { CashflowChart } from "./CashflowChart";
-import { Amount, PrivacyProvider, usePrivacy } from "./Privacy";
+import { Amount, usePrivacy } from "./Privacy";
 import { useDashboard, type CashflowPeriod, type DashboardProps } from "./useDashboard";
 
 /**
@@ -50,81 +30,41 @@ import { useDashboard, type CashflowPeriod, type DashboardProps } from "./useDas
  * browser except through the encrypted sync.
  */
 
-export function FinancialDashboard(props: DashboardProps) {
-  return (
-    <PrivacyProvider>
-      <Shell {...props} />
-    </PrivacyProvider>
-  );
-}
-
-const rise = (i: number) => ({ "--i": i } as CSSProperties);
 const PERIOD_LABEL: Record<CashflowPeriod, string> = { "6m": "Last 6 months", "12m": "Last 12 months", ytd: "This year so far" };
 
-function Shell(props: DashboardProps) {
+export function FinancialDashboard(props: DashboardProps) {
   const d = useDashboard(props);
   const { k, attention, counts } = d;
   const [view, setView] = useState<"chart" | "table">("chart");
   const balances = useBalanceUpdate(d.accounts, d.changeAccounts, d.setToast);
 
   return (
-    <div className="fd min-h-screen bg-background text-foreground">
-      <div className="mx-auto flex w-full max-w-[1280px] gap-8 px-4 py-5 md:px-6 lg:px-8 lg:py-8">
-        {/* ---------- sidebar (desktop) ---------- */}
-        <aside className="fd-rise sticky top-8 hidden h-[calc(100vh-4rem)] w-56 shrink-0 flex-col pb-16 lg:flex" style={rise(0)}>
-          <Link href="/money" className="flex items-center gap-2.5 px-2">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-foreground text-sm font-semibold text-background">G</span>
-            <span className="text-sm font-semibold leading-tight">Financial<br />Dashboard</span>
-          </Link>
-          <nav className="mt-8 flex flex-col gap-1" aria-label="Finance pages">
-            <NavItem href="/money" icon={LayoutDashboard} active>Overview</NavItem>
-            <NavItem href="/books" icon={BookOpen}>Books</NavItem>
-            <NavItem href="/for/expenses" icon={Receipt}>Expenses</NavItem>
-            <NavItem href="/for/clients" icon={Users}>Clients</NavItem>
-          </nav>
-          <div className="mt-auto flex flex-col gap-1">
-            <SyncControl variant="row" onToast={d.setToast} onRestored={d.reloadSoon} />
-            <PrivacyControl variant="row" />
-          </div>
-        </aside>
-
-        {/* ---------- content ---------- */}
-        <main className="flex min-w-0 flex-1 flex-col gap-5">
-          <header className="fd-rise flex flex-wrap items-start justify-between gap-3" style={rise(0)}>
-            <div className="flex flex-col gap-0.5">
-              <h1 className="text-2xl font-semibold tracking-tight lg:text-[28px]">
-                <span className="lg:hidden">Financial Dashboard</span>
-                <span className="hidden lg:inline">Overview</span>
-              </h1>
-              <p className="text-sm text-fd-muted-foreground">{d.dateLine}</p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button variant={balances.updating ? "default" : "outline"} size="sm" onClick={balances.updating ? balances.save : balances.start}>
-                <PenLine /> {balances.updating ? "Save balances" : "Update balances"}
-              </Button>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/books"><Plus /> Add expense</Link>
-              </Button>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/for/expenses"><Upload /> Import bank export</Link>
-              </Button>
-              <span className="ml-1 flex items-center gap-1.5 lg:hidden">
-                <PrivacyControl variant="icon" />
-                <SyncControl variant="icon" onToast={d.setToast} onRestored={d.reloadSoon} />
-              </span>
-            </div>
-          </header>
-          <nav className="-mx-4 flex gap-1.5 overflow-x-auto px-4 lg:hidden" aria-label="Finance pages">
-            {[
-              ["/books", "Books"],
-              ["/for/expenses", "Expenses"],
-              ["/for/clients", "Clients"],
-            ].map(([href, label]) => (
-              <Button key={href} asChild variant="outline" size="sm" className="rounded-full">
-                <Link href={href}>{label}</Link>
-              </Button>
-            ))}
-          </nav>
+    <FinanceShell
+      active="overview"
+      title={
+        <>
+          <span className="lg:hidden">Financial Dashboard</span>
+          <span className="hidden lg:inline">Overview</span>
+        </>
+      }
+      subtitle={d.dateLine}
+      toast={d.toast}
+      onToast={d.setToast}
+      onRestored={d.reloadSoon}
+      actions={
+        <>
+          <Button variant={balances.updating ? "default" : "outline"} size="sm" onClick={balances.updating ? balances.save : balances.start}>
+            <PenLine /> {balances.updating ? "Save balances" : "Update balances"}
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/books"><Plus /> Add expense</Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/books?tab=import"><Upload /> Import bank export</Link>
+          </Button>
+        </>
+      }
+    >
           {!props.ledgerLoaded ? (
             <p className="rounded-xl border border-dashed px-4 py-3 text-sm text-fd-muted-foreground">
               Invoice data loads after the gate — reload the page if income and open invoices show as zero.
@@ -330,15 +270,7 @@ function Shell(props: DashboardProps) {
           </section>
 
           <HowMade usdRate={d.usdRate} />
-        </main>
-      </div>
-
-      {d.toast ? (
-        <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-6">
-          <div className="fd-portal rounded-xl border bg-popover px-4 py-2.5 text-sm text-popover-foreground shadow-fd">{d.toast}</div>
-        </div>
-      ) : null}
-    </div>
+    </FinanceShell>
   );
 }
 
@@ -382,65 +314,6 @@ function useBalanceUpdate(accounts: Account[], onChange: (next: Account[]) => vo
     toast(changed === 0 ? "Balances confirmed for today" : `${changed} balance${changed === 1 ? "" : "s"} updated`);
   }, [accounts, drafts, onChange, toast]);
   return { updating: drafts !== null, drafts: drafts ?? {}, start, cancel, setDraft, save };
-}
-
-/* ---------- small pieces ---------- */
-
-function NavItem({ href, icon: Icon, active, children }: { href: string; icon: LucideIcon; active?: boolean; children: ReactNode }) {
-  return (
-    <Link
-      href={href}
-      aria-current={active ? "page" : undefined}
-      className={cn(
-        "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors",
-        active ? "bg-fd-card text-foreground shadow-fd" : "text-fd-muted-foreground hover:bg-fd-accent hover:text-foreground",
-      )}
-    >
-      <Icon className="size-4" aria-hidden />
-      {children}
-    </Link>
-  );
-}
-
-function InfoTip({ text }: { text: string }) {
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <button type="button" aria-label="How this is computed" className="rounded-full text-fd-muted-foreground/70 transition-colors hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none">
-          <Info className="size-4" aria-hidden />
-        </button>
-      </TooltipTrigger>
-      <TooltipContent side="left">{text}</TooltipContent>
-    </Tooltip>
-  );
-}
-
-function Mini({ label, value, tone, signed }: { label: string; value: number; tone?: "up" | "down"; signed?: boolean }) {
-  return (
-    <div className="flex min-w-0 flex-col gap-0.5">
-      <span className="truncate text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">{label}</span>
-      <Amount value={value} signed={signed} className={cn("truncate text-base font-semibold", tone === "up" && "text-fd-up", tone === "down" && "text-fd-down")} />
-    </div>
-  );
-}
-
-const TONE: Record<"up" | "down" | "warn", string> = { up: "text-fd-up", down: "text-fd-down", warn: "text-fd-warn" };
-
-function Kpi({ label, value, tip, tone, children, style }: { label: string; value: ReactNode; tip?: string; tone?: "up" | "down" | "warn"; children: ReactNode; style?: CSSProperties }) {
-  return (
-    <Card className="fd-rise gap-3 py-5" style={style}>
-      <CardHeader className="px-5">
-        <CardDescription>{label}</CardDescription>
-        <CardTitle className={cn("pt-0.5 text-2xl font-semibold tracking-tight tabular-nums", tone && TONE[tone])}>{value}</CardTitle>
-        {tip ? (
-          <CardAction>
-            <InfoTip text={tip} />
-          </CardAction>
-        ) : null}
-      </CardHeader>
-      <CardContent className="flex flex-col gap-2 px-5 text-xs leading-5 text-fd-muted-foreground">{children}</CardContent>
-    </Card>
-  );
 }
 
 /** Ninety days of net worth as a hairline, plus the change over the last thirty. */
@@ -826,150 +699,6 @@ function FdAccounts({
         </div>
       </CardContent>
     </>
-  );
-}
-
-/* ---------- controls ---------- */
-
-function agoNow(iso: string | undefined): string {
-  if (!iso) return "never";
-  const s = Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 1000));
-  if (s < 10) return "just now";
-  if (s < 60) return `${s}s ago`;
-  const m = Math.round(s / 60);
-  if (m < 60) return `${m} min ago`;
-  const h = Math.round(m / 60);
-  if (h < 48) return `${h} h ago`;
-  return `${Math.round(h / 24)} days ago`;
-}
-
-function PrivacyControl({ variant }: { variant: "icon" | "row" }) {
-  const { hidden, toggle } = usePrivacy();
-  if (variant === "icon") {
-    return (
-      <Button variant={hidden ? "default" : "outline"} size="icon-sm" onClick={toggle} aria-pressed={hidden} title={hidden ? "Show amounts (H)" : "Hide amounts (H)"}>
-        {hidden ? <EyeOff /> : <Eye />}
-      </Button>
-    );
-  }
-  return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-pressed={hidden}
-      className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-foreground"
-    >
-      {hidden ? <EyeOff className="size-4" aria-hidden /> : <Eye className="size-4" aria-hidden />}
-      <span className="flex-1 text-left">{hidden ? "Show amounts" : "Hide amounts"}</span>
-      <kbd className="rounded border px-1.5 text-[10px] text-fd-muted-foreground">H</kbd>
-    </button>
-  );
-}
-
-function SyncControl({ variant, onToast, onRestored }: { variant: "icon" | "row"; onToast: (msg: string) => void; onRestored: () => void }) {
-  const { state, status, run, enable, disable } = useSync();
-  const [open, setOpen] = useState(false);
-  const [pass, setPass] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [, bump] = useState(0);
-
-  useEffect(() => {
-    if (!open) return;
-    const t = window.setInterval(() => bump((n) => n + 1), 30_000);
-    return () => window.clearInterval(t);
-  }, [open]);
-
-  // A pull merged another device's edits into localStorage — reload so the page shows them.
-  useEffect(() => {
-    if (status.kind === "idle" && status.pulled) onRestored();
-  }, [status, onRestored]);
-
-  async function submit(e: FormEvent) {
-    e.preventDefault();
-    if (busy) return;
-    setBusy(true);
-    const ok = await enable(pass);
-    setBusy(false);
-    if (ok) {
-      setPass("");
-      setOpen(false);
-      onToast("Sync is on — the books follow this passphrase to every device");
-      onRestored();
-    }
-  }
-
-  const off = !state;
-  const syncing = status.kind === "syncing";
-  const errored = status.kind === "error";
-  const label = off ? "Sync is off" : syncing ? "Syncing…" : errored ? status.message : `Synced ${agoNow(status.kind === "idle" ? status.lastSyncAt : state.lastSyncAt)}`;
-  const icon = syncing ? <RefreshCw className="size-4 animate-spin" aria-hidden /> : off || errored ? <CloudOff className="size-4 text-fd-warn" aria-hidden /> : <Cloud className="size-4 text-fd-up" aria-hidden />;
-
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        {variant === "icon" ? (
-          <Button variant="outline" size="icon-sm" aria-label={`Sync: ${label}`} title={label}>
-            {icon}
-          </Button>
-        ) : (
-          <button type="button" className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-foreground">
-            {icon}
-            <span className="flex-1 truncate text-left">{label}</span>
-          </button>
-        )}
-      </PopoverTrigger>
-      <PopoverContent align={variant === "icon" ? "end" : "start"} side={variant === "icon" ? "bottom" : "top"} className="w-[min(92vw,360px)] text-sm">
-        {off ? (
-          <form onSubmit={submit} className="flex flex-col gap-3">
-            <p className="leading-5">
-              <span className="font-medium">Sync is off.</span>{" "}
-              <span className="text-fd-muted-foreground">The books only live in this browser. Choose a passphrase and they&apos;ll follow it to every device, encrypted before they leave.</span>
-            </p>
-            <Input type="password" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Passphrase — same one on each device" autoComplete="off" minLength={8} required autoFocus />
-            <div className="flex flex-wrap items-center gap-2">
-              <Button type="submit" size="sm" disabled={busy || pass.length < 8}>
-                <Cloud /> {busy ? "Setting up…" : "Turn on sync"}
-              </Button>
-              {errored ? <span className={/configured|unavailable/i.test(status.message) ? "text-fd-muted-foreground" : "text-fd-down"}>{status.message}</span> : null}
-            </div>
-            <p className="text-xs leading-5 text-fd-muted-foreground">Nobody can recover the passphrase — not the site, not Sanity. Keep it in your password manager. If a vault already exists, the passphrase must open it.</p>
-          </form>
-        ) : (
-          <div className="flex flex-col gap-3">
-            <p className="leading-5">
-              {syncing ? (
-                "Syncing…"
-              ) : errored ? (
-                <>
-                  <span className="font-medium">{status.message}.</span> <span className="text-fd-muted-foreground">Last synced {agoNow(status.lastSyncAt)}.</span>
-                </>
-              ) : (
-                <>
-                  <span className="font-medium">Synced {agoNow(status.kind === "idle" ? status.lastSyncAt : state.lastSyncAt)}.</span>{" "}
-                  <span className="text-fd-muted-foreground">Encrypted with your passphrase · {state.device}</span>
-                </>
-              )}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={() => void run({ force: true })} disabled={syncing}>
-                <RefreshCw /> Sync now
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  if (window.confirm("Forget the passphrase on this device? The books stay here and in the vault; you'll enter the passphrase again to sync.")) disable();
-                }}
-              >
-                Forget on this device
-              </Button>
-            </div>
-            <p className="text-xs text-fd-muted-foreground">The backup file lives on the Books page.</p>
-          </div>
-        )}
-      </PopoverContent>
-    </Popover>
   );
 }
 

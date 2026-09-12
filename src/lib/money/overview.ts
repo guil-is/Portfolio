@@ -279,12 +279,12 @@ export function attentionItems(input: {
     });
   }
   if (undecided > 0) {
-    items.push({ id: "undecided", severity: "info", title: `${undecided} bank row${undecided === 1 ? "" : "s"} still undecided`, detail: "swipe them so the books and the estimate are complete", href: "/for/expenses" });
+    items.push({ id: "undecided", severity: "info", title: `${undecided} bank row${undecided === 1 ? "" : "s"} still undecided`, detail: "swipe them so the books and the estimate are complete", href: "/books?tab=import" });
   }
   if (lastBankRow && daysUntil(lastBankRow, today) < -45) {
-    items.push({ id: "import", severity: "info", title: `Last bank row is from ${prettyDay(lastBankRow)}`, detail: "import a fresh N26 export so the books catch up", href: "/for/expenses" });
+    items.push({ id: "import", severity: "info", title: `Last bank row is from ${prettyDay(lastBankRow)}`, detail: "import a fresh N26 export so the books catch up", href: "/books?tab=import" });
   } else if (!lastBankRow) {
-    items.push({ id: "import", severity: "info", title: "No bank rows in the books yet", detail: "import an N26 export to start", href: "/for/expenses" });
+    items.push({ id: "import", severity: "info", title: "No bank rows in the books yet", detail: "import an N26 export to start", href: "/books?tab=import" });
   }
   if (k.staleAccounts.length > 0) {
     items.push({

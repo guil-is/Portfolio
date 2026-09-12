@@ -87,7 +87,8 @@ const VERDICT_LABEL: Record<DecidedVerdict | "pending", string> = {
   pending: "Ask me",
 };
 
-export function ExpensesTriage() {
+/** `embedded`: rendered inside the Books page (no page header, no own sync agent). */
+export function ExpensesTriage({ embedded = false }: { embedded?: boolean } = {}) {
   const [loaded, setLoaded] = useState<Loaded | null>(null);
   const [decisions, setDecisions] = useState<DecisionMap>({});
   const [memory, setMemory] = useState<Record<string, MerchantMemory>>(() => loadMemory());
@@ -420,24 +421,33 @@ export function ExpensesTriage() {
 
   const memoryCount = Object.keys(memory).length;
 
+  const Root = embedded ? "div" : "main";
   return (
-    <main className="page-fade-in mx-auto w-full max-w-[1040px] px-6 pt-10 pb-40 md:px-10 md:pt-16">
-      <SyncAgent />
-      <section className="flex flex-col gap-6 pb-10 md:pb-14">
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
-          Private · Tax expenses
+    <Root className={embedded ? "flex flex-col gap-2" : "page-fade-in mx-auto w-full max-w-[1040px] px-6 pt-10 pb-40 md:px-10 md:pt-16"}>
+      {embedded ? (
+        <p className="max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
+          Drop the N26 export for the year. The rules sort what they can, you swipe through the rest, and every business or tax-relevant row lands in the books. Nothing leaves this browser.
         </p>
-        <h1 className="intro-rise font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:text-[4rem]">
-          Expenses
-        </h1>
-        <p className="max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
-          Drop the N26 export for the year. The rules sort what they can, you swipe through the rest,
-          and every business or tax-relevant row lands in the books. Nothing leaves this browser.
-        </p>
-      </section>
+      ) : (
+        <>
+          <SyncAgent />
+          <section className="flex flex-col gap-6 pb-10 md:pb-14">
+            <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
+              Private · Tax expenses
+            </p>
+            <h1 className="intro-rise font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:text-[4rem]">
+              Expenses
+            </h1>
+            <p className="max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
+              Drop the N26 export for the year. The rules sort what they can, you swipe through the rest,
+              and every business or tax-relevant row lands in the books. Nothing leaves this browser.
+            </p>
+          </section>
+        </>
+      )}
 
       {!loaded ? (
-        <section className="flex flex-col gap-6">
+        <section className={`flex flex-col gap-6 ${embedded ? "pt-4" : ""}`}>
           <label
             onDragOver={(e) => {
               e.preventDefault();
@@ -520,7 +530,7 @@ export function ExpensesTriage() {
         </section>
       ) : (
         <>
-          <section className="flex flex-col gap-6">
+          <section className={`flex flex-col gap-6 ${embedded ? "pt-4" : ""}`}>
             <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule md:grid-cols-4">
               <Stat label="Outgoing" value={`€${formatEur(summary.total)}`} sub={`${summary.count} entries`} />
               <Stat label="Business" value={`€${formatEur(summary.business)}`} sub={`${summary.businessCount} entries`} accent />
@@ -533,9 +543,11 @@ export function ExpensesTriage() {
                 {loaded.parsed.incomingCount > 0 ? ` · ${loaded.parsed.incomingCount} incoming ignored` : ""}
               </p>
               <div className="flex gap-4">
-                <Link href="/books" className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted">
-                  Books &amp; tax →
-                </Link>
+                {embedded ? null : (
+                  <Link href="/books" className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted">
+                    Books &amp; tax →
+                  </Link>
+                )}
                 <button type="button" onClick={startOver} className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
                   Load another file
                 </button>
@@ -555,7 +567,7 @@ export function ExpensesTriage() {
             ) : null}
           </section>
 
-          <nav className="mt-12 mb-10 flex gap-6 border-b border-rule">
+          <nav className={`${embedded ? "mt-4 mb-8" : "mt-12 mb-10"} flex gap-6 border-b border-rule`}>
             {(
               [
                 ["swipe", `Swipe${pending.length > 0 ? ` · ${pending.length}` : ""}`],
@@ -700,7 +712,7 @@ export function ExpensesTriage() {
           </div>
         </div>
       ) : null}
-    </main>
+    </Root>
   );
 }
 

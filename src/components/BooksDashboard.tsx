@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import React, { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { Copy, Trash2 } from "lucide-react";
+import { Copy, Plus, Trash2 } from "lucide-react";
 import type { IncomeYear, InvoiceRow } from "@/lib/income";
 import {
   bookYears,
@@ -33,8 +33,14 @@ import {
 } from "@/lib/expenses/types";
 import { TaxEstimate } from "./TaxEstimate";
 import { SubscriptionsTab } from "./SubscriptionsTab";
-import { SyncBar } from "./SyncBar";
-import { Stat, signTone } from "./Stat";
+import { ExpensesTriage } from "./ExpensesTriage";
+import { FinanceShell } from "./finance/FinanceShell";
+import { Kpi } from "./finance/Kpi";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
+import { Input } from "./ui/input";
+import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
+import { Amount } from "./money/Privacy";
 import { sessionSources, trackSubscriptions } from "@/lib/expenses/subscriptions";
 import { loadMemory, loadSession } from "@/lib/expenses/storage";
 import { buildItems } from "@/lib/expenses/triage";
@@ -48,7 +54,14 @@ import { prettyDate } from "./ExpenseSwipeDeck";
  * the copy for the accountant's Primanota.
  */
 
-type Tab = "overview" | "entries" | "subscriptions" | "accountant";
+type Tab = "overview" | "entries" | "import" | "subscriptions" | "accountant";
+const TABS: Tab[] = ["overview", "entries", "import", "subscriptions", "accountant"];
+
+function tabFromUrl(): Tab {
+  if (typeof window === "undefined") return "overview";
+  const t = new URLSearchParams(window.location.search).get("tab");
+  return TABS.includes(t as Tab) ? (t as Tab) : "overview";
+}
 type Filter = "all" | "income" | "expense" | "tax";
 
 export function BooksDashboard({
@@ -85,7 +98,14 @@ export function BooksDashboard({
   });
   const [sentInvoices, setSentInvoices] = useState<string[]>(() => loadSentInvoices(year));
   const [settings, setSettings] = useState<BooksSettings>(() => loadBooksSettings());
-  const [tab, setTab] = useState<Tab>("overview");
+  const [tab, setTabState] = useState<Tab>(() => tabFromUrl());
+  const setTab = useCallback((t: Tab) => {
+    setTabState(t);
+    const url = new URL(window.location.href);
+    if (t === "overview") url.searchParams.delete("tab");
+    else url.searchParams.set("tab", t);
+    window.history.replaceState(null, "", url.toString());
+  }, []);
   const [filter, setFilter] = useState<Filter>("all");
   const [search, setSearch] = useState("");
   const [onlyNew, setOnlyNew] = useState(true);
@@ -276,114 +296,89 @@ export function BooksDashboard({
       return !q || `${r.party} ${r.reference} ${r.note ?? ""}`.toLowerCase().includes(q);
     });
 
+  const tabItems: [Tab, string][] = [
+    ["overview", "Tax estimate"],
+    ["entries", `Entries · ${allRows.length}`],
+    ["import", "Bank import"],
+    ["subscriptions", `Subscriptions · ${subs.filter((s) => s.verdict === "business" && !s.cancelledAt).length}${soon.length > 0 ? ` · ${soon.length} yearly renewing` : ""}`],
+    ["accountant", `For the accountant${exportRowsList.length > 0 ? ` · ${exportRowsList.length} new` : ""}`],
+  ];
+
   return (
-    <main className="page-fade-in mx-auto w-full max-w-[1040px] px-6 pt-10 pb-40 md:px-10 md:pt-16">
-      <section className="flex flex-col gap-6 pb-10 md:pb-14">
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
-          Private · Books
+    <FinanceShell
+      active="books"
+      title="Books"
+      subtitle={`${year} · income from the invoice ledger, expenses from the bank imports, the Finanzamt estimate, the copy for the accountant`}
+      toast={toast}
+      onToast={setToast}
+      onRestored={reloadSoon}
+      subnav={tabItems.map(([key, label]) => ({ key, label, active: tab === key, onSelect: () => setTab(key) }))}
+      actions={
+        <Tabs value={String(year)} onValueChange={(v) => switchYear(Number(v))}>
+          <TabsList aria-label="Year">
+            {allYears.map((y) => (
+              <TabsTrigger key={y} value={String(y)}>{y}</TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      }
+    >
+      {!ledgerLoaded ? (
+        <p className="rounded-xl border border-dashed px-4 py-3 text-sm text-fd-muted-foreground">
+          Invoice data loads after the gate — reload the page if income shows as zero.
         </p>
-        <div className="flex items-start justify-between gap-4">
-          <h1 className="intro-rise font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:text-[4rem]">
-            Books
-          </h1>
-          <div className="pt-2 md:pt-4">
-            <SyncBar onToast={setToast} onRestored={reloadSoon} />
-          </div>
-        </div>
-        <p className="max-w-[620px] text-[0.95rem] leading-[1.7rem] text-muted">
-          Income from the invoice ledger, expenses from the N26 imports, the Finanzamt estimate, and the copy
-          for the accountant.
-        </p>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="mr-2 font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">Year</span>
-          {allYears.map((y) => (
-            <button
-              key={y}
-              type="button"
-              onClick={() => switchYear(y)}
-              className={`rounded-full border px-3 py-1 font-caption text-[10px] font-semibold uppercase tracking-[1px] transition-colors ${
-                y === year ? "border-ink bg-ink text-bg" : "border-rule text-muted hover:border-ink hover:text-ink"
-              }`}
-            >
-              {y}
-            </button>
-          ))}
-          <Link href="/for/expenses" className="ml-4 font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
-            Import an N26 export →
-          </Link>
-          <Link href="/money" className="ml-2 font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
-            Financial dashboard →
-          </Link>
-        </div>
-        {!ledgerLoaded ? (
-          <p className="rounded-[12px] border border-rule-soft bg-card/40 px-4 py-3 text-[0.85rem] leading-[1.4rem] text-muted">
-            Invoice data loads after the gate — reload the page if income shows as zero.
-          </p>
-        ) : null}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            addQuick();
-          }}
-          className="flex flex-col gap-2"
-        >
-          <div className="flex items-center gap-2 rounded-full border border-rule bg-bg pl-5 pr-1.5 transition-colors focus-within:border-ink">
-            <input
+      ) : null}
+
+      <Card className="fd-rise gap-2 py-4" style={{ "--i": 1 } as React.CSSProperties}>
+        <CardContent className="flex flex-col gap-1.5 px-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              addQuick();
+            }}
+            className="flex items-center gap-2"
+          >
+            <Input
               type="text"
               value={quick}
               onChange={(e) => setQuick(e.target.value)}
               placeholder="Add an expense: Mobbin 119.88 yearly"
               aria-label="Quick add an expense"
-              className="h-12 w-full bg-transparent text-[0.95rem] text-ink placeholder:text-faint focus:outline-none"
+              className="h-10 border-transparent bg-fd-muted/60 text-base shadow-none focus-visible:bg-fd-card md:text-[0.95rem]"
             />
-            <button
-              type="submit"
-              disabled={!quickPreview}
-              className="h-9 shrink-0 rounded-full border border-ink bg-ink px-4 font-caption text-[10px] font-bold uppercase tracking-[1px] text-bg transition-colors hover:bg-transparent hover:text-ink disabled:opacity-30 disabled:hover:bg-ink disabled:hover:text-bg"
-            >
-              Add
-            </button>
-          </div>
-          <p className="min-h-[1.2rem] px-5 text-[0.8rem] text-muted">
+            <Button type="submit" size="sm" disabled={!quickPreview} className="h-10 shrink-0">
+              <Plus /> Add
+            </Button>
+          </form>
+          <p className="min-h-[1.2rem] px-1 text-xs text-fd-muted-foreground">
             {quickPreview
               ? `${quickPreview.party} · €${formatEur(quickPreview.amount)} · ${CATEGORY_LABELS[quickPreview.category]} · ${prettyDate(quickPreview.date)}${quickPreview.note ? ` · “${quickPreview.note}”` : ""} — Enter to add`
               : quick.trim()
                 ? "Type an amount to add it"
-                : "Merchant, amount, optional note or date (12.09.2026). Category comes from the rules; the next N26 import replaces the row with the bank line."}
+                : "Merchant, amount, optional note or date (12.09.2026). Category comes from the rules; the next bank import replaces the row with the bank line."}
           </p>
-        </form>
+        </CardContent>
+      </Card>
+
+      <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <Kpi label="Revenue, net" value={<Amount value={totals.income} />} tone="up" style={{ "--i": 2 } as React.CSSProperties}>{`${allRows.filter((r) => r.kind === "income").length} invoices`}</Kpi>
+        <Kpi label="Expenses" value={<Amount value={totals.expense} />} tone="down" style={{ "--i": 3 } as React.CSSProperties}>
+          {`${yearEntries.filter((e) => e.kind === "expense").length} rows · ${totals.income > 0 ? `${Math.round((totals.expense / totals.income) * 100)} % of revenue` : "no revenue yet"}`}
+        </Kpi>
+        <Kpi label="Profit" value={<Amount value={totals.income - totals.expense} />} tone={totals.income - totals.expense < 0 ? "down" : "up"} style={{ "--i": 4 } as React.CSSProperties}>before Sonderausgaben</Kpi>
+        <Kpi label="Tax-relevant" value={<Amount value={totals.tax} />} tone="warn" style={{ "--i": 5 } as React.CSSProperties}>{`${yearEntries.filter((e) => e.kind === "tax").length} rows · Finanzamt, health, KSK`}</Kpi>
       </section>
 
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule md:grid-cols-4">
-        <Stat label="Revenue, net" value={`€${formatEur(totals.income)}`} sub={`${allRows.filter((r) => r.kind === "income").length} invoices`} tone="up" />
-        <Stat label="Expenses" value={`€${formatEur(totals.expense)}`} sub={`${yearEntries.filter((e) => e.kind === "expense").length} rows · ${totals.income > 0 ? `${Math.round((totals.expense / totals.income) * 100)} % of revenue` : "no revenue yet"}`} tone="down" />
-        <Stat label="Profit" value={`${totals.income - totals.expense < 0 ? "−" : ""}€${formatEur(Math.abs(totals.income - totals.expense))}`} sub="before Sonderausgaben" tone={signTone(totals.income - totals.expense)} />
-        <Stat label="Tax-relevant" value={`€${formatEur(totals.tax)}`} sub={`${yearEntries.filter((e) => e.kind === "tax").length} rows · Finanzamt, health, KSK`} tone="warn" />
-      </div>
-
-      <nav className="mt-12 mb-10 flex gap-6 overflow-x-auto border-b border-rule [scrollbar-width:none]">
-        {(
-          [
-            ["overview", "Tax estimate"],
-            ["entries", `Entries · ${allRows.length}`],
-            ["subscriptions", `Subscriptions · ${subs.filter((s) => s.verdict === "business" && !s.cancelledAt).length}${soon.length > 0 ? ` · ${soon.length} yearly renewing` : ""}`],
-            ["accountant", `For the accountant${exportRowsList.length > 0 ? ` · ${exportRowsList.length} new` : ""}`],
-          ] as [Tab, string][]
-        ).map(([key, label]) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setTab(key)}
-            className={`-mb-px shrink-0 whitespace-nowrap border-b-2 pb-3 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] transition-colors ${
-              tab === key ? "border-ink text-ink" : "border-transparent text-muted hover:text-ink"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </nav>
+      <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="fd-rise" style={{ "--i": 6 } as React.CSSProperties}>
+        <TabsList aria-label="Books sections" className="-mx-4 h-auto w-auto max-w-[calc(100%+2rem)] flex-nowrap justify-start overflow-x-auto px-4 [scrollbar-width:none] lg:mx-0 lg:px-[3px]">
+          {tabItems.map(([key, label]) => (
+            <TabsTrigger key={key} value={key} className="h-8 flex-none">{label}</TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
 
       {tab === "overview" ? (
+        <Panel>
         <>
           {seedExpensesHidden ? (
             <p className="mb-8 rounded-[12px] border border-rule-soft bg-card/40 px-4 py-3 text-[0.85rem] leading-[1.4rem] text-muted">
@@ -392,9 +387,11 @@ export function BooksDashboard({
           ) : null}
           <TaxEstimate year={year} income={inc} entries={yearEntries} elsewhere={elsewhere} settings={settings} setSettings={setSettings} facts={facts[year]} />
         </>
+        </Panel>
       ) : null}
 
       {tab === "entries" ? (
+        <Panel>
         <section className="flex flex-col gap-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap gap-2">
@@ -556,7 +553,7 @@ export function BooksDashboard({
             ))}
             {visible.length === 0 ? (
               <li className="px-4 py-10 text-center text-[0.9rem] text-muted">
-                Nothing here yet. <Link href="/for/expenses" className="underline underline-offset-4">Import an N26 export</Link> or add a row.
+                Nothing here yet. <Link href="/books?tab=import" className="underline underline-offset-4">Import an N26 export</Link> or add a row.
               </li>
             ) : null}
           </ul>
@@ -564,11 +561,23 @@ export function BooksDashboard({
             N26 rows are edited on the expenses page (verdict, tax bucket); here you set VAT on the receipt and notes. Ledger and seed rows come from the repo.
           </p>
         </section>
+        </Panel>
       ) : null}
 
-      {tab === "subscriptions" ? <SubscriptionsTab subs={subs} today={today} /> : null}
+      {tab === "subscriptions" ? (
+        <Panel>
+          <SubscriptionsTab subs={subs} today={today} />
+        </Panel>
+      ) : null}
+
+      {tab === "import" ? (
+        <Panel>
+          <ExpensesTriage embedded />
+        </Panel>
+      ) : null}
 
       {tab === "accountant" ? (
+        <Panel>
         <section className="flex flex-col gap-8">
           <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
             <label className="flex items-center gap-2 text-[0.9rem] text-ink">
@@ -626,16 +635,18 @@ export function BooksDashboard({
             </table>
           </div>
         </section>
+        </Panel>
       ) : null}
 
-      {toast ? (
-        <div className="pointer-events-none fixed inset-x-0 bottom-8 z-50 flex justify-center px-6">
-          <div className="rounded-full border border-rule bg-bg px-5 py-3 text-[0.85rem] text-ink" style={{ boxShadow: "var(--shadow-card)" }}>
-            {toast}
-          </div>
-        </div>
-      ) : null}
-    </main>
+    </FinanceShell>
+  );
+}
+
+function Panel({ children }: { children: React.ReactNode }) {
+  return (
+    <Card className="fd-rise" style={{ "--i": 7 } as React.CSSProperties}>
+      <CardContent className="flex flex-col gap-6">{children}</CardContent>
+    </Card>
   );
 }
 

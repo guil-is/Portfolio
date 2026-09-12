@@ -6,6 +6,15 @@ reads what the other pages already keep (books, expenses session,
 invoice ledger, subscriptions, sync) and adds one thing of its own: the
 balances you type in.
 
+## The app
+
+Three pages share one frame, `src/components/finance/FinanceShell.tsx`:
+Overview (`/money`), Books (`/books`, with Tax estimate, Entries, Bank
+import, Subscriptions and For the accountant as tabs, also listed under
+Books in the sidebar) and Clients (`/for/clients`). Same sidebar, same
+header, one sync instance, privacy mode, toast. Whichever password let
+you in, the shell opens the other pages' gates for the tab.
+
 ## The layout
 
 Built on **shadcn/ui** (Radix primitives via the `radix-ui` package;
