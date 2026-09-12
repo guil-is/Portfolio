@@ -37,6 +37,11 @@ const nextConfig: NextConfig = {
         destination: "/books",
         permanent: true,
       },
+      {
+        source: "/money/v2",
+        destination: "/money",
+        permanent: false,
+      },
     ];
   },
 };

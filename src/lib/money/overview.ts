@@ -5,6 +5,7 @@
  */
 
 import type { BookEntry } from "@/lib/expenses/books";
+import { CATEGORY_LABELS, type Category } from "@/lib/expenses/types";
 import type { YearPicture } from "@/lib/expenses/estimate";
 import { daysUntil, nextRenewalFrom, type TrackedSubscription } from "@/lib/expenses/subscriptions";
 import type { IncomeMonth, Receivable } from "@/lib/income";
@@ -307,4 +308,63 @@ export function attentionItems(input: {
 function prettyDay(iso: string): string {
   const d = new Date(`${iso}T00:00:00Z`);
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+}
+
+/* ---------- list helpers for the upcoming card ---------- */
+
+export function monthTitle(key: string): string {
+  return new Date(`${key}-01T00:00:00Z`).toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+}
+
+export function dayLabel(iso: string): string {
+  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", timeZone: "UTC" });
+}
+
+export type UpcomingRow = { kind: "one"; item: UpcomingItem } | { kind: "plans"; month: string; items: UpcomingItem[] };
+
+/** A month's rows with monthly plans rolled into one expandable row (they're background, not decisions). */
+export function upcomingRows(month: string, items: UpcomingItem[]): UpcomingRow[] {
+  const plans = items.filter((it) => it.kind === "subscription" && it.interval === "monthly");
+  const rest = items.filter((it) => !plans.includes(it));
+  const out: UpcomingRow[] = rest.map((item) => ({ kind: "one", item }));
+  if (plans.length === 1) out.push({ kind: "one", item: plans[0] });
+  else if (plans.length > 1) out.push({ kind: "plans", month, items: plans });
+  const dateOf = (r: UpcomingRow) => (r.kind === "one" ? r.item.date : r.items[0].date);
+  return out.sort((a, b) => dateOf(a).localeCompare(dateOf(b)));
+}
+
+/** Money in, money out and net over the next `days` (default 30) of upcoming items. */
+export function upcomingWindow(items: UpcomingItem[], today: string, days = 30): { income: number; out: number; net: number; count: number } {
+  const end = addDays(today, days);
+  const inWindow = items.filter((it) => it.date <= end);
+  const income = inWindow.filter((it) => it.amount > 0).reduce((t, it) => t + it.amount, 0);
+  const out = inWindow.filter((it) => it.amount < 0).reduce((t, it) => t + it.amount, 0);
+  return { income, out, net: income + out, count: inWindow.length };
+}
+
+/* ---------- where the money goes ---------- */
+
+export type CategorySlice = { key: Category | "other-rest"; label: string; amount: number; share: number };
+
+/** Business expenses by category over the last `months` full months, biggest first, the tail folded into "Everything else". */
+export function categoryBreakdown(entries: BookEntry[], today: string, months = 3, top = 6): { slices: CategorySlice[]; total: number; from: string; to: string } {
+  const keys: string[] = [];
+  const d = new Date(`${today.slice(0, 7)}-01T00:00:00Z`);
+  for (let i = 1; i <= months; i++) {
+    const m = new Date(d);
+    m.setUTCMonth(m.getUTCMonth() - i);
+    keys.push(m.toISOString().slice(0, 7));
+  }
+  const sums = new Map<Category, number>();
+  for (const e of entries) {
+    if (e.kind !== "expense" || !keys.includes(monthKey(e.date))) continue;
+    sums.set(e.category, (sums.get(e.category) ?? 0) + e.amount);
+  }
+  const total = [...sums.values()].reduce((t, v) => t + v, 0);
+  const sorted = [...sums.entries()].sort((a, b) => b[1] - a[1]);
+  const head = sorted.slice(0, top);
+  const rest = sorted.slice(top).reduce((t, [, v]) => t + v, 0);
+  const slices: CategorySlice[] = head.map(([key, amount]) => ({ key, label: CATEGORY_LABELS[key] ?? key, amount, share: total > 0 ? amount / total : 0 }));
+  if (rest > 0) slices.push({ key: "other-rest", label: "Everything else", amount: rest, share: total > 0 ? rest / total : 0 });
+  return { slices, total, from: keys[keys.length - 1], to: keys[0] };
 }

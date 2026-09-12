@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { Eye, EyeOff } from "lucide-react";
 
 /**
  * Privacy mode for the money page: one toggle hides every amount (they
@@ -46,23 +45,6 @@ export function PrivacyProvider({ children }: { children: ReactNode }) {
 
 export function usePrivacy() {
   return useContext(PrivacyContext);
-}
-
-export function PrivacyToggle() {
-  const { hidden, toggle } = usePrivacy();
-  return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-pressed={hidden}
-      title={hidden ? "Show amounts (H)" : "Hide amounts (H)"}
-      className={`inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors ${
-        hidden ? "border-ink bg-ink text-bg" : "border-rule bg-bg text-muted hover:border-ink hover:text-ink"
-      }`}
-    >
-      {hidden ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
-    </button>
-  );
 }
 
 const fmt0 = new Intl.NumberFormat("en", { maximumFractionDigits: 0 });

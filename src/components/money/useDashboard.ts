@@ -18,15 +18,18 @@ import { loadMemory, loadSession } from "@/lib/expenses/storage";
 import { loadSyncState } from "@/lib/expenses/sync";
 import { buildItems } from "@/lib/expenses/triage";
 import { isAsset, loadAccounts, saveAccounts, type Account } from "@/lib/money/accounts";
-import { attentionItems, cashflowMonths, kpis, upcomingItems } from "@/lib/money/overview";
+import { changeSince, loadHistory, recordSnapshot, type Snapshot } from "@/lib/money/history";
+import { attentionItems, cashflowMonths, categoryBreakdown, kpis, upcomingItems, upcomingWindow } from "@/lib/money/overview";
+import { loadSnoozed, saveSnoozed, snoozeUntil } from "@/lib/money/snooze";
 import type { Subscription } from "@/content/books/subscriptions";
 import { usePrivacy } from "./Privacy";
 
 /**
  * Everything the Financial Dashboard shows, computed once from what the
- * other pages keep. Both layouts (/money and /money/v2) read this hook,
- * so they can never disagree on a number.
+ * other pages keep. The layout file is presentation only.
  */
+
+export type CashflowPeriod = "6m" | "12m" | "ytd";
 
 export type DashboardProps = {
   income: IncomeYear[];
@@ -95,8 +98,41 @@ export function useDashboard({ income, incomeMonths, receivables, seed, facts, r
     () => attentionItems({ picture, receivables, subs, kpis: k, syncOn, joint: settings.joint, undecided, lastBankRow, today }),
     [picture, receivables, subs, k, syncOn, settings.joint, undecided, lastBankRow, today],
   );
-  const flow = useMemo(() => cashflowMonths({ incomeMonths, entries: merged, usdRate, today }), [incomeMonths, merged, usdRate, today]);
+  const [period, setPeriod] = useState<CashflowPeriod>("12m");
+  const flowCount = period === "6m" ? 6 : period === "ytd" ? Number(today.slice(5, 7)) : 12;
+  const flow = useMemo(() => cashflowMonths({ incomeMonths, entries: merged, usdRate, today, count: flowCount }), [incomeMonths, merged, usdRate, today, flowCount]);
+  const flowSummary = useMemo(() => {
+    const income = flow.reduce((t, m) => t + m.income, 0);
+    const expenses = flow.reduce((t, m) => t + m.expenses, 0);
+    return { income, expenses, net: income - expenses, avg: flow.length ? (income - expenses) / flow.length : 0 };
+  }, [flow]);
+  const categories = useMemo(() => categoryBreakdown(merged, today), [merged, today]);
   const upcoming = useMemo(() => upcomingItems({ picture, subs, receivables, usdRate, today }), [picture, subs, receivables, usdRate, today]);
+  const window30 = useMemo(() => upcomingWindow(upcoming, today, 30), [upcoming, today]);
+
+  // Net worth history: one snapshot per day, refreshed when balances change.
+  const [history, setHistory] = useState<Snapshot[]>(() => loadHistory());
+  useEffect(() => {
+    setHistory(recordSnapshot(accounts, usdRate, today));
+  }, [accounts, usdRate, today]);
+  const change30 = useMemo(() => changeSince(history, 30, today), [history, today]);
+
+  // Snoozed attention items (a week at a time; critical ones never).
+  const [snoozed, setSnoozed] = useState<Record<string, string>>(() => loadSnoozed());
+  const snooze = useCallback(
+    (id: string) => {
+      setSnoozed((cur) => {
+        const next = { ...cur, [id]: snoozeUntil(today) };
+        saveSnoozed(next);
+        return next;
+      });
+    },
+    [today],
+  );
+  const unsnoozeAll = useCallback(() => {
+    setSnoozed({});
+    saveSnoozed({});
+  }, []);
 
   const noBalances = accounts.every((a) => !a.updatedAt);
   const assetCount = accounts.filter((a) => isAsset(a.kind)).length;
@@ -105,8 +141,10 @@ export function useDashboard({ income, incomeMonths, receivables, seed, facts, r
     () => new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }),
     [],
   );
-  const now = attention.filter((a) => a.severity === "critical").length;
-  const soon = attention.filter((a) => a.severity === "warning").length;
+  const visibleAttention = useMemo(() => attention.filter((a) => a.severity === "critical" || !(snoozed[a.id] && snoozed[a.id] > today)), [attention, snoozed, today]);
+  const snoozedCount = attention.length - visibleAttention.length;
+  const now = visibleAttention.filter((a) => a.severity === "critical").length;
+  const soon = visibleAttention.filter((a) => a.severity === "warning").length;
 
   const changeAccounts = useCallback((next: Account[]) => {
     setAccounts(next);
@@ -131,14 +169,24 @@ export function useDashboard({ income, incomeMonths, receivables, seed, facts, r
     picture,
     subs,
     k,
-    attention,
+    attention: visibleAttention,
+    snoozedCount,
+    snooze,
+    unsnoozeAll,
     flow,
+    flowSummary,
+    period,
+    setPeriod,
+    categories,
     upcoming,
+    window30,
+    history,
+    change30,
     noBalances,
     assetCount,
     coverage,
     dateLine,
-    counts: { now, soon, note: attention.length - now - soon },
+    counts: { now, soon, note: visibleAttention.length - now - soon },
     runway,
     receivables,
   };

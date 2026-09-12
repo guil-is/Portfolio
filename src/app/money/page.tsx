@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { MoneyDashboard } from "@/components/money/MoneyDashboard";
+import { FinancialDashboard } from "@/components/money/FinancialDashboard";
 import { dashboardProps, noRobots, PASSWORD, STORAGE_KEY } from "./data";
 
 export const metadata = {
@@ -21,7 +21,7 @@ export default async function MoneyPage() {
         <ThemeToggle />
       </div>
       <PasswordGate password={PASSWORD} storageKey={STORAGE_KEY}>
-        <MoneyDashboard {...dashboardProps(unlocked)} />
+        <FinancialDashboard {...dashboardProps(unlocked)} />
       </PasswordGate>
     </>
   );

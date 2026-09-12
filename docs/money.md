@@ -6,30 +6,29 @@ reads what the other pages already keep (books, expenses session,
 invoice ledger, subscriptions, sync) and adds one thing of its own: the
 balances you type in.
 
-## Two layouts, one set of numbers
+## The layout
 
-- **`/money`** — the site's own design system (editorial: display
-  type, hairlines, tokens from `globals.css`).
-- **`/money/v2`** — the same page on **shadcn/ui** (Radix primitives,
-  copied-in components under `src/components/ui/`): left sidebar, white
-  cards on an Apple-grey page, one blue accent, Geist. Theme tokens sit
-  at the end of `globals.css`; `card`, `muted` and `accent` are prefixed
-  `fd-` so they don't collide with the site's tokens.
-
-Both read `useDashboard()` (`src/components/money/useDashboard.ts`), so
-they cannot disagree on a number. Keep one, delete the other; the rest
-of this file applies to both.
+Built on **shadcn/ui** (Radix primitives via the `radix-ui` package;
+components copied into `src/components/ui/`, see the README there): a
+left sidebar, white cards on an Apple-grey page, one blue accent,
+Geist. Patterns borrowed from the finance apps on Mobbin (Monarch,
+Copilot, Origin, Quicken, Wise): net worth as a trend with a change
+since last month, a summary strip under the cash flow chart, spending
+by category as single-hue bars, recurring items grouped by month, and
+"updated x ago" on every balance with a refresh-all action.
 
 ## What's on it
 
+- **Quick actions** — Update balances (every account becomes a field,
+  Enter hops to the next, Save stamps them all as checked today), Add
+  expense (the quick-add box on /books), Import bank export.
 - **Free to spend** — every asset balance in EUR, minus what the
   Finanzamt still gets this year. Negative means the tax bill is bigger
   than the cash. Until a balance has been entered it shows a prompt
   instead of a number.
-- **Tiles** — Cash (incl. the tax set-aside), Owed to you (unpaid
-  invoices in the ledger), Tax owed (unpaid Vorauszahlungen + the
-  projected year-end bill on top of them + VAT collected and not yet
-  paid, with a meter of how much the tax account covers), Monthly burn
+- **Tiles** — Net worth with a ninety-day trend and the change over the
+  last thirty days (one snapshot a day, `books:v1:net-worth-history`),
+  Tax set-aside with a meter of how much it covers, Monthly burn
   (business expenses + health/KSK/pension, average of the last three
   full months), Runway (free cash ÷ burn; red under 3 months, amber
   under 6).
@@ -38,12 +37,19 @@ of this file applies to both.
   them, yearly renewals within 30 days, tax set-aside short of what's
   owed, undecided bank rows, a stale import, stale balances, the
   single-filing warning, sync off. Sorted now → soon → note; each row
-  links to where you fix it.
+  links to where you fix it. Anything below "now" can be snoozed for a
+  week (the × on hover; `books:v1:money-snoozed`, so it follows the
+  sync); "n snoozed" in the card header brings them back.
 - **Cash flow** — 12 months of money in (invoices by the month the money
   landed, VAT stripped, plus manual income rows) vs business money out.
-  Hover a month for the numbers; **Table** shows the same as text.
-- **Next 90 days** — Finanzamt instalments, invoice due dates and
-  renewals, by month, with a running "cash after all of it". Monthly
+  6M / 12M / YTD; a strip with money in, business out, net and the
+  average per month; hover a month for the numbers; **Table** shows the
+  same as text.
+- **Where the money goes** — business expenses by category over the
+  last three full months (the burn window), biggest first, the tail
+  folded into "Everything else".
+- **Next 90 days** — a next-30-days strip (in, out, net), then Finanzamt
+  instalments, invoice due dates and renewals, by month, with a running "cash after all of it". Monthly
   plans roll up into one row per month (click to expand); yearly
   renewals, invoices and tax stay as their own rows. Personal plans are
   listed and tagged.
@@ -63,19 +69,20 @@ of this file applies to both.
 | Subscriptions | `trackSubscriptions()` over the books + the expenses session, with the tab's ratings and cancellations applied |
 | Everything else | `src/lib/money/overview.ts` — `kpis`, `cashflowMonths`, `upcomingItems`, `attentionItems`; pure functions, easy to unit-test |
 
-Pages: `src/app/money/page.tsx` → `src/components/money/MoneyDashboard.tsx`
-(v1) and `src/app/money/v2/page.tsx` → `src/components/money/v2/FdDashboard.tsx`
-(v2); both take their props from `src/app/money/data.ts`. Shared pieces:
-`useDashboard`, `CashflowChart` (inline SVG, no chart library),
-`Privacy`; v1 also uses `AttentionList`, `UpcomingList`, `AccountsPanel`. Chart colours
+Page: `src/app/money/page.tsx` (props from `src/app/money/data.ts`) →
+`src/components/money/FinancialDashboard.tsx` (layout and interaction
+only) over `useDashboard.ts` (every number), `CashflowChart` (inline SVG,
+no chart library) and `Privacy`. History and snoozes:
+`src/lib/money/history.ts`, `src/lib/money/snooze.ts`. Chart colours
 are the `--color-viz-in` / `--color-viz-out` tokens in `globals.css`
 (validated as a colour-blind-safe pair on both surfaces); status colours
 stay `--color-up/down/warn`.
 
 ## Keeping it useful
 
-- Enter balances whenever you check the bank — weekly is plenty. The
-  page nags after a month.
+- Hit "Update balances" whenever you check the bank — weekly is plenty.
+  The page nags after a month, and the net worth trend only grows
+  from those updates.
 - Keep the books in step: import the N26 export and swipe the queue.
   Burn, cash flow and the subscriptions are only as complete as the
   books.
