@@ -11,8 +11,13 @@ import {
   type YearSettings,
 } from "@/lib/expenses/books";
 import { formatEur } from "@/lib/expenses/triage";
+import { cn } from "@/lib/utils";
+import { Checkbox } from "./ui/checkbox";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { StatStrip, StatTile } from "./finance/Kpi";
 import { prettyDate } from "./ExpenseSwipeDeck";
-import { Stat, signTone, TONE_TEXT, type Tone } from "./Stat";
 
 /**
  * The year-end Finanzamt estimate: income from the ledger, expenses and
@@ -20,6 +25,11 @@ import { Stat, signTone, TONE_TEXT, type Tone } from "./Stat";
  * what the year looks like so far, and the same run-rate carried to
  * 31 December.
  */
+
+type Tone = "up" | "down" | "warn" | "ink";
+const TONE: Record<Tone, string> = { up: "text-fd-up", down: "text-fd-down", warn: "text-fd-warn", ink: "" };
+const signTone = (n: number): Tone => (n < 0 ? "down" : "up");
+
 export function TaxEstimate({
   year,
   income,
@@ -51,18 +61,21 @@ export function TaxEstimate({
   const dueLabel = (d: { due: string; amount: number }) =>
     `${prettyDate(d.due)} ${eur(d.amount)}${d.due < today ? " · overdue" : d.due === today ? " · due today" : ""}`;
 
+  const field = "h-8 w-[100px] text-sm";
+
   return (
-    <section className="flex flex-col gap-10">
+    <section className="flex flex-col gap-8">
       {overdue.length > 0 ? (
-        <p className="rounded-[12px] border border-down/50 bg-down/5 px-4 py-3 text-[0.85rem] leading-[1.4rem] text-ink">
-          <span className="font-medium text-down">
+        <p className="rounded-xl border border-fd-down/40 bg-fd-down/5 px-4 py-3 text-sm leading-6">
+          <span className="font-medium text-fd-down">
             {eur(overdue.reduce((t, s) => t + s.amount, 0))} of Vorauszahlungen past due
           </span>{" "}
           and not in the books: {overdue.map((d) => `${prettyDate(d.due)} ${eur(d.amount)}`).join(", ")}. The Finanzamt adds a 1 % Säumniszuschlag per month started, so pay it now with the Steuernummer and “ESt-VZ” in the reference. If you did pay it from another account, add the row in Entries.
         </p>
       ) : null}
-      <div className="grid grid-cols-1 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule md:grid-cols-3">
-        <Stat
+
+      <StatStrip className="md:grid-cols-3">
+        <StatTile
           label={isPartial ? "Expected bill at year end" : "Expected bill"}
           value={eur(Math.max(0, projected.incomeTaxDue))}
           sub={
@@ -74,105 +87,66 @@ export function TaxEstimate({
           }
           tone={projected.incomeTaxDue <= 0 ? "up" : "down"}
         />
-        <Stat
-          label="VAT still to pay"
-          value={eur(Math.max(0, soFar.vatDue))}
-          sub={`collected ${eur(vatCollected)} · paid ${eur(side.vatPaid)} · before Vorsteuer`}
-          tone={soFar.vatDue > 0 ? "warn" : "ink"}
-        />
-        <Stat
+        <StatTile label="VAT still to pay" value={eur(Math.max(0, soFar.vatDue))} sub={`collected ${eur(vatCollected)} · paid ${eur(side.vatPaid)} · before Vorsteuer`} tone={soFar.vatDue > 0 ? "warn" : undefined} />
+        <StatTile
           label={isPartial ? "Profit, projected" : "Profit"}
           value={eur(projected.profit)}
           sub={`${isPartial ? `so far ${eur(soFar.profit)} · ` : ""}effective rate ${Math.round(projected.effectiveRate * 100)} %`}
-          tone={signTone(projected.profit)}
+          tone={projected.profit < 0 ? "down" : "up"}
         />
-      </div>
+      </StatStrip>
 
-      <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
-        <label className="flex items-center gap-2 text-[0.85rem] text-muted">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+        <Label className="gap-2 font-normal text-fd-muted-foreground">
           1 USD =
-          <input
+          <Input
             type="number"
             step="0.01"
             min="0.5"
             max="1.5"
             value={settings.usdRate}
             onChange={(e) => setSettings({ ...settings, usdRate: Number(e.target.value) || settings.usdRate })}
-            className="w-[72px] rounded-[8px] border border-rule bg-bg px-2 py-1 text-[0.85rem] text-ink focus:border-ink focus:outline-none"
+            className="h-8 w-[76px] text-sm"
           />
           EUR
-        </label>
-        <label className="flex items-center gap-2 text-[0.85rem] text-muted">
-          <input
-            type="checkbox"
-            checked={settings.joint}
-            onChange={(e) => setSettings({ ...settings, joint: e.target.checked })}
-            className="h-4 w-4 accent-[var(--color-accent)]"
-          />
+        </Label>
+        <Label className="gap-2 font-normal text-fd-muted-foreground">
+          <Checkbox checked={settings.joint} onCheckedChange={(v) => setSettings({ ...settings, joint: v === true })} />
           Married, filing jointly (Splittingtarif)
-        </label>
-        <label className="flex items-center gap-2 text-[0.85rem] text-muted">
+        </Label>
+        <Label className="gap-2 font-normal text-fd-muted-foreground">
           Vorauszahlungen not in the books
-          <input
-            type="number"
-            step="1"
-            min="0"
-            value={ys.prepaidExtra}
-            onChange={(e) => setYs({ prepaidExtra: Number(e.target.value) || 0 })}
-            className="w-[100px] rounded-[8px] border border-rule bg-bg px-2 py-1 text-[0.85rem] text-ink focus:border-ink focus:outline-none"
-          />
-        </label>
+          <Input type="number" step="1" min="0" value={ys.prepaidExtra} onChange={(e) => setYs({ prepaidExtra: Number(e.target.value) || 0 })} className={field} />
+        </Label>
         {settings.joint ? (
           <>
-            <label className="flex items-center gap-2 text-[0.85rem] text-muted">
+            <Label className="gap-2 font-normal text-fd-muted-foreground">
               Partner&apos;s taxable income {year}
-              <input
-                type="number"
-                step="100"
-                min="0"
-                value={ys.spouseIncome}
-                onChange={(e) => setYs({ spouseIncome: Number(e.target.value) || 0 })}
-                className="w-[110px] rounded-[8px] border border-rule bg-bg px-2 py-1 text-[0.85rem] text-ink focus:border-ink focus:outline-none"
-              />
-            </label>
-            <label className="flex items-center gap-2 text-[0.85rem] text-muted">
+              <Input type="number" step="100" min="0" value={ys.spouseIncome} onChange={(e) => setYs({ spouseIncome: Number(e.target.value) || 0 })} className={field} />
+            </Label>
+            <Label className="gap-2 font-normal text-fd-muted-foreground">
               Their Lohnsteuer withheld
-              <input
-                type="number"
-                step="100"
-                min="0"
-                value={ys.spouseWithheld}
-                onChange={(e) => setYs({ spouseWithheld: Number(e.target.value) || 0 })}
-                className="w-[110px] rounded-[8px] border border-rule bg-bg px-2 py-1 text-[0.85rem] text-ink focus:border-ink focus:outline-none"
-              />
-            </label>
-            <label className="flex items-center gap-2 text-[0.85rem] text-muted">
+              <Input type="number" step="100" min="0" value={ys.spouseWithheld} onChange={(e) => setYs({ spouseWithheld: Number(e.target.value) || 0 })} className={field} />
+            </Label>
+            <Label className="gap-2 font-normal text-fd-muted-foreground" title="Tax-free, but raises the rate on everything else (Progressionsvorbehalt)">
               Their Elterngeld / Krankengeld
-              <input
-                type="number"
-                step="100"
-                min="0"
-                title="Tax-free, but raises the rate on everything else (Progressionsvorbehalt)"
-                value={ys.spouseBenefits}
-                onChange={(e) => setYs({ spouseBenefits: Number(e.target.value) || 0 })}
-                className="w-[110px] rounded-[8px] border border-rule bg-bg px-2 py-1 text-[0.85rem] text-ink focus:border-ink focus:outline-none"
-              />
-            </label>
+              <Input type="number" step="100" min="0" value={ys.spouseBenefits} onChange={(e) => setYs({ spouseBenefits: Number(e.target.value) || 0 })} className={field} />
+            </Label>
           </>
         ) : null}
-        {ys.source ? <span className="text-[0.8rem] text-faint">Prefilled {ys.source}</span> : null}
+        {ys.source ? <span className="text-xs text-fd-muted-foreground/70">Prefilled {ys.source}</span> : null}
       </div>
 
-      <div className="overflow-x-auto rounded-[14px] border border-rule">
-        <table className="w-full min-w-[560px] border-collapse text-[0.9rem]">
-          <thead>
-            <tr className="border-b border-rule bg-card/40 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
-              <th className="px-4 py-2 text-left">Line</th>
-              <th className="px-4 py-2 text-right">So far</th>
-              {isPartial ? <th className="px-4 py-2 text-right">Projected to 31 Dec</th> : null}
-            </tr>
-          </thead>
-          <tbody>
+      <div className="overflow-hidden rounded-xl border">
+        <Table className="min-w-[560px]">
+          <TableHeader>
+            <TableRow className="bg-fd-muted/50 hover:bg-fd-muted/50">
+              <TableHead className="px-4">Line</TableHead>
+              <TableHead className="px-4 text-right">So far</TableHead>
+              {isPartial ? <TableHead className="px-4 text-right">Projected to 31 Dec</TableHead> : null}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             <Line label="Revenue received" sub={`${income?.invoices ?? 0} invoices${outstanding > 0 ? ` · ${eur(outstanding)} still unpaid, not counted` : ""}`} a={revenue} b={revenue * scale} partial={isPartial} eur={eur} tone="up" />
             <Line label="Business expenses" a={-side.expenses} b={-side.expenses * scale} partial={isPartial} eur={eur} tone="down" />
             <Line label="Profit" a={soFar.profit} b={projected.profit} partial={isPartial} eur={eur} strong tone={signTone(projected.profit)} />
@@ -200,13 +174,13 @@ export function TaxEstimate({
             ) : null}
             {settings.joint ? <Line label="Partner's Lohnsteuer withheld" tone="up" a={-ys.spouseWithheld} b={-ys.spouseWithheld} partial={isPartial} eur={eur} /> : null}
             <Line label={projected.incomeTaxDue >= 0 ? "Expected bill" : "Expected refund"} a={Math.abs(soFar.incomeTaxDue)} b={Math.abs(projected.incomeTaxDue)} partial={isPartial} eur={eur} strong tone={projected.incomeTaxDue >= 0 ? "down" : "up"} />
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
       <TaxRows side={side} eur={eur} />
 
-      <ul className="flex flex-col gap-1.5 text-[0.85rem] leading-[1.45rem] text-muted">
+      <ul className="flex flex-col gap-1.5 text-xs leading-5 text-fd-muted-foreground">
         <li>
           Projection = this year&apos;s average month × 12. It assumes the rest of the year looks like the part
           that&apos;s booked, which is optimistic in a slow autumn and pessimistic before a big invoice lands.
@@ -241,16 +215,16 @@ function Line({
   tone?: Tone;
 }) {
   const fmt = (n: number) => (n < 0 ? `− ${eur(-n)}` : eur(n));
-  const cls = `${strong ? "font-display text-[1.05rem] font-bold" : ""} ${TONE_TEXT[tone ?? "ink"]}`;
+  const cls = cn("px-4 py-2.5 text-right tabular-nums", strong ? "text-base font-semibold" : "", TONE[tone ?? "ink"]);
   return (
-    <tr className="border-b border-rule-soft last:border-b-0">
-      <td className="px-4 py-2.5">
-        <span className={strong ? "text-ink" : "text-body"}>{label}</span>
-        {sub ? <span className="ml-2 text-[0.8rem] text-muted">{sub}</span> : null}
-      </td>
-      <td className={`px-4 py-2.5 text-right tabular-nums ${cls}`}>{fmt(a)}</td>
-      {partial ? <td className={`px-4 py-2.5 text-right tabular-nums ${cls}`}>{fmt(b)}</td> : null}
-    </tr>
+    <TableRow className={strong ? "bg-fd-muted/30" : undefined}>
+      <TableCell className="px-4 py-2.5 whitespace-normal">
+        <span className={strong ? "font-medium" : ""}>{label}</span>
+        {sub ? <span className="ml-2 text-xs text-fd-muted-foreground">{sub}</span> : null}
+      </TableCell>
+      <TableCell className={cls}>{fmt(a)}</TableCell>
+      {partial ? <TableCell className={cls}>{fmt(b)}</TableCell> : null}
+    </TableRow>
   );
 }
 
@@ -264,27 +238,25 @@ function TaxRows({ side, eur }: { side: ReturnType<typeof bookTotals>; eur: (n: 
   if (groups.every(([b]) => side.rows[b].length === 0)) return null;
   return (
     <div className="flex flex-col gap-3">
-      <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
-        Tax-relevant rows · what counts where
-      </p>
+      <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-fd-muted-foreground">Tax-relevant rows · what counts where</p>
       {groups.map(([bucket, title, hint]) =>
         side.rows[bucket].length === 0 ? null : (
-          <div key={bucket} className="rounded-[14px] border border-rule px-4">
-            <p className="flex items-baseline justify-between gap-4 border-b border-rule-soft py-2.5 text-[0.85rem]">
-              <span className="text-ink">
-                {title} <span className="ml-1 text-muted">· {hint}</span>
+          <div key={bucket} className="overflow-hidden rounded-xl border">
+            <p className="flex items-baseline justify-between gap-4 border-b bg-fd-muted/50 px-4 py-2.5 text-sm">
+              <span>
+                {title} <span className="ml-1 text-fd-muted-foreground">· {hint}</span>
               </span>
-              <span className={`tabular-nums ${bucket === "tax" ? "text-up" : bucket === "taxother" ? "text-muted" : "text-warn"}`}>{eur(side.rows[bucket].reduce((t, e) => t + e.amount, 0))}</span>
+              <span className={cn("tabular-nums font-medium", bucket === "tax" ? "text-fd-up" : bucket === "taxother" ? "text-fd-muted-foreground" : "text-fd-warn")}>{eur(side.rows[bucket].reduce((t, e) => t + e.amount, 0))}</span>
             </p>
-            <ul className="flex flex-col divide-y divide-rule-soft">
+            <ul className="flex flex-col divide-y">
               {side.rows[bucket].map((e) => (
-                <li key={e.id} className="grid grid-cols-[84px_minmax(0,1fr)_auto] items-baseline gap-3 py-2 text-[0.8rem]">
-                  <span className="font-caption text-[10px] uppercase tracking-[1px] text-muted">{prettyDate(e.date)}</span>
-                  <span className="truncate text-body">
+                <li key={e.id} className="grid grid-cols-[84px_minmax(0,1fr)_auto] items-baseline gap-3 px-4 py-2 text-sm">
+                  <span className="text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">{prettyDate(e.date)}</span>
+                  <span className="truncate">
                     {e.party}
-                    {e.reference ? <span className="text-muted"> · {e.reference}</span> : null}
+                    {e.reference ? <span className="text-fd-muted-foreground"> · {e.reference}</span> : null}
                   </span>
-                  <span className="tabular-nums text-ink">{eur(e.amount)}</span>
+                  <span className="tabular-nums">{eur(e.amount)}</span>
                 </li>
               ))}
             </ul>

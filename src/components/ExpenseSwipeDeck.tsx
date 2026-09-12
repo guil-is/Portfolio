@@ -25,6 +25,13 @@ import {
   type DecidedVerdict,
 } from "@/lib/expenses/types";
 import { formatEur, sameMerchant, similarPending, type Item } from "@/lib/expenses/triage";
+import { cn } from "@/lib/utils";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { NativeSelect, NativeSelectOption } from "./ui/native-select";
+import { Switch } from "./ui/switch";
 
 /**
  * The "tinder" half of /for/expenses. One card at a time: drag right for
@@ -190,23 +197,19 @@ export function ExpenseSwipeDeck({
     <section className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-          <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
+          <p className="text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">
             {done} of {total} sorted · {queue.length} to go
           </p>
           <div className="flex items-center gap-3">
-            {streak >= 3 ? (
-              <span className="inline-flex items-center rounded-[6px] border border-accent/40 bg-accent/10 px-2 py-[2px] font-caption text-[10px] font-semibold uppercase tracking-[1px] text-accent">
-                Streak {streak}
-              </span>
-            ) : null}
-            <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
+            {streak >= 3 ? <Badge className="border-transparent bg-primary/10 text-primary">Streak {streak}</Badge> : null}
+            <p className="text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">
               Business so far €{formatEur(businessSoFar)}
             </p>
           </div>
         </div>
-        <div className="h-[3px] w-full overflow-hidden rounded-full bg-rule">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-fd-muted">
           <div
-            className="h-full rounded-full bg-accent transition-[width] duration-500 ease-out"
+            className="h-full rounded-full bg-primary transition-[width] duration-500 ease-out"
             style={{ width: `${Math.round(progress * 100)}%` }}
           />
         </div>
@@ -275,7 +278,7 @@ export function ExpenseSwipeDeck({
           <Clock className="h-4 w-4" strokeWidth={2} />
         </RoundButton>
       </div>
-      <p className="text-center font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-faint">
+      <p className="text-center text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground/70">
         <span className="inline-flex items-center gap-1"><ArrowLeft className="h-3 w-3" /> personal</span>
         <span className="mx-3">·</span>
         <span className="inline-flex items-center gap-1">business <ArrowRight className="h-3 w-3" /></span>
@@ -307,12 +310,12 @@ function RoundButton({
   const dims = size === "lg" ? "h-16 w-16" : "h-12 w-12";
   const color =
     tone === "yes"
-      ? "border-accent text-accent hover:bg-accent hover:text-bg"
+      ? "border-primary text-primary hover:bg-primary hover:text-primary-foreground"
       : tone === "no"
-        ? "border-[#d14343] text-[#d14343] hover:bg-[#d14343] hover:text-white"
+        ? "border-fd-down text-fd-down hover:bg-fd-down hover:text-white"
         : active
-          ? "border-ink bg-ink text-bg"
-          : "border-rule text-muted hover:border-ink hover:text-ink";
+          ? "border-foreground bg-foreground text-background"
+          : "text-fd-muted-foreground hover:border-foreground/40 hover:text-foreground";
   return (
     <button
       type="button"
@@ -320,7 +323,7 @@ function RoundButton({
       title={label}
       onClick={(e) => onClick(e.shiftKey)}
       disabled={disabled}
-      className={`inline-flex ${dims} items-center justify-center rounded-full border bg-bg transition-colors disabled:cursor-not-allowed disabled:opacity-30 ${color}`}
+      className={cn("inline-flex items-center justify-center rounded-full border bg-fd-card shadow-fd transition-colors disabled:cursor-not-allowed disabled:opacity-30", dims, color)}
     >
       {children}
     </button>
@@ -439,10 +442,7 @@ function Card({
       onPointerCancel={onPointerUp}
     >
       <div
-        className={`relative flex h-full w-full flex-col overflow-hidden rounded-[24px] border border-rule bg-bg ${
-          depth === 0 ? "cursor-grab active:cursor-grabbing" : ""
-        }`}
-        style={{ boxShadow: "var(--shadow-card)" }}
+        className={cn("relative flex h-full w-full flex-col overflow-hidden rounded-3xl border bg-fd-card shadow-fd", depth === 0 && "cursor-grab active:cursor-grabbing")}
       >
         {depth === 0 ? (
           <>
@@ -494,44 +494,38 @@ function CardFront({
   return (
     <div className="flex h-full flex-col justify-between p-7">
       <div className="flex items-center justify-between gap-4">
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
+        <p className="text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">
           {prettyDateWithDay(tx.date)}
         </p>
-        <span className="inline-flex items-center rounded-[6px] border border-rule-soft bg-card/50 px-2 py-[2px] font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
-          {kindLabel(tx.kind, tx.type)}
-        </span>
+        <Badge variant="secondary">{kindLabel(tx.kind, tx.type)}</Badge>
       </div>
 
       <div className="flex flex-col gap-3">
-        <h2 className="font-display text-[1.75rem] font-bold leading-[1.1] text-ink md:text-[2rem]">
+        <h2 className="text-2xl font-semibold leading-tight tracking-tight md:text-[1.75rem]">
           {tx.partner}
-          {similarCount > 0 ? (
-            <span className="ml-3 inline-flex -translate-y-1 items-center rounded-[6px] border border-rule-soft bg-card/60 px-2 py-[2px] align-middle font-caption text-[11px] font-semibold tracking-[1px] text-muted">
-              ×{similarCount + 1}
-            </span>
-          ) : null}
+          {similarCount > 0 ? <Badge variant="secondary" className="ml-2 -translate-y-0.5 align-middle">×{similarCount + 1}</Badge> : null}
         </h2>
-        <p className="font-display text-[3rem] font-bold leading-none text-ink">
+        <p className="text-5xl font-semibold leading-none tracking-tight tabular-nums">
           €{formatEur(Math.abs(tx.amount))}
         </p>
         {tx.originalAmount !== undefined ? (
-          <p className="font-caption text-[11px] font-medium uppercase tracking-[1.5px] text-muted">
+          <p className="text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">
             {Math.abs(tx.originalAmount).toFixed(2)} {tx.originalCurrency}
           </p>
         ) : null}
         {tx.reference ? (
-          <p className="line-clamp-3 text-[0.9rem] leading-[1.5rem] text-muted">
+          <p className="line-clamp-3 text-sm leading-6 text-fd-muted-foreground">
             {tx.reference}
           </p>
         ) : null}
       </div>
 
-      <div className="flex flex-col gap-2 rounded-[14px] bg-card/60 px-4 py-3">
-        <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
+      <div className="flex flex-col gap-1.5 rounded-xl bg-fd-muted/60 px-4 py-3">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-fd-muted-foreground">
           Why I&apos;m asking
         </p>
-        <p className="text-[0.9rem] leading-[1.45rem] text-body">{auto.reason}</p>
-        <p className="text-[0.8rem] leading-[1.3rem] text-muted">
+        <p className="text-sm leading-6">{auto.reason}</p>
+        <p className="text-xs leading-5 text-fd-muted-foreground">
           Suggested: {CATEGORY_LABELS[auto.category]}
           {similarCount > 0
             ? byAmount
@@ -579,90 +573,49 @@ function CardBack({
     <div className="flex h-full flex-col gap-4 overflow-y-auto p-6">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
+          <p className="text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">
             {prettyDate(tx.date)} · €{formatEur(Math.abs(tx.amount))}
           </p>
-          <h3 className="mt-1 truncate font-display text-[1.25rem] font-bold leading-tight text-ink">
+          <h3 className="mt-1 truncate text-lg font-semibold leading-tight tracking-tight">
             {tx.partner}
           </h3>
         </div>
-        <button
-          type="button"
-          onClick={onFlip}
-          className="shrink-0 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted hover:text-ink"
-        >
-          Back
-        </button>
+        <Button type="button" variant="ghost" size="sm" onClick={onFlip} className="shrink-0">Back</Button>
       </div>
 
-      <label className="flex flex-col gap-1.5">
-        <span className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
-          Category if business
-        </span>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value as Category)}
-          className="w-full rounded-[10px] border border-rule bg-bg px-3 py-2 text-[0.9rem] text-ink focus:border-ink focus:outline-none"
-        >
+      <Label className="flex-col items-stretch gap-1.5">
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-fd-muted-foreground">Category if business</span>
+        <NativeSelect value={category} onChange={(e) => setCategory(e.target.value as Category)} className="w-full">
           {BUSINESS_CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {CATEGORY_LABELS[c]}
-            </option>
+            <NativeSelectOption key={c} value={c}>{CATEGORY_LABELS[c]}</NativeSelectOption>
           ))}
-        </select>
-      </label>
+        </NativeSelect>
+      </Label>
 
-      <label className="flex flex-col gap-1.5">
-        <span className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
-          Note for the sheet
-        </span>
-        <input
-          type="text"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          placeholder="e.g. client dinner with Justice"
-          className="w-full rounded-[10px] border border-rule bg-bg px-3 py-2 text-[0.9rem] text-ink placeholder:text-faint focus:border-ink focus:outline-none"
-        />
-      </label>
+      <Label className="flex-col items-stretch gap-1.5">
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-fd-muted-foreground">Note for the sheet</span>
+        <Input type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. client dinner with Justice" />
+      </Label>
 
-      <label className="flex items-center justify-between gap-3 rounded-[10px] border border-rule px-3 py-2">
-        <span className="text-[0.85rem] leading-[1.3rem] text-body">
+      <Label className="justify-between gap-3 rounded-xl border px-3 py-2.5 font-normal">
+        <span className="text-sm leading-5">
           Apply to {similarCount} more {item.key.includes("@") ? "of this exact amount" : "from this merchant"} and remember it
         </span>
-        <input
-          type="checkbox"
-          checked={applyToSimilar}
-          onChange={(e) => setApplyToSimilar(e.target.checked)}
-          className="h-4 w-4 accent-[var(--color-accent)]"
-        />
-      </label>
+        <Switch checked={applyToSimilar} onCheckedChange={setApplyToSimilar} />
+      </Label>
 
       <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={() => onDecideOther("tax")}
-          className="flex-1 rounded-[10px] border border-rule px-3 py-2 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted transition-colors hover:border-ink hover:text-ink"
-        >
-          Tax-relevant, not an expense
-        </button>
-        <button
-          type="button"
-          onClick={() => onDecideOther("skip")}
-          className="flex-1 rounded-[10px] border border-rule px-3 py-2 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted transition-colors hover:border-ink hover:text-ink"
-        >
-          Skip (internal)
-        </button>
+        <Button type="button" variant="outline" size="sm" onClick={() => onDecideOther("tax")} className="flex-1">Tax-relevant, not an expense</Button>
+        <Button type="button" variant="outline" size="sm" onClick={() => onDecideOther("skip")} className="flex-1">Skip (internal)</Button>
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
-          As exported
-        </p>
-        <dl className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-x-3 gap-y-1 text-[0.8rem] leading-[1.25rem]">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-fd-muted-foreground">As exported</p>
+        <dl className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-x-3 gap-y-1 text-xs leading-5">
           {Object.entries(tx.raw).map(([k, v]) => (
             <div key={k} className="contents">
-              <dt className="truncate text-muted">{k}</dt>
-              <dd className="break-words text-body">{v}</dd>
+              <dt className="truncate text-fd-muted-foreground">{k}</dt>
+              <dd className="break-words">{v}</dd>
             </div>
           ))}
         </dl>
@@ -670,19 +623,19 @@ function CardBack({
 
       {decidedSiblings.length > 0 || siblings.length > 0 ? (
         <div className="flex flex-col gap-1.5">
-          <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-fd-muted-foreground">
             {item.key.includes("@") ? "Same biller, same amount" : "Same merchant"} · {siblings.length} other{siblings.length === 1 ? "" : "s"} · €
             {formatEur(siblings.reduce((s, i) => s + Math.abs(i.tx.amount), 0))}
           </p>
-          <ul className="flex flex-col gap-0.5 text-[0.8rem] leading-[1.25rem] text-muted">
+          <ul className="flex flex-col gap-0.5 text-xs leading-5 text-fd-muted-foreground">
             {siblings.slice(0, 6).map((s) => (
               <li key={s.tx.id} className="flex justify-between gap-3">
                 <span>{prettyDate(s.tx.date)}</span>
                 <span>€{formatEur(Math.abs(s.tx.amount))}</span>
-                <span className="text-faint">{s.decision ? s.decision.verdict : "pending"}</span>
+                <span className="opacity-70">{s.decision ? s.decision.verdict : "pending"}</span>
               </li>
             ))}
-            {siblings.length > 6 ? <li className="text-faint">…and {siblings.length - 6} more</li> : null}
+            {siblings.length > 6 ? <li className="opacity-70">…and {siblings.length - 6} more</li> : null}
           </ul>
         </div>
       ) : null}
@@ -695,11 +648,10 @@ function Stamp({ side, label, opacity }: { side: "left" | "right"; label: string
   return (
     <div
       aria-hidden
-      className={`pointer-events-none absolute top-7 z-20 rounded-[8px] border-[3px] px-3 py-1 font-caption text-[14px] font-bold uppercase tracking-[3px] ${
-        yes
-          ? "left-6 -rotate-12 border-accent text-accent"
-          : "right-6 rotate-12 border-[#d14343] text-[#d14343]"
-      }`}
+      className={cn(
+        "pointer-events-none absolute top-7 z-20 rounded-lg border-[3px] px-3 py-1 text-sm font-bold uppercase tracking-[3px]",
+        yes ? "left-6 -rotate-12 border-primary text-primary" : "right-6 rotate-12 border-fd-down text-fd-down",
+      )}
       style={{ opacity }}
     >
       {label}

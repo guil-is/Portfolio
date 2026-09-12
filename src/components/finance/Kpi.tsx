@@ -52,3 +52,42 @@ export function Kpi({ label, value, tip, tone, children, style, className }: { l
     </Card>
   );
 }
+
+/** A muted strip of figures for use inside a card (where nested cards would be too much). */
+export function StatStrip({ children, className }: { children: ReactNode; className?: string }) {
+  return <div className={cn("grid grid-cols-2 gap-4 rounded-xl bg-fd-muted/60 p-4", className)}>{children}</div>;
+}
+
+export function StatTile({
+  label,
+  value,
+  sub,
+  tone,
+  onClick,
+  active,
+  title,
+}: {
+  label: string;
+  value: ReactNode;
+  sub?: ReactNode;
+  tone?: Tone;
+  onClick?: () => void;
+  active?: boolean;
+  title?: string;
+}) {
+  const inner = (
+    <>
+      <span className="truncate text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">{label}</span>
+      <span className={cn("text-xl font-semibold tracking-tight tabular-nums", tone && TONE[tone])}>{value}</span>
+      {sub ? <span className="text-xs leading-4 text-fd-muted-foreground">{sub}</span> : null}
+    </>
+  );
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} title={title} aria-pressed={active} className={cn("-m-2 flex min-w-0 flex-col gap-1 rounded-lg p-2 text-left transition-colors hover:bg-fd-card/70", active && "bg-fd-card shadow-fd")}>
+        {inner}
+      </button>
+    );
+  }
+  return <div className="flex min-w-0 flex-col gap-1">{inner}</div>;
+}

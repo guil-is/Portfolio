@@ -18,8 +18,13 @@ import {
   type SubSort,
   type TrackedSubscription,
 } from "@/lib/expenses/subscriptions";
+import { cn } from "@/lib/utils";
 import { prettyDate } from "./ExpenseSwipeDeck";
-import { Stat } from "./Stat";
+import { StatStrip, StatTile } from "./finance/Kpi";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { NativeSelect, NativeSelectOption } from "./ui/native-select";
 
 /**
  * Subscriptions tab on /books. Layout borrowed from the recurring
@@ -42,9 +47,9 @@ const SORTS: [SubSort, string][] = [
 const RATINGS: SubRating[] = [3, 2, 1];
 const RATING_SHORT: Record<SubRating, string> = { 3: "Essential", 2: "Useful", 1: "Cut" };
 const RATING_ON: Record<SubRating, string> = {
-  3: "bg-up/15 text-up",
-  2: "bg-ink/10 text-ink",
-  1: "bg-down/15 text-down",
+  3: "bg-fd-card text-fd-up shadow-sm",
+  2: "bg-fd-card text-foreground shadow-sm",
+  1: "bg-fd-card text-fd-down shadow-sm",
 };
 
 const RENEWAL_ORDER: RenewalBucket[] = ["week", "month", "quarter", "later"];
@@ -153,10 +158,6 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
     return visible.length > 0 ? [{ key: "all", label: "", rows: visible, hint: "" }] : [];
   }, [visible, sort, view, today]);
 
-  const chip = (on: boolean) =>
-    `rounded-full border px-3 py-1 font-caption text-[10px] font-semibold uppercase tracking-[1px] transition-colors ${
-      on ? "border-ink bg-ink text-bg" : "border-rule text-muted hover:border-ink hover:text-ink"
-    }`;
   const toggle = (v: View) => setView(view === v ? "all" : v);
 
   const chips: [View, string, number | null][] = [
@@ -174,93 +175,72 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
 
   return (
     <section className="flex flex-col gap-8">
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule md:grid-cols-5">
-        <Stat label="Per year, business" value={`€${formatEur(yearly)}`} sub={`${active.length} plans · €${formatEur(yearly / 12)} a month${personal.length > 0 ? ` · personal €${formatEur(personalYearly)}/yr on top` : ""}`} tone="down" />
-        <Stat
+      <StatStrip className="md:grid-cols-5">
+        <StatTile label="Per year, business" value={`€${formatEur(yearly)}`} sub={`${active.length} plans · €${formatEur(yearly / 12)} a month${personal.length > 0 ? ` · personal €${formatEur(personalYearly)}/yr on top` : ""}`} tone="down" />
+        <StatTile
           label="Next 30 days"
           value={`€${formatEur(soonTotal)}`}
           sub={soon.length === 0 ? "nothing due" : `${soon.length} charge${soon.length === 1 ? "" : "s"}${soonYearly.length > 0 ? ` · ${soonYearly.length} yearly: ${soonYearly.map((s) => s.name).join(", ")}` : ""}`}
-          tone={soonYearly.length > 0 ? "warn" : "ink"}
+          tone={soonYearly.length > 0 ? "warn" : undefined}
         />
-        <button type="button" onClick={() => toggle("cut")} className="flex h-full flex-col text-left transition-colors hover:bg-card/40">
-          <Stat
-            label="Could cut"
-            value={`€${formatEur(cutTotal)}`}
-            sub={cut.length > 0 ? `${cut.length} plan${cut.length === 1 ? "" : "s"} · ${Math.round((cutTotal / Math.max(1, yearly)) * 100)} % of the total` : "rate a plan “Cut” to see it here"}
-            tone={cut.length > 0 ? "up" : "ink"}
-          />
-        </button>
-        <button type="button" onClick={() => toggle("cancelled")} className="flex h-full flex-col text-left transition-colors hover:bg-card/40">
-          <Stat
-            label={`Cancelled in ${today.slice(0, 4)}`}
-            value={`€${formatEur(saved)}`}
-            sub={
-              rebilled.length > 0
-                ? `${rebilled.map((s) => s.name).join(", ")} charged again — check`
-                : cancelledThisYear.length > 0
-                  ? `${cancelledThisYear.length} plan${cancelledThisYear.length === 1 ? "" : "s"} · a year's worth saved`
-                  : "mark a plan cancelled to count it"
-            }
-            tone={rebilled.length > 0 ? "warn" : saved > 0 ? "up" : "ink"}
-          />
-        </button>
-        <button type="button" onClick={() => toggle("unrated")} className="flex h-full flex-col text-left transition-colors hover:bg-card/40">
-          <Stat
-            label="Unrated"
-            value={String(unrated.length)}
-            sub={unrated.length > 0 ? "tap to rate them" : "every plan is rated"}
-            tone={unrated.length > 0 ? "warn" : "ink"}
-          />
-        </button>
-      </div>
+        <StatTile
+          label="Could cut"
+          value={`€${formatEur(cutTotal)}`}
+          sub={cut.length > 0 ? `${cut.length} plan${cut.length === 1 ? "" : "s"} · ${Math.round((cutTotal / Math.max(1, yearly)) * 100)} % of the total` : "rate a plan “Cut” to see it here"}
+          tone={cut.length > 0 ? "up" : undefined}
+          onClick={() => toggle("cut")}
+          active={view === "cut"}
+        />
+        <StatTile
+          label={`Cancelled in ${today.slice(0, 4)}`}
+          value={`€${formatEur(saved)}`}
+          sub={
+            rebilled.length > 0
+              ? `${rebilled.map((s) => s.name).join(", ")} charged again — check`
+              : cancelledThisYear.length > 0
+                ? `${cancelledThisYear.length} plan${cancelledThisYear.length === 1 ? "" : "s"} · a year's worth saved`
+                : "mark a plan cancelled to count it"
+          }
+          tone={rebilled.length > 0 ? "warn" : saved > 0 ? "up" : undefined}
+          onClick={() => toggle("cancelled")}
+          active={view === "cancelled"}
+        />
+        <StatTile label="Unrated" value={String(unrated.length)} sub={unrated.length > 0 ? "tap to rate them" : "every plan is rated"} tone={unrated.length > 0 ? "warn" : undefined} onClick={() => toggle("unrated")} active={view === "unrated"} />
+      </StatStrip>
 
       <div className="flex flex-col gap-3">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center">
-          <label className="flex h-9 flex-1 items-center gap-2 rounded-full border border-rule px-3 focus-within:border-ink">
-            <Search className="h-3.5 w-3.5 shrink-0 text-faint" aria-hidden />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search plans"
-              className="h-full w-full bg-transparent text-[0.85rem] text-ink placeholder:text-faint focus:outline-none"
-            />
-          </label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value as Category | "all")}
-            className="h-9 rounded-full border border-rule bg-transparent px-3 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted focus:border-ink focus:outline-none"
-          >
-            <option value="all">Every category</option>
+        <div className="flex flex-col gap-2 md:flex-row md:items-center">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fd-muted-foreground" aria-hidden />
+            <Input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search plans" className="h-9 pl-9" />
+          </div>
+          <NativeSelect value={category} onChange={(e) => setCategory(e.target.value as Category | "all")} aria-label="Category">
+            <NativeSelectOption value="all">Every category</NativeSelectOption>
             {categories.map((c) => (
-              <option key={c} value={c}>
-                {CATEGORY_LABELS[c]}
-              </option>
+              <NativeSelectOption key={c} value={c}>{CATEGORY_LABELS[c]}</NativeSelectOption>
             ))}
-          </select>
-          <label className="flex h-9 items-center gap-2 rounded-full border border-rule px-3 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted focus-within:border-ink">
-            Sort
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SubSort)}
-              className="bg-transparent font-caption text-[10px] font-semibold uppercase tracking-[1px] text-ink focus:outline-none"
-            >
-              {SORTS.map(([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
+          </NativeSelect>
+          <NativeSelect value={sort} onChange={(e) => setSort(e.target.value as SubSort)} aria-label="Sort">
+            {SORTS.map(([key, label]) => (
+              <NativeSelectOption key={key} value={key}>Sort · {label}</NativeSelectOption>
+            ))}
+          </NativeSelect>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           {chips
             .filter(([key, , n]) => key === "all" || key === "monthly" || key === "yearly" || (n ?? 0) > 0)
             .map(([key, label, n]) => (
-              <button key={key} type="button" onClick={() => (key === "all" ? setView("all") : toggle(key))} className={`${chip(view === key)} ${key === "undecided" && view !== key ? "border-warn/60 text-warn" : ""}`}>
+              <Button
+                key={key}
+                type="button"
+                size="sm"
+                variant={view === key ? "default" : "outline"}
+                onClick={() => (key === "all" ? setView("all") : toggle(key))}
+                className={cn("h-7 rounded-full px-3 text-xs", key === "undecided" && view !== key && "border-fd-warn/60 text-fd-warn")}
+              >
                 {label}
-                {n !== null ? <span className="ml-1.5 opacity-60">{n}</span> : null}
-              </button>
+                {n !== null ? <span className="opacity-60">{n}</span> : null}
+              </Button>
             ))}
         </div>
       </div>
@@ -269,14 +249,14 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
         {groups.map((g) => (
           <div key={g.key} className="flex flex-col gap-2">
             {g.label ? (
-              <p className="flex items-baseline justify-between px-1 font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
+              <p className="flex items-baseline justify-between px-1 text-[11px] font-semibold uppercase tracking-wide text-fd-muted-foreground">
                 <span>
-                  {g.label} <span className="ml-1 text-faint">{g.rows.length}</span>
+                  {g.label} <span className="ml-1 opacity-60">{g.rows.length}</span>
                 </span>
-                <span className="tabular-nums text-faint">{g.hint}</span>
+                <span className="tabular-nums opacity-60">{g.hint}</span>
               </p>
             ) : null}
-            <ul className="flex flex-col overflow-hidden rounded-[14px] border border-rule">
+            <ul className="flex flex-col divide-y overflow-hidden rounded-xl border">
               {g.rows.map((s) => (
                 <Row
                   key={s.key}
@@ -292,13 +272,13 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
           </div>
         ))}
         {groups.length === 0 ? (
-          <p className="rounded-[14px] border border-rule px-4 py-10 text-center text-[0.9rem] text-muted">
+          <p className="rounded-xl border border-dashed px-4 py-10 text-center text-sm text-fd-muted-foreground">
             {tracked.length === 0 ? "No recurring charges found yet — import a year of N26 and they appear here." : "Nothing matches."}
           </p>
         ) : null}
       </div>
 
-      <p className="text-[0.8rem] leading-[1.4rem] text-muted">
+      <p className="text-xs leading-5 text-fd-muted-foreground">
         Detected from every bank row in the books and the expenses session: a merchant charged at a steady cadence (monthly or yearly, amounts within 15 % of each other; two charges show as “confirm”). Personal and undecided charges are listed so nothing recurring hides, but only business plans count in the totals — decide the undecided ones on the expenses page. Known plans with a price step or a cancellation live in <code>src/content/books/subscriptions.ts</code> and override the detection. Ratings, cancellations and hidden rows stay in this browser. A cancelled plan that gets charged again is flagged — either the cancellation didn&apos;t take or you resubscribed; press the arrow to track it again.
       </p>
     </section>
@@ -324,51 +304,53 @@ function Row({
   const days = daysUntil(s.nextRenewal, today);
   // Only yearly renewals get a colour — those are the decisions. Monthly
   // charges come round every month; shouting about them is noise.
-  const dueTone = s.interval === "yearly" && days <= 7 ? "text-down" : s.interval === "yearly" && days <= 30 ? "text-warn" : "text-ink";
+  const dueTone = s.interval === "yearly" && days <= 7 ? "text-fd-down" : s.interval === "yearly" && days <= 30 ? "text-fd-warn" : "";
   const stepUp = s.nextAmount !== undefined && s.nextAmount > s.amount;
   const stepDown = s.nextAmount !== undefined && s.nextAmount < s.amount;
   const share = Math.round((s.yearly / Math.max(1, yearlyTotal)) * 100);
   const when = days <= 0 ? "today" : days === 1 ? "tomorrow" : days <= 30 ? `in ${days} days` : "";
 
   return (
-    <li className={`grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 border-b border-rule px-4 py-3 last:border-b-0 md:grid-cols-[auto_minmax(0,1fr)_170px_130px_auto_auto] md:gap-x-4 ${s.ignored || (cancelled && !s.chargedAfterCancel) ? "opacity-60" : ""}`}>
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-card font-display text-[0.95rem] font-bold text-ink" aria-hidden>
+    <li className={cn("grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 px-4 py-3 md:grid-cols-[auto_minmax(0,1fr)_170px_130px_auto_auto] md:gap-x-4", (s.ignored || (cancelled && !s.chargedAfterCancel)) && "opacity-60")}>
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-fd-muted text-sm font-semibold" aria-hidden>
         {s.name.charAt(0).toUpperCase()}
       </span>
 
       <div className="min-w-0">
-        <p className="flex min-w-0 items-center gap-2 text-[0.95rem] font-medium text-ink">
+        <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium">
           <a href={websiteFor(s)} target="_blank" rel="noreferrer" className="inline-flex min-w-0 items-center gap-1.5 hover:underline">
             <span className="truncate">{s.name}</span>
-            <ExternalLink className="h-3 w-3 shrink-0 text-faint" aria-hidden />
+            <ExternalLink className="size-3 shrink-0 text-fd-muted-foreground/60" aria-hidden />
           </a>
           {s.chargedAfterCancel ? (
-            <span className="shrink-0 rounded-full bg-down/15 px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-down">charged again</span>
+            <Badge className="border-transparent bg-fd-down/12 text-fd-down">charged again</Badge>
           ) : s.verdict === "undecided" && !cancelled ? (
-            <Link href="/books?tab=import" className="shrink-0 rounded-full bg-warn/15 px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-warn hover:underline">undecided · triage</Link>
+            <Badge asChild className="border-transparent bg-fd-warn/15 text-fd-warn">
+              <Link href="/books?tab=import">undecided · triage</Link>
+            </Badge>
           ) : s.verdict === "personal" && !cancelled ? (
-            <span className="shrink-0 rounded-full bg-card px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-muted">personal</span>
+            <Badge variant="secondary">personal</Badge>
           ) : cancelled ? (
-            <span className="shrink-0 rounded-full bg-card px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-muted">cancelled</span>
+            <Badge variant="secondary">cancelled</Badge>
           ) : s.unseen ? (
-            <span className="shrink-0 rounded-full bg-warn/15 px-2 py-0.5 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-warn">not in the books</span>
+            <Badge className="border-transparent bg-fd-warn/15 text-fd-warn">not in the books</Badge>
           ) : null}
         </p>
-        <p className="truncate text-[0.8rem] text-muted">
+        <p className="truncate text-xs text-fd-muted-foreground">
           {CATEGORY_LABELS[s.category]}
           {s.source === "detected" ? (
-            <span className={`ml-2 font-caption text-[9px] font-semibold uppercase tracking-[1px] ${s.tentative ? "text-warn" : "text-faint"}`}>
+            <span className={cn("ml-2 text-[10px] font-semibold uppercase tracking-wide", s.tentative ? "text-fd-warn" : "opacity-70")}>
               {s.charges} charges{s.tentative ? " · confirm" : ""}
             </span>
           ) : null}
-          {s.raw ? <span className="text-faint"> · {s.raw}</span> : null}
+          {s.raw ? <span className="opacity-70"> · {s.raw}</span> : null}
           {s.note ? <span> · {s.note}</span> : null}
         </p>
       </div>
 
-      <div className="col-span-3 min-w-0 text-[0.8rem] md:col-span-1">
+      <div className="col-span-3 min-w-0 text-xs md:col-span-1">
         {cancelled ? (
-          <p className={s.chargedAfterCancel ? "text-down" : "text-muted"}>Cancelled {prettyDate(s.cancelledAt!)}</p>
+          <p className={s.chargedAfterCancel ? "text-fd-down" : "text-fd-muted-foreground"}>Cancelled {prettyDate(s.cancelledAt!)}</p>
         ) : (
           <p className={dueTone}>
             {when ? <span className="font-medium">{when}</span> : null}
@@ -376,21 +358,21 @@ function Row({
             {prettyDate(s.nextRenewal)}
           </p>
         )}
-        <p className={`truncate text-[0.75rem] ${s.chargedAfterCancel ? "text-down" : "text-faint"}`}>{s.lastCharge ? `Last charged ${prettyDate(s.lastCharge)}` : "Not charged yet"}</p>
+        <p className={cn("truncate text-[11px]", s.chargedAfterCancel ? "text-fd-down" : "text-fd-muted-foreground/70")}>{s.lastCharge ? `Last charged ${prettyDate(s.lastCharge)}` : "Not charged yet"}</p>
       </div>
 
       <div className="col-start-3 row-start-1 text-right md:col-start-4 md:row-auto">
-        <p className="font-display text-[1rem] font-bold tabular-nums text-ink">
+        <p className="text-base font-semibold tabular-nums">
           €{formatEur(s.amount)}
-          <span className="ml-1 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-faint">/{s.interval === "monthly" ? "mo" : "yr"}</span>
+          <span className="ml-1 text-[10px] font-medium text-fd-muted-foreground">/{s.interval === "monthly" ? "mo" : "yr"}</span>
         </p>
-        <p className={`text-[0.75rem] tabular-nums ${cancelled ? "text-up" : stepUp ? "text-warn" : stepDown ? "text-up" : "text-muted"}`} title={s.nextAmount !== undefined && s.nextAmount !== s.amount ? `€${formatEur(s.nextAmount)} from the next term` : undefined}>
+        <p className={cn("text-[11px] tabular-nums", cancelled ? "text-fd-up" : stepUp ? "text-fd-warn" : stepDown ? "text-fd-up" : "text-fd-muted-foreground")} title={s.nextAmount !== undefined && s.nextAmount !== s.amount ? `€${formatEur(s.nextAmount)} from the next term` : undefined}>
           {cancelled ? `saves €${formatEur(s.yearly)}/yr` : `${stepUp ? "↑ " : stepDown ? "↓ " : ""}€${formatEur(s.yearly)}/yr${s.verdict === "business" ? ` · ${share} %` : ""}`}
         </p>
       </div>
 
       <div className="col-span-2 flex items-center gap-2 md:col-span-1 md:col-start-5" role="radiogroup" aria-label={`How needed is ${s.name}`}>
-        <span className={`inline-flex overflow-hidden rounded-full border border-rule ${s.verdict !== "business" ? "invisible" : ""}`}>
+        <span className={cn("inline-flex rounded-lg bg-fd-muted p-[2px]", s.verdict !== "business" && "invisible")}>
           {RATINGS.map((r) => (
             <button
               key={r}
@@ -399,9 +381,7 @@ function Row({
               aria-checked={s.rating === r}
               title={RATING_LABELS[r]}
               onClick={() => onRate(s.rating === r ? undefined : r)}
-              className={`px-2.5 py-1 font-caption text-[9px] font-semibold uppercase tracking-[1px] transition-colors ${
-                s.rating === r ? RATING_ON[r] : "text-faint hover:bg-card/60 hover:text-ink"
-              }`}
+              className={cn("rounded-md px-2 py-1 text-[11px] font-medium transition-colors", s.rating === r ? RATING_ON[r] : "text-fd-muted-foreground hover:text-foreground")}
             >
               {RATING_SHORT[r]}
             </button>
@@ -411,23 +391,13 @@ function Row({
 
       <span className="flex items-center justify-self-end md:col-start-6">
         {s.ignored ? null : (
-          <button
-            type="button"
-            title={cancelled ? "Resubscribed — track it again" : "I cancelled this"}
-            onClick={onCancel}
-            className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-card/60 ${cancelled ? "text-ink" : "text-faint hover:text-down"}`}
-          >
-            {cancelled ? <RotateCcw className="h-3.5 w-3.5" aria-hidden /> : <Ban className="h-3.5 w-3.5" aria-hidden />}
-          </button>
+          <Button type="button" variant="ghost" size="icon-sm" title={cancelled ? "Resubscribed — track it again" : "I cancelled this"} onClick={onCancel} className={cancelled ? "" : "text-fd-muted-foreground/70 hover:text-fd-down"}>
+            {cancelled ? <RotateCcw aria-hidden /> : <Ban aria-hidden />}
+          </Button>
         )}
-        <button
-          type="button"
-          title={s.ignored ? "Track again" : "Not a subscription — hide it"}
-          onClick={onHide}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-faint transition-colors hover:bg-card/60 hover:text-ink"
-        >
-          {s.ignored ? <RotateCcw className="h-3.5 w-3.5" aria-hidden /> : <EyeOff className="h-3.5 w-3.5" aria-hidden />}
-        </button>
+        <Button type="button" variant="ghost" size="icon-sm" title={s.ignored ? "Track again" : "Not a subscription — hide it"} onClick={onHide} className="text-fd-muted-foreground/70">
+          {s.ignored ? <RotateCcw aria-hidden /> : <EyeOff aria-hidden />}
+        </Button>
       </span>
     </li>
   );

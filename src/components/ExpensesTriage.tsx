@@ -58,6 +58,16 @@ import {
   type ParseResult,
 } from "@/lib/expenses/types";
 import { ExpenseSwipeDeck, kindLabel, prettyDate, type DecideOptions } from "./ExpenseSwipeDeck";
+import { cn } from "@/lib/utils";
+import { StatStrip, StatTile } from "./finance/Kpi";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { NativeSelect, NativeSelectOption } from "./ui/native-select";
+import { Switch } from "./ui/switch";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 import { SyncAgent } from "./SyncBar";
 
 /**
@@ -425,7 +435,7 @@ export function ExpensesTriage({ embedded = false }: { embedded?: boolean } = {}
   return (
     <Root className={embedded ? "flex flex-col gap-2" : "page-fade-in mx-auto w-full max-w-[1040px] px-6 pt-10 pb-40 md:px-10 md:pt-16"}>
       {embedded ? (
-        <p className="max-w-[620px] text-[0.9rem] leading-[1.5rem] text-muted">
+        <p className="max-w-[620px] text-sm leading-6 text-fd-muted-foreground">
           Drop the N26 export for the year. The rules sort what they can, you swipe through the rest, and every business or tax-relevant row lands in the books. Nothing leaves this browser.
         </p>
       ) : (
@@ -455,9 +465,10 @@ export function ExpensesTriage({ embedded = false }: { embedded?: boolean } = {}
             }}
             onDragLeave={() => setDragOver(false)}
             onDrop={onDrop}
-            className={`flex min-h-[260px] cursor-pointer flex-col items-center justify-center gap-4 rounded-[20px] border border-dashed px-6 py-12 text-center transition-colors ${
-              dragOver ? "border-ink bg-card/60" : "border-rule hover:border-ink hover:bg-card/40"
-            }`}
+            className={cn(
+              "flex min-h-[260px] cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border border-dashed px-6 py-12 text-center transition-colors",
+              dragOver ? "border-primary bg-primary/5" : "hover:border-foreground/40 hover:bg-fd-muted/40",
+            )}
           >
             <input
               type="file"
@@ -467,62 +478,57 @@ export function ExpensesTriage({ embedded = false }: { embedded?: boolean } = {}
               className="sr-only"
               disabled={busy}
             />
-            <span className="flex h-14 w-14 items-center justify-center rounded-full border border-rule text-muted">
-              <FileUp className="h-5 w-5" strokeWidth={2} />
+            <span className="flex size-14 items-center justify-center rounded-full bg-fd-muted text-fd-muted-foreground">
+              <FileUp className="size-5" strokeWidth={2} />
             </span>
-            <span className="font-display text-[1.25rem] font-bold text-ink">
+            <span className="text-lg font-semibold tracking-tight">
               {busy ? "Reading…" : "Drop the N26 CSV here"}
             </span>
-            <span className="max-w-[420px] text-[0.9rem] leading-[1.5rem] text-muted">
+            <span className="max-w-[420px] text-sm leading-6 text-fd-muted-foreground">
               N26 web app → Transactions → Download → CSV, full year. A PDF statement works too,
               but the CSV is cleaner. Several files at once are fine.
             </span>
           </label>
 
           {error ? (
-            <p className="rounded-[12px] border border-[#d14343]/40 bg-[#d14343]/5 px-4 py-3 text-[0.9rem] leading-[1.5rem] text-[#d14343]">
+            <p className="rounded-xl border border-fd-down/40 bg-fd-down/5 px-4 py-3 text-sm leading-6 text-fd-down">
               {error}
             </p>
           ) : null}
 
           {resumable ? (
-            <div className="flex flex-col gap-4 rounded-[14px] border border-rule px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 rounded-xl border bg-fd-muted/40 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
-                <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-fd-muted-foreground">
                   Pick up where you left off
                 </p>
-                <p className="mt-1 truncate text-[0.95rem] text-ink">{resumable.fileName}</p>
-                <p className="text-[0.85rem] text-muted">
+                <p className="mt-1 truncate text-sm font-medium">{resumable.fileName}</p>
+                <p className="text-xs text-fd-muted-foreground">
                   {resumable.parsed.transactions.length} entries · {Object.keys(resumable.decisions ?? {}).length} decided by you · saved{" "}
                   {prettyDate(resumable.savedAt.slice(0, 10))}
                 </p>
               </div>
               <div className="flex gap-2">
-                <button
+                <Button type="button" size="sm" onClick={resume}>Resume</Button>
+                <Button
                   type="button"
-                  onClick={resume}
-                  className="rounded-full border border-ink bg-ink px-5 py-2 font-caption text-[11px] font-bold uppercase tracking-[1px] text-bg transition-colors hover:bg-transparent hover:text-ink"
-                >
-                  Resume
-                </button>
-                <button
-                  type="button"
+                  size="sm"
+                  variant="outline"
                   onClick={() => {
                     clearSession();
                     setResumable(null);
                   }}
-                  className="rounded-full border border-rule px-5 py-2 font-caption text-[11px] font-bold uppercase tracking-[1px] text-muted transition-colors hover:border-ink hover:text-ink"
                 >
                   Discard
-                </button>
+                </Button>
               </div>
             </div>
           ) : null}
 
           {memoryCount > 0 ? (
-            <p className="text-[0.85rem] text-muted">
+            <p className="text-xs text-fd-muted-foreground">
               You&apos;ve taught it {memoryCount} merchant{memoryCount === 1 ? "" : "s"} so far.{" "}
-              <button type="button" onClick={forget} className="underline underline-offset-4 hover:text-ink">
+              <button type="button" onClick={forget} className="underline underline-offset-4 hover:text-foreground">
                 Forget them
               </button>
             </p>
@@ -531,35 +537,33 @@ export function ExpensesTriage({ embedded = false }: { embedded?: boolean } = {}
       ) : (
         <>
           <section className={`flex flex-col gap-6 ${embedded ? "pt-4" : ""}`}>
-            <div className="grid grid-cols-2 gap-px overflow-hidden rounded-[14px] border border-rule bg-rule md:grid-cols-4">
-              <Stat label="Outgoing" value={`€${formatEur(summary.total)}`} sub={`${summary.count} entries`} />
-              <Stat label="Business" value={`€${formatEur(summary.business)}`} sub={`${summary.businessCount} entries`} accent />
-              <Stat label="To decide" value={String(summary.pendingCount)} sub={`€${formatEur(summary.pending)}`} />
-              <Stat label="Personal" value={`€${formatEur(summary.personal)}`} sub={`+ tax-relevant €${formatEur(summary.tax)}, internal €${formatEur(summary.skip)}`} />
-            </div>
+            <StatStrip className="md:grid-cols-4">
+              <StatTile label="Outgoing" value={`€${formatEur(summary.total)}`} sub={`${summary.count} entries`} />
+              <StatTile label="Business" value={`€${formatEur(summary.business)}`} sub={`${summary.businessCount} entries`} tone="up" />
+              <StatTile label="To decide" value={String(summary.pendingCount)} sub={`€${formatEur(summary.pending)}`} tone={summary.pendingCount > 0 ? "warn" : undefined} />
+              <StatTile label="Personal" value={`€${formatEur(summary.personal)}`} sub={`+ tax-relevant €${formatEur(summary.tax)}, internal €${formatEur(summary.skip)}`} />
+            </StatStrip>
             <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-              <p className="min-w-0 truncate text-[0.85rem] text-muted">
+              <p className="min-w-0 truncate text-xs text-fd-muted-foreground">
                 {FORMAT_LABEL[loaded.parsed.format]} · {loaded.fileName}
                 {loaded.parsed.incomingCount > 0 ? ` · ${loaded.parsed.incomingCount} incoming ignored` : ""}
               </p>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-1">
                 {embedded ? null : (
-                  <Link href="/books" className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-ink transition-colors hover:text-muted">
-                    Books &amp; tax →
-                  </Link>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link href="/books">Books &amp; tax →</Link>
+                  </Button>
                 )}
-                <button type="button" onClick={startOver} className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
-                  Load another file
-                </button>
+                <Button type="button" variant="ghost" size="sm" onClick={startOver}>Load another file</Button>
                 {memoryCount > 0 ? (
-                  <button type="button" onClick={forget} className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
+                  <Button type="button" variant="ghost" size="sm" onClick={forget}>
                     Forget {memoryCount} merchant{memoryCount === 1 ? "" : "s"}
-                  </button>
+                  </Button>
                 ) : null}
               </div>
             </div>
             {loaded.parsed.warnings.length > 0 ? (
-              <ul className="flex flex-col gap-1 rounded-[12px] border border-rule-soft bg-card/40 px-4 py-3 text-[0.85rem] leading-[1.4rem] text-muted">
+              <ul className="flex flex-col gap-1 rounded-xl border border-dashed px-4 py-3 text-sm leading-6 text-fd-muted-foreground">
                 {loaded.parsed.warnings.map((w) => (
                   <li key={w}>{w}</li>
                 ))}
@@ -567,51 +571,24 @@ export function ExpensesTriage({ embedded = false }: { embedded?: boolean } = {}
             ) : null}
           </section>
 
-          <nav className={`${embedded ? "mt-4 mb-8" : "mt-12 mb-10"} flex gap-6 border-b border-rule`}>
-            {(
-              [
-                ["swipe", `Swipe${pending.length > 0 ? ` · ${pending.length}` : ""}`],
-                ["all", `All entries · ${items.length}`],
-                ["export", "Export"],
-              ] as [Tab, string][]
-            ).map(([key, label]) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setTab(key)}
-                className={`-mb-px border-b-2 pb-3 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] transition-colors ${
-                  tab === key ? "border-ink text-ink" : "border-transparent text-muted hover:text-ink"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </nav>
+          <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className={embedded ? "mt-2 mb-6" : "mt-12 mb-10"}>
+            <TabsList aria-label="Import sections">
+              <TabsTrigger value="swipe">Swipe{pending.length > 0 ? ` · ${pending.length}` : ""}</TabsTrigger>
+              <TabsTrigger value="all">All entries · {items.length}</TabsTrigger>
+              <TabsTrigger value="export">Export</TabsTrigger>
+            </TabsList>
+          </Tabs>
 
           {tab === "swipe" && queue.length > 0 ? (
-            <div className="mb-6 flex flex-wrap items-center gap-2">
-              <span className="mr-2 font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
-                Order
-              </span>
-              {(
-                [
-                  ["date", "Oldest first"],
-                  ["amount", "Biggest first"],
-                  ["merchant", "By merchant"],
-                ] as [QueueOrder, string][]
-              ).map(([key, label]) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setPrefs({ ...prefs, order: key })}
-                  className={`rounded-full border px-3 py-1 font-caption text-[10px] font-semibold uppercase tracking-[1px] transition-colors ${
-                    prefs.order === key ? "border-ink bg-ink text-bg" : "border-rule text-muted hover:border-ink hover:text-ink"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-              <span className="ml-2 text-[0.8rem] text-muted">
+            <div className="mb-6 flex flex-wrap items-center gap-3">
+              <Tabs value={prefs.order} onValueChange={(v) => setPrefs({ ...prefs, order: v as QueueOrder })}>
+                <TabsList aria-label="Queue order">
+                  <TabsTrigger value="date">Oldest first</TabsTrigger>
+                  <TabsTrigger value="amount">Biggest first</TabsTrigger>
+                  <TabsTrigger value="merchant">By merchant</TabsTrigger>
+                </TabsList>
+              </Tabs>
+              <span className="text-xs text-fd-muted-foreground">
                 {prefs.order === "amount"
                   ? `€${formatEur(summary.pending)} still to decide — the big ones go first`
                   : prefs.order === "merchant"
@@ -622,29 +599,17 @@ export function ExpensesTriage({ embedded = false }: { embedded?: boolean } = {}
           ) : null}
 
           {tab === "swipe" && smallPending.length > 0 ? (
-            <div className="mb-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-[14px] border border-rule-soft bg-card/40 px-4 py-3">
-              <p className="text-[0.85rem] leading-[1.4rem] text-body">
-                {smallPending.length} card{smallPending.length === 1 ? "" : "s"} under{" "}
-                <select
-                  value={prefs.sweepUnder}
-                  onChange={(e) => setPrefs({ ...prefs, sweepUnder: Number(e.target.value) })}
-                  className="rounded-[6px] border border-rule bg-bg px-1.5 py-0.5 text-[0.85rem] text-ink focus:border-ink focus:outline-none"
-                >
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-xl border bg-fd-muted/40 px-4 py-3">
+              <div className="flex flex-wrap items-center gap-1.5 text-sm leading-6">
+                {smallPending.length} card{smallPending.length === 1 ? "" : "s"} under
+                <NativeSelect value={prefs.sweepUnder} onChange={(e) => setPrefs({ ...prefs, sweepUnder: Number(e.target.value) })} className="h-7 py-0 text-xs" aria-label="Threshold">
                   {[5, 10, 20, 50].map((n) => (
-                    <option key={n} value={n}>
-                      €{n}
-                    </option>
+                    <NativeSelectOption key={n} value={n}>€{n}</NativeSelectOption>
                   ))}
-                </select>{" "}
+                </NativeSelect>
                 — €{formatEur(smallPending.reduce((t, i) => t + Math.abs(i.tx.amount), 0))} in total, mostly coffee.
-              </p>
-              <button
-                type="button"
-                onClick={sweepSmall}
-                className="rounded-full border border-ink px-4 py-1.5 font-caption text-[10px] font-bold uppercase tracking-[1px] text-ink transition-colors hover:bg-ink hover:text-bg"
-              >
-                Mark them all personal
-              </button>
+              </div>
+              <Button type="button" variant="outline" size="sm" onClick={sweepSmall}>Mark them all personal</Button>
             </div>
           ) : null}
 
@@ -701,28 +666,18 @@ export function ExpensesTriage({ embedded = false }: { embedded?: boolean } = {}
       )}
 
       {toast ? (
-        <div className="pointer-events-none fixed inset-x-0 bottom-8 z-50 flex justify-center px-6">
-          <div className="pointer-events-auto flex items-center gap-4 rounded-full border border-rule bg-bg px-5 py-3 text-[0.85rem] text-ink" style={{ boxShadow: "var(--shadow-card)" }}>
+        <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-6">
+          <div className="fd-portal pointer-events-auto flex items-center gap-3 rounded-xl border bg-popover px-4 py-2.5 text-sm text-popover-foreground shadow-fd">
             <span>{toast.text}</span>
             {toast.undo ? (
-              <button type="button" onClick={undo} className="inline-flex items-center gap-1 font-caption text-[10px] font-bold uppercase tracking-[1px] text-muted hover:text-ink">
-                <RotateCcw className="h-3 w-3" /> Undo
-              </button>
+              <Button type="button" variant="ghost" size="sm" onClick={undo} className="h-7">
+                <RotateCcw /> Undo
+              </Button>
             ) : null}
           </div>
         </div>
       ) : null}
     </Root>
-  );
-}
-
-function Stat({ label, value, sub, accent }: { label: string; value: string; sub: string; accent?: boolean }) {
-  return (
-    <div className="flex flex-col gap-1 bg-bg px-5 py-5">
-      <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">{label}</p>
-      <p className={`font-display text-[1.5rem] font-bold leading-tight ${accent ? "text-accent" : "text-ink"}`}>{value}</p>
-      <p className="text-[0.75rem] leading-[1.1rem] text-muted">{sub}</p>
-    </div>
   );
 }
 
@@ -740,34 +695,25 @@ function DonePanel({
   onUndo?: () => void;
 }) {
   return (
-    <section className="flex flex-col items-start gap-8 rounded-[20px] border border-rule px-6 py-10 md:px-10">
-      <div className="flex flex-col gap-3">
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">All sorted</p>
-        <h2 className="font-display text-[2rem] font-bold leading-[1.05] text-ink md:text-[2.75rem]">
+    <section className="flex flex-col items-start gap-6 rounded-2xl border bg-fd-muted/30 px-6 py-8 md:px-8">
+      <div className="flex flex-col gap-2">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-fd-muted-foreground">All sorted</p>
+        <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
           €{formatEur(summary.business)} of business expenses across {summary.businessCount} entries.
         </h2>
-        <p className="max-w-[560px] text-[0.95rem] leading-[1.7rem] text-muted">
+        <p className="max-w-[560px] text-sm leading-6 text-fd-muted-foreground">
           {rows} rows are ready for the sheet. Copy them, paste into Google Sheets, and check the
           category column on anything the rules decided on their own.
         </p>
       </div>
-      <div className="flex flex-wrap items-center gap-4">
-        <button type="button" onClick={onCopy} className="cta-pill group inline-flex h-14 items-center gap-4 pr-6">
-          <span className="flex h-14 w-14 items-center justify-center text-bg">
-            <Copy className="h-5 w-5" strokeWidth={2} />
-          </span>
-          <span className="font-caption text-[13px] font-bold uppercase tracking-[1px]">Copy for Google Sheets</span>
-        </button>
-        <button type="button" onClick={onReview} className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
-          Review all entries
-        </button>
-        <Link href="/books" className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
-          Open the books
-        </Link>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button type="button" onClick={onCopy}><Copy /> Copy for Google Sheets</Button>
+        <Button type="button" variant="outline" size="sm" onClick={onReview}>Review all entries</Button>
+        <Button asChild variant="outline" size="sm">
+          <Link href="/books">Open the books</Link>
+        </Button>
         {onUndo ? (
-          <button type="button" onClick={onUndo} className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
-            Undo last
-          </button>
+          <Button type="button" variant="ghost" size="sm" onClick={onUndo}><RotateCcw /> Undo last</Button>
         ) : null}
       </div>
     </section>
@@ -812,55 +758,43 @@ function EntriesTable({
 
   return (
     <section className="flex flex-col gap-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-wrap gap-1.5">
           {(["all", "pending", "business", "personal", "tax", "skip"] as Filter[]).map((f) => (
-            <button
-              key={f}
-              type="button"
-              onClick={() => setFilter(f)}
-              className={`rounded-full border px-3 py-1 font-caption text-[10px] font-semibold uppercase tracking-[1px] transition-colors ${
-                filter === f ? "border-ink bg-ink text-bg" : "border-rule text-muted hover:border-ink hover:text-ink"
-              }`}
-            >
-              {f === "all" ? "All" : f === "pending" ? "Ask me" : VERDICT_LABEL[f]} · {counts[f]}
-            </button>
+            <Button key={f} type="button" size="sm" variant={filter === f ? "default" : "outline"} onClick={() => setFilter(f)} className="h-7 rounded-full px-3 text-xs">
+              {f === "all" ? "All" : f === "pending" ? "Ask me" : VERDICT_LABEL[f]} <span className="opacity-60">{counts[f]}</span>
+            </Button>
           ))}
         </div>
-        <input
-          type="search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search merchant or reference"
-          className="w-full rounded-full border border-rule bg-transparent px-4 py-2 text-[0.9rem] text-ink placeholder:text-faint focus:border-ink focus:outline-none md:w-[280px]"
-        />
+        <Input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search merchant or reference" className="h-9 md:w-[280px]" />
       </div>
-      <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
+      <p className="text-xs text-fd-muted-foreground">
         {visible.length} entries · €{formatEur(total)} · table edits change one row only, swipes teach the tool
       </p>
-      <ul className="flex flex-col overflow-hidden rounded-[14px] border border-rule">
+      <ul className="flex flex-col divide-y overflow-hidden rounded-xl border">
         {visible.map((i) => (
           <li
             key={i.tx.id}
-            className={`grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-3 border-b border-rule px-4 py-4 last:border-b-0 md:grid-cols-[88px_minmax(0,1fr)_92px_auto_176px] md:items-center ${
-              !i.decision ? "bg-card/30" : ""
-            }`}
+            className={cn(
+              "grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-3 px-4 py-3 md:grid-cols-[88px_minmax(0,1fr)_92px_auto_176px] md:items-center",
+              !i.decision && "bg-fd-warn/5",
+            )}
           >
-            <p className="font-caption text-[11px] font-medium uppercase tracking-[1px] text-muted md:col-start-1">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground md:col-start-1">
               {prettyDate(i.tx.date)}
             </p>
-            <p className="justify-self-end font-display text-[1rem] font-bold text-ink md:col-start-3 md:justify-self-end">
+            <p className="justify-self-end text-base font-semibold tabular-nums md:col-start-3 md:justify-self-end">
               €{formatEur(Math.abs(i.tx.amount))}
             </p>
             <div className="col-span-2 min-w-0 md:col-span-1 md:col-start-2 md:row-start-1">
-              <p className="truncate text-[0.95rem] font-medium text-ink">
-                {i.tx.partner}
-                <span className="ml-2 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-faint">
+              <p className="flex min-w-0 items-center gap-2 text-sm font-medium">
+                <span className="truncate">{i.tx.partner}</span>
+                <Badge variant="outline" className="shrink-0 px-1.5 text-[10px] text-fd-muted-foreground">
                   {kindLabel(i.tx.kind, i.tx.type)}
                   {i.decision ? ` · ${i.decision.by}` : ""}
-                </span>
+                </Badge>
               </p>
-              <p className="truncate text-[0.8rem] text-muted">
+              <p className="truncate text-xs text-fd-muted-foreground">
                 {i.tx.reference || i.auto.reason}
               </p>
             </div>
@@ -870,47 +804,36 @@ function EntriesTable({
             />
             {i.decision?.verdict === "business" ? (
               <div className="flex flex-col gap-1.5 md:col-start-5">
-                <select
-                  value={i.decision.category}
-                  onChange={(e) => onPatch(i, { category: e.target.value as Category })}
-                  className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.8rem] text-ink focus:border-ink focus:outline-none"
-                >
+                <NativeSelect value={i.decision.category} onChange={(e) => onPatch(i, { category: e.target.value as Category })} className="h-8 w-full text-xs" aria-label="Category">
                   {BUSINESS_CATEGORIES.map((c) => (
-                    <option key={c} value={c}>
-                      {CATEGORY_LABELS[c]}
-                    </option>
+                    <NativeSelectOption key={c} value={c}>{CATEGORY_LABELS[c]}</NativeSelectOption>
                   ))}
-                </select>
-                <input
+                </NativeSelect>
+                <Input
                   type="text"
                   defaultValue={i.decision.note ?? ""}
                   placeholder="Note"
+                  aria-label="Note"
                   onBlur={(e) => {
                     const v = e.target.value.trim();
                     if (v !== (i.decision?.note ?? "")) onPatch(i, { note: v || undefined });
                   }}
-                  className="rounded-[8px] border border-rule bg-transparent px-2 py-1 text-[0.8rem] text-ink placeholder:text-faint focus:border-ink focus:outline-none"
+                  className="h-8 text-xs"
                 />
               </div>
             ) : i.decision?.verdict === "tax" ? (
-              <select
-                value={taxBucket(i)}
-                onChange={(e) => onPatch(i, { category: e.target.value as Category })}
-                className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.8rem] text-ink focus:border-ink focus:outline-none md:col-start-5"
-              >
+              <NativeSelect value={taxBucket(i)} onChange={(e) => onPatch(i, { category: e.target.value as Category })} className="h-8 w-full text-xs md:col-start-5" aria-label="Tax bucket">
                 {TAX_CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {CATEGORY_LABELS[c]}
-                  </option>
+                  <NativeSelectOption key={c} value={c}>{CATEGORY_LABELS[c]}</NativeSelectOption>
                 ))}
-              </select>
+              </NativeSelect>
             ) : (
               <span className="hidden md:col-start-5 md:block" />
             )}
           </li>
         ))}
         {visible.length === 0 ? (
-          <li className="px-4 py-10 text-center text-[0.9rem] text-muted">Nothing here.</li>
+          <li className="px-4 py-10 text-center text-sm text-fd-muted-foreground">Nothing here.</li>
         ) : null}
       </ul>
     </section>
@@ -926,10 +849,10 @@ function VerdictButtons({
   onChange: (v: DecidedVerdict | "pending") => void;
 }) {
   const options: { v: DecidedVerdict; Icon: typeof Briefcase; active: string }[] = [
-    { v: "business", Icon: Briefcase, active: "border-accent bg-accent text-bg" },
-    { v: "personal", Icon: User, active: "border-[#d14343] bg-[#d14343] text-white" },
-    { v: "tax", Icon: Landmark, active: "border-ink bg-ink text-bg" },
-    { v: "skip", Icon: Ban, active: "border-ink bg-ink text-bg" },
+    { v: "business", Icon: Briefcase, active: "border-primary bg-primary text-primary-foreground" },
+    { v: "personal", Icon: User, active: "border-fd-down bg-fd-down text-white" },
+    { v: "tax", Icon: Landmark, active: "border-fd-warn bg-fd-warn text-white" },
+    { v: "skip", Icon: Ban, active: "border-foreground bg-foreground text-background" },
   ];
   return (
     <div className="flex gap-1.5 md:col-start-4" role="group" aria-label="Verdict">
@@ -940,11 +863,9 @@ function VerdictButtons({
           aria-label={VERDICT_LABEL[v]}
           title={value === v ? `${VERDICT_LABEL[v]} — click again to ask me` : VERDICT_LABEL[v]}
           onClick={() => onChange(value === v ? "pending" : v)}
-          className={`inline-flex h-8 w-8 items-center justify-center rounded-full border transition-colors ${
-            value === v ? active : "border-rule text-muted hover:border-ink hover:text-ink"
-          }`}
+          className={cn("inline-flex size-8 items-center justify-center rounded-full border transition-colors", value === v ? active : "text-fd-muted-foreground hover:border-foreground/40 hover:text-foreground")}
         >
-          <Icon className="h-3.5 w-3.5" strokeWidth={2} />
+          <Icon className="size-3.5" strokeWidth={2} />
         </button>
       ))}
     </div>
@@ -999,62 +920,43 @@ function ExportPanel({
           />
         </div>
         {pendingCount > 0 ? (
-          <p className="rounded-[12px] border border-rule-soft bg-card/40 px-4 py-3 text-[0.85rem] leading-[1.4rem] text-muted">
+          <p className="rounded-xl border border-dashed px-4 py-3 text-sm leading-6 text-fd-muted-foreground">
             {pendingCount} entr{pendingCount === 1 ? "y is" : "ies are"} still undecided and not in this export. Swipe them first, or set them in All entries.
           </p>
         ) : null}
-        <div className="flex flex-wrap items-center gap-4">
-          <button type="button" onClick={onCopy} className="cta-pill group inline-flex h-14 items-center gap-4 pr-6">
-            <span className="flex h-14 w-14 items-center justify-center text-bg">
-              <Copy className="h-5 w-5" strokeWidth={2} />
-            </span>
-            <span className="font-caption text-[13px] font-bold uppercase tracking-[1px]">
-              Copy {rows.length} rows
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={onDownload}
-            className="inline-flex items-center gap-2 font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink"
-          >
-            <Download className="h-4 w-4" /> Download CSV
-          </button>
-          <p className="font-caption text-[10px] font-medium uppercase tracking-[1.5px] text-muted">
-            Total €{formatEur(total, prefs.decimalComma)}
-          </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button type="button" onClick={onCopy}><Copy /> Copy {rows.length} rows</Button>
+          <Button type="button" variant="outline" size="sm" onClick={onDownload}><Download /> Download CSV</Button>
+          <p className="ml-2 text-xs text-fd-muted-foreground">Total €{formatEur(total, prefs.decimalComma)}</p>
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-[14px] border border-rule">
-        <table className="w-full min-w-[720px] border-collapse text-left text-[0.8rem]">
-          <thead>
-            <tr className="border-b border-rule bg-card/40">
+      <div className="overflow-hidden rounded-xl border">
+        <Table className="min-w-[720px] text-xs">
+          <TableHeader>
+            <TableRow className="bg-fd-muted/50 hover:bg-fd-muted/50">
               {cols.map((c) => (
-                <th key={c} className="whitespace-nowrap px-3 py-2 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
-                  {COLUMN_LABELS[c]}
-                </th>
+                <TableHead key={c} className="px-3">{COLUMN_LABELS[c]}</TableHead>
               ))}
-            </tr>
-          </thead>
-          <tbody>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {rows.slice(0, 40).map((r, idx) => (
-              <tr key={idx} className="border-b border-rule-soft last:border-b-0">
+              <TableRow key={idx}>
                 {cols.map((c) => (
-                  <td key={c} className={`max-w-[260px] truncate px-3 py-1.5 text-body ${c === "amount" ? "text-right tabular-nums" : ""}`}>
+                  <TableCell key={c} className={cn("max-w-[260px] truncate px-3 py-1.5", c === "amount" && "text-right tabular-nums")}>
                     {c === "amount" ? formatEur(r.amount, prefs.decimalComma) : String(r[c])}
-                  </td>
+                  </TableCell>
                 ))}
-              </tr>
+              </TableRow>
             ))}
             {rows.length > 40 ? (
-              <tr>
-                <td colSpan={cols.length} className="px-3 py-2 text-muted">
-                  …and {rows.length - 40} more rows in the copy
-                </td>
-              </tr>
+              <TableRow>
+                <TableCell colSpan={cols.length} className="px-3 py-2 text-fd-muted-foreground">…and {rows.length - 40} more rows in the copy</TableCell>
+              </TableRow>
             ) : null}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
@@ -1083,16 +985,16 @@ function Breakdown({
   decimalComma: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-3">
-      <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">{title}</p>
-      <ul className="flex flex-col divide-y divide-rule-soft rounded-[14px] border border-rule px-4">
-        {rows.length === 0 ? <li className="py-3 text-[0.85rem] text-muted">Nothing yet.</li> : null}
+    <div className="flex flex-col gap-2">
+      <p className="px-1 text-[11px] font-semibold uppercase tracking-wide text-fd-muted-foreground">{title}</p>
+      <ul className="flex flex-col divide-y rounded-xl border px-4">
+        {rows.length === 0 ? <li className="py-3 text-sm text-fd-muted-foreground">Nothing yet.</li> : null}
         {rows.map(([label, count, total]) => (
-          <li key={label} className="flex items-baseline justify-between gap-4 py-2.5 text-[0.85rem]">
-            <span className="min-w-0 truncate text-body">
-              {label} <span className="text-faint">×{count}</span>
+          <li key={label} className="flex items-baseline justify-between gap-4 py-2.5 text-sm">
+            <span className="min-w-0 truncate">
+              {label} <span className="text-fd-muted-foreground">×{count}</span>
             </span>
-            <span className="tabular-nums text-ink">€{formatEur(total, decimalComma)}</span>
+            <span className="tabular-nums font-medium">€{formatEur(total, decimalComma)}</span>
           </li>
         ))}
       </ul>
@@ -1112,18 +1014,13 @@ function Toggle({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3">
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        className="mt-1 h-4 w-4 accent-[var(--color-accent)]"
-      />
-      <span className="flex flex-col">
-        <span className="text-[0.9rem] text-ink">{label}</span>
-        <span className="text-[0.8rem] text-muted">{hint}</span>
+    <Label className="cursor-pointer items-start gap-3 font-normal">
+      <Switch checked={checked} onCheckedChange={onChange} className="mt-0.5" />
+      <span className="flex flex-col gap-0.5">
+        <span className="text-sm">{label}</span>
+        <span className="text-xs text-fd-muted-foreground">{hint}</span>
       </span>
-    </label>
+    </Label>
   );
 }
 

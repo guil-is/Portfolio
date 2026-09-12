@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { Copy, Plus, Trash2 } from "lucide-react";
+import { Copy, Plus, Search, Trash2 } from "lucide-react";
 import type { IncomeYear, InvoiceRow } from "@/lib/income";
 import {
   bookYears,
@@ -36,10 +36,16 @@ import { SubscriptionsTab } from "./SubscriptionsTab";
 import { ExpensesTriage } from "./ExpensesTriage";
 import { FinanceShell } from "./finance/FinanceShell";
 import { Kpi } from "./finance/Kpi";
+import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
+import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { NativeSelect, NativeSelectOption } from "./ui/native-select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
+import { cn } from "@/lib/utils";
 import { Amount } from "./money/Privacy";
 import { sessionSources, trackSubscriptions } from "@/lib/expenses/subscriptions";
 import { loadMemory, loadSession } from "@/lib/expenses/storage";
@@ -381,7 +387,7 @@ export function BooksDashboard({
         <Panel>
         <>
           {seedExpensesHidden ? (
-            <p className="mb-8 rounded-[12px] border border-rule-soft bg-card/40 px-4 py-3 text-[0.85rem] leading-[1.4rem] text-muted">
+            <p className="rounded-xl border border-dashed px-4 py-3 text-sm leading-6 text-fd-muted-foreground">
               This year has an N26 import, so the expense rows transcribed from the old sheet are hidden to avoid double counting. Its income rows still count.
             </p>
           ) : null}
@@ -392,175 +398,142 @@ export function BooksDashboard({
 
       {tab === "entries" ? (
         <Panel>
-        <section className="flex flex-col gap-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="flex flex-wrap gap-2">
-              {(["all", "income", "expense", "tax"] as Filter[]).map((f) => (
-                <button
-                  key={f}
-                  type="button"
-                  onClick={() => setFilter(f)}
-                  className={`rounded-full border px-3 py-1 font-caption text-[10px] font-semibold uppercase tracking-[1px] transition-colors ${
-                    filter === f ? "border-ink bg-ink text-bg" : "border-rule text-muted hover:border-ink hover:text-ink"
-                  }`}
-                >
-                  {f === "all" ? "All" : f === "tax" ? "Tax-relevant" : f}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => setAdding((a) => !a)}
-                className="rounded-full border border-ink px-3 py-1 font-caption text-[10px] font-bold uppercase tracking-[1px] text-ink transition-colors hover:bg-ink hover:text-bg"
-              >
-                {adding ? "Cancel" : "+ Add a row"}
-              </button>
-            </div>
-            <input
-              type="search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search"
-              className="w-full rounded-full border border-rule bg-transparent px-4 py-2 text-[0.9rem] text-ink placeholder:text-faint focus:border-ink focus:outline-none md:w-[240px]"
-            />
-          </div>
-
-          {adding ? (
-            <form onSubmit={addManual} className="grid grid-cols-2 gap-3 rounded-[14px] border border-rule px-4 py-4 md:grid-cols-4">
-              <label className="flex flex-col gap-1 text-[0.75rem] text-muted">
-                Date
-                <input name="date" type="date" required defaultValue={`${year}-01-01`} className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.85rem] text-ink focus:border-ink focus:outline-none" />
-              </label>
-              <label className="flex flex-col gap-1 text-[0.75rem] text-muted">
-                Kind
-                <select name="kind" className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.85rem] text-ink focus:border-ink focus:outline-none">
-                  <option value="expense">Expense</option>
-                  <option value="income">Income</option>
-                  <option value="tax">Tax-relevant</option>
-                </select>
-              </label>
-              <label className="flex flex-col gap-1 text-[0.75rem] text-muted">
-                Amount (EUR)
-                <input name="amount" type="text" inputMode="decimal" required placeholder="12.99" className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.85rem] text-ink focus:border-ink focus:outline-none" />
-              </label>
-              <label className="flex flex-col gap-1 text-[0.75rem] text-muted">
-                VAT on receipt
-                <select name="vat" className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.85rem] text-ink focus:border-ink focus:outline-none">
-                  <option value="">unknown</option>
-                  <option value="19">19 %</option>
-                  <option value="7">7 %</option>
-                  <option value="0">0 %</option>
-                </select>
-              </label>
-              <label className="flex flex-col gap-1 text-[0.75rem] text-muted md:col-span-1">
-                Vendor / client
-                <input name="party" type="text" required className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.85rem] text-ink focus:border-ink focus:outline-none" />
-              </label>
-              <label className="flex flex-col gap-1 text-[0.75rem] text-muted md:col-span-2">
-                Reference
-                <input name="reference" type="text" className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.85rem] text-ink focus:border-ink focus:outline-none" />
-              </label>
-              <label className="flex flex-col gap-1 text-[0.75rem] text-muted">
-                Category
-                <select name="category" className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.85rem] text-ink focus:border-ink focus:outline-none">
-                  {[...BUSINESS_CATEGORIES, ...TAX_CATEGORIES].map((c) => (
-                    <option key={c} value={c}>
-                      {CATEGORY_LABELS[c]}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <div className="col-span-2 md:col-span-4">
-                <button type="submit" className="rounded-full border border-ink bg-ink px-5 py-2 font-caption text-[11px] font-bold uppercase tracking-[1px] text-bg transition-colors hover:bg-transparent hover:text-ink">
-                  Add
-                </button>
-              </div>
-            </form>
-          ) : null}
-
-          <ul className="flex flex-col overflow-hidden rounded-[14px] border border-rule">
-            {visible.map((r) => (
-              <li key={r.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-2 border-b border-rule px-4 py-3 last:border-b-0 md:grid-cols-[88px_minmax(0,1fr)_100px_200px_150px_32px] md:items-center">
-                <p className="font-caption text-[11px] font-medium uppercase tracking-[1px] text-muted">{prettyDate(r.date)}</p>
-                <p className={`justify-self-end font-display text-[1rem] font-bold tabular-nums md:col-start-3 ${r.kind === "income" ? "text-up" : r.kind === "tax" ? "text-warn" : "text-down"}`}>
-                  {r.kind === "income" ? "+" : "−"}€{formatEur(r.amount)}
-                </p>
-                <div className="col-span-2 min-w-0 md:col-span-1 md:col-start-2 md:row-start-1">
-                  <p className="truncate text-[0.95rem] font-medium text-ink">
-                    {r.party}
-                    <span className="ml-2 font-caption text-[9px] font-semibold uppercase tracking-[1px] text-faint">
-                      {r.source}{r.sentAt ? " · sent" : ""}
-                    </span>
-                  </p>
-                  <p className="truncate text-[0.8rem] text-muted">{[r.reference, r.note].filter(Boolean).join(" · ") || CATEGORY_LABELS[r.category]}</p>
-                </div>
-                {r.source === "ledger" || r.source === "seed" ? (
-                  <p className="text-[0.8rem] text-faint md:col-start-4">{r.kind === "income" ? (r.vat === 19 ? "19 % MwSt" : "no VAT") : CATEGORY_LABELS[r.category]}{r.currency === "USD" ? ` · $${formatEur(r.original ?? 0)}` : ""}</p>
-                ) : r.kind === "income" ? (
-                  <span className="hidden md:col-start-4 md:block" />
-                ) : (
-                  <select
-                    value={r.category}
-                    onChange={(e) => patchEntry(r.id, { category: e.target.value as Category })}
-                    className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.8rem] text-ink focus:border-ink focus:outline-none md:col-start-4"
-                  >
-                    {(r.kind === "tax" ? TAX_CATEGORIES : BUSINESS_CATEGORIES).map((c) => (
-                      <option key={c} value={c}>
-                        {CATEGORY_LABELS[c]}
-                      </option>
+          <section className="flex flex-col gap-5">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <div className="flex flex-wrap items-center gap-2">
+                <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
+                  <TabsList aria-label="Filter rows">
+                    {(["all", "income", "expense", "tax"] as Filter[]).map((f) => (
+                      <TabsTrigger key={f} value={f} className="capitalize">{f === "all" ? "All" : f === "tax" ? "Tax-relevant" : f}</TabsTrigger>
                     ))}
-                  </select>
-                )}
-                {r.source === "ledger" || r.source === "seed" ? (
-                  <span className="hidden md:col-start-5 md:block" />
-                ) : (
-                  <div className="flex gap-1.5 md:col-start-5">
-                    <select
-                      value={r.vat ?? ""}
-                      title="VAT on the receipt"
-                      onChange={(e) => patchEntry(r.id, { vat: e.target.value === "" ? undefined : Number(e.target.value) })}
-                      className="rounded-[8px] border border-rule bg-bg px-2 py-1.5 text-[0.8rem] text-ink focus:border-ink focus:outline-none"
-                    >
-                      <option value="">VAT ?</option>
-                      <option value="19">19 %</option>
-                      <option value="7">7 %</option>
-                      <option value="0">0 %</option>
-                    </select>
-                    <input
-                      type="text"
-                      defaultValue={r.note ?? ""}
-                      placeholder="Note"
-                      onBlur={(e) => {
-                        const v = e.target.value.trim();
-                        if (v !== (r.note ?? "")) patchEntry(r.id, { note: v || undefined });
-                      }}
-                      className="w-full rounded-[8px] border border-rule bg-transparent px-2 py-1 text-[0.8rem] text-ink placeholder:text-faint focus:border-ink focus:outline-none"
-                    />
-                  </div>
-                )}
-                {r.source === "manual" ? (
-                  <button
-                    type="button"
-                    aria-label="Delete row"
-                    onClick={() => removeEntry(r.id)}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-rule text-muted transition-colors hover:border-[#d14343] hover:text-[#d14343] md:col-start-6"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                ) : (
-                  <span className="hidden md:col-start-6 md:block" />
-                )}
-              </li>
-            ))}
-            {visible.length === 0 ? (
-              <li className="px-4 py-10 text-center text-[0.9rem] text-muted">
-                Nothing here yet. <Link href="/books?tab=import" className="underline underline-offset-4">Import an N26 export</Link> or add a row.
-              </li>
+                  </TabsList>
+                </Tabs>
+                <Button type="button" variant={adding ? "secondary" : "outline"} size="sm" onClick={() => setAdding((a) => !a)}>
+                  {adding ? "Cancel" : <><Plus /> Add a row</>}
+                </Button>
+              </div>
+              <div className="relative md:w-[260px]">
+                <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-fd-muted-foreground" aria-hidden />
+                <Input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search rows" className="h-9 pl-9" />
+              </div>
+            </div>
+
+            {adding ? (
+              <form onSubmit={addManual} className="grid grid-cols-2 gap-3 rounded-xl border bg-fd-muted/40 p-4 md:grid-cols-4">
+                <Label className="flex-col items-start gap-1.5 text-xs text-fd-muted-foreground">
+                  Date
+                  <Input name="date" type="date" required defaultValue={`${year}-01-01`} className="h-8 text-sm" />
+                </Label>
+                <Label className="flex-col items-start gap-1.5 text-xs text-fd-muted-foreground">
+                  Kind
+                  <NativeSelect name="kind" className="h-8 w-full text-sm">
+                    <NativeSelectOption value="expense">Expense</NativeSelectOption>
+                    <NativeSelectOption value="income">Income</NativeSelectOption>
+                    <NativeSelectOption value="tax">Tax-relevant</NativeSelectOption>
+                  </NativeSelect>
+                </Label>
+                <Label className="flex-col items-start gap-1.5 text-xs text-fd-muted-foreground">
+                  Amount (EUR)
+                  <Input name="amount" type="text" inputMode="decimal" required placeholder="12.99" className="h-8 text-sm" />
+                </Label>
+                <Label className="flex-col items-start gap-1.5 text-xs text-fd-muted-foreground">
+                  VAT on receipt
+                  <NativeSelect name="vat" className="h-8 w-full text-sm">
+                    <NativeSelectOption value="">unknown</NativeSelectOption>
+                    <NativeSelectOption value="19">19 %</NativeSelectOption>
+                    <NativeSelectOption value="7">7 %</NativeSelectOption>
+                    <NativeSelectOption value="0">0 %</NativeSelectOption>
+                  </NativeSelect>
+                </Label>
+                <Label className="flex-col items-start gap-1.5 text-xs text-fd-muted-foreground">
+                  Vendor / client
+                  <Input name="party" type="text" required className="h-8 text-sm" />
+                </Label>
+                <Label className="flex-col items-start gap-1.5 text-xs text-fd-muted-foreground md:col-span-2">
+                  Reference
+                  <Input name="reference" type="text" className="h-8 text-sm" />
+                </Label>
+                <Label className="flex-col items-start gap-1.5 text-xs text-fd-muted-foreground">
+                  Category
+                  <NativeSelect name="category" className="h-8 w-full text-sm">
+                    {[...BUSINESS_CATEGORIES, ...TAX_CATEGORIES].map((c) => (
+                      <NativeSelectOption key={c} value={c}>{CATEGORY_LABELS[c]}</NativeSelectOption>
+                    ))}
+                  </NativeSelect>
+                </Label>
+                <div className="col-span-2 md:col-span-4">
+                  <Button type="submit" size="sm"><Plus /> Add row</Button>
+                </div>
+              </form>
             ) : null}
-          </ul>
-          <p className="text-[0.8rem] text-muted">
+
+            <ul className="flex flex-col divide-y overflow-hidden rounded-xl border">
+              {visible.map((r) => (
+                <li key={r.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-2 px-4 py-3 md:grid-cols-[84px_minmax(0,1fr)_104px_168px_160px_32px] md:items-center">
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">{prettyDate(r.date)}</p>
+                  <p className={cn("justify-self-end text-base font-semibold tabular-nums md:col-start-3", r.kind === "income" ? "text-fd-up" : r.kind === "tax" ? "text-fd-warn" : "text-fd-down")}>
+                    {r.kind === "income" ? "+" : "−"}€{formatEur(r.amount)}
+                  </p>
+                  <div className="col-span-2 min-w-0 md:col-span-1 md:col-start-2 md:row-start-1">
+                    <p className="flex min-w-0 items-center gap-2 text-sm font-medium">
+                      <span className="truncate">{r.party}</span>
+                      <Badge variant="outline" className="shrink-0 px-1.5 text-[10px] text-fd-muted-foreground">{r.source}{r.sentAt ? " · sent" : ""}</Badge>
+                    </p>
+                    <p className="truncate text-xs text-fd-muted-foreground">{[r.reference, r.note].filter(Boolean).join(" · ") || CATEGORY_LABELS[r.category]}</p>
+                  </div>
+                  {r.source === "ledger" || r.source === "seed" ? (
+                    <p className="text-xs text-fd-muted-foreground md:col-start-4">{r.kind === "income" ? (r.vat === 19 ? "19 % MwSt" : "no VAT") : CATEGORY_LABELS[r.category]}{r.currency === "USD" ? ` · $${formatEur(r.original ?? 0)}` : ""}</p>
+                  ) : r.kind === "income" ? (
+                    <span className="hidden md:col-start-4 md:block" />
+                  ) : (
+                    <NativeSelect value={r.category} onChange={(e) => patchEntry(r.id, { category: e.target.value as Category })} className="h-8 text-xs" aria-label="Category">
+                      {(r.kind === "tax" ? TAX_CATEGORIES : BUSINESS_CATEGORIES).map((c) => (
+                        <NativeSelectOption key={c} value={c}>{CATEGORY_LABELS[c]}</NativeSelectOption>
+                      ))}
+                    </NativeSelect>
+                  )}
+                  {r.source === "ledger" || r.source === "seed" ? (
+                    <span className="hidden md:col-start-5 md:block" />
+                  ) : (
+                    <div className="flex gap-1.5 md:col-start-5">
+                      <NativeSelect value={r.vat ?? ""} title="VAT on the receipt" aria-label="VAT" onChange={(e) => patchEntry(r.id, { vat: e.target.value === "" ? undefined : Number(e.target.value) })} className="h-8 w-[84px] text-xs">
+                        <NativeSelectOption value="">VAT ?</NativeSelectOption>
+                        <NativeSelectOption value="19">19 %</NativeSelectOption>
+                        <NativeSelectOption value="7">7 %</NativeSelectOption>
+                        <NativeSelectOption value="0">0 %</NativeSelectOption>
+                      </NativeSelect>
+                      <Input
+                        type="text"
+                        defaultValue={r.note ?? ""}
+                        placeholder="Note"
+                        aria-label="Note"
+                        onBlur={(e) => {
+                          const v = e.target.value.trim();
+                          if (v !== (r.note ?? "")) patchEntry(r.id, { note: v || undefined });
+                        }}
+                        className="h-8 text-xs"
+                      />
+                    </div>
+                  )}
+                  {r.source === "manual" ? (
+                    <Button type="button" variant="ghost" size="icon-sm" aria-label="Delete row" onClick={() => removeEntry(r.id)} className="text-fd-muted-foreground/70 hover:text-fd-down md:col-start-6">
+                      <Trash2 />
+                    </Button>
+                  ) : (
+                    <span className="hidden md:col-start-6 md:block" />
+                  )}
+                </li>
+              ))}
+              {visible.length === 0 ? (
+                <li className="px-4 py-10 text-center text-sm text-fd-muted-foreground">
+                  Nothing here yet. <Link href="/books?tab=import" className="underline underline-offset-4">Import an N26 export</Link> or add a row.
+                </li>
+              ) : null}
+            </ul>
+            <p className="text-xs leading-5 text-fd-muted-foreground">
             N26 rows are edited on the expenses page (verdict, tax bucket); here you set VAT on the receipt and notes. Ledger and seed rows come from the repo.
           </p>
-        </section>
+          </section>
         </Panel>
       ) : null}
 
@@ -578,66 +551,57 @@ export function BooksDashboard({
 
       {tab === "accountant" ? (
         <Panel>
-        <section className="flex flex-col gap-8">
-          <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
-            <label className="flex items-center gap-2 text-[0.9rem] text-ink">
-              <input type="checkbox" checked={onlyNew} onChange={(e) => setOnlyNew(e.target.checked)} className="h-4 w-4 accent-[var(--color-accent)]" />
-              Only rows not yet sent
-            </label>
-            <label className="flex items-center gap-2 text-[0.9rem] text-ink">
-              <input type="checkbox" checked={settings.decimalComma} onChange={(e) => setSettings({ ...settings, decimalComma: e.target.checked })} className="h-4 w-4 accent-[var(--color-accent)]" />
-              Decimal comma
-            </label>
-          </div>
-          <div className="flex flex-wrap items-center gap-4">
-            <button type="button" onClick={copyForAccountant} className="cta-pill group inline-flex h-14 items-center gap-4 pr-6">
-              <span className="flex h-14 w-14 items-center justify-center text-bg">
-                <Copy className="h-5 w-5" strokeWidth={2} />
-              </span>
-              <span className="font-caption text-[13px] font-bold uppercase tracking-[1px]">Copy {exportRowsList.length} rows for the Primanota</span>
-            </button>
-            <button
-              type="button"
-              onClick={markSent}
-              disabled={exportRowsList.length === 0}
-              className="font-caption text-[11px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink disabled:opacity-40"
-            >
-              Mark these as sent
-            </button>
-          </div>
-          <p className="text-[0.85rem] leading-[1.45rem] text-muted">
-            Same columns as your sheet: Date, Income, Expense, Client + Reference, VAT, Country, Invoice nr, Currency, USD rate, Income (USD), plus a Category column at the end you can drop. Income rows first, then expenses; Krankenkasse and Finanzamt rows are marked tax-relevant for the accountant to sort. Paste, send, then mark as sent so the next batch only holds what&apos;s new.
-          </p>
-          <div className="overflow-x-auto rounded-[14px] border border-rule">
-            <table className="w-full min-w-[900px] border-collapse text-left text-[0.8rem]">
-              <thead>
-                <tr className="border-b border-rule bg-card/40">
-                  {ACCOUNTANT_COLUMNS.map((c) => (
-                    <th key={c} className="whitespace-nowrap px-3 py-2 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">{c}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {exportRowsList.slice(0, 40).map((r) => (
-                  <tr key={r.id} className="border-b border-rule-soft last:border-b-0">
-                    {accountantRow(r, settings.decimalComma).map((c, i) => (
-                      <td key={i} className={`max-w-[240px] truncate px-3 py-1.5 text-body ${i === 1 || i === 2 ? "text-right tabular-nums" : ""}`}>{c}</td>
+          <section className="flex flex-col gap-6">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+              <Label className="gap-2 font-normal">
+                <Checkbox checked={onlyNew} onCheckedChange={(v) => setOnlyNew(v === true)} />
+                Only rows not yet sent
+              </Label>
+              <Label className="gap-2 font-normal">
+                <Checkbox checked={settings.decimalComma} onCheckedChange={(v) => setSettings({ ...settings, decimalComma: v === true })} />
+                Decimal comma
+              </Label>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Button type="button" onClick={copyForAccountant}>
+                <Copy /> Copy {exportRowsList.length} rows for the Primanota
+              </Button>
+              <Button type="button" variant="ghost" size="sm" onClick={markSent} disabled={exportRowsList.length === 0}>
+                Mark these as sent
+              </Button>
+            </div>
+            <p className="text-xs leading-5 text-fd-muted-foreground">
+              Same columns as your sheet: Date, Income, Expense, Client + Reference, VAT, Country, Invoice nr, Currency, USD rate, Income (USD), plus a Category column at the end you can drop. Income rows first, then expenses; Krankenkasse and Finanzamt rows are marked tax-relevant for the accountant to sort. Paste, send, then mark as sent so the next batch only holds what&apos;s new.
+            </p>
+            <div className="overflow-hidden rounded-xl border">
+              <Table className="min-w-[900px] text-xs">
+                <TableHeader>
+                  <TableRow className="bg-fd-muted/50 hover:bg-fd-muted/50">
+                    {ACCOUNTANT_COLUMNS.map((c) => (
+                      <TableHead key={c} className="px-3">{c}</TableHead>
                     ))}
-                  </tr>
-                ))}
-                {exportRowsList.length > 40 ? (
-                  <tr><td colSpan={ACCOUNTANT_COLUMNS.length} className="px-3 py-2 text-muted">…and {exportRowsList.length - 40} more rows in the copy</td></tr>
-                ) : null}
-                {exportRowsList.length === 0 ? (
-                  <tr><td colSpan={ACCOUNTANT_COLUMNS.length} className="px-3 py-6 text-center text-muted">Nothing new to send.</td></tr>
-                ) : null}
-              </tbody>
-            </table>
-          </div>
-        </section>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {exportRowsList.slice(0, 40).map((r) => (
+                    <TableRow key={r.id}>
+                      {accountantRow(r, settings.decimalComma).map((c, i) => (
+                        <TableCell key={i} className={cn("max-w-[240px] truncate px-3 py-1.5", (i === 1 || i === 2) && "text-right tabular-nums")}>{c}</TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                  {exportRowsList.length > 40 ? (
+                    <TableRow><TableCell colSpan={ACCOUNTANT_COLUMNS.length} className="px-3 py-2 text-fd-muted-foreground">…and {exportRowsList.length - 40} more rows in the copy</TableCell></TableRow>
+                  ) : null}
+                  {exportRowsList.length === 0 ? (
+                    <TableRow><TableCell colSpan={ACCOUNTANT_COLUMNS.length} className="px-3 py-6 text-center text-fd-muted-foreground">Nothing new to send.</TableCell></TableRow>
+                  ) : null}
+                </TableBody>
+              </Table>
+            </div>
+          </section>
         </Panel>
       ) : null}
-
     </FinanceShell>
   );
 }
