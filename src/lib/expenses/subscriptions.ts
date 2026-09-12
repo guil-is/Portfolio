@@ -13,6 +13,8 @@
  */
 
 import type { BookEntry, SubMeta, SubRating } from "./books";
+import { loadMemory, loadSession } from "./storage";
+import { buildItems } from "./triage";
 import { merchantKey, prettyMerchant } from "./text";
 
 /** How the charge was triaged. Only business plans count in the totals. */
@@ -20,6 +22,30 @@ export type SubVerdict = "business" | "personal" | "undecided";
 
 /** A book row, or a bank row that never reached the books (personal, undecided). */
 export type SubSource = BookEntry & { verdict?: SubVerdict };
+
+/**
+ * Bank rows from the expenses session that never reached the books —
+ * personal and undecided charges recur too. Skips rows already booked,
+ * incoming money, internal moves and skipped rows.
+ */
+export function sessionSources(bookedIds: Set<string>): SubSource[] {
+  const session = loadSession();
+  if (!session) return [];
+  return buildItems(session.parsed.transactions, loadMemory(), session.decisions)
+    .filter((i) => !bookedIds.has(i.tx.id) && i.tx.amount < 0 && i.tx.kind !== "internal" && i.decision?.verdict !== "skip")
+    .map((i) => ({
+      id: i.tx.id,
+      date: i.tx.date,
+      kind: "expense" as const,
+      amount: Math.abs(i.tx.amount),
+      party: i.tx.partner,
+      reference: i.tx.reference,
+      category: i.decision?.category ?? "other",
+      source: "n26" as const,
+      updatedAt: "",
+      verdict: i.decision?.verdict === "personal" ? "personal" : i.decision?.verdict === "business" ? "business" : "undecided",
+    }));
+}
 
 /**
  * Merchant key for subscriptions: the cleaned name ("PAYPAL *MYFONTS" →

@@ -15,6 +15,8 @@ export default function robots(): MetadataRoute.Robots {
           "/for/",
           "/books",
           "/books/",
+          "/money",
+          "/money/",
           "/resources",
           "/resources/",
         ],

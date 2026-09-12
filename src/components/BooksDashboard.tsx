@@ -9,11 +9,11 @@ import {
   loadAllBooks,
   loadBook,
   loadBooksSettings,
+  mergeYearEntries,
   prepaidElsewhereFor,
   loadSentInvoices,
   newManualEntry,
   parseQuickAdd,
-  sameCharge,
   saveBook,
   saveBooksSettings,
   saveSentInvoices,
@@ -35,7 +35,7 @@ import { TaxEstimate } from "./TaxEstimate";
 import { SubscriptionsTab } from "./SubscriptionsTab";
 import { SyncBar } from "./SyncBar";
 import { Stat, signTone } from "./Stat";
-import { trackSubscriptions, type SubSource } from "@/lib/expenses/subscriptions";
+import { sessionSources, trackSubscriptions } from "@/lib/expenses/subscriptions";
 import { loadMemory, loadSession } from "@/lib/expenses/storage";
 import { buildItems } from "@/lib/expenses/triage";
 import type { Subscription } from "@/content/books/subscriptions";
@@ -175,18 +175,7 @@ export function BooksDashboard({
 
   // Seed rows for the year: income always; expenses only until an N26
   // import for that year exists (the import is the complete record).
-  const yearEntries = useMemo(() => {
-    const own = entries.filter((e) => e.date.startsWith(String(year)));
-    const hasImport = own.some((e) => e.source === "n26");
-    const seeded = seed.filter(
-      (e) =>
-        e.date.startsWith(String(year)) &&
-        (e.kind === "income" || !hasImport || e.keep) &&
-        // A row added from chat steps aside once the bank or a quick-add has it.
-        !(e.keep && own.some((o) => sameCharge(o, e))),
-    );
-    return [...own, ...seeded];
-  }, [entries, seed, year]);
+  const yearEntries = useMemo(() => mergeYearEntries(year, entries, seed), [entries, seed, year]);
   const seedExpensesHidden = useMemo(
     () =>
       entries.some((e) => e.date.startsWith(String(year)) && e.source === "n26") &&
@@ -199,25 +188,8 @@ export function BooksDashboard({
   // charges recur too, and a plan the rules don't know sits undecided.
   const subs = useMemo(() => {
     const booked = new Set([...loadAllBooks(), ...entries].map((e) => e.id));
-    const session = loadSession();
-    const outside: SubSource[] = session
-      ? buildItems(session.parsed.transactions, loadMemory(), session.decisions)
-          .filter((i) => !booked.has(i.tx.id) && i.tx.amount < 0 && i.tx.kind !== "internal" && i.decision?.verdict !== "skip")
-          .map((i) => ({
-            id: i.tx.id,
-            date: i.tx.date,
-            kind: "expense" as const,
-            amount: Math.abs(i.tx.amount),
-            party: i.tx.partner,
-            reference: i.tx.reference,
-            category: i.decision?.category ?? "other",
-            source: "n26" as const,
-            updatedAt: "",
-            verdict: i.decision?.verdict === "personal" ? "personal" : i.decision?.verdict === "business" ? "business" : "undecided",
-          }))
-      : [];
     return trackSubscriptions(
-      [...loadAllBooks().filter((e) => !e.date.startsWith(String(year))), ...entries, ...seed, ...outside],
+      [...loadAllBooks().filter((e) => !e.date.startsWith(String(year))), ...entries, ...seed, ...sessionSources(booked)],
       registry,
     );
   }, [entries, seed, registry, year]);
@@ -338,6 +310,9 @@ export function BooksDashboard({
           ))}
           <Link href="/for/expenses" className="ml-4 font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
             Import an N26 export →
+          </Link>
+          <Link href="/money" className="ml-2 font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
+            Money overview →
           </Link>
         </div>
         {!ledgerLoaded ? (

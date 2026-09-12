@@ -32,6 +32,9 @@
   --color-up: #299c68;
   --color-down: #c8452d;
   --color-warn: #b7791f;
+  /* Chart marks only — validated as a categorical pair on each surface. */
+  --color-viz-in: #299c68;
+  --color-viz-out: #c8452d;
   --color-card: #e8e8e8;
   --shadow-card: 0 4px 40px #cfc8c433;
 }
@@ -50,6 +53,8 @@
   --color-up: #4ade80;
   --color-down: #f47c66;
   --color-warn: #e6b355;
+  --color-viz-in: #34a86f;
+  --color-viz-out: #e0603f;
   --color-card: #1a1a1a;
   --shadow-card: 0 4px 40px #00000040;
 }
@@ -68,6 +73,8 @@
   --color-up: var(--color-up);
   --color-down: var(--color-down);
   --color-warn: var(--color-warn);
+  --color-viz-in: var(--color-viz-in);
+  --color-viz-out: var(--color-viz-out);
   --color-card: var(--color-card);
 
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;

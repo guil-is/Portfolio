@@ -1,12 +1,10 @@
 "use client";
 
 import type { IncomeYear } from "@/lib/income";
-import { estimateTax, type TaxEstimate as Estimate } from "@/lib/tax";
+import type { TaxEstimate as Estimate } from "@/lib/tax";
+import { yearPicture } from "@/lib/expenses/estimate";
 import {
   bookTotals,
-  unpaidInstalments,
-  yearProgress,
-  EMPTY_YEAR,
   type BookEntry,
   type BooksSettings,
   type TaxBucket,
@@ -41,59 +39,14 @@ export function TaxEstimate({
   /** Defaults for this year from a Bescheid (src/content/books/seed.ts). */
   facts?: YearSettings;
 }) {
-  const side = bookTotals(entries, year);
-  const ys: YearSettings = settings.years[year] ?? facts ?? {
-    ...EMPTY_YEAR,
-    spouseIncome: settings.spouseIncome,
-    spouseWithheld: settings.spouseWithheld,
-  };
+  const picture = yearPicture({ year, income, entries, elsewhere, settings, facts });
+  const { side, ys, prepaid, prepaidElsewhere, unpaid, stillDue, overdue, revenue, outstanding, vatCollected, progress, isPartial, soFar, projected } = picture;
+  const today = new Date().toISOString().slice(0, 10);
   const setYs = (patch: Partial<YearSettings>) =>
     setSettings({ ...settings, years: { ...settings.years, [year]: { ...ys, ...patch, source: undefined } } });
-  const prepaidElsewhere = elsewhere.reduce((t, e) => t + e.amount, 0);
-  const prepaid = side.incomeTaxPrepaid + prepaidElsewhere + ys.prepaidExtra;
-  // What the Finanzamt set for the year (Vorauszahlungsbescheid), minus
-  // what's been paid, in due-date order: the rest is still owed this year.
-  const today = new Date().toISOString().slice(0, 10);
-  const unpaid = unpaidInstalments(facts?.scheduled ?? ys.scheduled ?? [], side.incomeTaxPrepaid + ys.prepaidExtra);
-  const stillDue = unpaid.reduce((t, s) => t + s.amount, 0);
-  const overdue = unpaid.filter((s) => s.due < today);
-  const usdEur = (income?.usd ?? 0) * settings.usdRate;
-  const revenue = (income?.eurNet ?? 0) + usdEur + side.manualIncome;
-  const progress = yearProgress(year);
   const scale = progress > 0 ? 1 / progress : 1;
-  const outstanding = (income?.outstandingEurNet ?? 0) + (income?.outstandingUsd ?? 0) * settings.usdRate;
-
-  const vatCollected = (income?.eurVat ?? 0) + side.manualVat;
-  const base = {
-    year,
-    vatCollected,
-    vatPaid: side.vatPaid,
-    joint: settings.joint,
-    spouseIncome: ys.spouseIncome,
-    spouseWithheld: ys.spouseWithheld,
-    spouseBenefits: ys.spouseBenefits,
-  };
-  const soFar = estimateTax({
-    ...base,
-    revenue,
-    expenses: side.expenses,
-    insurance: side.insurance,
-    prepaid,
-  });
-  // Run-rate: revenue, expenses and insurance scale with the year; the
-  // partner's figures and prepayments are entered as full-year values.
-  const projected = estimateTax({
-    ...base,
-    revenue: revenue * scale,
-    expenses: side.expenses * scale,
-    insurance: side.insurance * scale,
-    prepaid: prepaid + stillDue,
-    vatCollected: vatCollected * scale,
-    vatPaid: side.vatPaid,
-  });
   const eur = (n: number) => `€${formatEur(Math.round(n))}`;
   const monthsRun = Math.max(1, Math.round(progress * 12));
-  const isPartial = progress < 1;
 
   const dueLabel = (d: { due: string; amount: number }) =>
     `${prettyDate(d.due)} ${eur(d.amount)}${d.due < today ? " · overdue" : d.due === today ? " · due today" : ""}`;

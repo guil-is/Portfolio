@@ -103,6 +103,25 @@ const YEARS_KEY = "books:v1:years";
 const SETTINGS_KEY = "books:v1:settings";
 const SUBS_META_KEY = "books:v1:subs-meta";
 
+/**
+ * A year's rows for the books: what's stored for the year plus the seed
+ * rows that still apply — seed income always; seed expenses only until
+ * an N26 import exists for the year (the import is the complete record),
+ * unless the row is marked `keep`; and a kept row steps aside once the
+ * same charge exists as a bank or quick-add row.
+ */
+export function mergeYearEntries(year: number, own: BookEntry[], seed: BookEntry[]): BookEntry[] {
+  const mine = own.filter((e) => e.date.startsWith(String(year)));
+  const hasImport = mine.some((e) => e.source === "n26");
+  const seeded = seed.filter(
+    (e) =>
+      e.date.startsWith(String(year)) &&
+      (e.kind === "income" || !hasImport || e.keep) &&
+      !(e.keep && mine.some((o) => sameCharge(o, e))),
+  );
+  return [...mine, ...seeded];
+}
+
 /** How much a subscription earns its keep. 3 = essential, 1 = could cut. */
 export type SubRating = 1 | 2 | 3;
 

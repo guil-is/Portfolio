@@ -3,6 +3,8 @@
  * (up), money out (down), things to watch (warn). Default is ink.
  */
 
+import type { ReactNode } from "react";
+
 export type Tone = "up" | "down" | "warn" | "ink";
 
 export const TONE_TEXT: Record<Tone, string> = {
@@ -12,7 +14,7 @@ export const TONE_TEXT: Record<Tone, string> = {
   ink: "text-ink",
 };
 
-export function Stat({ label, value, sub, tone = "ink" }: { label: string; value: string; sub: string; tone?: Tone }) {
+export function Stat({ label, value, sub, tone = "ink" }: { label: string; value: ReactNode; sub: ReactNode; tone?: Tone }) {
   return (
     <div className="flex h-full w-full flex-col gap-1 bg-bg px-5 py-5">
       <p className="font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">{label}</p>

@@ -98,3 +98,47 @@ export function invoiceRows(): InvoiceRow[] {
     };
   });
 }
+
+/** An unpaid, tracked invoice — what the money page lists under "owed to you". */
+export type Receivable = {
+  number: string;
+  client: string;
+  clientSlug?: string;
+  issuedAt: string;
+  dueAt: string;
+  total: number;
+  currency: "EUR" | "USD";
+};
+
+export function receivables(): Receivable[] {
+  return invoiceLedger
+    .filter((e) => !e.paidAt && e.dueAt)
+    .map((e) => ({
+      number: e.number,
+      client: e.client,
+      clientSlug: e.clientSlug,
+      issuedAt: e.issuedAt,
+      dueAt: e.dueAt!,
+      total: e.total,
+      currency: e.currency,
+    }))
+    .sort((a, b) => a.dueAt.localeCompare(b.dueAt));
+}
+
+/** Money received per calendar month (YYYY-MM), cash basis, VAT stripped. */
+export type IncomeMonth = { month: string; eurNet: number; usd: number; invoices: number };
+
+export function incomeByMonth(): IncomeMonth[] {
+  const months = new Map<string, IncomeMonth>();
+  for (const e of invoiceLedger) {
+    const received = receivedOn(e);
+    if (!received) continue;
+    const key = received.slice(0, 7);
+    const m = months.get(key) ?? { month: key, eurNet: 0, usd: 0, invoices: 0 };
+    m.invoices++;
+    if (e.currency === "EUR") m.eurNet += net(e);
+    else m.usd += e.total;
+    months.set(key, m);
+  }
+  return [...months.values()].sort((a, b) => a.month.localeCompare(b.month));
+}
