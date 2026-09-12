@@ -80,20 +80,21 @@ export const spaAftermovie: Proposal = {
         list: [
           "A locked-off camera on the stage, audio from the AV desk. Lav mic as fallback.",
           "Each session trimmed, title card and lower third, slides cut in where speakers share them, its own file. Ready for the site, YouTube, and the speakers themselves.",
-          "All stage sessions. Delivered ten working days after the event.",
+          "Every talk and pitch, one correction pass. Delivered ten working days after the event.",
         ],
       },
       {
         label: "On the day",
         list: [
-          "The stage during the talks, the main room in between. Breakout rooms as b-roll only, no audio, unless you ask.",
+          "The stage during the talks, the main room in between. Roundtables are not filmed unless WinWin and the hosts ask.",
+          "Setup at 09:00 to the first hour of the afterparty.",
           "Run-of-show check at the venue the day before.",
         ],
       },
     ],
     provides: {
       label: "From the venue",
-      body: "The run-of-show a week ahead, a line out from the AV desk, and a fixed camera spot with a clear view of the lectern. All of it can be settled at the venue visit.",
+      body: "The run-of-show a week ahead, access to the venue the morning before, a line out from the AV desk, and a fixed camera spot with a clear view of the lectern. All of it can be settled at the venue visit.",
     },
   },
 
@@ -103,7 +104,7 @@ export const spaAftermovie: Proposal = {
       {
         label: "By 10 October",
         title: "Go-ahead",
-        body: "Crew, rental and cabinet accreditation need three weeks. Later works subject to availability.",
+        body: "Crew, rental and cabinet accreditation via WinWin need three weeks. Later works subject to availability.",
         kind: "start",
       },
       {
@@ -133,7 +134,7 @@ export const spaAftermovie: Proposal = {
   },
 
   quote: {
-    heading: "Budget Options",
+    heading: "Budget options",
     subheading: "Net. VAT reverse charge, as on the rest of the project. Same deliverables in both; the difference is crew and kit.",
     options: [
       {
@@ -163,10 +164,11 @@ export const spaAftermovie: Proposal = {
           "Travel Berlin–Brussels · 200",
         ],
         prices: [{ label: "Package", amount: "3,800 EUR" }],
-        priceNote: "Phone image: sharp, but \"fake\" depth of field and grainier in low light.",
+        priceNote: "Phone image: sharp, but simulated depth of field and grainier in low light.",
         timeline: "Same dates.",
       },
     ],
+    footnote: "Aftermovie only, no talk recordings: 800 less on either package.",
   },
 
   terms: {
@@ -181,12 +183,12 @@ export const spaAftermovie: Proposal = {
         },
         {
           title: "Event photos",
-          detail: "40 to 60 treated stills, delivered the next morning. Professional only.",
+          detail: "40 to 60 treated stills, between sessions and at the party, delivered the next morning. Professional only.",
           price: "600 EUR",
         },
         {
           title: "Extra camera operator",
-          detail: "Covers the breakout rooms with sound while the main stage runs.",
+          detail: "A second roaming camera for the afternoon and the afterparty.",
           price: "900 EUR + travel",
         },
         {
@@ -203,11 +205,12 @@ export const spaAftermovie: Proposal = {
     },
     itemsLabel: "Terms",
     items: [
-      "Half on go-ahead, half on delivery. 14 days, reverse charge, like the rest of the project.",
+      "Half on go-ahead, due before the shoot day. Half on delivery. 14 days, reverse charge, like the rest of the project.",
       "You own the films: web and social use, worldwide, no time limit. Music is licensed for that use, not for paid ads or broadcast.",
       "Portfolio use only with your written OK.",
-      "The filming notice and opt-out at registration are on WinWin's side. I keep anyone who opts out out of the cut.",
-      "Footage of protected guests goes out only with their office's approval. I prepare a short filming plan for the cabinet after the venue visit. If protocol limits filming of a guest on the day, we film everything else and the day stands.",
+      "The filming notice and opt-out at registration, and the speakers' OK to publish their talk, are on WinWin's side. I keep anyone who opts out out of the cut.",
+      "Every file is delivered to WinWin. Anything showing the President or another protected guest goes public only once WinWin has cleared it with their office. The 48-hour teaser is cut without her unless her shots are pre-cleared.",
+      "I prepare a short filming plan for the cabinet after the venue visit; WinWin submits it. If protocol limits filming of a guest on the day, we film everything else and the day stands.",
       "Venue AV and third-party costs are not included.",
     ],
   },
