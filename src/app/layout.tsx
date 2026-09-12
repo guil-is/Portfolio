@@ -13,6 +13,7 @@ const googleFontsHref =
   "?family=Corinthia:wght@400;700" +
   "&family=Inter:wght@300;400;500;600;700" +
   "&family=Public+Sans:wght@400;500;600;700" +
+  "&family=Geist:wght@400;500;600;700" +
   "&display=swap";
 
 export const metadata: Metadata = {

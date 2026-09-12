@@ -47,7 +47,7 @@ every decision intact.
 ## The books: /books
 
 > The overview across everything — balances, tax owed, cash flow, the
-> next 90 days — is **/money** (`docs/money.md`). This section is the
+> next 90 days — is the **Financial Dashboard** at `/money` (`docs/money.md`). This section is the
 > books it draws on.
 
 `/books` is the bookkeeping home and the replacement for the yearly

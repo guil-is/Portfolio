@@ -19,7 +19,7 @@ const CHECK_MS = 4000;
 const QUIET_MS = 1500;
 const PULL_MS = 60_000;
 
-function useSync(onChange?: (status: SyncStatus) => void) {
+export function useSync(onChange?: (status: SyncStatus) => void) {
   const [state, setState] = useState<SyncState | null>(() => loadSyncState());
   const [status, setStatus] = useState<SyncStatus>(() => (loadSyncState() ? { kind: "idle", lastSyncAt: loadSyncState()?.lastSyncAt, rev: loadSyncState()?.rev ?? 0 } : { kind: "off" }));
   const running = useRef(false);

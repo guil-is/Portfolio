@@ -1,10 +1,24 @@
-# Money: the one-page overview
+# Financial Dashboard: the one-page overview
 
 **guil.is/money** — same gate, password and cookie as `/books`
 (`for-expenses-unlocked`). The page to open before a money decision. It
 reads what the other pages already keep (books, expenses session,
 invoice ledger, subscriptions, sync) and adds one thing of its own: the
 balances you type in.
+
+## Two layouts, one set of numbers
+
+- **`/money`** — the site's own design system (editorial: display
+  type, hairlines, tokens from `globals.css`).
+- **`/money/v2`** — the same page on **shadcn/ui** (Radix primitives,
+  copied-in components under `src/components/ui/`): left sidebar, white
+  cards on an Apple-grey page, one blue accent, Geist. Theme tokens sit
+  at the end of `globals.css`; `card`, `muted` and `accent` are prefixed
+  `fd-` so they don't collide with the site's tokens.
+
+Both read `useDashboard()` (`src/components/money/useDashboard.ts`), so
+they cannot disagree on a number. Keep one, delete the other; the rest
+of this file applies to both.
 
 ## What's on it
 
@@ -49,9 +63,11 @@ balances you type in.
 | Subscriptions | `trackSubscriptions()` over the books + the expenses session, with the tab's ratings and cancellations applied |
 | Everything else | `src/lib/money/overview.ts` — `kpis`, `cashflowMonths`, `upcomingItems`, `attentionItems`; pure functions, easy to unit-test |
 
-Page: `src/app/money/page.tsx` → `src/components/money/MoneyDashboard.tsx`,
-with `AttentionList`, `CashflowChart` (inline SVG, no chart library),
-`UpcomingList`, `AccountsPanel` and `Privacy` next to it. Chart colours
+Pages: `src/app/money/page.tsx` → `src/components/money/MoneyDashboard.tsx`
+(v1) and `src/app/money/v2/page.tsx` → `src/components/money/v2/FdDashboard.tsx`
+(v2); both take their props from `src/app/money/data.ts`. Shared pieces:
+`useDashboard`, `CashflowChart` (inline SVG, no chart library),
+`Privacy`; v1 also uses `AttentionList`, `UpcomingList`, `AccountsPanel`. Chart colours
 are the `--color-viz-in` / `--color-viz-out` tokens in `globals.css`
 (validated as a colour-blind-safe pair on both surfaces); status colours
 stay `--color-up/down/warn`.

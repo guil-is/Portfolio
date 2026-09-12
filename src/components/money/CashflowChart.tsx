@@ -30,12 +30,23 @@ function compact(n: number): string {
   return String(Math.round(n));
 }
 
-export function CashflowChart({ months }: { months: CashflowMonth[] }) {
+export function CashflowChart({
+  months,
+  view,
+  controls = true,
+}: {
+  months: CashflowMonth[];
+  /** Controlled view; leave unset to let the chart's own toggle decide. */
+  view?: "chart" | "table";
+  /** Hide the built-in Chart/Table toggle (when the host renders its own). */
+  controls?: boolean;
+}) {
   const { hidden } = usePrivacy();
   const host = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(880);
   const [hover, setHover] = useState<number | null>(null);
-  const [table, setTable] = useState(false);
+  const [own, setOwn] = useState(false);
+  const table = view ? view === "table" : own;
 
   useEffect(() => {
     const el = host.current;
@@ -85,13 +96,15 @@ export function CashflowChart({ months }: { months: CashflowMonth[] }) {
             <span className="inline-block h-2.5 w-2.5 rounded-[2px] bg-viz-out" aria-hidden /> Business out <span className="text-ink">{fmt(totalOut)}</span>
           </span>
         </div>
-        <button
-          type="button"
-          onClick={() => setTable((t) => !t)}
-          className="rounded-full border border-rule px-3 py-1 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted transition-colors hover:border-ink hover:text-ink"
-        >
-          {table ? "Chart" : "Table"}
-        </button>
+        {controls ? (
+          <button
+            type="button"
+            onClick={() => setOwn((t) => !t)}
+            className="rounded-full border border-rule px-3 py-1 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted transition-colors hover:border-ink hover:text-ink"
+          >
+            {table ? "Chart" : "Table"}
+          </button>
+        ) : null}
       </div>
 
       {table ? (

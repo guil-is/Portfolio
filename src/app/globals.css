@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -546,4 +547,140 @@ html.page-leaving body {
   }
 }
 
+/* ==========================================================================
+   Financial Dashboard v2 (/money/v2) — shadcn/ui tokens.
+   Soft, minimal: page in Apple grey, white cards, hairline borders, one
+   blue accent, Geist. `card`, `muted` and `accent` are prefixed `fd-` so
+   they don't collide with the site's own tokens above. Chart pair
+   validated with the dataviz validator on both card surfaces.
+   ========================================================================== */
+:root {
+  --background: #f5f5f7;
+  --foreground: #1d1d1f;
+  --fd-card: #ffffff;
+  --fd-card-foreground: #1d1d1f;
+  --popover: #ffffff;
+  --popover-foreground: #1d1d1f;
+  --primary: #0a5fd6;
+  --primary-foreground: #ffffff;
+  --secondary: #f0f0f3;
+  --secondary-foreground: #1d1d1f;
+  --fd-muted: #ececf0;
+  --fd-muted-foreground: #6e6e73;
+  --fd-accent: #f0f0f3;
+  --fd-accent-foreground: #1d1d1f;
+  --destructive: #d93025;
+  --border: #e6e6eb;
+  --input: #dcdce2;
+  --ring: #0a5fd6;
+  --fd-up: #18794e;
+  --fd-down: #cd2b31;
+  --fd-warn: #ad5700;
+  --chart-1: #299c68;
+  --chart-2: #c8452d;
+  --shadow-fd: 0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px rgb(0 0 0 / 0.05);
+}
 
+.dark {
+  --background: #0e0e10;
+  --foreground: #f5f5f7;
+  --fd-card: #1a1a1d;
+  --fd-card-foreground: #f5f5f7;
+  --popover: #1f1f23;
+  --popover-foreground: #f5f5f7;
+  --primary: #4c9aff;
+  --primary-foreground: #0b0b0c;
+  --secondary: #26262b;
+  --secondary-foreground: #f5f5f7;
+  --fd-muted: #232327;
+  --fd-muted-foreground: #9a9aa1;
+  --fd-accent: #26262b;
+  --fd-accent-foreground: #f5f5f7;
+  --destructive: #ff6369;
+  --border: #2a2a2f;
+  --input: #35353b;
+  --ring: #4c9aff;
+  --fd-up: #4cc38a;
+  --fd-down: #ff6369;
+  --fd-warn: #f1a10d;
+  --chart-1: #34a86f;
+  --chart-2: #e0603f;
+  --shadow-fd: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-fd-card: var(--fd-card);
+  --color-fd-card-foreground: var(--fd-card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-fd-muted: var(--fd-muted);
+  --color-fd-muted-foreground: var(--fd-muted-foreground);
+  --color-fd-accent: var(--fd-accent);
+  --color-fd-accent-foreground: var(--fd-accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-fd-up: var(--fd-up);
+  --color-fd-down: var(--fd-down);
+  --color-fd-warn: var(--fd-warn);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --shadow-fd: var(--shadow-fd);
+  --font-fd: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+}
+
+@layer base {
+  .fd,
+  .fd-portal {
+    font-family: var(--font-fd);
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+  }
+  .fd *,
+  .fd *::before,
+  .fd *::after,
+  .fd-portal,
+  .fd-portal * {
+    border-color: var(--color-border);
+  }
+  /* The v2 chart reads the site's chart tokens; point them at the fd pair. */
+  .fd {
+    --color-viz-in: var(--chart-1);
+    --color-viz-out: var(--chart-2);
+    --color-rule: var(--border);
+    --color-muted: var(--fd-muted-foreground);
+    --color-ink: var(--foreground);
+    --color-body: var(--foreground);
+    --color-bg: var(--fd-card);
+    --color-up: var(--fd-up);
+    --color-down: var(--fd-down);
+    --color-warn: var(--fd-warn);
+  }
+}
+
+@keyframes fd-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.fd-rise {
+  animation: fd-rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .fd-rise {
+    animation: none;
+  }
+}

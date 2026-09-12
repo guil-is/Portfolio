@@ -13,17 +13,17 @@ import { Amount } from "./Privacy";
  * decisions); yearly renewals, invoices and tax stay as their own rows.
  */
 
-function monthTitle(key: string): string {
+export function monthTitle(key: string): string {
   return new Date(`${key}-01T00:00:00Z`).toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
 }
 
-function day(iso: string): string {
+export function day(iso: string): string {
   return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", timeZone: "UTC" });
 }
 
-type Row = { kind: "one"; item: UpcomingItem } | { kind: "plans"; month: string; items: UpcomingItem[] };
+export type Row = { kind: "one"; item: UpcomingItem } | { kind: "plans"; month: string; items: UpcomingItem[] };
 
-function rowsFor(month: string, items: UpcomingItem[]): Row[] {
+export function rowsFor(month: string, items: UpcomingItem[]): Row[] {
   const plans = items.filter((it) => it.kind === "subscription" && it.interval === "monthly");
   const rest = items.filter((it) => !plans.includes(it));
   const out: Row[] = rest.map((item) => ({ kind: "one", item }));

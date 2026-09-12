@@ -312,7 +312,7 @@ export function BooksDashboard({
             Import an N26 export →
           </Link>
           <Link href="/money" className="ml-2 font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted transition-colors hover:text-ink">
-            Money overview →
+            Financial dashboard →
           </Link>
         </div>
         {!ledgerLoaded ? (

@@ -1,53 +1,24 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import Link from "next/link";
-import type { IncomeMonth, IncomeYear, Receivable } from "@/lib/income";
-import {
-  loadAllBooks,
-  loadBooksSettings,
-  loadSubsMeta,
-  mergeYearEntries,
-  prepaidElsewhereFor,
-  syncItemsIntoBooks,
-  type BookEntry,
-  type YearSettings,
-} from "@/lib/expenses/books";
-import { yearPicture } from "@/lib/expenses/estimate";
-import { applySubsMeta, sessionSources, trackSubscriptions } from "@/lib/expenses/subscriptions";
-import { loadMemory, loadSession } from "@/lib/expenses/storage";
-import { loadSyncState } from "@/lib/expenses/sync";
-import { buildItems } from "@/lib/expenses/triage";
-import { isAsset, loadAccounts, saveAccounts, type Account } from "@/lib/money/accounts";
-import { attentionItems, cashflowMonths, kpis, upcomingItems } from "@/lib/money/overview";
-import type { Subscription } from "@/content/books/subscriptions";
+import type { ReactNode } from "react";
 import { Stat } from "../Stat";
 import { SyncBar } from "../SyncBar";
 import { AccountsPanel } from "./AccountsPanel";
 import { AttentionList } from "./AttentionList";
 import { CashflowChart } from "./CashflowChart";
-import { Amount, PrivacyProvider, PrivacyToggle, usePrivacy } from "./Privacy";
+import { Amount, PrivacyProvider, PrivacyToggle } from "./Privacy";
 import { UpcomingList } from "./UpcomingList";
+import { useDashboard, type DashboardProps } from "./useDashboard";
 
 /**
- * /money — the one page to open when deciding about money. Reads what
- * the other pages keep (books, expenses session, ledger, subscriptions,
- * sync) and adds the balances you type in. Nothing here leaves the
+ * /money — the Financial Dashboard on the site's own design system: the
+ * one page to open when deciding about money. Numbers come from
+ * useDashboard(); this file is layout only. Nothing here leaves the
  * browser except through the encrypted sync.
  */
 
-type Props = {
-  income: IncomeYear[];
-  incomeMonths: IncomeMonth[];
-  receivables: Receivable[];
-  /** Pre-tool years + rows added from chat (src/content/books). */
-  seed: BookEntry[];
-  facts: Record<number, YearSettings>;
-  registry: Subscription[];
-  ledgerLoaded: boolean;
-};
-
-export function MoneyDashboard(props: Props) {
+export function MoneyDashboard(props: DashboardProps) {
   return (
     <PrivacyProvider>
       <Dashboard {...props} />
@@ -55,91 +26,20 @@ export function MoneyDashboard(props: Props) {
   );
 }
 
-function Dashboard({ income, incomeMonths, receivables, seed, facts, registry, ledgerLoaded }: Props) {
-  const { hidden } = usePrivacy();
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
-  const year = Number(today.slice(0, 4));
-  // Same as /books: reconcile the expenses session into the books before
-  // reading them, so a fresh triage shows here without a detour.
-  const [books] = useState<BookEntry[]>(() => {
-    const session = loadSession();
-    if (session) syncItemsIntoBooks(buildItems(session.parsed.transactions, loadMemory(), session.decisions));
-    return loadAllBooks();
-  });
-  const [settings] = useState(() => loadBooksSettings());
-  const [accounts, setAccounts] = useState<Account[]>(() => loadAccounts());
-  const [toast, setToast] = useState<string | null>(null);
-  const reloadSoon = useCallback(() => window.setTimeout(() => window.location.reload(), 600), []);
-  // Read each render (cheap): the SyncBar's toast re-renders us after enable/disable.
-  const syncOn = Boolean(loadSyncState());
-  const usdRate = settings.usdRate;
-
-  useEffect(() => {
-    if (!toast) return;
-    const t = window.setTimeout(() => setToast(null), 4000);
-    return () => window.clearTimeout(t);
-  }, [toast]);
-
-  // Every year's rows, with the seed rules applied per year.
-  const merged = useMemo(() => {
-    const years = new Set<number>([...books, ...seed].map((e) => Number(e.date.slice(0, 4))));
-    return [...years].flatMap((y) => mergeYearEntries(y, books, seed));
-  }, [books, seed]);
-  const yearEntries = useMemo(() => merged.filter((e) => e.date.startsWith(String(year))), [merged, year]);
-  const elsewhere = useMemo(() => prepaidElsewhereFor(year, books), [year, books]);
-  const picture = useMemo(
-    () => yearPicture({ year, income: income.find((i) => i.year === year), entries: yearEntries, elsewhere, settings, facts: facts[year], today }),
-    [year, income, yearEntries, elsewhere, settings, facts, today],
-  );
-  const session = useMemo(() => sessionSources(new Set(books.map((e) => e.id))), [books]);
-  const subs = useMemo(
-    () => applySubsMeta(trackSubscriptions([...books, ...seed, ...session], registry, today), loadSubsMeta()),
-    [books, seed, session, registry, today],
-  );
-  const undecided = useMemo(() => session.filter((s) => s.verdict === "undecided").length, [session]);
-  const lastBankRow = useMemo(
-    () =>
-      [...books, ...session]
-        .filter((e) => e.source === "n26")
-        .map((e) => e.date)
-        .sort()
-        .at(-1),
-    [books, session],
-  );
-  const k = useMemo(() => kpis({ accounts, usdRate, picture, receivables, entries: merged, today }), [accounts, usdRate, picture, receivables, merged, today]);
-  const attention = useMemo(
-    () => attentionItems({ picture, receivables, subs, kpis: k, syncOn, joint: settings.joint, undecided, lastBankRow, today }),
-    [picture, receivables, subs, k, syncOn, settings.joint, undecided, lastBankRow, today],
-  );
-  const flow = useMemo(() => cashflowMonths({ incomeMonths, entries: merged, usdRate, today }), [incomeMonths, merged, usdRate, today]);
-  const upcoming = useMemo(() => upcomingItems({ picture, subs, receivables, usdRate, today }), [picture, subs, receivables, usdRate, today]);
-
-  const noBalances = accounts.every((a) => !a.updatedAt);
-  const assetCount = accounts.filter((a) => isAsset(a.kind)).length;
-  const coverage = k.taxOwed > 0 ? k.taxReserve / k.taxOwed : 1;
-  const dateLine = useMemo(
-    () => new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }),
-    [],
-  );
-  const now = attention.filter((a) => a.severity === "critical").length;
-  const soon = attention.filter((a) => a.severity === "warning").length;
-
-  function changeAccounts(next: Account[]) {
-    setAccounts(next);
-    saveAccounts(next);
-  }
-
-  const runway =
-    k.runwayMonths === null ? "—" : hidden ? "••" : k.runwayMonths <= 0 ? "0" : k.runwayMonths >= 24 ? "24+" : k.runwayMonths.toFixed(1);
+function Dashboard(props: DashboardProps) {
+  const { ledgerLoaded } = props;
+  const { k, attention, flow, upcoming, accounts, changeAccounts, toast, setToast, reloadSoon, noBalances, assetCount, coverage, dateLine, counts, runway, today, usdRate, receivables } =
+    useDashboard(props);
+  const { now, soon, note } = counts;
 
   return (
     <main className="page-fade-in mx-auto w-full max-w-[1040px] px-6 pt-10 pb-40 md:px-10 md:pt-16">
       {/* ---------- header ---------- */}
       <section className="flex flex-col gap-5 pb-10 md:pb-12">
-        <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">Private · Money</p>
+        <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">Private · Financial dashboard</p>
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col gap-2">
-            <h1 className="intro-rise font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:text-[4rem]">Money</h1>
+            <h1 className="intro-rise font-display text-[2.5rem] font-bold leading-[1.05] text-ink md:text-[4rem]">Financial Dashboard</h1>
             <p className="text-[0.9rem] text-muted">{dateLine}</p>
           </div>
           <div className="flex items-center gap-2 pt-2 md:pt-4">
@@ -147,10 +47,11 @@ function Dashboard({ income, incomeMonths, receivables, seed, facts, registry, l
             <SyncBar onToast={setToast} onRestored={reloadSoon} />
           </div>
         </div>
-        <nav aria-label="Money pages" className="flex flex-wrap items-center gap-x-4 gap-y-1 font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
+        <nav aria-label="Finance pages" className="flex flex-wrap items-center gap-x-4 gap-y-1 font-caption text-[10px] font-semibold uppercase tracking-[1.5px] text-muted">
           <Link href="/books" className="transition-colors hover:text-ink">Books →</Link>
           <Link href="/for/expenses" className="transition-colors hover:text-ink">Expenses →</Link>
           <Link href="/for/clients" className="transition-colors hover:text-ink">Clients →</Link>
+          <Link href="/money/v2" className="ml-auto transition-colors hover:text-ink">Try the v2 layout →</Link>
         </nav>
         {!ledgerLoaded ? (
           <p className="rounded-[12px] border border-rule-soft bg-card/40 px-4 py-3 text-[0.85rem] leading-[1.4rem] text-muted">
@@ -214,19 +115,19 @@ function Dashboard({ income, incomeMonths, receivables, seed, facts, registry, l
         />
         <Stat label="Monthly burn" value={<Amount value={k.burn} />} sub="business + health, avg of last 3 full months" tone={k.burn > 0 ? "down" : "ink"} />
         <div className="col-span-2 sm:col-span-1">
-        <Stat
-          label="Runway"
-          value={runway === "—" ? "—" : <>{runway} <span className="text-[0.9rem] font-medium text-muted">mo</span></>}
-          sub={k.runwayMonths === null ? "needs three months of expenses" : "free cash ÷ monthly burn"}
-          tone={k.runwayMonths === null ? "ink" : k.runwayMonths < 3 ? "down" : k.runwayMonths < 6 ? "warn" : "up"}
-        />
+          <Stat
+            label="Runway"
+            value={runway === "—" ? "—" : <>{runway} <span className="text-[0.9rem] font-medium text-muted">mo</span></>}
+            sub={k.runwayMonths === null ? "needs three months of expenses" : "free cash ÷ monthly burn"}
+            tone={k.runwayMonths === null ? "ink" : k.runwayMonths < 3 ? "down" : k.runwayMonths < 6 ? "warn" : "up"}
+          />
         </div>
       </section>
 
       {/* ---------- attention ---------- */}
       <Section
         title="Needs a decision"
-        meta={attention.length === 0 ? undefined : [now ? `${now} now` : null, soon ? `${soon} soon` : null, `${attention.length - now - soon} to note`].filter(Boolean).join(" · ")}
+        meta={attention.length === 0 ? undefined : [now ? `${now} now` : null, soon ? `${soon} soon` : null, `${note} to note`].filter(Boolean).join(" · ")}
       >
         <AttentionList items={attention} />
       </Section>

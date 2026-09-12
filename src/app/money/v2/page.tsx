@@ -1,19 +1,19 @@
 import { cookies } from "next/headers";
 import { PasswordGate } from "@/components/PasswordGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { MoneyDashboard } from "@/components/money/MoneyDashboard";
-import { dashboardProps, noRobots, PASSWORD, STORAGE_KEY } from "./data";
+import { FdDashboard } from "@/components/money/v2/FdDashboard";
+import { dashboardProps, noRobots, PASSWORD, STORAGE_KEY } from "../data";
 
 export const metadata = {
-  title: "Financial Dashboard | Private",
-  description: "Private personal finance overview",
+  title: "Financial Dashboard v2 | Private",
+  description: "Private personal finance overview — shadcn/ui layout",
   robots: noRobots,
 };
 
-// Same gate and password as /books — one unlock covers both.
 export const dynamic = "force-dynamic";
 
-export default async function MoneyPage() {
+/** The same numbers as /money, laid out on shadcn/ui. Pick one, then the other goes. */
+export default async function MoneyV2Page() {
   const unlocked = (await cookies()).get(STORAGE_KEY)?.value === "1";
   return (
     <>
@@ -21,7 +21,7 @@ export default async function MoneyPage() {
         <ThemeToggle />
       </div>
       <PasswordGate password={PASSWORD} storageKey={STORAGE_KEY}>
-        <MoneyDashboard {...dashboardProps(unlocked)} />
+        <FdDashboard {...dashboardProps(unlocked)} />
       </PasswordGate>
     </>
   );
