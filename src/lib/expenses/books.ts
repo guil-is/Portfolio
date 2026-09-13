@@ -73,6 +73,10 @@ export type BooksSettings = {
   spouseWithheld: number;
   years: Record<number, YearSettings>;
   usdRate: number;
+  /** "ecb": the rate refreshes daily from the ECB reference rate (src/lib/money/fx.ts). Unset = typed by hand. */
+  usdRateSource?: "manual" | "ecb";
+  /** Date of the ECB rate in `usdRate`, when the source is "ecb". */
+  usdRateAt?: string;
   /** "12,99" in exports, for a German-locale sheet. */
   decimalComma: boolean;
 };

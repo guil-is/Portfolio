@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { Copy, Plus, Search, Trash2 } from "lucide-react";
+import { ChevronDown, Copy, PenLine, Plus, Search, Trash2 } from "lucide-react";
 import type { IncomeYear, InvoiceRow } from "@/lib/income";
 import {
   bookYears,
@@ -44,9 +44,11 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { NativeSelect, NativeSelectOption } from "./ui/native-select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
+import { Segmented, SegmentedItem } from "./ui/segmented";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
 import { cn } from "@/lib/utils";
-import { Amount } from "./money/Privacy";
+import { Amount, PrivacyProvider, useMoney } from "./money/Privacy";
 import { sessionSources, trackSubscriptions } from "@/lib/expenses/subscriptions";
 import { loadMemory, loadSession } from "@/lib/expenses/storage";
 import { buildItems } from "@/lib/expenses/triage";
@@ -70,14 +72,7 @@ function tabFromUrl(): Tab {
 }
 type Filter = "all" | "income" | "expense" | "tax";
 
-export function BooksDashboard({
-  income,
-  invoices,
-  seed,
-  facts,
-  registry,
-  ledgerLoaded,
-}: {
+type BooksProps = {
   income: IncomeYear[];
   invoices: InvoiceRow[];
   /** Pre-tool years transcribed from the old sheets (src/content/books/seed.ts). */
@@ -87,7 +82,18 @@ export function BooksDashboard({
   /** Known subscriptions (src/content/books/subscriptions.ts). */
   registry: Subscription[];
   ledgerLoaded: boolean;
-}) {
+};
+
+export function BooksDashboard(props: BooksProps) {
+  return (
+    <PrivacyProvider>
+      <Books {...props} />
+    </PrivacyProvider>
+  );
+}
+
+function Books({ income, invoices, seed, facts, registry, ledgerLoaded }: BooksProps) {
+  const money = useMoney();
   const [years, setYears] = useState<number[]>(() => bookYears());
   const [year, setYear] = useState<number>(() => {
     const all = [...bookYears(), ...income.map((i) => i.year), new Date().getFullYear()];
@@ -131,7 +137,7 @@ export function BooksDashboard({
       setYears(bookYears());
     }
     setQuick("");
-    setToast(`Added ${entry.party} · €${formatEur(entry.amount)} · ${CATEGORY_LABELS[entry.category]}`);
+    setToast(`Added ${entry.party} · ${money.eur(entry.amount, 2)} · ${CATEGORY_LABELS[entry.category]}`);
   }
 
   function switchYear(y: number) {
@@ -320,13 +326,11 @@ export function BooksDashboard({
       onRestored={reloadSoon}
       subnav={tabItems.map(([key, label]) => ({ key, label, active: tab === key, onSelect: () => setTab(key) }))}
       actions={
-        <Tabs value={String(year)} onValueChange={(v) => switchYear(Number(v))}>
-          <TabsList aria-label="Year">
-            {allYears.map((y) => (
-              <TabsTrigger key={y} value={String(y)}>{y}</TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <Segmented value={String(year)} onValueChange={(v) => switchYear(Number(v))} aria-label="Year">
+          {allYears.map((y) => (
+            <SegmentedItem key={y} value={String(y)}>{y}</SegmentedItem>
+          ))}
+        </Segmented>
       }
     >
       {!ledgerLoaded ? (
@@ -358,7 +362,7 @@ export function BooksDashboard({
           </form>
           <p className="min-h-[1.2rem] px-1 text-xs text-fd-muted-foreground">
             {quickPreview
-              ? `${quickPreview.party} · €${formatEur(quickPreview.amount)} · ${CATEGORY_LABELS[quickPreview.category]} · ${prettyDate(quickPreview.date)}${quickPreview.note ? ` · “${quickPreview.note}”` : ""} — Enter to add`
+              ? `${quickPreview.party} · ${money.eur(quickPreview.amount, 2)} · ${CATEGORY_LABELS[quickPreview.category]} · ${prettyDate(quickPreview.date)}${quickPreview.note ? ` · “${quickPreview.note}”` : ""} — Enter to add`
               : quick.trim()
                 ? "Type an amount to add it"
                 : "Merchant, amount, optional note or date (12.09.2026). Category comes from the rules; the next bank import replaces the row with the bank line."}
@@ -375,15 +379,19 @@ export function BooksDashboard({
         <Kpi label="Tax-relevant" value={<Amount value={totals.tax} />} tone="warn" style={{ "--i": 5 } as React.CSSProperties}>{`${yearEntries.filter((e) => e.kind === "tax").length} rows · Finanzamt, health, KSK`}</Kpi>
       </section>
 
-      <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="fd-rise" style={{ "--i": 6 } as React.CSSProperties}>
+      <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className="fd-rise gap-5" style={{ "--i": 6 } as React.CSSProperties}>
         <TabsList aria-label="Books sections" className="-mx-4 h-auto w-auto max-w-[calc(100%+2rem)] flex-nowrap justify-start overflow-x-auto px-4 [scrollbar-width:none] lg:mx-0 lg:px-[3px]">
           {tabItems.map(([key, label]) => (
             <TabsTrigger key={key} value={key} className="h-8 flex-none">{label}</TabsTrigger>
           ))}
         </TabsList>
-      </Tabs>
+        {/* Every panel exists (so each tab's aria-controls points somewhere); only the open one renders content. */}
+        {TABS.filter((t) => t !== tab).map((t) => (
+          <TabsContent key={t} value={t} forceMount hidden />
+        ))}
 
       {tab === "overview" ? (
+        <TabsContent value="overview" forceMount>
         <Panel>
         <>
           {seedExpensesHidden ? (
@@ -391,23 +399,23 @@ export function BooksDashboard({
               This year has an N26 import, so the expense rows transcribed from the old sheet are hidden to avoid double counting. Its income rows still count.
             </p>
           ) : null}
-          <TaxEstimate year={year} income={inc} entries={yearEntries} elsewhere={elsewhere} settings={settings} setSettings={setSettings} facts={facts[year]} />
+          <TaxEstimate year={year} income={inc} entries={yearEntries} elsewhere={elsewhere} settings={settings} setSettings={setSettings} facts={facts[year]} onToast={setToast} />
         </>
         </Panel>
+        </TabsContent>
       ) : null}
 
       {tab === "entries" ? (
+        <TabsContent value="entries" forceMount>
         <Panel>
           <section className="flex flex-col gap-5">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div className="flex flex-wrap items-center gap-2">
-                <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
-                  <TabsList aria-label="Filter rows">
-                    {(["all", "income", "expense", "tax"] as Filter[]).map((f) => (
-                      <TabsTrigger key={f} value={f} className="capitalize">{f === "all" ? "All" : f === "tax" ? "Tax-relevant" : f}</TabsTrigger>
-                    ))}
-                  </TabsList>
-                </Tabs>
+                <Segmented value={filter} onValueChange={(v) => setFilter(v as Filter)} aria-label="Filter rows">
+                  {(["all", "income", "expense", "tax"] as Filter[]).map((f) => (
+                    <SegmentedItem key={f} value={f} className="capitalize">{f === "all" ? "All" : f === "tax" ? "Tax-relevant" : f}</SegmentedItem>
+                  ))}
+                </Segmented>
                 <Button type="button" variant={adding ? "secondary" : "outline"} size="sm" onClick={() => setAdding((a) => !a)}>
                   {adding ? "Cancel" : <><Plus /> Add a row</>}
                 </Button>
@@ -467,89 +475,33 @@ export function BooksDashboard({
               </form>
             ) : null}
 
-            <ul className="flex flex-col divide-y overflow-hidden rounded-xl border">
-              {visible.map((r) => (
-                <li key={r.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-2 px-4 py-3 md:grid-cols-[84px_minmax(0,1fr)_104px_168px_160px_32px] md:items-center">
-                  <p className="text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">{prettyDate(r.date)}</p>
-                  <p className={cn("justify-self-end text-base font-semibold tabular-nums md:col-start-3", r.kind === "income" ? "text-fd-up" : r.kind === "tax" ? "text-fd-warn" : "text-fd-down")}>
-                    {r.kind === "income" ? "+" : "−"}€{formatEur(r.amount)}
-                  </p>
-                  <div className="col-span-2 min-w-0 md:col-span-1 md:col-start-2 md:row-start-1">
-                    <p className="flex min-w-0 items-center gap-2 text-sm font-medium">
-                      <span className="truncate">{r.party}</span>
-                      <Badge variant="outline" className="shrink-0 px-1.5 text-[10px] text-fd-muted-foreground">{r.source}{r.sentAt ? " · sent" : ""}</Badge>
-                    </p>
-                    <p className="truncate text-xs text-fd-muted-foreground">{[r.reference, r.note].filter(Boolean).join(" · ") || CATEGORY_LABELS[r.category]}</p>
-                  </div>
-                  {r.source === "ledger" || r.source === "seed" ? (
-                    <p className="text-xs text-fd-muted-foreground md:col-start-4">{r.kind === "income" ? (r.vat === 19 ? "19 % MwSt" : "no VAT") : CATEGORY_LABELS[r.category]}{r.currency === "USD" ? ` · $${formatEur(r.original ?? 0)}` : ""}</p>
-                  ) : r.kind === "income" ? (
-                    <span className="hidden md:col-start-4 md:block" />
-                  ) : (
-                    <NativeSelect value={r.category} onChange={(e) => patchEntry(r.id, { category: e.target.value as Category })} className="h-8 text-xs" aria-label="Category">
-                      {(r.kind === "tax" ? TAX_CATEGORIES : BUSINESS_CATEGORIES).map((c) => (
-                        <NativeSelectOption key={c} value={c}>{CATEGORY_LABELS[c]}</NativeSelectOption>
-                      ))}
-                    </NativeSelect>
-                  )}
-                  {r.source === "ledger" || r.source === "seed" ? (
-                    <span className="hidden md:col-start-5 md:block" />
-                  ) : (
-                    <div className="flex gap-1.5 md:col-start-5">
-                      <NativeSelect value={r.vat ?? ""} title="VAT on the receipt" aria-label="VAT" onChange={(e) => patchEntry(r.id, { vat: e.target.value === "" ? undefined : Number(e.target.value) })} className="h-8 w-[84px] text-xs">
-                        <NativeSelectOption value="">VAT ?</NativeSelectOption>
-                        <NativeSelectOption value="19">19 %</NativeSelectOption>
-                        <NativeSelectOption value="7">7 %</NativeSelectOption>
-                        <NativeSelectOption value="0">0 %</NativeSelectOption>
-                      </NativeSelect>
-                      <Input
-                        type="text"
-                        defaultValue={r.note ?? ""}
-                        placeholder="Note"
-                        aria-label="Note"
-                        onBlur={(e) => {
-                          const v = e.target.value.trim();
-                          if (v !== (r.note ?? "")) patchEntry(r.id, { note: v || undefined });
-                        }}
-                        className="h-8 text-xs"
-                      />
-                    </div>
-                  )}
-                  {r.source === "manual" ? (
-                    <Button type="button" variant="ghost" size="icon-sm" aria-label="Delete row" onClick={() => removeEntry(r.id)} className="text-fd-muted-foreground/70 hover:text-fd-down md:col-start-6">
-                      <Trash2 />
-                    </Button>
-                  ) : (
-                    <span className="hidden md:col-start-6 md:block" />
-                  )}
-                </li>
-              ))}
-              {visible.length === 0 ? (
-                <li className="px-4 py-10 text-center text-sm text-fd-muted-foreground">
-                  Nothing here yet. <Link href="/books?tab=import" className="underline underline-offset-4">Import an N26 export</Link> or add a row.
-                </li>
-              ) : null}
-            </ul>
+            <EntriesByMonth rows={visible} today={today} eur={money.eur} mask={money.mask} onPatch={patchEntry} onRemove={removeEntry} />
             <p className="text-xs leading-5 text-fd-muted-foreground">
             N26 rows are edited on the expenses page (verdict, tax bucket); here you set VAT on the receipt and notes. Ledger and seed rows come from the repo.
           </p>
           </section>
         </Panel>
+        </TabsContent>
       ) : null}
 
       {tab === "subscriptions" ? (
+        <TabsContent value="subscriptions" forceMount>
         <Panel>
           <SubscriptionsTab subs={subs} today={today} />
         </Panel>
+        </TabsContent>
       ) : null}
 
       {tab === "import" ? (
+        <TabsContent value="import" forceMount>
         <Panel>
           <ExpensesTriage embedded />
         </Panel>
+        </TabsContent>
       ) : null}
 
       {tab === "accountant" ? (
+        <TabsContent value="accountant" forceMount>
         <Panel>
           <section className="flex flex-col gap-6">
             <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -574,7 +526,7 @@ export function BooksDashboard({
               Same columns as your sheet: Date, Income, Expense, Client + Reference, VAT, Country, Invoice nr, Currency, USD rate, Income (USD), plus a Category column at the end you can drop. Income rows first, then expenses; Krankenkasse and Finanzamt rows are marked tax-relevant for the accountant to sort. Paste, send, then mark as sent so the next batch only holds what&apos;s new.
             </p>
             <div className="overflow-hidden rounded-xl border">
-              <Table className="min-w-[900px] text-xs">
+              <Table className="min-w-[900px] text-xs" containerLabel="Primanota rows">
                 <TableHeader>
                   <TableRow className="bg-fd-muted/50 hover:bg-fd-muted/50">
                     {ACCOUNTANT_COLUMNS.map((c) => (
@@ -586,7 +538,9 @@ export function BooksDashboard({
                   {exportRowsList.slice(0, 40).map((r) => (
                     <TableRow key={r.id}>
                       {accountantRow(r, settings.decimalComma).map((c, i) => (
-                        <TableCell key={i} className={cn("max-w-[240px] truncate px-3 py-1.5", (i === 1 || i === 2) && "text-right tabular-nums")}>{c}</TableCell>
+                        <TableCell key={i} className={cn("max-w-[240px] truncate px-3 py-1.5", (i === 1 || i === 2) && "text-right tabular-nums")}>
+                          {money.hidden && (i === 1 || i === 2 || i === 9) && c ? "••••" : money.mask(c)}
+                        </TableCell>
                       ))}
                     </TableRow>
                   ))}
@@ -601,9 +555,197 @@ export function BooksDashboard({
             </div>
           </section>
         </Panel>
+        </TabsContent>
       ) : null}
+      </Tabs>
     </FinanceShell>
   );
+}
+
+/* ---------- entries, grouped by month ---------- */
+
+type Patch = (id: string, patch: Partial<BookEntry>) => void;
+
+/**
+ * Rows grouped by month, newest first, each month with its in/out
+ * totals. The current and previous month start open, older ones fold
+ * up; each row shows its category and VAT as text and turns into a
+ * small form when you click the pencil.
+ */
+type Fmt = { eur: (n: number, d?: 0 | 2, signed?: boolean) => string; mask: (text: string) => string };
+
+function EntriesByMonth({ rows, today, eur, mask, onPatch, onRemove }: { rows: BookEntry[]; today: string; onPatch: Patch; onRemove: (id: string) => void } & Fmt) {
+  const [editing, setEditing] = useState<string | null>(null);
+  const [open, setOpen] = useState<Record<string, boolean>>({});
+  const [allOpen, setAllOpen] = useState(false);
+  const months = useMemo(() => {
+    const map = new Map<string, BookEntry[]>();
+    for (const r of rows) {
+      const k = r.date.slice(0, 7);
+      map.set(k, [...(map.get(k) ?? []), r]);
+    }
+    return [...map.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+  }, [rows]);
+  if (rows.length === 0) {
+    return (
+      <p className="rounded-xl border border-dashed px-4 py-10 text-center text-sm text-fd-muted-foreground">
+        Nothing here yet. <Link href="/books?tab=import" className="underline underline-offset-4">Import an N26 export</Link> or add a row.
+      </p>
+    );
+  }
+  const thisMonth = today.slice(0, 7);
+  const lastMonth = addMonthsIso(thisMonth, -1);
+  const isOpen = (k: string) => open[k] ?? (allOpen || k === thisMonth || k === lastMonth || months.length <= 2);
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-between px-1 text-xs text-fd-muted-foreground">
+        <span>{months.length} month{months.length === 1 ? "" : "s"} · {rows.length} rows</span>
+        <button
+          type="button"
+          onClick={() => {
+            setAllOpen((a) => !a);
+            setOpen({});
+          }}
+          className="underline underline-offset-4 hover:text-foreground"
+        >
+          {allOpen ? "Collapse older months" : "Expand every month"}
+        </button>
+      </div>
+      {months.map(([month, list]) => {
+        const inc = list.filter((r) => r.kind === "income").reduce((t, r) => t + r.amount, 0);
+        const out = list.filter((r) => r.kind !== "income").reduce((t, r) => t + r.amount, 0);
+        const o = isOpen(month);
+        return (
+          <Collapsible key={month} open={o} onOpenChange={(v) => setOpen((cur) => ({ ...cur, [month]: v }))} className="overflow-hidden rounded-xl border">
+            <CollapsibleTrigger asChild>
+              <button type="button" className={cn("flex w-full items-center gap-3 bg-fd-muted/50 px-4 py-2.5 text-left transition-colors hover:bg-fd-muted", o && "border-b")}>
+                <ChevronDown className={cn("size-4 shrink-0 text-fd-muted-foreground transition-transform", !o && "-rotate-90")} aria-hidden />
+                <span className="flex-1 text-sm font-medium">
+                  {monthName(month)} <span className="ml-1 text-xs font-normal text-fd-muted-foreground">{list.length} row{list.length === 1 ? "" : "s"}</span>
+                </span>
+                <span className="flex items-center gap-3 text-xs tabular-nums">
+                  {inc > 0 ? <span className="text-fd-up">+{eur(inc)}</span> : null}
+                  {out > 0 ? <span className="text-fd-down">−{eur(out)}</span> : null}
+                </span>
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <ul className="flex flex-col divide-y">
+                {list.map((r) => (
+                  <EntryRow key={r.id} r={r} eur={eur} mask={mask} editing={editing === r.id} onEdit={() => setEditing(editing === r.id ? null : r.id)} onPatch={onPatch} onRemove={onRemove} />
+                ))}
+              </ul>
+            </CollapsibleContent>
+          </Collapsible>
+        );
+      })}
+    </div>
+  );
+}
+
+function EntryRow({ r, eur, mask, editing, onEdit, onPatch, onRemove }: { r: BookEntry; editing: boolean; onEdit: () => void; onPatch: Patch; onRemove: (id: string) => void } & Fmt) {
+  const fixed = r.source === "ledger" || r.source === "seed";
+  const editable = !fixed && r.kind !== "income";
+  const meta = fixed
+    ? `${r.kind === "income" ? (r.vat === 19 ? "19 % MwSt" : "no VAT") : CATEGORY_LABELS[r.category]}${r.currency === "USD" ? ` · ${mask(`$${formatEur(r.original ?? 0)}`)}` : ""}`
+    : r.kind === "income"
+      ? r.vat === 19
+        ? "19 % MwSt"
+        : "no VAT"
+      : `${CATEGORY_LABELS[r.category]} · ${r.vat === undefined ? "VAT ?" : `${r.vat} % VAT`}`;
+  return (
+    <li className={cn("flex flex-col gap-2 px-4 py-2.5", editing && "bg-fd-muted/30")}>
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 md:grid-cols-[84px_minmax(0,1fr)_minmax(0,220px)_110px_auto] md:gap-x-4">
+        <p className="text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground md:col-start-1">{prettyDate(r.date)}</p>
+        <p className={cn("justify-self-end text-base font-semibold tabular-nums md:col-start-4", r.kind === "income" ? "text-fd-up" : r.kind === "tax" ? "text-fd-warn" : "text-fd-down")}>
+          {r.kind === "income" ? "+" : "−"}{eur(r.amount, 2)}
+        </p>
+        <div className="col-span-2 min-w-0 md:col-span-1 md:col-start-2 md:row-start-1">
+          <p className="flex min-w-0 items-center gap-2 text-sm font-medium">
+            <span className="truncate">{r.party}</span>
+            <Badge variant="outline" className="shrink-0 px-1.5 text-[10px] text-fd-muted-foreground">{r.source}{r.sentAt ? " · sent" : ""}</Badge>
+          </p>
+          <p className="truncate text-xs text-fd-muted-foreground">{[r.reference, r.note].filter(Boolean).join(" · ") || CATEGORY_LABELS[r.category]}</p>
+        </div>
+        <p className="col-span-2 truncate text-xs text-fd-muted-foreground md:col-span-1 md:col-start-3 md:row-start-1">{meta}</p>
+        <span className="hidden items-center justify-end gap-0.5 md:col-start-5 md:row-start-1 md:flex">
+          {editable ? (
+            <Button type="button" variant="ghost" size="icon-sm" aria-label={editing ? "Done editing" : `Edit ${r.party}`} aria-pressed={editing} onClick={onEdit} className={cn("text-fd-muted-foreground/70", editing && "text-foreground")}>
+              <PenLine />
+            </Button>
+          ) : null}
+          {r.source === "manual" ? (
+            <Button type="button" variant="ghost" size="icon-sm" aria-label={`Delete ${r.party}`} onClick={() => onRemove(r.id)} className="text-fd-muted-foreground/70 hover:text-fd-down">
+              <Trash2 />
+            </Button>
+          ) : null}
+        </span>
+      </div>
+      {editable || r.source === "manual" ? (
+        <div className="flex items-center gap-1 md:hidden">
+          {editable ? (
+            <Button type="button" variant="ghost" size="sm" onClick={onEdit} aria-pressed={editing} className="h-7 px-2 text-xs text-fd-muted-foreground">
+              <PenLine /> {editing ? "Done" : "Edit"}
+            </Button>
+          ) : null}
+          {r.source === "manual" ? (
+            <Button type="button" variant="ghost" size="sm" onClick={() => onRemove(r.id)} className="h-7 px-2 text-xs text-fd-muted-foreground hover:text-fd-down">
+              <Trash2 /> Delete
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
+      {editing && editable ? (
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-[minmax(0,1fr)_110px_minmax(0,1fr)]">
+          <Label className="flex-col items-start gap-1 text-[11px] text-fd-muted-foreground">
+            Category
+            <NativeSelect value={r.category} onChange={(e) => onPatch(r.id, { category: e.target.value as Category })} className="h-8 w-full text-xs">
+              {(r.kind === "tax" ? TAX_CATEGORIES : BUSINESS_CATEGORIES).map((c) => (
+                <NativeSelectOption key={c} value={c}>{CATEGORY_LABELS[c]}</NativeSelectOption>
+              ))}
+            </NativeSelect>
+          </Label>
+          <Label className="flex-col items-start gap-1 text-[11px] text-fd-muted-foreground">
+            VAT on the receipt
+            <NativeSelect value={r.vat ?? ""} onChange={(e) => onPatch(r.id, { vat: e.target.value === "" ? undefined : Number(e.target.value) })} className="h-8 w-full text-xs">
+              <NativeSelectOption value="">unknown</NativeSelectOption>
+              <NativeSelectOption value="19">19 %</NativeSelectOption>
+              <NativeSelectOption value="7">7 %</NativeSelectOption>
+              <NativeSelectOption value="0">0 %</NativeSelectOption>
+            </NativeSelect>
+          </Label>
+          <Label className="col-span-2 flex-col items-start gap-1 text-[11px] text-fd-muted-foreground md:col-span-1">
+            Note
+            <Input
+              type="text"
+              defaultValue={r.note ?? ""}
+              placeholder="What it was for"
+              autoFocus
+              onBlur={(e) => {
+                const v = e.target.value.trim();
+                if (v !== (r.note ?? "")) onPatch(r.id, { note: v || undefined });
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === "Escape") (e.target as HTMLInputElement).blur();
+                if (e.key === "Enter") onEdit();
+              }}
+              className="h-8 w-full text-xs"
+            />
+          </Label>
+        </div>
+      ) : null}
+    </li>
+  );
+}
+
+function monthName(key: string): string {
+  return new Date(`${key}-01T00:00:00Z`).toLocaleDateString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+}
+
+function addMonthsIso(key: string, n: number): string {
+  const d = new Date(`${key}-01T00:00:00Z`);
+  d.setUTCMonth(d.getUTCMonth() + n);
+  return d.toISOString().slice(0, 7);
 }
 
 function Panel({ children }: { children: React.ReactNode }) {

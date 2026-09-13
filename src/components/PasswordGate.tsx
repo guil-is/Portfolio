@@ -72,19 +72,19 @@ export function PasswordGate({ children, password, storageKey = "odyssey-unlocke
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-6">
+    <main className="flex min-h-screen items-center justify-center px-6">
       <form
         onSubmit={handleSubmit}
         className="flex w-full max-w-[400px] flex-col gap-10"
       >
         <div className="flex flex-col gap-2">
-          <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-muted">
+          <p className="font-caption text-[11px] font-medium uppercase tracking-[2px] text-ink/75">
             Private page
           </p>
           <h1 className="font-display text-[1.75rem] font-bold leading-tight text-ink md:text-[2rem]">
             This page is locked.
           </h1>
-          <p className="mt-2 text-[0.95rem] leading-[1.6rem] text-muted">
+          <p className="mt-2 text-[0.95rem] leading-[1.6rem] text-ink/75">
             Enter the password shared with you to continue.
           </p>
         </div>
@@ -92,7 +92,7 @@ export function PasswordGate({ children, password, storageKey = "odyssey-unlocke
         <div className="flex flex-col gap-3">
           <label
             htmlFor="odyssey-pw"
-            className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-muted"
+            className="font-caption text-[12px] font-medium uppercase tracking-[1.5px] text-ink/75"
           >
             Password
           </label>
@@ -130,6 +130,6 @@ export function PasswordGate({ children, password, storageKey = "odyssey-unlocke
           </span>
         </button>
       </form>
-    </div>
+    </main>
   );
 }

@@ -278,7 +278,7 @@ export function ExpenseSwipeDeck({
           <Clock className="h-4 w-4" strokeWidth={2} />
         </RoundButton>
       </div>
-      <p className="text-center text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground/70">
+      <p className="text-center text-[11px] font-medium uppercase tracking-wide text-fd-muted-foreground">
         <span className="inline-flex items-center gap-1"><ArrowLeft className="h-3 w-3" /> personal</span>
         <span className="mx-3">·</span>
         <span className="inline-flex items-center gap-1">business <ArrowRight className="h-3 w-3" /></span>
@@ -632,10 +632,10 @@ function CardBack({
               <li key={s.tx.id} className="flex justify-between gap-3">
                 <span>{prettyDate(s.tx.date)}</span>
                 <span>€{formatEur(Math.abs(s.tx.amount))}</span>
-                <span className="opacity-70">{s.decision ? s.decision.verdict : "pending"}</span>
+                <span>{s.decision ? s.decision.verdict : "pending"}</span>
               </li>
             ))}
-            {siblings.length > 6 ? <li className="opacity-70">…and {siblings.length - 6} more</li> : null}
+            {siblings.length > 6 ? <li>…and {siblings.length - 6} more</li> : null}
           </ul>
         </div>
       ) : null}

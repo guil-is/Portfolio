@@ -20,7 +20,8 @@ import { buildItems } from "@/lib/expenses/triage";
 import { isAsset, loadAccounts, saveAccounts, type Account } from "@/lib/money/accounts";
 import { loadExpected, saveExpected, type Expected } from "@/lib/money/expected";
 import { changeSince, loadHistory, recordSnapshot, type Snapshot } from "@/lib/money/history";
-import { attentionItems, cashflowMonths, categoryBreakdown, kpis, upcomingItems, upcomingWindow } from "@/lib/money/overview";
+import { attentionItems, cashflowMonths, categoryBreakdown, kpis, personalSpend, upcomingItems, upcomingWindow } from "@/lib/money/overview";
+import { loadPrefs, savePrefs, type MoneyPrefs } from "@/lib/money/prefs";
 import { loadSnoozed, saveSnoozed, snoozeUntil } from "@/lib/money/snooze";
 import type { Subscription } from "@/content/books/subscriptions";
 import { usePrivacy } from "./Privacy";
@@ -55,6 +56,14 @@ export function useDashboard({ income, incomeMonths, receivables, seed, facts, r
     return loadAllBooks();
   });
   const [settings] = useState(() => loadBooksSettings());
+  const [prefs, setPrefs] = useState<MoneyPrefs>(() => loadPrefs());
+  const changePrefs = useCallback((patch: Partial<MoneyPrefs>) => {
+    setPrefs((cur) => {
+      const next = { ...cur, ...patch };
+      savePrefs(next);
+      return next;
+    });
+  }, []);
   const [accounts, setAccounts] = useState<Account[]>(() => loadAccounts());
   const [expected, setExpected] = useState<Expected[]>(() => loadExpected());
   const addExpected = useCallback((e: Expected) => {
@@ -123,6 +132,8 @@ export function useDashboard({ income, incomeMonths, receivables, seed, facts, r
     return { income, expenses, net: income - expenses, avg: flow.length ? (income - expenses) / flow.length : 0 };
   }, [flow]);
   const categories = useMemo(() => categoryBreakdown(merged, today), [merged, today]);
+  // Bank rows swiped "personal" never reach the books; this is the only place they add up.
+  const personal = useMemo(() => personalSpend(session, today), [session, today]);
   const upcoming = useMemo(() => upcomingItems({ picture, subs, receivables, expected, usdRate, today }), [picture, subs, receivables, expected, usdRate, today]);
   const window30 = useMemo(() => upcomingWindow(upcoming, today, 30), [upcoming, today]);
 
@@ -197,11 +208,15 @@ export function useDashboard({ income, incomeMonths, receivables, seed, facts, r
     period,
     setPeriod,
     categories,
+    personal,
+    prefs,
+    changePrefs,
     upcoming,
     window30,
     history,
     change30,
     noBalances,
+    lastBankRow,
     assetCount,
     coverage,
     dateLine,

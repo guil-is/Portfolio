@@ -1,14 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import type { CashflowMonth } from "@/lib/money/overview";
+import { cn } from "@/lib/utils";
 import { formatAmount, usePrivacy } from "./Privacy";
 
 /**
- * Twelve months of money in vs business money out, as paired columns.
- * Inline SVG: <=24px columns with a 4px rounded cap, a 2px surface gap
- * between the pair, hairline gridlines, a legend (two series), a hover
- * tooltip per month band, and a table view for the same numbers.
+ * Money in vs business money out, as paired columns. Inline SVG: <=24px
+ * columns with a 4px rounded cap, a 2px surface gap between the pair,
+ * hairline gridlines, a legend (two series), a hover tooltip per month
+ * band, and a table view for the same numbers. The month in progress is
+ * drawn lighter and labelled "so far" so a half month doesn't read as a
+ * bad one. Keyboard: the chart is one tab stop; arrow keys walk the
+ * months and a live region reads each one out.
  */
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -34,18 +38,22 @@ export function CashflowChart({
   months,
   view,
   controls = true,
+  currentMonth,
 }: {
   months: CashflowMonth[];
   /** Controlled view; leave unset to let the chart's own toggle decide. */
   view?: "chart" | "table";
   /** Hide the built-in Chart/Table toggle (when the host renders its own). */
   controls?: boolean;
+  /** YYYY-MM of the month in progress — drawn lighter, labelled "so far". */
+  currentMonth?: string;
 }) {
   const { hidden } = usePrivacy();
   const host = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(880);
   const [hover, setHover] = useState<number | null>(null);
   const [own, setOwn] = useState(false);
+  const liveId = useId();
   const table = view ? view === "table" : own;
 
   useEffect(() => {
@@ -84,17 +92,37 @@ export function CashflowChart({
 
   const hovered = hover !== null ? months[hover] : null;
   const fmt = (n: number) => (hidden ? "€••••" : formatAmount(n, { decimals: 0 }));
+  const isCurrent = (m: CashflowMonth) => m.month === currentMonth;
+  const describe = (m: CashflowMonth) => `${monthLabel(m.month)} ${m.month.slice(0, 4)}${isCurrent(m) ? " so far" : ""}: in ${fmt(m.income)}, out ${fmt(m.expenses)}, net ${fmt(m.income - m.expenses)}`;
+
+  function onKey(e: KeyboardEvent<HTMLDivElement>) {
+    if (months.length === 0) return;
+    const last = months.length - 1;
+    const cur = hover ?? last;
+    if (e.key === "ArrowRight") setHover(Math.min(last, cur + 1));
+    else if (e.key === "ArrowLeft") setHover(Math.max(0, hover === null ? last : cur - 1));
+    else if (e.key === "Home") setHover(0);
+    else if (e.key === "End") setHover(last);
+    else if (e.key === "Escape") setHover(null);
+    else return;
+    e.preventDefault();
+  }
 
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-4 text-[0.8rem] text-muted">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.8rem] text-muted">
           <span className="inline-flex items-center gap-1.5">
             <span className="inline-block h-2.5 w-2.5 rounded-[2px] bg-viz-in" aria-hidden /> Money in <span className="text-ink">{fmt(totalIn)}</span>
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span className="inline-block h-2.5 w-2.5 rounded-[2px] bg-viz-out" aria-hidden /> Business out <span className="text-ink">{fmt(totalOut)}</span>
           </span>
+          {currentMonth && months.some(isCurrent) ? (
+            <span className="inline-flex items-center gap-1.5">
+              <span className="inline-block h-2.5 w-2.5 rounded-[2px] bg-viz-in opacity-40" aria-hidden /> {monthLabel(currentMonth)} so far
+            </span>
+          ) : null}
         </div>
         {controls ? (
           <button
@@ -108,7 +136,7 @@ export function CashflowChart({
       </div>
 
       {table ? (
-        <div className="overflow-x-auto rounded-[12px] border border-rule">
+        <div className="overflow-x-auto rounded-[12px] border border-rule" tabIndex={0} role="region" aria-label="Cash flow by month">
           <table className="w-full border-collapse text-[0.85rem]">
             <thead>
               <tr className="border-b border-rule bg-card/40 font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
@@ -121,7 +149,10 @@ export function CashflowChart({
             <tbody>
               {months.map((m) => (
                 <tr key={m.month} className="border-b border-rule-soft last:border-b-0">
-                  <td className="px-3 py-1.5 text-body">{monthLabel(m.month)} {m.month.slice(2, 4)}</td>
+                  <td className="px-3 py-1.5 text-body">
+                    {monthLabel(m.month)} {m.month.slice(2, 4)}
+                    {isCurrent(m) ? <span className="ml-1.5 text-[11px] text-muted">so far</span> : null}
+                  </td>
                   <td className="px-3 py-1.5 text-right tabular-nums text-ink">{fmt(m.income)}</td>
                   <td className="px-3 py-1.5 text-right tabular-nums text-ink">{fmt(m.expenses)}</td>
                   <td className={`px-3 py-1.5 text-right tabular-nums ${m.income - m.expenses < 0 ? "text-down" : "text-up"}`}>{fmt(m.income - m.expenses)}</td>
@@ -131,8 +162,21 @@ export function CashflowChart({
           </table>
         </div>
       ) : (
-        <div ref={host} className="relative w-full" onMouseLeave={() => setHover(null)}>
-          <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Money in versus business money out, by month" className="block max-w-full">
+        <div
+          ref={host}
+          className="relative w-full rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          onMouseLeave={() => setHover(null)}
+          tabIndex={0}
+          role="img"
+          aria-label={`Money in versus business money out, by month. ${months.length} months. Use the arrow keys to read each month.`}
+          aria-describedby={liveId}
+          onKeyDown={onKey}
+          onBlur={() => setHover(null)}
+        >
+          <span id={liveId} className="sr-only" aria-live="polite">
+            {hovered ? describe(hovered) : ""}
+          </span>
+          <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="block max-w-full" aria-hidden>
             {ticks.map((t) => (
               <g key={t}>
                 <line x1={pad.left} x2={width - pad.right} y1={y(t)} y2={y(t)} stroke="var(--color-rule)" strokeWidth={1} shapeRendering="crispEdges" />
@@ -144,13 +188,15 @@ export function CashflowChart({
             {months.map((m, i) => {
               const x0 = pad.left + i * band + (band - (2 * bar + gap)) / 2;
               const on = hover === i;
+              const partial = isCurrent(m);
               return (
                 <g key={m.month} opacity={hover === null || on ? 1 : 0.45} style={{ transition: "opacity 120ms" }}>
-                  <rect x={pad.left + i * band} y={pad.top} width={band} height={innerH} fill="transparent" onMouseEnter={() => setHover(i)} onFocus={() => setHover(i)} tabIndex={0} aria-label={`${monthLabel(m.month)}: in ${fmt(m.income)}, out ${fmt(m.expenses)}`} />
-                  <path d={column(x0, m.income)} fill="var(--color-viz-in)" pointerEvents="none" />
-                  <path d={column(x0 + bar + gap, m.expenses)} fill="var(--color-viz-out)" pointerEvents="none" />
+                  <rect x={pad.left + i * band} y={pad.top} width={band} height={innerH} fill="transparent" onMouseEnter={() => setHover(i)} />
+                  <path d={column(x0, m.income)} fill="var(--color-viz-in)" opacity={partial ? 0.4 : 1} pointerEvents="none" />
+                  <path d={column(x0 + bar + gap, m.expenses)} fill="var(--color-viz-out)" opacity={partial ? 0.4 : 1} pointerEvents="none" />
                   <text x={pad.left + i * band + band / 2} y={height - 10} textAnchor="middle" fontSize={10} fill={on ? "var(--color-ink)" : "var(--color-muted)"} fontFamily="var(--font-caption)">
                     {monthLabel(m.month)}
+                    {partial ? "·" : ""}
                   </text>
                 </g>
               );
@@ -159,11 +205,12 @@ export function CashflowChart({
           </svg>
           {hovered && hover !== null ? (
             <div
-              className="pointer-events-none absolute top-2 z-10 rounded-[10px] border border-rule bg-bg px-3 py-2 text-[0.8rem]"
+              className={cn("pointer-events-none absolute top-2 z-10 rounded-[10px] border border-rule bg-bg px-3 py-2 text-[0.8rem]")}
               style={{ left: Math.min(width - 190, Math.max(0, pad.left + hover * band + band / 2 - 90)), boxShadow: "var(--shadow-card)" }}
             >
               <p className="font-caption text-[10px] font-semibold uppercase tracking-[1px] text-muted">
                 {monthLabel(hovered.month)} {hovered.month.slice(0, 4)}
+                {isCurrent(hovered) ? " · so far" : ""}
               </p>
               <p className="flex items-center justify-between gap-4">
                 <span className="inline-flex items-center gap-1.5 text-muted"><span className="inline-block h-0.5 w-3 bg-viz-in" aria-hidden /> In</span>

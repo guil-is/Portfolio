@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Ban, ExternalLink, EyeOff, RotateCcw, Search } from "lucide-react";
-import { formatEur } from "@/lib/expenses/triage";
 import { CATEGORY_LABELS, type Category } from "@/lib/expenses/types";
 import { loadSubsMeta, saveSubsMeta, type SubMeta, type SubRating } from "@/lib/expenses/books";
 import {
@@ -25,6 +24,7 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { NativeSelect, NativeSelectOption } from "./ui/native-select";
+import { useMoney } from "./money/Privacy";
 
 /**
  * Subscriptions tab on /books. Layout borrowed from the recurring
@@ -57,6 +57,7 @@ const RENEWAL_ORDER: RenewalBucket[] = ["week", "month", "quarter", "later"];
 type Group = { key: string; label: string; rows: TrackedSubscription[]; hint: string };
 
 export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscription[]; today: string }) {
+  const { eur, mask } = useMoney();
   const [meta, setMeta] = useState<Record<string, SubMeta>>(() => loadSubsMeta());
   const [sort, setSort] = useState<SubSort>("renewal");
   const [view, setView] = useState<View>("all");
@@ -132,13 +133,13 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
   const groups = useMemo<Group[]>(() => {
     if (view === "cancelled") {
       const rows = [...visible].sort((a, b) => (b.cancelledAt ?? "").localeCompare(a.cancelledAt ?? ""));
-      return rows.length > 0 ? [{ key: "cancelled", label: "Cancelled", rows, hint: `€${formatEur(rows.reduce((t, s) => t + s.yearly, 0))} a year no longer paid` }] : [];
+      return rows.length > 0 ? [{ key: "cancelled", label: "Cancelled", rows, hint: `${eur(rows.reduce((t, s) => t + s.yearly, 0))} a year no longer paid` }] : [];
     }
     if (sort === "renewal") {
       return RENEWAL_ORDER.map((b) => {
         const rows = visible.filter((s) => renewalBucket(daysUntil(s.nextRenewal, today)) === b);
         const due = rows.reduce((t, s) => t + s.amount, 0);
-        return { key: b, label: RENEWAL_BUCKET_LABELS[b], rows, hint: `€${formatEur(due)} due` };
+        return { key: b, label: RENEWAL_BUCKET_LABELS[b], rows, hint: `${eur(due)} due` };
       }).filter((g) => g.rows.length > 0);
     }
     if (sort === "rating") {
@@ -151,12 +152,12 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
       return levels
         .map(([key, label, test]) => {
           const rows = visible.filter(test);
-          return { key, label, rows, hint: `€${formatEur(rows.reduce((t, s) => t + s.yearly, 0))} a year` };
+          return { key, label, rows, hint: `${eur(rows.reduce((t, s) => t + s.yearly, 0))} a year` };
         })
         .filter((g) => g.rows.length > 0);
     }
     return visible.length > 0 ? [{ key: "all", label: "", rows: visible, hint: "" }] : [];
-  }, [visible, sort, view, today]);
+  }, [visible, sort, view, today, eur]);
 
   const toggle = (v: View) => setView(view === v ? "all" : v);
 
@@ -176,16 +177,16 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
   return (
     <section className="flex flex-col gap-8">
       <StatStrip className="md:grid-cols-5">
-        <StatTile label="Per year, business" value={`€${formatEur(yearly)}`} sub={`${active.length} plans · €${formatEur(yearly / 12)} a month${personal.length > 0 ? ` · personal €${formatEur(personalYearly)}/yr on top` : ""}`} tone="down" />
+        <StatTile label="Per year, business" value={eur(yearly)} sub={`${active.length} plans · ${eur(yearly / 12)} a month${personal.length > 0 ? ` · personal ${eur(personalYearly)}/yr on top` : ""}`} tone="down" />
         <StatTile
           label="Next 30 days"
-          value={`€${formatEur(soonTotal)}`}
+          value={eur(soonTotal)}
           sub={soon.length === 0 ? "nothing due" : `${soon.length} charge${soon.length === 1 ? "" : "s"}${soonYearly.length > 0 ? ` · ${soonYearly.length} yearly: ${soonYearly.map((s) => s.name).join(", ")}` : ""}`}
           tone={soonYearly.length > 0 ? "warn" : undefined}
         />
         <StatTile
           label="Could cut"
-          value={`€${formatEur(cutTotal)}`}
+          value={eur(cutTotal)}
           sub={cut.length > 0 ? `${cut.length} plan${cut.length === 1 ? "" : "s"} · ${Math.round((cutTotal / Math.max(1, yearly)) * 100)} % of the total` : "rate a plan “Cut” to see it here"}
           tone={cut.length > 0 ? "up" : undefined}
           onClick={() => toggle("cut")}
@@ -193,7 +194,7 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
         />
         <StatTile
           label={`Cancelled in ${today.slice(0, 4)}`}
-          value={`€${formatEur(saved)}`}
+          value={eur(saved)}
           sub={
             rebilled.length > 0
               ? `${rebilled.map((s) => s.name).join(", ")} charged again — check`
@@ -239,7 +240,7 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
                 className={cn("h-7 rounded-full px-3 text-xs", key === "undecided" && view !== key && "border-fd-warn/60 text-fd-warn")}
               >
                 {label}
-                {n !== null ? <span className="opacity-60">{n}</span> : null}
+                {n !== null ? <span className={view === key ? "text-primary-foreground/90" : "text-fd-muted-foreground"}>{n}</span> : null}
               </Button>
             ))}
         </div>
@@ -251,9 +252,9 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
             {g.label ? (
               <p className="flex items-baseline justify-between px-1 text-[11px] font-semibold uppercase tracking-wide text-fd-muted-foreground">
                 <span>
-                  {g.label} <span className="ml-1 opacity-60">{g.rows.length}</span>
+                  {g.label} <span className="ml-1 font-normal">{g.rows.length}</span>
                 </span>
-                <span className="tabular-nums opacity-60">{g.hint}</span>
+                <span className="tabular-nums font-normal">{g.hint}</span>
               </p>
             ) : null}
             <ul className="flex flex-col divide-y overflow-hidden rounded-xl border">
@@ -261,6 +262,8 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
                 <Row
                   key={s.key}
                   s={s}
+                  eur={eur}
+                  mask={mask}
                   today={today}
                   yearlyTotal={yearly}
                   onRate={(r) => patch(s.key, { rating: r })}
@@ -287,6 +290,8 @@ export function SubscriptionsTab({ subs: tracked, today }: { subs: TrackedSubscr
 
 function Row({
   s,
+  eur,
+  mask,
   today,
   yearlyTotal,
   onRate,
@@ -294,6 +299,8 @@ function Row({
   onCancel,
 }: {
   s: TrackedSubscription;
+  eur: (n: number, decimals?: 0 | 2) => string;
+  mask: (text: string) => string;
   today: string;
   yearlyTotal: number;
   onRate: (r: SubRating | undefined) => void;
@@ -339,12 +346,12 @@ function Row({
         <p className="truncate text-xs text-fd-muted-foreground">
           {CATEGORY_LABELS[s.category]}
           {s.source === "detected" ? (
-            <span className={cn("ml-2 text-[10px] font-semibold uppercase tracking-wide", s.tentative ? "text-fd-warn" : "opacity-70")}>
+            <span className={cn("ml-2 text-[10px] font-semibold uppercase tracking-wide", s.tentative ? "text-fd-warn" : "")}>
               {s.charges} charges{s.tentative ? " · confirm" : ""}
             </span>
           ) : null}
-          {s.raw ? <span className="opacity-70"> · {s.raw}</span> : null}
-          {s.note ? <span> · {s.note}</span> : null}
+          {s.raw ? <span> · {s.raw}</span> : null}
+          {s.note ? <span> · {mask(s.note)}</span> : null}
         </p>
       </div>
 
@@ -358,16 +365,16 @@ function Row({
             {prettyDate(s.nextRenewal)}
           </p>
         )}
-        <p className={cn("truncate text-[11px]", s.chargedAfterCancel ? "text-fd-down" : "text-fd-muted-foreground/70")}>{s.lastCharge ? `Last charged ${prettyDate(s.lastCharge)}` : "Not charged yet"}</p>
+        <p className={cn("truncate text-[11px]", s.chargedAfterCancel ? "text-fd-down" : "text-fd-muted-foreground")}>{s.lastCharge ? `Last charged ${prettyDate(s.lastCharge)}` : "Not charged yet"}</p>
       </div>
 
       <div className="col-start-3 row-start-1 text-right md:col-start-4 md:row-auto">
         <p className="text-base font-semibold tabular-nums">
-          €{formatEur(s.amount)}
+          {eur(s.amount, 2)}
           <span className="ml-1 text-[10px] font-medium text-fd-muted-foreground">/{s.interval === "monthly" ? "mo" : "yr"}</span>
         </p>
-        <p className={cn("text-[11px] tabular-nums", cancelled ? "text-fd-up" : stepUp ? "text-fd-warn" : stepDown ? "text-fd-up" : "text-fd-muted-foreground")} title={s.nextAmount !== undefined && s.nextAmount !== s.amount ? `€${formatEur(s.nextAmount)} from the next term` : undefined}>
-          {cancelled ? `saves €${formatEur(s.yearly)}/yr` : `${stepUp ? "↑ " : stepDown ? "↓ " : ""}€${formatEur(s.yearly)}/yr${s.verdict === "business" ? ` · ${share} %` : ""}`}
+        <p className={cn("text-[11px] tabular-nums", cancelled ? "text-fd-up" : stepUp ? "text-fd-warn" : stepDown ? "text-fd-up" : "text-fd-muted-foreground")} title={s.nextAmount !== undefined && s.nextAmount !== s.amount ? `${eur(s.nextAmount, 2)} from the next term` : undefined}>
+          {cancelled ? `saves ${eur(s.yearly, 2)}/yr` : `${stepUp ? "↑ " : stepDown ? "↓ " : ""}${eur(s.yearly, 2)}/yr${s.verdict === "business" ? ` · ${share} %` : ""}`}
         </p>
       </div>
 

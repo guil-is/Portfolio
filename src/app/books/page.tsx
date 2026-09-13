@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
 import { PasswordGate } from "@/components/PasswordGate";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { BooksDashboard } from "@/components/BooksDashboard";
 import { incomeByYear, invoiceRows } from "@/lib/income";
 import { seedBooks, seedEntries, seedFacts } from "@/content/books/seed";
@@ -28,9 +27,6 @@ export default async function BooksPage() {
   const unlocked = (await cookies()).get(STORAGE_KEY)?.value === "1";
   return (
     <>
-      <div className="fixed right-4 top-4 z-50">
-        <ThemeToggle />
-      </div>
       <PasswordGate password="beancounter" storageKey={STORAGE_KEY}>
         <BooksDashboard
           income={unlocked ? incomeByYear() : []}

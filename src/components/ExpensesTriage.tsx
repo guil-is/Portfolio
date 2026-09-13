@@ -67,7 +67,8 @@ import { Label } from "./ui/label";
 import { NativeSelect, NativeSelectOption } from "./ui/native-select";
 import { Switch } from "./ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
+import { Segmented, SegmentedItem } from "./ui/segmented";
+import { Confirm } from "./finance/Confirm";
 import { SyncAgent } from "./SyncBar";
 
 /**
@@ -374,13 +375,14 @@ export function ExpensesTriage({ embedded = false }: { embedded?: boolean } = {}
     setDecisions((d) => ({ ...d, [item.tx.id]: { ...base, ...patch } }));
   }
 
+  const [confirming, setConfirming] = useState<"file" | "memory" | null>(null);
+
   function startOver() {
-    if (
-      history.length > 0 &&
-      !window.confirm("Drop this file and its decisions? What you taught the tool about merchants stays.")
-    ) {
+    if (history.length > 0 && confirming !== "file") {
+      setConfirming("file");
       return;
     }
+    setConfirming(null);
     clearSession();
     setLoaded(null);
     setDecisions({});
@@ -394,9 +396,11 @@ export function ExpensesTriage({ embedded = false }: { embedded?: boolean } = {}
   function forget() {
     const n = Object.keys(memory).length;
     if (n === 0) return;
-    if (!window.confirm(`Forget the ${n} merchant${n === 1 ? "" : "s"} you taught the tool? Rows decided from memory go back to the rules.`)) {
+    if (confirming !== "memory") {
+      setConfirming("memory");
       return;
     }
+    setConfirming(null);
     clearMemory();
     setMemory({});
   }
@@ -571,23 +575,39 @@ export function ExpensesTriage({ embedded = false }: { embedded?: boolean } = {}
             ) : null}
           </section>
 
-          <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)} className={embedded ? "mt-2 mb-6" : "mt-12 mb-10"}>
-            <TabsList aria-label="Import sections">
-              <TabsTrigger value="swipe">Swipe{pending.length > 0 ? ` · ${pending.length}` : ""}</TabsTrigger>
-              <TabsTrigger value="all">All entries · {items.length}</TabsTrigger>
-              <TabsTrigger value="export">Export</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <Segmented value={tab} onValueChange={(v) => setTab(v as Tab)} aria-label="Import sections" className={embedded ? "mt-2 mb-6" : "mt-12 mb-10"}>
+            <SegmentedItem value="swipe">Swipe{pending.length > 0 ? ` · ${pending.length}` : ""}</SegmentedItem>
+            <SegmentedItem value="all">All entries · {items.length}</SegmentedItem>
+            <SegmentedItem value="export">Export</SegmentedItem>
+          </Segmented>
+          <Confirm
+            open={confirming === "file"}
+            onOpenChange={(o) => {
+              if (!o) setConfirming(null);
+            }}
+            title="Drop this file and its decisions?"
+            description="The rows you swiped in this file go; what you taught the tool about merchants stays, and the books keep every row that already landed there."
+            action="Drop the file"
+            onConfirm={startOver}
+          />
+          <Confirm
+            open={confirming === "memory"}
+            onOpenChange={(o) => {
+              if (!o) setConfirming(null);
+            }}
+            title={`Forget the ${memoryCount} merchant${memoryCount === 1 ? "" : "s"} you taught the tool?`}
+            description="Rows decided from memory go back to the rules and show up to swipe again. Nothing in the books changes."
+            action="Forget them"
+            onConfirm={forget}
+          />
 
           {tab === "swipe" && queue.length > 0 ? (
             <div className="mb-6 flex flex-wrap items-center gap-3">
-              <Tabs value={prefs.order} onValueChange={(v) => setPrefs({ ...prefs, order: v as QueueOrder })}>
-                <TabsList aria-label="Queue order">
-                  <TabsTrigger value="date">Oldest first</TabsTrigger>
-                  <TabsTrigger value="amount">Biggest first</TabsTrigger>
-                  <TabsTrigger value="merchant">By merchant</TabsTrigger>
-                </TabsList>
-              </Tabs>
+              <Segmented value={prefs.order} onValueChange={(v) => setPrefs({ ...prefs, order: v as QueueOrder })} aria-label="Queue order">
+                <SegmentedItem value="date">Oldest first</SegmentedItem>
+                <SegmentedItem value="amount">Biggest first</SegmentedItem>
+                <SegmentedItem value="merchant">By merchant</SegmentedItem>
+              </Segmented>
               <span className="text-xs text-fd-muted-foreground">
                 {prefs.order === "amount"
                   ? `€${formatEur(summary.pending)} still to decide — the big ones go first`
@@ -762,7 +782,7 @@ function EntriesTable({
         <div className="flex flex-wrap gap-1.5">
           {(["all", "pending", "business", "personal", "tax", "skip"] as Filter[]).map((f) => (
             <Button key={f} type="button" size="sm" variant={filter === f ? "default" : "outline"} onClick={() => setFilter(f)} className="h-7 rounded-full px-3 text-xs">
-              {f === "all" ? "All" : f === "pending" ? "Ask me" : VERDICT_LABEL[f]} <span className="opacity-60">{counts[f]}</span>
+              {f === "all" ? "All" : f === "pending" ? "Ask me" : VERDICT_LABEL[f]} <span className="opacity-90">{counts[f]}</span>
             </Button>
           ))}
         </div>

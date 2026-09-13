@@ -12,8 +12,25 @@ Three pages share one frame, `src/components/finance/FinanceShell.tsx`:
 Overview (`/money`), Books (`/books`, with Tax estimate, Entries, Bank
 import, Subscriptions and For the accountant as tabs, also listed under
 Books in the sidebar) and Clients (`/for/clients`). Same sidebar, same
-header, one sync instance, privacy mode, toast. Whichever password let
-you in, the shell opens the other pages' gates for the tab.
+header, one sync instance, privacy mode, theme, keyboard shortcuts,
+toast. Whichever password let you in, the shell opens the other pages'
+gates for the tab.
+
+- **Theme** lives in the sidebar (Light / Dark / Auto). Auto is the
+  site's rule (dark before 7 and after 19); Light or Dark sticks.
+- **Shortcuts** — `1` `2` `3` switch pages, `H` hides amounts, `U`
+  starts the balance update, `E` opens Expecting money, `?` lists them.
+  They don't fire inside a field.
+- **Sync on a new device** — while the first pull runs the page says
+  "Checking the vault"; when a pull brings newer books it shows
+  "Restoring your books" and reloads, instead of flashing empty numbers.
+- Below `sm` the header keeps one primary action and folds the rest into
+  a menu; Expecting money opens as a dialog there.
+- Destructive actions (remove an account, forget the passphrase, drop a
+  file, forget merchants) ask in the app's own dialog
+  (`src/components/finance/Confirm.tsx`), never `window.confirm`.
+- A skip link ("Skip to content") is the first tab stop; the cash flow
+  chart is one tab stop and the arrow keys read the months.
 
 ## The layout
 
@@ -28,6 +45,10 @@ by category as single-hue bars, recurring items grouped by month, and
 
 ## What's on it
 
+- **Getting started** — a checklist card (enter balances, import an N26
+  export, turn on sync) that shows on a fresh device and disappears
+  once all three are done. Until balances exist the free-cash figure
+  and "cash after all of it" show a dash, not a zero.
 - **Quick actions** — Update balances (every account becomes a field,
   Enter hops to the next, Save stamps them all as checked today), Add
   expense (the quick-add box on /books), Import bank export.
@@ -47,26 +68,33 @@ by category as single-hue bars, recurring items grouped by month, and
   last thirty days (one snapshot a day, `books:v1:net-worth-history`),
   Tax set-aside with a meter of how much it covers, Monthly burn
   (business expenses + health/KSK/pension, average of the last three
-  full months), Runway (free cash ÷ burn; red under 3 months, amber
-  under 6).
+  full months), Runway (free cash ÷ burn against a target you set —
+  "goal n mo", default six months, `books:v1:money-prefs`; red under 3
+  months, amber under the target).
 - **Needs a decision** — overdue or imminent Vorauszahlungen, overdue
   and due-this-week invoices, plans charged again after you cancelled
   them, yearly renewals within 30 days, tax set-aside short of what's
   owed, undecided bank rows, a stale import, stale balances, the
-  single-filing warning, sync off. Sorted now → soon → note; each row
-  links to where you fix it. Anything below "now" can be snoozed for a
+  single-filing warning, sync off. Several overdue Vorauszahlungen are
+  one row (the 90-day list carries them one by one). Sorted now → soon
+  → note; each row links to where you fix it. Anything below "now" can be snoozed for a
   week (the × on hover; `books:v1:money-snoozed`, so it follows the
   sync); "n snoozed" in the card header brings them back.
 - **Cash flow** — 12 months of money in (invoices by the month the money
   landed, VAT stripped, plus manual income rows) vs business money out.
   6M / 12M / YTD; a strip with money in, business out, net and the
   average per month; hover a month for the numbers; **Table** shows the
-  same as text.
+  same as text. The month in progress is drawn lighter and marked "so
+  far" so a half month doesn't read as a bad one.
 - **Where the money goes** — business expenses by category over the
   last three full months (the burn window), biggest first, the tail
-  folded into "Everything else".
-- **Next 90 days** — a next-30-days strip (in, out, net), then Finanzamt
-  instalments, invoice due dates and renewals, by month, with a running "cash after all of it". Monthly
+  folded into "Everything else". Underneath, the bank rows you swiped
+  "personal" over the same months, summed — the only place that money
+  adds up, since it never enters the books.
+- **Next 90 days** — a next-30-days strip (in, out, net), then anything
+  already past its date under **Overdue** at the top, then Finanzamt
+  instalments, invoice due dates and renewals by month, with a running
+  "cash after all of it". Monthly
   plans roll up into one row per month (click to expand); yearly
   renewals, invoices and tax stay as their own rows. Personal plans are
   listed and tagged.
@@ -74,7 +102,24 @@ by category as single-hue bars, recurring items grouped by month, and
   number (the old one is selected, so just type); the row says how old
   it is and turns amber after 30 days. Add or remove accounts of any
   kind (cash, tax set-aside, savings, investments, crypto, debt). USD
-  converts at the rate from the books settings. Net worth at the foot.
+  converts at the rate from the books settings — typed by hand, or the
+  ECB reference rate fetched on the Tax estimate tab ("Use the ECB
+  rate", via Frankfurter; the request carries no data of yours and
+  refreshes once a day while it's on). Net worth at the foot.
+
+## Books and Clients in the same shell
+
+- **Entries** are grouped by month, newest first, each month with its
+  in/out totals; the current and previous month start open, older ones
+  fold up ("Expand every month" opens them all). A row shows its
+  category and VAT as text; the pencil turns it into a small form
+  (category, VAT on the receipt, note). N26 verdicts are still set on
+  the Bank import tab.
+- **Clients** shows owed / overdue / billed this year / active clients,
+  a stage badge on every card with what each client was billed this
+  year and what's open, and the whole invoice ledger with a status per
+  row (paid on, due in, overdue, untracked) filtered Open / this year /
+  All. USD converts at the books rate.
 
 ## Where the numbers come from
 
@@ -116,7 +161,12 @@ stay `--color-up/down/warn`.
   balances.
 - The eye icon (or `H`) hides every amount on this device — bullets,
   not blurred digits, so nothing readable is in the DOM while it's on.
-  Remembered per device (`money:v1:hidden`), deliberately not synced.
+  It covers every page in the shell: Books (entries, estimate,
+  subscriptions, the accountant preview) and Clients too, and figures
+  inside sentences ("Logos owes €500") are masked as well
+  (`useMoney()` in `src/components/money/Privacy.tsx`: `eur()`,
+  `usd()`, `mask()`). Remembered per device (`money:v1:hidden`),
+  deliberately not synced.
 - `/money` is `noindex`, disallowed in `robots.txt`, and the ledger data
   is only rendered once the gate cookie is present.
 
@@ -125,6 +175,7 @@ stay `--color-up/down/warn`.
 - No bank API. Balances are yours to type; the page shows their age
   instead of pretending to be live.
 - Personal spending isn't in the books, so burn is business + health
-  only. Personal plans show in the 90-day list, tagged, but not in burn.
+  only. Personal plans show in the 90-day list, tagged, and the personal
+  total sits under "Where the money goes", but neither is in burn.
 - One year at a time for the tax picture (the current year). Older
   years live on `/books`.

@@ -1,21 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, type FormEvent, type ReactNode } from "react";
-import { BookOpen, Cloud, CloudOff, Eye, EyeOff, LayoutDashboard, RefreshCw, Users, type LucideIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { useEffect, useState, useSyncExternalStore, type FormEvent, type ReactNode } from "react";
+import { BookOpen, Cloud, CloudOff, Eye, EyeOff, Keyboard, LayoutDashboard, Moon, RefreshCw, Sun, SunMoon, Users, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Segmented, SegmentedItem } from "@/components/ui/segmented";
 import { cn } from "@/lib/utils";
-import { PrivacyProvider, usePrivacy } from "@/components/money/Privacy";
+import { usePrivacy } from "@/components/money/Privacy";
 import { useSync } from "@/components/SyncBar";
+import { Confirm } from "./Confirm";
 import { rise } from "./Kpi";
 
 /**
  * The frame every finance page shares: sidebar (Overview, Books,
  * Clients), page header with actions, one sync instance, privacy mode,
- * a toast. Pages render their content inside; nothing here touches the
- * numbers.
+ * theme, keyboard shortcuts, a toast. Pages render their content inside;
+ * nothing here touches the numbers.
  *
  * One login for the app: whichever gate let you in, the shell marks the
  * other pages' gates as open for this tab (sessionStorage, like the
@@ -26,34 +31,50 @@ export type ShellSection = "overview" | "books" | "clients";
 
 export type SubnavItem = { key: string; label: string; active: boolean; onSelect: () => void };
 
-const NAV: { key: ShellSection; href: string; label: string; icon: LucideIcon }[] = [
-  { key: "overview", href: "/money", label: "Overview", icon: LayoutDashboard },
-  { key: "books", href: "/books", label: "Books", icon: BookOpen },
-  { key: "clients", href: "/for/clients", label: "Clients", icon: Users },
+/** A page-level keyboard shortcut: listed in the "?" sheet and fired by the shell. */
+export type Shortcut = { key: string; label: string; run: () => void };
+
+const NAV: { key: ShellSection; href: string; label: string; icon: LucideIcon; shortcut: string }[] = [
+  { key: "overview", href: "/money", label: "Overview", icon: LayoutDashboard, shortcut: "1" },
+  { key: "books", href: "/books", label: "Books", icon: BookOpen, shortcut: "2" },
+  { key: "clients", href: "/for/clients", label: "Clients", icon: Users, shortcut: "3" },
 ];
 
 const GATE_KEYS = ["for-expenses-unlocked", "for-clients-unlocked"];
 
+/**
+ * Pages must sit inside <PrivacyProvider> (each dashboard wraps itself),
+ * so useMoney()/usePrivacy() work above the shell as well as in it.
+ */
 export function FinanceShell(props: {
   active: ShellSection;
   title: ReactNode;
   subtitle?: ReactNode;
+  /** Header actions on wide screens. */
   actions?: ReactNode;
+  /** What replaces them below `sm` — typically one primary button plus a menu. Omit to show `actions` everywhere. */
+  compactActions?: ReactNode;
   subnav?: SubnavItem[];
+  shortcuts?: Shortcut[];
   toast?: string | null;
   onToast: (msg: string) => void;
   onRestored: () => void;
   children: ReactNode;
 }) {
-  return (
-    <PrivacyProvider>
-      <Frame {...props} />
-    </PrivacyProvider>
-  );
+  return <Frame {...props} />;
 }
 
-function Frame({ active, title, subtitle, actions, subnav, toast, onToast, onRestored, children }: Parameters<typeof FinanceShell>[0]) {
+function Frame({ active, title, subtitle, actions, compactActions, subnav, shortcuts, toast, onToast, onRestored, children }: Parameters<typeof FinanceShell>[0]) {
   const sync = useSync();
+  const router = useRouter();
+  const [help, setHelp] = useState(false);
+  // The first sync after the page opens may bring newer books from the
+  // vault; until it answers, a fresh device would show empty numbers.
+  const [settled, setSettled] = useState(false);
+  if (!settled && (sync.status.kind === "idle" || sync.status.kind === "error")) setSettled(true);
+  const firstSync = !settled && sync.status.kind === "syncing";
+  // A pull merged another device's edits — the overlay stays until the reload.
+  const restoring = sync.status.kind === "idle" && Boolean(sync.status.pulled);
 
   useEffect(() => {
     try {
@@ -68,8 +89,39 @@ function Frame({ active, title, subtitle, actions, subnav, toast, onToast, onRes
     if (sync.status.kind === "idle" && sync.status.pulled) onRestored();
   }, [sync.status, onRestored]);
 
+  // Global shortcuts: 1/2/3 switch pages, ? opens the sheet, H is handled by the privacy provider.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" || t.isContentEditable)) return;
+      if (e.key === "?") {
+        setHelp((h) => !h);
+        return;
+      }
+      const nav = NAV.find((n) => n.shortcut === e.key);
+      if (nav) {
+        if (nav.key !== active) router.push(nav.href);
+        return;
+      }
+      const page = shortcuts?.find((s) => s.key.toLowerCase() === e.key.toLowerCase());
+      if (page) {
+        e.preventDefault();
+        page.run();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [active, router, shortcuts]);
+
   return (
     <div className="fd min-h-screen bg-background text-foreground">
+      <a
+        href="#fd-main"
+        className="sr-only z-[60] rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+      >
+        Skip to content
+      </a>
       <div className="mx-auto flex w-full max-w-[1280px] gap-8 px-4 py-5 md:px-6 lg:px-8 lg:py-8">
         {/* ---------- sidebar (desktop) ---------- */}
         <aside className="fd-rise sticky top-8 hidden h-[calc(100vh-4rem)] w-56 shrink-0 flex-col pb-16 lg:flex" style={rise(0)}>
@@ -80,7 +132,7 @@ function Frame({ active, title, subtitle, actions, subnav, toast, onToast, onRes
           <nav className="mt-8 flex flex-col gap-1" aria-label="Finance pages">
             {NAV.map((n) => (
               <div key={n.key}>
-                <NavItem href={n.href} icon={n.icon} active={active === n.key}>
+                <NavItem href={n.href} icon={n.icon} active={active === n.key} shortcut={n.shortcut}>
                   {n.label}
                 </NavItem>
                 {active === n.key && subnav && subnav.length > 0 ? (
@@ -108,20 +160,38 @@ function Frame({ active, title, subtitle, actions, subnav, toast, onToast, onRes
           <div className="mt-auto flex flex-col gap-1">
             <SyncControl variant="row" sync={sync} onToast={onToast} onRestored={onRestored} />
             <PrivacyControl variant="row" />
+            <ThemeControl variant="row" />
+            <button
+              type="button"
+              onClick={() => setHelp(true)}
+              className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-foreground"
+            >
+              <Keyboard className="size-4" aria-hidden />
+              <span className="flex-1 text-left">Shortcuts</span>
+              <kbd className="rounded border px-1.5 text-[10px] text-fd-muted-foreground">?</kbd>
+            </button>
           </div>
         </aside>
 
         {/* ---------- content ---------- */}
-        <main className="flex min-w-0 flex-1 flex-col gap-5">
+        <main id="fd-main" className="flex min-w-0 flex-1 flex-col gap-5 outline-none" tabIndex={-1}>
           <header className="fd-rise flex flex-wrap items-start justify-between gap-3" style={rise(0)}>
             <div className="flex min-w-0 flex-col gap-0.5">
               <h1 className="text-2xl font-semibold tracking-tight lg:text-[28px]">{title}</h1>
               {subtitle ? <p className="text-sm text-fd-muted-foreground">{subtitle}</p> : null}
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {actions}
+              {compactActions ? (
+                <>
+                  <span className="hidden flex-wrap items-center gap-2 sm:flex">{actions}</span>
+                  <span className="flex items-center gap-2 sm:hidden">{compactActions}</span>
+                </>
+              ) : (
+                actions
+              )}
               <span className="ml-1 flex items-center gap-1.5 lg:hidden">
                 <PrivacyControl variant="icon" />
+                <ThemeControl variant="icon" />
                 <SyncControl variant="icon" sync={sync} onToast={onToast} onRestored={onRestored} />
               </span>
             </div>
@@ -133,31 +203,47 @@ function Frame({ active, title, subtitle, actions, subnav, toast, onToast, onRes
               </Button>
             ))}
           </nav>
+          {firstSync && sync.status.kind === "syncing" ? (
+            <p className="flex items-center gap-2 rounded-xl border border-dashed px-4 py-2.5 text-sm text-fd-muted-foreground" role="status">
+              <RefreshCw className="size-4 animate-spin" aria-hidden /> Checking the vault for newer books…
+            </p>
+          ) : null}
           {children}
         </main>
       </div>
+
+      {restoring ? (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-background/80 backdrop-blur-sm" role="status" aria-live="polite">
+          <div className="fd-portal flex items-center gap-3 rounded-xl border bg-popover px-5 py-3 text-sm shadow-fd">
+            <RefreshCw className="size-4 animate-spin" aria-hidden /> Restoring your books from the vault…
+          </div>
+        </div>
+      ) : null}
 
       {toast ? (
         <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-6">
           <div className="fd-portal rounded-xl border bg-popover px-4 py-2.5 text-sm text-popover-foreground shadow-fd">{toast}</div>
         </div>
       ) : null}
+
+      <ShortcutSheet open={help} onOpenChange={setHelp} page={shortcuts} />
     </div>
   );
 }
 
-function NavItem({ href, icon: Icon, active, children }: { href: string; icon: LucideIcon; active?: boolean; children: ReactNode }) {
+function NavItem({ href, icon: Icon, active, shortcut, children }: { href: string; icon: LucideIcon; active?: boolean; shortcut?: string; children: ReactNode }) {
   return (
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors",
+        "group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors",
         active ? "bg-fd-card text-foreground shadow-fd" : "text-fd-muted-foreground hover:bg-fd-accent hover:text-foreground",
       )}
     >
       <Icon className="size-4" aria-hidden />
-      {children}
+      <span className="flex-1">{children}</span>
+      {shortcut ? <kbd className="rounded border px-1.5 text-[10px] text-fd-muted-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">{shortcut}</kbd> : null}
     </Link>
   );
 }
@@ -176,26 +262,87 @@ function agoNow(iso: string | undefined): string {
   return `${Math.round(h / 24)} days ago`;
 }
 
+const ROW_BTN = "flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-foreground";
+
 function PrivacyControl({ variant }: { variant: "icon" | "row" }) {
   const { hidden, toggle } = usePrivacy();
   if (variant === "icon") {
     return (
-      <Button variant={hidden ? "default" : "outline"} size="icon-sm" onClick={toggle} aria-pressed={hidden} title={hidden ? "Show amounts (H)" : "Hide amounts (H)"}>
+      <Button variant={hidden ? "default" : "outline"} size="icon-sm" onClick={toggle} aria-pressed={hidden} aria-label={hidden ? "Show amounts" : "Hide amounts"} title={hidden ? "Show amounts (H)" : "Hide amounts (H)"}>
         {hidden ? <EyeOff /> : <Eye />}
       </Button>
     );
   }
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-pressed={hidden}
-      className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-foreground"
-    >
+    <button type="button" onClick={toggle} aria-pressed={hidden} className={ROW_BTN}>
       {hidden ? <EyeOff className="size-4" aria-hidden /> : <Eye className="size-4" aria-hidden />}
       <span className="flex-1 text-left">{hidden ? "Show amounts" : "Hide amounts"}</span>
       <kbd className="rounded border px-1.5 text-[10px] text-fd-muted-foreground">H</kbd>
     </button>
+  );
+}
+
+function useHasMounted() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+}
+
+/**
+ * Theme for the app: Light, Dark, or Auto (the site's rule — dark before
+ * 7 and after 19). An explicit choice sticks; "Auto" hands it back.
+ */
+function ThemeControl({ variant }: { variant: "icon" | "row" }) {
+  const { theme, resolvedTheme, setTheme } = useTheme();
+  const mounted = useHasMounted();
+  const current = mounted ? (theme ?? "system") : "system";
+  const dark = mounted && resolvedTheme === "dark";
+  if (variant === "icon") {
+    return (
+      <Button variant="outline" size="icon-sm" onClick={() => setTheme(dark ? "light" : "dark")} aria-label={dark ? "Switch to light theme" : "Switch to dark theme"} title={dark ? "Light theme" : "Dark theme"}>
+        {mounted ? dark ? <Sun /> : <Moon /> : <SunMoon />}
+      </Button>
+    );
+  }
+  return (
+    <div className="flex items-center gap-2.5 px-2.5 py-1.5">
+      <SunMoon className="size-4 text-fd-muted-foreground" aria-hidden />
+      <Segmented value={current} onValueChange={setTheme} aria-label="Theme" className="h-7 flex-1">
+        <SegmentedItem value="light" className="px-2 text-xs">Light</SegmentedItem>
+        <SegmentedItem value="dark" className="px-2 text-xs">Dark</SegmentedItem>
+        <SegmentedItem value="system" className="px-2 text-xs" title="Dark before 7 and after 19, like the site">Auto</SegmentedItem>
+      </Segmented>
+    </div>
+  );
+}
+
+function ShortcutSheet({ open, onOpenChange, page }: { open: boolean; onOpenChange: (o: boolean) => void; page?: Shortcut[] }) {
+  const rows: { key: string; label: string }[] = [
+    ...NAV.map((n) => ({ key: n.shortcut, label: `Go to ${n.label}` })),
+    { key: "H", label: "Hide or show every amount" },
+    ...(page ?? []).map((s) => ({ key: s.key.toUpperCase(), label: s.label })),
+    { key: "?", label: "This sheet" },
+    { key: "Esc", label: "Close a menu or cancel an edit" },
+  ];
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Keyboard shortcuts</DialogTitle>
+          <DialogDescription>They work anywhere on the page except inside a field.</DialogDescription>
+        </DialogHeader>
+        <ul className="flex flex-col divide-y text-sm">
+          {rows.map((r) => (
+            <li key={r.key + r.label} className="flex items-center justify-between gap-4 py-2">
+              <span>{r.label}</span>
+              <kbd className="rounded-md border bg-fd-muted px-2 py-0.5 font-mono text-xs">{r.key}</kbd>
+            </li>
+          ))}
+        </ul>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -240,7 +387,7 @@ function SyncControl({ variant, sync, onToast, onRestored }: { variant: "icon" |
             {icon}
           </Button>
         ) : (
-          <button type="button" className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-fd-muted-foreground transition-colors hover:bg-fd-accent hover:text-foreground">
+          <button type="button" className={ROW_BTN}>
             {icon}
             <span className="flex-1 truncate text-left">{label}</span>
           </button>
@@ -282,16 +429,17 @@ function SyncControl({ variant, sync, onToast, onRestored }: { variant: "icon" |
               <Button type="button" variant="outline" size="sm" onClick={() => void run({ force: true })} disabled={syncing}>
                 <RefreshCw /> Sync now
               </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  if (window.confirm("Forget the passphrase on this device? The books stay here and in the vault; you'll enter the passphrase again to sync.")) disable();
-                }}
-              >
-                Forget on this device
-              </Button>
+              <Confirm
+                title="Forget the passphrase on this device?"
+                description="The books stay here and in the vault. You'll enter the passphrase again to sync from this device."
+                action="Forget it"
+                onConfirm={disable}
+                trigger={
+                  <Button type="button" variant="ghost" size="sm">
+                    Forget on this device
+                  </Button>
+                }
+              />
             </div>
             <p className="text-xs text-fd-muted-foreground">The backup file lives on the Books page, under the accountant tab.</p>
           </div>

@@ -10,8 +10,12 @@ import {
   type TaxBucket,
   type YearSettings,
 } from "@/lib/expenses/books";
-import { formatEur } from "@/lib/expenses/triage";
+import { useEffect, useState } from "react";
+import { RefreshCw } from "lucide-react";
+import { fetchUsdEur } from "@/lib/money/fx";
 import { cn } from "@/lib/utils";
+import { useMoney } from "./money/Privacy";
+import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -38,6 +42,7 @@ export function TaxEstimate({
   settings,
   setSettings,
   facts,
+  onToast,
 }: {
   year: number;
   income?: IncomeYear;
@@ -48,14 +53,18 @@ export function TaxEstimate({
   setSettings: (s: BooksSettings) => void;
   /** Defaults for this year from a Bescheid (src/content/books/seed.ts). */
   facts?: YearSettings;
+  onToast?: (msg: string) => void;
 }) {
+  const money = useMoney();
   const picture = yearPicture({ year, income, entries, elsewhere, settings, facts });
   const { side, ys, prepaid, prepaidElsewhere, unpaid, stillDue, overdue, revenue, outstanding, vatCollected, progress, isPartial, soFar, projected } = picture;
   const today = new Date().toISOString().slice(0, 10);
   const setYs = (patch: Partial<YearSettings>) =>
     setSettings({ ...settings, years: { ...settings.years, [year]: { ...ys, ...patch, source: undefined } } });
   const scale = progress > 0 ? 1 / progress : 1;
-  const eur = (n: number) => `€${formatEur(Math.round(n))}`;
+  // Whole euros on the tiles, cents in the table.
+  const eur = (n: number) => money.eur(n, 2);
+  const eur0 = (n: number) => money.eur(n);
   const monthsRun = Math.max(1, Math.round(progress * 12));
 
   const dueLabel = (d: { due: string; amount: number }) =>
@@ -77,39 +86,27 @@ export function TaxEstimate({
       <StatStrip className="md:grid-cols-3">
         <StatTile
           label={isPartial ? "Expected bill at year end" : "Expected bill"}
-          value={eur(Math.max(0, projected.incomeTaxDue))}
+          value={eur0(Math.max(0, projected.incomeTaxDue))}
           sub={
             projected.incomeTaxDue < 0
-              ? `refund of ${eur(-projected.incomeTaxDue)} at this pace`
+              ? `refund of ${eur0(-projected.incomeTaxDue)} at this pace`
               : isPartial
-                ? `run-rate over ${monthsRun} months · so far ${eur(Math.max(0, soFar.incomeTaxDue))}`
-                : `after ${eur(prepaid + stillDue)} prepaid`
+                ? `run-rate over ${monthsRun} months · so far ${eur0(Math.max(0, soFar.incomeTaxDue))}`
+                : `after ${eur0(prepaid + stillDue)} prepaid`
           }
           tone={projected.incomeTaxDue <= 0 ? "up" : "down"}
         />
-        <StatTile label="VAT still to pay" value={eur(Math.max(0, soFar.vatDue))} sub={`collected ${eur(vatCollected)} · paid ${eur(side.vatPaid)} · before Vorsteuer`} tone={soFar.vatDue > 0 ? "warn" : undefined} />
+        <StatTile label="VAT still to pay" value={eur0(Math.max(0, soFar.vatDue))} sub={`collected ${eur0(vatCollected)} · paid ${eur0(side.vatPaid)} · before Vorsteuer`} tone={soFar.vatDue > 0 ? "warn" : undefined} />
         <StatTile
           label={isPartial ? "Profit, projected" : "Profit"}
-          value={eur(projected.profit)}
-          sub={`${isPartial ? `so far ${eur(soFar.profit)} · ` : ""}effective rate ${Math.round(projected.effectiveRate * 100)} %`}
+          value={eur0(projected.profit)}
+          sub={`${isPartial ? `so far ${eur0(soFar.profit)} · ` : ""}effective rate ${Math.round(projected.effectiveRate * 100)} %`}
           tone={projected.profit < 0 ? "down" : "up"}
         />
       </StatStrip>
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
-        <Label className="gap-2 font-normal text-fd-muted-foreground">
-          1 USD =
-          <Input
-            type="number"
-            step="0.01"
-            min="0.5"
-            max="1.5"
-            value={settings.usdRate}
-            onChange={(e) => setSettings({ ...settings, usdRate: Number(e.target.value) || settings.usdRate })}
-            className="h-8 w-[76px] text-sm"
-          />
-          EUR
-        </Label>
+        <UsdRate settings={settings} setSettings={setSettings} onToast={onToast} />
         <Label className="gap-2 font-normal text-fd-muted-foreground">
           <Checkbox checked={settings.joint} onCheckedChange={(v) => setSettings({ ...settings, joint: v === true })} />
           Married, filing jointly (Splittingtarif)
@@ -134,7 +131,7 @@ export function TaxEstimate({
             </Label>
           </>
         ) : null}
-        {ys.source ? <span className="text-xs text-fd-muted-foreground/70">Prefilled {ys.source}</span> : null}
+        {ys.source ? <span className="text-xs text-fd-muted-foreground">Prefilled {ys.source}</span> : null}
       </div>
 
       <div className="overflow-hidden rounded-xl border">
@@ -191,6 +188,63 @@ export function TaxEstimate({
         <li>VAT is settled through the Voranmeldungen. The figure above ignores Vorsteuer on German receipts, so the real balance is lower.</li>
       </ul>
     </section>
+  );
+}
+
+/**
+ * The USD→EUR rate: typed by hand, or fetched from the ECB reference
+ * rate (via Frankfurter, a public mirror — no data of yours goes out).
+ * "ECB" fetches once; "keep it" refreshes it whenever the estimate opens
+ * on a new day. Typing a rate switches back to manual.
+ */
+function UsdRate({ settings, setSettings, onToast }: { settings: BooksSettings; setSettings: (s: BooksSettings) => void; onToast?: (msg: string) => void }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const today = new Date().toISOString().slice(0, 10);
+  const auto = settings.usdRateSource === "ecb";
+
+  async function pull(keep: boolean) {
+    setBusy(true);
+    setError(null);
+    try {
+      const q = await fetchUsdEur();
+      setSettings({ ...settings, usdRate: q.rate, usdRateSource: keep ? "ecb" : "manual", usdRateAt: q.date });
+      onToast?.(`1 USD = ${q.rate} EUR · ECB reference rate of ${prettyDate(q.date)}`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "ECB rate unavailable");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Auto mode: refresh once a day, the first time the estimate opens.
+  useEffect(() => {
+    if (!auto || settings.usdRateAt === today || busy) return;
+    void pull(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auto, settings.usdRateAt, today]);
+
+  return (
+    <span className="flex flex-wrap items-center gap-2">
+      <Label className="gap-2 font-normal text-fd-muted-foreground">
+        1 USD =
+        <Input
+          type="number"
+          step="0.01"
+          min="0.5"
+          max="1.5"
+          value={settings.usdRate}
+          onChange={(e) => setSettings({ ...settings, usdRate: Number(e.target.value) || settings.usdRate, usdRateSource: "manual", usdRateAt: undefined })}
+          aria-label="USD to EUR rate"
+          className="h-8 w-[76px] text-sm"
+        />
+        EUR
+      </Label>
+      <Button type="button" variant={auto ? "secondary" : "outline"} size="sm" onClick={() => void pull(!auto)} disabled={busy} title={auto ? "Refreshes daily from the ECB · click to fetch now and switch to manual" : "Fetch today's ECB reference rate and keep it current"} aria-pressed={auto} className="h-8">
+        <RefreshCw className={busy ? "animate-spin" : ""} /> {auto ? `ECB · ${settings.usdRateAt ? prettyDate(settings.usdRateAt) : "today"}` : "Use the ECB rate"}
+      </Button>
+      {error ? <span className="text-xs text-fd-down">{error}</span> : null}
+    </span>
   );
 }
 

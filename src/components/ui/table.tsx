@@ -3,9 +3,11 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({ className, containerLabel, ...props }: React.ComponentProps<"table"> & { containerLabel?: string }) {
+  // A wide table scrolls sideways; the container takes focus so the
+  // keyboard can scroll it too (axe: scrollable-region-focusable).
   return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto">
+    <div data-slot="table-container" className="relative w-full overflow-x-auto focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none" tabIndex={0} role="region" aria-label={containerLabel ?? "Table"}>
       <table data-slot="table" className={cn("w-full caption-bottom text-sm", className)} {...props} />
     </div>
   );

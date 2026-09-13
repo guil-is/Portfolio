@@ -257,14 +257,26 @@ export function attentionItems(input: {
   const items: AttentionItem[] = [];
   const eur = (n: number) => `€${Math.round(n).toLocaleString("en")}`;
 
-  for (const s of picture.overdue) {
+  // One row for every overdue instalment: the 90-day list carries them one by one.
+  if (picture.overdue.length === 1) {
+    const s = picture.overdue[0];
     items.push({
       id: `overdue-tax-${s.due}`,
       severity: "critical",
       title: `Vorauszahlung due ${prettyDay(s.due)} not paid`,
       detail: "1 % Säumniszuschlag per month started — pay it with the Steuernummer and “ESt-VZ” in the reference",
       amount: -s.amount,
-      href: "/books",
+      href: "#upcoming",
+    });
+  } else if (picture.overdue.length > 1) {
+    const sum = picture.overdue.reduce((t, s) => t + s.amount, 0);
+    items.push({
+      id: "overdue-tax",
+      severity: "critical",
+      title: `${picture.overdue.length} Vorauszahlungen overdue`,
+      detail: `${picture.overdue.map((s) => prettyDay(s.due)).join(", ")} · 1 % Säumniszuschlag per month started — pay them with the Steuernummer and “ESt-VZ” in the reference, or add the rows in Entries if you paid from another account`,
+      amount: -sum,
+      href: "#upcoming",
     });
   }
   const dueToday = picture.unpaid.filter((s) => s.due >= today && daysUntil(s.due, today) <= 3);
@@ -384,6 +396,11 @@ export function upcomingRows(month: string, items: UpcomingItem[]): UpcomingRow[
   return out.sort((a, b) => dateOf(a).localeCompare(dateOf(b)));
 }
 
+/** The items already past their date (an unpaid instalment, a late invoice, a claim past its expected date) and the rest, in order. */
+export function splitOverdue(items: UpcomingItem[], today: string): { overdue: UpcomingItem[]; ahead: UpcomingItem[] } {
+  return { overdue: items.filter((it) => it.date < today), ahead: items.filter((it) => it.date >= today) };
+}
+
 /** Money in, money out and net over the next `days` (default 30) of upcoming items. */
 export function upcomingWindow(items: UpcomingItem[], today: string, days = 30): { income: number; out: number; net: number; count: number } {
   const end = addDays(today, days);
@@ -391,6 +408,27 @@ export function upcomingWindow(items: UpcomingItem[], today: string, days = 30):
   const income = inWindow.filter((it) => it.amount > 0).reduce((t, it) => t + it.amount, 0);
   const out = inWindow.filter((it) => it.amount < 0).reduce((t, it) => t + it.amount, 0);
   return { income, out, net: income + out, count: inWindow.length };
+}
+
+/* ---------- personal spending (never in the books) ---------- */
+
+/** Bank rows swiped "personal" over the last `months` full months: the money that leaves and never reaches the books. */
+export function personalSpend(rows: { date: string; amount: number; verdict?: string }[], today: string, months = 3): { total: number; count: number } {
+  const keys: string[] = [];
+  const d = new Date(`${today.slice(0, 7)}-01T00:00:00Z`);
+  for (let i = 1; i <= months; i++) {
+    const m = new Date(d);
+    m.setUTCMonth(m.getUTCMonth() - i);
+    keys.push(m.toISOString().slice(0, 7));
+  }
+  let total = 0;
+  let count = 0;
+  for (const r of rows) {
+    if (r.verdict !== "personal" || !keys.includes(monthKey(r.date))) continue;
+    total += Math.abs(r.amount);
+    count++;
+  }
+  return { total, count };
 }
 
 /* ---------- where the money goes ---------- */

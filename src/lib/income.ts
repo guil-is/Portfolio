@@ -74,6 +74,10 @@ export function incomeByYear(): IncomeYear[] {
 export type InvoiceRow = {
   number: string;
   client: string;
+  clientSlug?: string;
+  issuedAt: string;
+  dueAt?: string;
+  paidAt?: string;
   /** Date the money landed (or issue date for legacy entries). */
   date: string;
   /** Gross total in `currency`. */
@@ -90,6 +94,10 @@ export function invoiceRows(): InvoiceRow[] {
     return {
       number: e.number,
       client: e.client,
+      clientSlug: e.clientSlug,
+      issuedAt: e.issuedAt,
+      dueAt: e.dueAt,
+      paidAt: e.paidAt,
       date: received ?? e.dueAt ?? e.issuedAt,
       total: e.total,
       currency: e.currency,
